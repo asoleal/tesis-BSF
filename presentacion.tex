@@ -1,19 +1,37 @@
-\documentclass[spanish]{beamer}
-\usepackage{fontspec}
-\usepackage{polyglossia}
-\setmainlanguage{spanish}
-\usetheme{Madrid}
+\documentclass[aspectratio=169]{beamer}
 
-\title{Modelo de emisiones en larvas de mosca soldado}
-\author{John Jairo Leal Gómez}
-\date{}
+% --- Configuración XeLaTeX ---
+\usepackage{fontspec}
+\setsansfont{Latin Modern Sans} 
+
+% --- Carga Modular ---
+\usepackage{preambulo/paquetes_comunes}
+\input{preambulo/variables}
+
+% --- Configuración Beamer ---
+\usetheme{default}
+\usecolortheme{dove} 
+
+\title{\thesisname}
+\author{\studentname}
+\institute{\department \ \faculty \ \university}
+\date{\today}
 
 \begin{document}
-\frame{\titlepage}
 
-\begin{frame}{Objetivo}
-  Estimar CO₂ y CH₄ mediante un híbrido de EDOs y aprendizaje automático, 
-  bajo principios de gobernanza de datos y diseño frugal.
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}{Resumen}
+    % CORRECCIÓN: Sintaxis correcta con llaves { }
+    El objetivo es analizar la producción de \ch{CH4} y \ch{CO2}.
+    
+    Variables importadas:
+    \begin{itemize}
+        \item Director: \director
+        \item Entrega: \submissiondate
+    \end{itemize}
 \end{frame}
 
 \end{document}
