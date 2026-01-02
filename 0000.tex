@@ -1,27 +1,22 @@
 % Esta es la Plantilla UNAL en LaTeX
 \documentclass[10pt,spanish,fleqn,openany,twoside,letterpaper]{book}
 
-% --- Configuración Exclusiva PDFLATEX (Tesis) ---
+% --- Codificación (solo para pdflatex) ---
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 
-% --- Carga Modular ---
+% --- Carga modular (¡solo una vez!) ---
 \usepackage{preambulo/paquetes_comunes}
 
-% --- Configuración de Diseño y Variables de la Tesis ---
-% (A partir de aquí mantienes geometry, fancyhdr, titlesec y tus \newcommand)
-\usepackage{layout}
-\usepackage[hidelinks]{hyperref}
-% ...
-\usepackage{preambulo/paquetes_comunes}
-
-% Cargar datos de la tesis (Título, Autor, etc.)
+% --- Metadatos ---
 \input{preambulo/variables}
 
-% --- Configuración de Diseño y Fancyhdr ---
+% --- Paquetes específicos de la tesis (no en paquetes_comunes) ---
+\usepackage{layout}
+\usepackage[hidelinks]{hyperref}
 \usepackage{fancyhdr}
-% ... resto del archivo
+% ... resto de configuración (titlesec, appendix, etc.)
 
 \begin{document}
 
@@ -169,6 +164,7 @@ Albert Einstein
 {\scriptsize
 \pagestyle{plain}
 % Nombre del documento donde se almacenan las referencias
+\bibliographystyle{dtvstyle}
 \bibliography{Referencias}
 \nocite{*}
 % Inserta un página adicional al final en blanco 

@@ -1,6 +1,11 @@
 FROM texlive/texlive:latest
 
-# Instalar paquetes necesarios
-RUN tlmgr install natbib babel-english babel-spanish beamer polyglossia xetex
+WORKDIR /src
 
-# Listo para compilar
+COPY . .
+
+RUN pdflatex -interaction=nonstopmode -shell-escape 0000.tex && \
+    bibtex 0000 && \
+    pdflatex -interaction=nonstopmode -shell-escape 0000.tex && \
+    pdflatex -interaction=nonstopmode -shell-escape 0000.tex && \
+    xelatex -interaction=nonstopmode presentacion.tex

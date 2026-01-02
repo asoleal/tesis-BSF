@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main, master ]
   pull_request:
-  workflow_dispatch:  # Permite ejecutar manualmente
+  workflow_dispatch:
 
 jobs:
   build:
@@ -14,25 +14,23 @@ jobs:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: 🐳 Set up Docker and build
-        run: |
-          docker build -t tesis-bsf .
+      - name: 🐳 Build Docker image
+        run: docker build -t tesis-bsf .
 
-      - name: 🖨️ Compile thesis and presentation
+      - name: 🖨️ Extract compiled PDFs
         run: |
-          docker run --rm -v "$PWD:/src" -w /src tesis-bsf sh -c "
-            pdflatex 0000.tex && bibtex 0000 && pdflatex 0000.tex && pdflatex 0000.tex &&
-            xelatex presentacion.tex &&
-            mv 0000.pdf tesis.pdf
-          "
+          docker create --name artifacts tesis-bsf
+          docker cp artifacts:/src/0000.pdf ./tesis.pdf
+          docker cp artifacts:/src/presentacion.pdf ./presentacion.pdf
+          docker rm artifacts
 
-      - name: 📤 Upload thesis PDF
+      - name: 📤 Upload thesis
         uses: actions/upload-artifact@v4
         with:
           name: tesis-pdf
           path: tesis.pdf
 
-      - name: 📤 Upload presentation PDF
+      - name: 📤 Upload presentation
         uses: actions/upload-artifact@v4
         with:
           name: presentacion-pdf
