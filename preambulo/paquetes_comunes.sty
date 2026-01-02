@@ -1,0 +1,34 @@
+\ProvidesPackage{paquetes_comunes}
+
+% --- Idioma (Babel funciona en ambos, inputenc NO va aquí) ---
+\usepackage[main=spanish,english]{babel}
+\usepackage{microtype}
+
+% --- Matemáticas y Química ---
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{calc,arrows.meta}
+\usepackage{chemformula} % Fundamental para tu tesis (CO2, CH4)
+
+% --- Tablas y Figuras ---
+\usepackage{graphicx}
+\usepackage{booktabs}    % Tablas profesionales
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{tabu}
+\usepackage{adjustbox}
+\usepackage{rotating}
+\usepackage[rgb]{xcolor}
+\usepackage{float}
+
+% --- Código y Verbatim ---
+\usepackage{minted}
+\usepackage{fancyvrb}
+\newenvironment{myverbatim}{\Verbatim}{\endVerbatim}
+
+% --- Bibliografía ---
+\usepackage{natbib}
+
+% --- Definiciones Universales ---
+\newcommand{\angstrom}{\textup{\AA}}
+\newcommand{\grad}{\ensuremath{^{\circ}}}
