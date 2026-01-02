@@ -1,0 +1,39 @@
+name: Build Thesis and Slides
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+  workflow_dispatch:  # Permite ejecutar manualmente
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐳 Set up Docker and build
+        run: |
+          docker build -t tesis-bsf .
+
+      - name: 🖨️ Compile thesis and presentation
+        run: |
+          docker run --rm -v "$PWD:/src" -w /src tesis-bsf sh -c "
+            pdflatex 0000.tex && bibtex 0000 && pdflatex 0000.tex && pdflatex 0000.tex &&
+            xelatex presentacion.tex &&
+            mv 0000.pdf tesis.pdf
+          "
+
+      - name: 📤 Upload thesis PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: tesis-pdf
+          path: tesis.pdf
+
+      - name: 📤 Upload presentation PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: presentacion-pdf
+          path: presentacion.pdf
