@@ -119,10 +119,10 @@ Albert Einstein
 %Páginas preámbulo, listado de figuras, tablas y tabla de contenido
 {\pagestyle{plain} \pagenumbering{roman}
 \setlength{\parskip}{1mm}
-\include{00Agradecimientos}
+\include{contenido/00Agradecimientos}
 % Comentar las dos lineas de abajo con % en caso que no se requieran abreviaturas y resumen en el trabajo
-\include{00Abreviaturas}
-\include{00ResumenAbstract}
+\include{contenido/00Abreviaturas}
+\include{contenido/00ResumenAbstract}
 % Dejar esta parte así para que genere correctamente la página de la tabla de contenido
 \addcontentsline{toc}{chapter}{Lista de figuras}
 \listoffigures
@@ -139,20 +139,20 @@ Albert Einstein
 \setlength{\parskip}{\baselineskip}
 %Incluir secciones del documento de aqui en adelante
 %Use \include para incluir desde una página nueva e \input para incluir sin salto de página
-\include{00Intrucciones} % Anular esta linea con comentario de ser necesario
-\include{00HipotesisPlanteamiento}
-\include{00Objetivos}
-\include{01Seccion01}
-\include{02Seccion02}
-\include{03Seccion03}
-\include{04Seccion04}
-\include{05Seccion05}
-\include{06Seccion06}
-\include{07Seccion07}
+\include{contenido/00Intrucciones} % Anular esta linea con comentario de ser necesario
+\include{contenido/00HipotesisPlanteamiento}
+\include{contenido/00Objetivos}
+\include{contenido/01Seccion01}
+\include{contenido/02Seccion02}
+\include{contenido/03Seccion03}
+\include{contenido/04Seccion04}
+\include{contenido/05Seccion05}
+\include{contenido/06Seccion06}
+\include{contenido/07Seccion07}
 
 %Inicio del apéndice o anexos
 \begin{appendix}
-\include{08Apendice01}%
+\include{contenido/08Apendice01}%
 \end{appendix}
 
 %Permite visualizar la bibliografía en la tabla de contenido
