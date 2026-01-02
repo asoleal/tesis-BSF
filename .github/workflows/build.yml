@@ -1,37 +1,36 @@
-name: Build Thesis and Slides
+name: CI Tesis Modular
 
 on:
   push:
     branches: [ main, master ]
   pull_request:
-  workflow_dispatch:
 
 jobs:
-  build:
+  compile:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Bajar el código (INDISPENSABLE)
       - name: 📥 Checkout code
         uses: actions/checkout@v4
 
+      # 2. Construir la imagen limpia (rápido, sin archivos dentro)
       - name: 🐳 Build Docker image
         run: docker build -t tesis-bsf .
 
-      - name: 🖨️ Extract compiled PDFs
-        run: |
-          docker create --name artifacts tesis-bsf
-          docker cp artifacts:/src/0000.pdf ./tesis.pdf
-          docker cp artifacts:/src/presentacion.pdf ./presentacion.pdf
-          docker rm artifacts
+      # 3. Compilar usando TU Makefile (Magia aquí ✨)
+      #    Esto usa automáticamente $(CURDIR) para montar el volumen correctamente
+      - name: 📜 Compile Thesis (via Make)
+        run: make tesis
 
-      - name: 📤 Upload thesis
+      - name: 🎞️ Compile Slides (via Make)
+        run: make slides
+
+      # 4. Subir los PDFs (están en la raíz, no dentro de docker)
+      - name: 📤 Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: tesis-pdf
-          path: tesis.pdf
-
-      - name: 📤 Upload presentation
-        uses: actions/upload-artifact@v4
-        with:
-          name: presentacion-pdf
-          path: presentacion.pdf
+          name: Resultados_Compilacion
+          path: |
+            0000.pdf
+            presentacion.pdf
