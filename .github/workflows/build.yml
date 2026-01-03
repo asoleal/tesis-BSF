@@ -9,32 +9,32 @@ on:
 jobs:
   build_latex:
     runs-on: ubuntu-latest
-    # USAMOS UNA IMAGEN YA LISTA (Aquí está el truco de velocidad)
-    # Esta imagen ya tiene todo texlive-full preinstalado.
     container: texlive/texlive:latest
 
     steps:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      # A veces la imagen base no trae 'make', lo instalamos en 2 segundos
-      - name: Instalar Make
+      # --- COMPILACIÓN DE LA TESIS ---
+      # Ejecutamos los comandos directos para no llamar a Docker desde el Makefile
+      - name: Compilar Tesis (Directo)
         run: |
-          apt-get update
-          apt-get install -y make
+          pdflatex -interaction=nonstopmode tesis.tex
+          biber tesis
+          pdflatex -interaction=nonstopmode tesis.tex
+          pdflatex -interaction=nonstopmode tesis.tex
 
-      # Compilamos la Tesis
-      - name: Compilar Tesis
-        run: make tesis
+      # --- COMPILACIÓN DE LA PRESENTACIÓN ---
+      - name: Compilar Presentación (Directo)
+        if: always() # Ejecutar aunque falle la tesis
+        run: |
+          pdflatex -interaction=nonstopmode presentacion.tex
+          # No necesitamos biber aquí si no hay citas, si las hay, descomenta la linea de abajo:
+          # biber presentacion || true
+          pdflatex -interaction=nonstopmode presentacion.tex
 
-      # Compilamos la Presentación
-      # Usamos el 'continue-on-error' por si la presentación falla,
-      # que no nos oculte el PDF de la tesis si ya salió bien.
-      - name: Compilar Presentación
-        run: make slides || true
-
-      # Subimos los PDFs resultantes para que los puedas descargar
-      - name: Subir Artefactos (PDFs)
+      # --- SUBIR RESULTADOS ---
+      - name: Subir PDFs
         uses: actions/upload-artifact@v4
         with:
           name: Documentos_Finales
