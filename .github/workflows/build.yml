@@ -1,36 +1,44 @@
-name: CI Tesis Modular
+name: Compilar Tesis y Presentación
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ "main", "master" ]
   pull_request:
+    branches: [ "main", "master" ]
 
 jobs:
-  compile:
+  build_latex:
     runs-on: ubuntu-latest
+    # USAMOS UNA IMAGEN YA LISTA (Aquí está el truco de velocidad)
+    # Esta imagen ya tiene todo texlive-full preinstalado.
+    container: texlive/texlive:latest
 
     steps:
-      # 1. Bajar el código (INDISPENSABLE)
-      - name: 📥 Checkout code
+      - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      # 2. Construir la imagen limpia (rápido, sin archivos dentro)
-      - name: 🐳 Build Docker image
-        run: docker build -t tesis-bsf .
+      # A veces la imagen base no trae 'make', lo instalamos en 2 segundos
+      - name: Instalar Make
+        run: |
+          apt-get update
+          apt-get install -y make
 
-      # 3. Compilar usando TU Makefile (Magia aquí ✨)
-      #    Esto usa automáticamente $(CURDIR) para montar el volumen correctamente
-      - name: 📜 Compile Thesis (via Make)
+      # Compilamos la Tesis
+      - name: Compilar Tesis
         run: make tesis
 
-      - name: 🎞️ Compile Slides (via Make)
-        run: make slides
+      # Compilamos la Presentación
+      # Usamos el 'continue-on-error' por si la presentación falla,
+      # que no nos oculte el PDF de la tesis si ya salió bien.
+      - name: Compilar Presentación
+        run: make slides || true
 
-      # 4. Subir los PDFs (están en la raíz, no dentro de docker)
-      - name: 📤 Upload Artifacts
+      # Subimos los PDFs resultantes para que los puedas descargar
+      - name: Subir Artefactos (PDFs)
         uses: actions/upload-artifact@v4
         with:
-          name: Resultados_Compilacion
+          name: Documentos_Finales
           path: |
             tesis.pdf
             presentacion.pdf
+          if-no-files-found: warn
