@@ -1,45 +1,24 @@
-# Archivos auxiliares de LaTeX (pdflatex/xelatex)
+# Archivos temporales de LaTeX
 *.aux
 *.log
+*.out
+*.toc
 *.lof
 *.lot
-*.toc
 *.bbl
 *.blg
-*.brf
-*.out
 *.fls
 *.fdb_latexmk
 *.synctex.gz
-*.run.xml
-*-blx.bib
-
-# Salidas de compilación
-*.pdf
+*.nav
+*.snm
+*.vrb
 *.dvi
-*.ps
 
-# Carpetas temporales
-/build/
-/_minted*/
+# Archivos PDF (Opcional: A veces es bueno ignorarlos para no inflar el repo)
+# tesis.pdf
+# presentacion.pdf
 
-# Editor backups
-*~
-*.bak
-*.swp
+# Archivos de sistema
 .DS_Store
-
-# Sistema operativo
 Thumbs.db
-
-# Evitar subir fuentes (la plantilla UNAL ya no las usa)
-/AncizarSans/
-
-# Logs y cachés
-.DS_Store
-.DS_Store?
-._*
-
-# Evita subir PDFs generados, pero permite PDFs de figuras si los usas
-# Si usas figuras en PDF, descomenta la siguiente línea:
-!00Figuras/*.pdf

@@ -1,0 +1,8 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c}{\PYGZpc{} Opción 1 \PYGZhy{} Inserción simple de una imagen}
+\PYG{k}{\PYGZbs{}includegraphics}\PYG{n+na}{[Parámetros de la imagen]}\PYG{n+nb}{\PYGZob{}}Fuente o lugar de la imagen\PYG{n+nb}{\PYGZcb{}}
+\PYG{c}{\PYGZpc{} Algunos parámetros útiles que se usan en el recuadro [Parámetros] son:}
+\PYG{c}{\PYGZpc{} scale=Valor entre 0 y 1, la imagen se proporciona basada en el archivo original}
+\PYG{c}{\PYGZpc{} \PYGZbs{}textwidth, la imagen queda con un ancho máximo igual al que tiene el texto}
+\PYG{c}{\PYGZpc{} Esta imagen no va a quedar registrada en el listado de figuras de la plantilla}
+\end{MintedVerbatim}

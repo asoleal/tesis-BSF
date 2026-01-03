@@ -10,7 +10,7 @@ help:
 all: tesis slides
 
 tesis:
-	$(DOCKER_CMD) sh -c "pdflatex 0000.tex && bibtex 0000 && pdflatex 0000.tex && pdflatex 0000.tex"
+	$(DOCKER_CMD) sh -c "pdflatex tesis.tex && bibtex tesis && pdflatex tesis.tex && pdflatex tesis.tex"
 
 slides:
 	$(DOCKER_CMD) xelatex presentacion.tex

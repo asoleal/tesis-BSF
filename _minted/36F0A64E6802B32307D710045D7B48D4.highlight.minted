@@ -1,0 +1,24 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c}{\PYGZpc{} Opción 1: Insertar una tabla sencilla con tabular}
+\PYG{k}{\PYGZbs{}begin}\PYG{n+nb}{\PYGZob{}}tabular\PYG{n+nb}{\PYGZcb{}\PYGZob{}}c|c\PYG{n+nb}{\PYGZcb{}} \PYG{c}{\PYGZpc{}Tabla de 2 x 2 con texto centrado}
+   Celda 1\PYGZhy{}1 \PYG{n+nb}{\PYGZam{}} Celda 1\PYGZhy{}2  \PYG{k}{\PYGZbs{}\PYGZbs{}}
+   Celda 2\PYGZhy{}1 \PYG{n+nb}{\PYGZam{}} Celda 2\PYGZhy{}2
+\PYG{k}{\PYGZbs{}end}\PYG{n+nb}{\PYGZob{}}tabular\PYG{n+nb}{\PYGZcb{}}
+\PYG{c}{\PYGZpc{} Opción 2: Insertar una Tabla que quede en la Lista de Tablas del documento}
+\PYG{k}{\PYGZbs{}begin}\PYG{n+nb}{\PYGZob{}}table\PYG{n+nb}{\PYGZcb{}}[ht]
+\PYG{c}{\PYGZpc{} Usar [ht] (here, top) esto coloca la tabla en la ubicación donde se solicita}
+\PYG{c}{\PYGZpc{} O en su defecto en la parte superior de la siguiente página (top)}
+    \PYG{k}{\PYGZbs{}centering} \PYG{c}{\PYGZpc{} Formato centrado}
+    \PYG{k}{\PYGZbs{}begin}\PYG{n+nb}{\PYGZob{}}tabular\PYG{n+nb}{\PYGZcb{}\PYGZob{}}l|r\PYG{n+nb}{\PYGZcb{}}
+    \PYG{c}{\PYGZpc{} Tabla 2 x 2 Texto a la Izquierda Columna 1, Derecha Columna 2}
+         \PYG{n+nb}{\PYGZam{}}  \PYG{k}{\PYGZbs{}\PYGZbs{}}
+         \PYG{n+nb}{\PYGZam{}}
+    \PYG{k}{\PYGZbs{}end}\PYG{n+nb}{\PYGZob{}}tabular\PYG{n+nb}{\PYGZcb{}}
+    \PYG{k}{\PYGZbs{}caption}\PYG{n+na}{[Nombre abreviado de la Tabla]}\PYG{n+nb}{\PYGZob{}}Nombre extendido de la tabla\PYG{n+nb}{\PYGZcb{}}
+    \PYG{c}{\PYGZpc{} El nombre abreviado de la tabla se ve en la Lista de Tablas}
+    \PYG{c}{\PYGZpc{} El nombre extendido de la tabla se ve en el texto del documento}
+    \PYG{k}{\PYGZbs{}label}\PYG{n+nb}{\PYGZob{}}tab:Etiqueta\PYG{n+nb}{\PYGZcb{}}
+    \PYG{c}{\PYGZpc{} Etiqueta de la tabla, permite citarla en el texto usando \PYGZbs{}ref\PYGZob{}tab:Etiqueta\PYGZcb{}}
+    \PYG{c}{\PYGZpc{} La etiqueta es definida por el usuario y DEBE ser única}
+\PYG{k}{\PYGZbs{}end}\PYG{n+nb}{\PYGZob{}}table\PYG{n+nb}{\PYGZcb{}}
+\end{MintedVerbatim}

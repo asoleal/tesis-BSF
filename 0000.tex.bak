@@ -1,0 +1,176 @@
+% Esta es la Plantilla UNAL en LaTeX
+\documentclass[10pt,spanish,fleqn,openany,twoside,letterpaper]{book}
+
+% --- Codificación (solo para pdflatex) ---
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+
+% --- Carga modular (¡solo una vez!) ---
+\usepackage{preambulo/paquetes_comunes}
+
+% --- Metadatos ---
+\input{preambulo/variables}
+
+% --- Paquetes específicos de la tesis (no en paquetes_comunes) ---
+\usepackage{layout}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+% ... resto de configuración (titlesec, appendix, etc.)
+
+\begin{document}
+
+%Nombres y formatos de títulos, tablas y figuras
+%Use \sffamily para dejar con letra Sans Serif, sin etiqueta queda LaTeX clásico
+\renewcommand{\listfigurename}{\sffamily Lista de figuras}
+\renewcommand{\listtablename}{\sffamily Lista de tablas}
+\renewcommand{\contentsname}{\sffamily Contenido}
+\renewcommand{\chaptername}{\sffamily Capítulo}
+\renewcommand{\tablename}{\scriptsize \centering \textbf{Tabla}}
+\renewcommand{\figurename}{\scriptsize \centering \textbf{Figura}}
+\renewcommand{\appendixname}{\sffamily Anexo}
+
+%Cambia el nombre de la sección de referencias
+\renewcommand{\bibname}{\sffamily Referencias Bibliográficas}
+
+%Páginas de Presentación del documento - No modificar esto se hace automáticamente
+{\newpage
+\thispagestyle{empty}
+\begin{center}
+\begin{figure}
+\centering
+\epsfig{file=00Figuras/00f00EscudoUN2016,scale=1}%
+\end{figure}
+\vspace{2.5cm}
+\textbf{\Huge \thesisname} \\ 
+\vspace{2.5cm}
+\textbf{\Large \studentname} \\
+\vspace{5.0cm}
+\faculty \\ \department \\
+\sede, Colombia (Nota: ciudad sede donde se gradúa [borrar esta nota])\\
+\issuedate
+\newpage 
+\thispagestyle{empty}
+\vspace{2.0cm}
+\textbf{\Huge \thesisname} \\
+\vspace{2.0cm}
+\textbf{\Large \studentname} \\
+\vspace{2.0cm}
+\small Tesis presentada como requisito parcial para optar por el título de: \\
+{\bfseries \academictitle}\\
+\vspace{2.0cm}
+\textbf{Director(a):} \\
+\director \\
+\directortitle \; - \departmenttwo \\
+\faculty \\
+\university \\ 
+\vspace{0.5cm}
+\textbf{Codirector(a):} \\
+\codirector \\
+\codirectortitle \; - \department \\
+\faculty \\
+\university 
+\vspace{1.5cm} \\
+\textbf{Línea de investigación:} \\ 
+\researchtopic\\
+\textbf{Grupo de investigación:} \\
+\resgroupone \\
+\resgrouptwo \\
+\vspace{1.5cm} 
+\university \\
+\faculty \\
+\department \\
+\issuedate
+\end{center}
+
+% Dedicatorias
+\newpage
+\thispagestyle{empty}
+\begin{flushright}
+\begin{minipage}{12.5cm}
+\noindent
+\\[10em]
+%Modificar la cita que se quiere agregar
+{\Large Cita 01.}
+\\[3em]
+Autor
+\\ \textit{Fuente}
+\\[10em]
+%Para anular la adición de una segunda cita anule las siguientes lineas desde acá mediante comentario (%)
+{\Large \textit{Wenn du es nicht einfach erkl\"{a}ren kannst, hast du es nicht genug verstanden} - Si no eres capaz de explicar algo claramente, es que aún no lo has entendido lo suficiente.}
+\\[3em]
+Albert Einstein
+%Hasta acá!
+\end{minipage}
+\end{flushright} 
+
+% Declaracíon de originalidad del texto y del contenido
+% No modificar, se hace automáticamente con los comandos ya definidos
+\newpage
+\chapter*{\sffamily Declaración}
+\par Me permito afirmar que he realizado ésta tesis de manera autónoma y con la única ayuda de los medios permitidos y no diferentes a los mencionados el presente texto. Todos los pasajes que se han tomado de manera textual o figurativa de textos publicados y no publicados, los he reconocido en el presente trabajo. Ninguna parte del presente trabajo se ha empleado en ningún otro tipo de tesis. 
+\\[1em]
+\sede., \submissiondate
+\\[6em]
+\rule{6cm}{0.5pt}\\
+\studentname
+}
+
+%Páginas preámbulo, listado de figuras, tablas y tabla de contenido
+{\pagestyle{plain} \pagenumbering{roman}
+\setlength{\parskip}{1mm}
+\include{contenido/00Agradecimientos}
+% Comentar las dos lineas de abajo con % en caso que no se requieran abreviaturas y resumen en el trabajo
+\include{contenido/00Abreviaturas}
+\include{contenido/00ResumenAbstract}
+% Dejar esta parte así para que genere correctamente la página de la tabla de contenido
+\addcontentsline{toc}{chapter}{Lista de figuras}
+\listoffigures
+\clearpage
+\addcontentsline{toc}{chapter}{Lista de tablas}
+\listoftables
+\clearpage
+\addcontentsline{toc}{chapter}{Contenido}
+\tableofcontents
+\clearpage
+}
+
+{\pagenumbering{arabic}
+\setlength{\parskip}{\baselineskip}
+%Incluir secciones del documento de aqui en adelante
+%Use \include para incluir desde una página nueva e \input para incluir sin salto de página
+\include{contenido/00Intrucciones} % Anular esta linea con comentario de ser necesario
+\include{contenido/00HipotesisPlanteamiento}
+\include{contenido/00Objetivos}
+\include{contenido/01Seccion01}
+\include{contenido/02Seccion02}
+\include{contenido/03Seccion03}
+\include{contenido/04Seccion04}
+\include{contenido/05Seccion05}
+\include{contenido/06Seccion06}
+\include{contenido/07Seccion07}
+
+%Inicio del apéndice o anexos
+\begin{appendix}
+\include{contenido/08Apendice01}%
+\end{appendix}
+
+%Permite visualizar la bibliografía en la tabla de contenido
+%Cambie el nombre a Bibliografía o Literatura Citada en la siguiente línea de ser preciso
+\addcontentsline{toc}{chapter}{Referencias Bibliográficas} 
+
+\let\OLDthebibliography=\thebibliography
+\def\thebibliography#1{\OLDthebibliography{#1}}
+{\scriptsize
+\pagestyle{plain}
+% Nombre del documento donde se almacenan las referencias
+\bibliographystyle{dtvstyle}
+\bibliography{Referencias}
+\nocite{*}
+% Inserta un página adicional al final en blanco 
+%\cleardoublepage
+% Para NO insertar una página adicional al final usar \clearpage
+\clearpage
+}}
+
+\end{document}

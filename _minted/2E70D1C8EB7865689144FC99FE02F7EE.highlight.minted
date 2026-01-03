@@ -1,0 +1,16 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k}{\PYGZbs{}chapter}\PYG{n+nb}{\PYGZob{}}Nombre del Capítulo\PYG{n+nb}{\PYGZcb{}}
+\PYG{c}{\PYGZpc{} Capitulo, división de primer orden en el texto}
+\PYG{k}{\PYGZbs{}chapter*}\PYG{n+nb}{\PYGZob{}}Nombre\PYG{n+nb}{\PYGZcb{}}
+\PYG{c}{\PYGZpc{} Capitulo requerido en el texto pero que no debe aparecer en la Tabla de Contenido}
+\PYG{k}{\PYGZbs{}section}\PYG{n+nb}{\PYGZob{}}Nombre\PYG{n+nb}{\PYGZcb{}}
+\PYG{c}{\PYGZpc{} Sección del capitulo, división de segundo orden}
+\PYG{k}{\PYGZbs{}section*}\PYG{n+nb}{\PYGZob{}}Nombre\PYG{n+nb}{\PYGZcb{}}
+\PYG{c}{\PYGZpc{} Sección requerida en el texto pero que no debe aparecer en la Tabla de Contenido}
+\PYG{k}{\PYGZbs{}subsection}\PYG{n+nb}{\PYGZob{}}Nombre\PYG{n+nb}{\PYGZcb{}}
+\PYG{c}{\PYGZpc{} Subsección de una sección de un capitulo, división de tercer orden}
+\PYG{k}{\PYGZbs{}subsubsection}\PYG{n+nb}{\PYGZob{}}Nombre\PYG{n+nb}{\PYGZcb{}}
+\PYG{c}{\PYGZpc{} Subsección de una subsección, división de cuarto orden}
+\PYG{k}{\PYGZbs{}paragraph}\PYG{n+nb}{\PYGZob{}}Nombre\PYG{n+nb}{\PYGZcb{}}
+\PYG{c}{\PYGZpc{} Puede tomarse como división de quinto orden o para resaltar información importante}
+\end{MintedVerbatim}
