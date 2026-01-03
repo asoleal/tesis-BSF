@@ -1,10 +1,12 @@
 \documentclass[aspectratio=169]{beamer}
 
-% --- Configuración XeLaTeX ---
-\usepackage{fontspec}
-\setsansfont{Latin Modern Sans} 
+% --- Configuración de Idioma (Igual a la tesis) ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
 
 % --- Carga Modular ---
+% Esto carga tus configuraciones compartidas
 \usepackage{preambulo/paquetes_comunes}
 \input{preambulo/variables}
 
@@ -17,21 +19,28 @@
 \institute{\department \ \faculty \ \university}
 \date{\today}
 
+% --- Paquetes de Química y Unidades (SOLUCIÓN AL ERROR) ---
+\usepackage{chemformula} % Para usar el comando \ch{}
+\usepackage{chemfig}     % Para estructuras químicas
+\usepackage{chemmacros}  % Macros químicos
+\usepackage{siunitx}     % Para unidades (SI)
+\usepackage[version=4]{mhchem} % Alternativa química
+
+% ==========================================
+%    INICIO DE LAS DIAPOSITIVAS
+% ==========================================
 \begin{document}
 
 \begin{frame}
-    \titlepage
+\titlepage
 \end{frame}
 
-\begin{frame}{Resumen}
-    % CORRECCIÓN: Sintaxis correcta con llaves { }
-    El objetivo es analizar la producción de \ch{CH4} y \ch{CO2}.
+% Ejemplo para probar que funciona
+\begin{frame}{Prueba de Química}
+    Aquí probamos la fórmula que fallaba antes:
+    \vspace{1cm}
     
-    Variables importadas:
-    \begin{itemize}
-        \item Director: \director
-        \item Entrega: \submissiondate
-    \end{itemize}
+    Producimos \ch{CH4} y \ch{CO2} sin errores.
 \end{frame}
 
 \end{document}
