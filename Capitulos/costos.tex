@@ -1,0 +1,125 @@
+\chapter{Estimación de Costos y Presupuesto}
+
+\section{Resumen Financiero del Proyecto}
+El desarrollo de esta investigación implica la implementación de una arquitectura híbrida de hardware y software para la validación de métricas ambientales. La estructura de costos se ha diseñado bajo el principio de eficiencia, priorizando el desarrollo de capital intelectual y la validación experimental sobre la adquisición de activos fijos costosos.
+
+El presupuesto global estimado asciende a $267$ millones de pesos colombianos (COP), ejecutados a lo largo de 4 años. Este monto cubre desde la fase de diseño conceptual hasta la validación en campo y la divulgación científica.
+\section{Desglose de Costos de Desarrollo Tecnológico}
+
+A continuación se detalla la inversión específica requerida para la construcción del prototipo funcional (TRL 5-6), diferenciando componentes físicos y servicios digitales.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{7cm}|c|c|}
+        \hline
+        \textbf{Componente Tecnológico} & \textbf{Unidades} & \textbf{Costo (MM COP)} \\ \hline
+        \multicolumn{3}{|l|}{\textit{\textbf{1. Hardware y Sensórica (Nodo IoT)}}} \\ \hline
+        Sensores de \ce{CO2} (NDIR Grado Industrial) & 3 & 0.6 \\ \hline
+        Sensores de Gases Traza (\ce{CH4}, VOCs) & 3 & 0.72 \\ \hline
+        Sensores Ambientales (Temp/Humedad de alta precisión) & 3 & 1.2 \\ \hline
+        Sensores Auxiliares (Luz, pH, NPK) & 3 & 0.6 \\ \hline
+        Unidades de Procesamiento (ESP32 + LoRa) & 5 & 4.0 \\ \hline
+        Manufactura de PCB y Carcasas IP65 & 3 & 0.8 \\ \hline
+        \multicolumn{3}{|l|}{\textit{\textbf{2. Software e Infraestructura de Datos}}} \\ \hline
+        Desarrollo de Algoritmos Híbridos (Licenciamiento) & Global & 4.0 \\ \hline
+        Interfaz de Visualización (Dashboard Web) & Global & 2.0 \\ \hline
+        Infraestructura Cloud (Hosting + DB - 12 meses) & Global & 2.4 \\ \hline
+        \multicolumn{3}{|l|}{\textit{\textbf{3. Validación y Transferencia}}} \\ \hline
+        Equipos Patrón de Referencia (Alquiler/Uso) & Global & 2.0 \\ \hline
+        Insumos para Ensayos Experimentales & Global & 2.8 \\ \hline
+        Kit de Comunicaciones (Gateway LoRaWAN + Antenas) & 1 & 1.8 \\ \hline
+        \multicolumn{3}{|l|}{\textit{\textbf{4. Servicios Especializados}}} \\ \hline
+        Consultoría Técnica Externa & Global & 6.0 \\ \hline
+        Capacitación y Formación Especializada & Global & 3.2 \\ \hline
+        \textbf{SUBTOTAL DESARROLLO TECNOLÓGICO} & & \textbf{\$ 32.12} \\ \hline
+    \end{tabular}
+    \caption{Estimación de costos directos de desarrollo e implementación.}
+    \label{tab:costos_desarrollo}
+\end{table}
+
+\section{Cronograma de Ejecución Financiera}
+
+La siguiente tabla detalla la distribución de recursos por actividad estratégica, indicando el estado actual de avance y la valoración económica de los entregables (recursos humanos, técnicos y operativos).
+
+\begin{longtable}{|p{5cm}|p{6cm}|c|c|}
+    \hline
+    \textbf{Actividad} & \textbf{Descripción del Rubro} & \textbf{\% Avance} & \textbf{Costo (MM COP)*} \\
+    \hline
+    \endfirsthead
+    \multicolumn{4}{c}{\textit{Continúa de la página anterior}} \\
+    \hline
+    \textbf{Actividad} & \textbf{Descripción} & \textbf{\% Avance} & \textbf{Costo (MM COP)} \\
+    \hline
+    \endhead
+    \hline
+    \multicolumn{4}{r}{\textit{*MM COP: Millones de Pesos Colombianos}} \\
+    \endfoot
+    \hline
+    \endlastfoot
+    
+    Revisión bibliográfica & Acceso a bases de datos y análisis del estado del arte. & 50\% & 6.0 \\
+    \hline
+    Infraestructura Computacional & Uso de equipos de cómputo, licencias de software y simulación. & 70\% & 8.0 \\
+    \hline
+    Ingeniería de Software & Desarrollo de algoritmos de backend y procesamiento (4 años). & 45\% & 20.0 \\
+    \hline
+    Ingeniería de Hardware & Diseño PCB, integración de sensores y manufactura de nodos. & 100\% & 20.0 \\
+    \hline
+    \textbf{Estudio Doctoral} & \textbf{Dedicación del investigador (Matrícula + Manutención 4 años).} & 45\% & 80.0 \\
+    \hline
+    Validación Experimental & Logística de campo, insumos biológicos (larvas) y sustratos. & 0\% & 16.0 \\
+    \hline
+    Desarrollo de IA & Entrenamiento de modelos y horas de procesamiento en GPU. & 10\% & 24.0 \\
+    \hline
+    Sistema MRV & Diseño de la plataforma de reporte y validación ambiental. & 60\% & 12.0 \\
+    \hline
+    Servicios en la Nube & Costos operativos de almacenamiento y despliegue (AWS/Azure). & 50\% & 10.0 \\
+    \hline
+    Divulgación Científica & Publicación en revistas y asistencia a congresos. & 25\% & 8.0 \\
+    \hline
+    Gestión del Proyecto & Administración, papelería y costos indirectos. & 60\% & 8.0 \\
+    \hline
+    Metrología y Calibración & Servicios de laboratorio certificado para validación de sensores. & 40\% & 12.0 \\
+    \hline
+    Escritura y Edición & Elaboración de documentos, traducción y corrección de estilo. & 20\% & 8.0 \\
+    \hline 
+    \textbf{TOTAL ESTIMADO} &  & \textbf{-} & \textbf{\$ 232.0} \\
+    \hline
+\end{longtable}
+
+\section{Estrategia de Financiamiento}
+
+La viabilidad financiera del proyecto se sustenta en un modelo mixto de financiación:
+
+\begin{itemize}
+    \item \textbf{Aporte Institucional (UNAL):} Cubre principalmente los costos de capital humano (dirección de tesis), acceso a laboratorios, infraestructura física y recursos bibliográficos, valorados como contrapartida en especie.
+    \item \textbf{Recursos Propios:} El investigador asume los costos directos de adquisición de componentes electrónicos importados, insumos de experimentación y gastos operativos de campo no cubiertos por convocatorias institucionales.
+\end{itemize}
+\section{Cronograma de Actividades}
+
+El plan de trabajo se estructura en un horizonte temporal de 42 meses (agosto 2023 – enero 2027), organizado mediante una ejecución paralela de actividades transversales y fases de desarrollo tecnológico incremental. La distribución temporal, detallada en la Figura \ref{fig:cronograma}, obedece a la siguiente lógica operativa:
+
+\begin{description} \item[Actividades Transversales (2023-2027):] Se contempla la \textbf{Revisión Bibliográfica} y el desarrollo de la \textbf{Tesis Doctoral} como procesos continuos durante todo el ciclo del proyecto. Esto garantiza que tanto el marco teórico como la escritura del documento final se actualicen constantemente con los hallazgos experimentales.
+
+\item[Fase 1: Infraestructura y Fundamentación (2023-2024):] 
+Inicia con el despliegue temprano de la \textbf{Infraestructura en la Nube} (finales de 2023), asegurando el entorno digital antes de la llegada de los datos físicos. Simultáneamente, se consolidan las bases teóricas del estudio.
+
+\item[Fase 2: Ingeniería Hard/Soft (2024-2026):] 
+Es el núcleo de desarrollo técnico. Inicia en el segundo semestre de 2024 con la \textbf{Ingeniería de Software} y \textbf{Hardware}. Nótese que el diseño de sensores IoT se extiende hasta mediados de 2025, mientras que la ingeniería de hardware continúa hasta inicios de 2026 para permitir ajustes iterativos post-validación.
+
+\item[Fase 3: Inteligencia Artificial y Validación (2025-2026):] 
+A partir de 2025, con los primeros prototipos funcionales, inicia el \textbf{Desarrollo de IA} (que corre paralelo durante dos años) y la \textbf{Validación Experimental} (mediados de 2025 a mediados de 2026). Esta superposición es intencional para permitir el entrenamiento de algoritmos con datos reales a medida que se generan.
+
+\item[Fase 4: Consolidación y Divulgación (2026-2027):] 
+La etapa final se centra en la implementación del sistema \textbf{MRV} (segundo semestre de 2026), la producción de \textbf{Publicaciones Científicas} y el cierre administrativo y académico del doctorado en enero de 2027.
+\end{description}
+
+\begin{sidewaysfigure} 
+    \centering 
+    \includegraphics[width=1.0\textwidth]{00Figuras/gant.png} 
+    \caption{Cronograma general de investigación y desarrollo tecnológico (2023-2027).} \label{fig:cronograma} 
+\end{sidewaysfigure}
+
+\section{Retorno de la Inversión (Justificación)}
+Más allá del aporte académico, la inversión en este sistema genera valor tangible al reducir la incertidumbre en la medición de emisiones. Un sistema MRV validado habilita el acceso a mercados de carbono, cuyo potencial económico para una planta de bioconversión de 10 toneladas/día podría superar los costos de implementación tecnológica en menos de 2 años de operación, demostrando la sostenibilidad financiera de la propuesta a escala industrial.
+

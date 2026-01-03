@@ -1,0 +1,181 @@
+\chapter{Marco Metodológico}
+
+\section{Arquitectura del sistema híbrido}
+
+El sistema implementa una arquitectura de modelado en cascada que integra técnicas de aprendizaje profundo con principios de bioenergética teórica. A diferencia de los enfoques de caja negra, esta propuesta utiliza una Red Neuronal Artificial (RNA) para estimar las variables de estado biológico (biomasa), las cuales alimentan posteriormente un modelo mecanístico basado en la teoría de Presupuesto Energético Dinámico (DEB), siguiendo los lineamientos de \textcite{eriksenDynamicModellingFeed2022}. 
+
+La arquitectura se estructura en tres etapas secuenciales:
+
+\textbf{1. Inferencia Biométrica (Red Neuronal):} Dado que la medición directa y continua de la biomasa larval es invasiva e impracticable en operación, se emplea una Red Neuronal, como estimador virtual. Este algoritmo recibe como entrada las series temporales de las variables ambientales (temperatura, humedad) y el histórico de emisiones, y tiene como objetivo reconstruir la curva de crecimiento de la biomasa húmeda ($W_w$) y determinar el estadio de desarrollo larval en tiempo real.
+
+\textbf{2. Modelado Metabólico (Enfoque DEB):} Con la biomasa estimada, se ejecuta el modelo mecanístico DEB parametrizado para BSF. Este modelo desagrega matemáticamente el flujo de energía del organismo, calculando la tasa de respiración aeróbica obligada (producción de \ce{CO2}) en función de dos componentes: los costos de mantenimiento somático (proporcionales a la biomasa actual) y los costos de síntesis de nuevo tejido (proporcionales a la tasa de crecimiento). Esto genera una predicción teórica de cuánto \ce{CO2} \textit{debería} emitir el sistema si el metabolismo fuera puramente aeróbico y saludable.
+
+\textbf{3. Diagnóstico por Contrastación (Residuo Operativo):} El nivel final compara la predicción teórica del modelo DEB (el "deber ser"\ biológico) con la medición real de los sensores NDIR. La discrepancia entre ambos valores actúa como un indicador de desempeño:\begin{itemize}\item Una coincidencia alta valida la eficiencia del proceso.\item Una divergencia significativa (ej. sensor $<$ modelo) sugiere inhibición metabólica o problemas en el sistema.\item La presencia simultánea de \ce{CH4} (medido) confirma desviaciones hacia rutas anaerobias no contempladas en el modelo DEB, gatillando alertas de gestión.\end{itemize}
+
+\section{Ubicación y Contexto Experimental}
+
+El componente experimental se desarrollará en la sede Palmira de la Universidad Nacional de Colombia, ver Figura \ref{fig:localizacion}). La zona se caracteriza por corresponder a un ecosistema de bosque tropical seco, con una temperatura media anual de $24^\circ C$, condiciones que favorecen el desarrollo natural de BSF. El montaje se realizará en condiciones de laboratorio controlado (mesocosmos) para garantizar la reproducibilidad de los datos de calibración.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{00Figuras/localizacion.jpg} % Asegúrate de que la ruta sea correcta
+    \caption{Ubicación del proyecto en Palmira, Valle del Cauca, Colombia.}
+    \label{fig:localizacion}
+\end{figure}
+
+\section{Enfoque y Tipo de Investigación}
+
+Este estudio se enmarca dentro de una investigación aplicada, experimental, tecnocientífica e interdisciplinaria, orientada al desarrollo y validación de un sistema híbrido para la caracterización dinámica de emisiones de gases de efecto invernadero (GEI).
+
+El enfoque es cuantitativo, fundamentado en la recolección sistemática de series de tiempo mediante sensores IoT, el modelado determinista (EDO) y el análisis estadístico predictivo (Machine Learning). La metodología se estructura en cuatro fases secuenciales e integradas que van desde la instrumentación física hasta la validación de la utilidad ambiental del sistema.
+
+\section{Diseño Experimental y Desarrollo (Materiales y Métodos)}
+
+\subsection{Fase I: Diseño e Implementación del Sistema IoT y Aseguramiento de Datos}
+
+El objetivo de esta fase es garantizar la calidad del dato de entrada. Dada la naturaleza agresiva del entorno de bioconversión (alta humedad relativa $>80\%$), se implementarán protocolos de robustez instrumental.
+
+\textbf{Actividades Clave:}
+\begin{itemize}
+    \item \textbf{Implementación de Hardware:} Diseño de un nodo de sensores basado en microcontroladores (tipo ESP32), integrando sensores NDIR para \ce{CO2} y semiconductores/electroquímicos para \ce{CH4}.
+    \item \textbf{Protocolos de Calibración:} Ejecución de curvas de calibración frente a concentraciones patrón y desarrollo de algoritmos de \textbf{compensación cruzada} para corregir la deriva del sensor causada por las fluctuaciones de temperatura y humedad inherentes al proceso exotérmico.
+    \item \textbf{Captura de Datos:} Despliegue de la red IoT para la recolección de datos en ciclos de bioconversión (14-20 días), generando el \textit{dataset} experimental necesario para el entrenamiento de los modelos.
+\end{itemize}
+
+\subsection{Fase II: Formulación y Parametrización del Modelo Mecanístico (Línea Base)}
+
+Se desarrollará un modelo matemático basado en Ecuaciones Diferenciales Ordinarias (EDO) siguiendo el marco del \textit{Dynamic Energy Budget} (DEB) simplificado para BSF. La función de este módulo es generar una predicción de referencia de la respiración del sistema bajo condiciones ideales.
+
+\textbf{Enfoque de Modelado Bioenergético:}
+\begin{itemize}
+    \item \textbf{Dinámica del \ce{CO2} ($J_{CO2}$):} El modelo describe la producción de dióxido de carbono como la suma de dos procesos fisiológicos acoplados: el costo energético de mantenimiento (proporcional a la biomasa actual) y el costo de biosíntesis (proporcional a la tasa de crecimiento), según la lógica de \textcite{eriksenDynamicModellingFeed2022}.
+    \item \textbf{Supuesto de Aerobiosis Estricta:} Se asume que el sistema opera con suministro de oxígeno no limitante. Por consiguiente, la generación de \ce{CH4} se excluye de las ecuaciones de estado deterministas, considerándose una variable de perturbación estocástica indicativa de fallos operativos (zonas anóxicas).
+    \item \textbf{Salida del Modelo:} El resultado es una curva teórica de respiración ($Y_{DEB}$) que representa el \textit{comportamiento esperado}. Esta señal servirá de línea base para calcular los residuales frente a las mediciones reales en la etapa de validación.\end{itemize}
+
+\subsection{Fase III: Desarrollo del Sistema Híbrido (Validación Cruzada)}
+
+En esta fase se integra la información experimental determinista (biomasa medida) con la observación estocástica (sensores) para validar el desempeño del proceso. La arquitectura resuelve el conflicto de incertidumbre mediante la siguiente lógica de jerarquización:
+
+\textbf{Estrategia de Validación:}
+
+\begin{itemize}\item \textbf{Entrada de Biomasa :} Los datos experimentales de biomasa larval ($W_{real}$), obtenidos mediante pesaje periódico, constituyen la variable independiente de entrada. Dado que estos datos son discretos (ej. mediciones cada 48h), se ajustará una curva de crecimiento (función logística o Gompertz) para proveer un valor continuo de biomasa ($W(t)$) al modelo en cada instante de tiempo.\item \textbf{Generación de la Expectativa Ideal ($Y_{modelo}$):} El modelo EDO/DEB recibe el valor de $W(t)$ y calcula la tasa de respiración teórica esperada bajo condiciones de aerobiosis estricta. Este valor representa la línea base de eficiencia máxima: ¿Cuánto \ce{CO2} debería generar esta cantidad exacta de larvas si estuvieran totalmente sanas y el medio fuera 100\% aeróbico?.
+
+\item \textbf{Análisis de Discrepancia (El aporte del Sensor):} Se contrasta la curva teórica con la señal del sensor ($Y_{sensor}$). Se asume que:
+\begin{equation}
+    Y_{sensor} = Y_{modelo} + \delta_{bio} + \epsilon_{inst}
+\end{equation}
+Donde $\epsilon_{inst}$ es el error instrumental del sensor (asumido acotado por calibración H1) y $\delta_{bio}$ es la \textit{desviación biológica}.
+
+\item \textbf{Criterio de Decisión:} Si la diferencia $|Y_{sensor} - Y_{modelo}|$ supera el umbral de error del sensor y correlaciona con la presencia de \ce{CH4} (medido), el sistema atribuye la causa a una ineficiencia del proceso (anaerobiosis), validando así la utilidad del modelo como herramienta de referencia para la gestión ambiental.
+\end{itemize}
+
+\subsection{Fase IV: Evaluación del Desempeño del Prototipo}
+
+Esta fase final tiene por objeto cuantificar la diferencia práctica entre medir el proceso continuamente frente a estimarlo teóricamente.
+
+\textbf{Estrategia de Evaluación:} \begin{itemize} \item \textbf{Detección de Eventos (Validación de H4):} Se verificará si el sistema fue capaz de registrar picos de \ce{CH4} en momentos donde el modelo teórico predecía normalidad. El éxito se medirá de forma binaria: ¿Detectó el sensor el evento anómalo? (Sí/No).
+
+\item \textbf{Cálculo de la Discrepancia de Masa:} Se comparará la masa total de carbono emitida según el sensor (integrando el área bajo la curva medida) contra la masa estimada por el modelo teórico.
+\begin{equation}
+    \Delta_{Total} = \int_{0}^{t} (Y_{sensor} - Y_{modelo}) \, dt
+\end{equation}
+Este valor $\Delta_{Total}$ representará la cantidad de gas que el método tradicional "no vio" (o sobreestimó), sirviendo como indicador simple de la utilidad del monitoreo en tiempo real.
+\end{itemize}
+
+\section{Arquitectura Tecnológica del Sistema}
+
+El sistema sigue una arquitectura modular de tres capas, diseñada bajo el paradigma IoT para garantizar la integridad, disponibilidad y trazabilidad del dato científico (Ver Figura \ref{fig:arquitectura}):
+
+\subsection{Capa de Percepción (Edge Computing)} Compuesta por el nodo sensor (Hardware basado en ESP32). Su función principal es la digitalización de variables físicas. Para garantizar la robustez del dato experimental, esta capa implementa: \begin{itemize} \item Adquisición y Filtrado: Lectura de sensores y aplicación de filtros digitales (media móvil) para atenuar el ruido eléctrico. \item Resiliencia: Almacenamiento temporal en memoria local (SD/Flash) para evitar pérdida de datos ante fallos de conectividad (buffer circular). \item Telemetría: Transmisión asíncrona de la trama de datos mediante protocolo ligero MQTT hacia el servidor de procesamiento. \end{itemize}
+
+\subsection{Capa de Procesamiento (Core/Cloud)} Módulo de software centralizado donde reside la lógica científica del sistema. \begin{itemize} \item Gestor de Datos (Ingesta): Recibe la telemetría, realiza una validación de rangos (sanitización de datos) y la almacena en una base de datos relacional para garantizar la persistencia histórica. \item Motor Híbrido de Estimación: Ejecuta secuencialmente el modelo matemático: primero resuelve la cinética base (EDO) y posteriormente invoca el algoritmo de aprendizaje automático para corregir el error residual, generando la "Variable Estimada"\ final. \end{itemize}
+
+\subsection{Capa de Aplicación (Interfaz de Decisión)} Interfaz de visualización orientada al usuario final y al soporte de decisiones operativas. Sus funcionalidades clave incluyen: \begin{itemize} \item Monitorización Dinámica: Visualización de las curvas de tendencia (Real vs. Estimada) en tiempo real. \item Auditoría Ambiental: Módulo de descarga de reportes consolidados del ciclo para procesos de MRV. \item Gestión de Alertas: Semáforo de riesgo que notifica visualmente la detección de patrones compatibles con anaerobiosis incipiente. \end{itemize}
+
+\begin{figure}[h!] \centering \includegraphics[width=1.0\textwidth]{00Figuras/DG_FLUJO_GENERAL.png} \caption{Diagrama de la arquitectura funcional del sistema de monitoreo y predicción híbrido, detallando el flujo de datos desde la percepción física hasta la toma de decisiones.} \label{fig:arquitectura} \end{figure}
+
+\section{Criterios de Validación y Métricas de Éxito}Para determinar el cumplimiento de los objetivos e hipótesis, se establecen los siguientes umbrales de desempeño, alineados con el alcance de un prototipo experimental:\begin{itemize}\item \textbf{Robustez Instrumental (H1):} Se aceptará una correlación de Pearson positiva ($R > 0.85$) entre la señal de los sensores NDIR y el instrumento de referencia, con un Error Porcentual Absoluto Medio ($MAPE$) $\leq 15\%$, un margen tolerado considerando la deriva instrumental en ambientes de alta humedad relativa ($>80\%$).\item \textbf{Precisión del Modelo Híbrido (H2 y H3):} El sistema integrado (Estimación de Biomasa IA $\to$ Modelo DEB) se considerará exitoso si logra predecir la tasa de evolución de \ce{CO2} con un Coeficiente de Determinación ($R^2$) $\geq 0.70$ respecto a los datos observados. Además, se busca que el error de predicción (RMSE) sea inferior al obtenido mediante un modelo de crecimiento lineal estático, demostrando el valor de capturar la dinámica biológica.
+
+\item \textbf{Sensibilidad a Anomalías (H4):} Se validará la capacidad del sistema para actuar como alerta temprana de anaerobiosis. La clasificación de eventos (Presencia/Ausencia de picos de \ce{CH4}) deberá alcanzar una \textbf{Sensibilidad (\textit{Recall})} $> 80\%$. Se prioriza esta métrica sobre la precisión pura, para el apoyo en la gestión ambiental.
+
+\item \textbf{Valor de Gestión (Objetivo General):} El sistema deberá entregar un \textbf{Inventario Dinámico de Carbono}, cuantificando la discrepancia de masa ($\Delta_{Total}$) entre la emisión real acumulada y la estimación teórica. El criterio de éxito será la capacidad del sistema para explicitar esta diferencia (en gramos de C) al final del ciclo, aportando un dato de incertidumbre reducida para el reporte ambiental.
+\end{itemize}
+\section{Alineación de Objetivos y Estrategia Experimental}
+
+A modo de síntesis, la Tabla~\ref{tab:resumen_metodologia} presenta la matriz de coherencia que articula los objetivos específicos con sus respectivas fases de ejecución y criterios de validación. Esta estructura evidencia que el diseño metodológico no opera como un conjunto de técnicas aisladas, sino como una arquitectura en cascada integrada. En este esquema, la \textbf{precisión instrumental} (Fase I) alimenta la \textbf{inferencia de estados biológicos} mediante inteligencia artificial (Fase III), lo cual a su vez habilita la \textbf{fidelidad bioenergética} del modelo mecanístico (Fase II). Este encadenamiento lógico asegura que cada etapa contribuya de forma directa y cuantificable a la generación de métricas de desempeño ambiental (Fase IV), garantizando la trazabilidad científica desde la captura de la señal física hasta la toma de decisiones operativas.
+
+\begin{table}[h]
+\centering
+\caption{Matriz de Coherencia Metodológica y Criterios de Éxito}
+\label{tab:resumen_metodologia}
+\renewcommand{\arraystretch}{1.3} % Para dar un poco más de aire a las filas
+\begin{tabular}{|p{3cm}|p{3.5cm}|p{4.5cm}|p{3.5cm}|}
+\hline
+\textbf{Objetivo Específico} & \textbf{Método / Fase} & \textbf{Entregable Clave} & \textbf{Criterio de Éxito} \\ \hline
+1. Instrumentación & Fase I: Calibración y Despliegue & Módulo de sensores validado en ambiente saturado & $R > 0.85$ y MAPE $< 15\%$ (vs. referencia) \\ \hline
+2. Modelo EDO & Fase II: Parametrización Bioenergética & Ecuaciones de tasa respiratoria parametrizadas para \textit{H. illucens} & Capacidad de replicar la tendencia base ($R^2 > 0.70$) \\ \hline
+3. Integración Híbrida & Fase III: Estimación de Estados (IA $\to$ DEB) & Algoritmo de estimación de biomasa y predicción dinámica de \ce{CO2} & Error (RMSE) inferior al de un modelo de crecimiento lineal estático \\ \hline
+4. Métricas Ambientales & Fase IV: Validación Operativa & Inventario Dinámico de Carbono y sistema de alertas & Recall $> 80\%$ en detección de eventos de Anaerobiosis (\ce{CH4}) \\ \hline
+\end{tabular}
+\end{table}
+\section{Análisis Crítico: Limitaciones, Riesgos y Desafíos de Implementación}
+
+Si bien la integración de tecnologías digitales promete optimizar la bioconversión, este estudio adopta una postura \textit{tecno-realista}, reconociendo que la digitalización no es neutral ni está exenta de externalidades. En respuesta a la necesidad de un análisis riguroso sobre la viabilidad técnica y socioambiental, a continuación se detallan las tensiones éticas, ambientales, epistémicas y operativas inherentes a la propuesta, junto con las estrategias de mitigación integradas en su diseño.
+
+\subsection{Tensión socioecológica: impacto de la materialidad digital}
+Existe una tensión entre la sostenibilidad del proceso biológico (bioconversión) y la huella ecológica asociada a la infraestructura digital. La implementación de redes IoT conlleva impactos en la extracción de minerales críticos, el consumo energético y la generación futura de residuos electrónicos (\textit{e-waste}).
+
+\begin{itemize}
+    \item \textbf{Riesgo (Degradación prematura):} La exposición prolongada a condiciones agresivas —humedad relativa $>80\%$, amoniaco y compuestos volátiles corrosivos— puede acortar drásticamente la vida útil de los sensores, incrementando la frecuencia de reemplazos y la generación de residuos tecnológicos.
+    \item \textbf{Mitigación (Diseño para mantenimiento):} El sistema se basa en una arquitectura modular que permite reemplazar únicamente el elemento sensible (sensor), preservando la unidad de procesamiento (ESP32) y comunicación. Esta estrategia, combinada con el uso de microcontroladores de bajo consumo, reduce tanto la huella operativa como la tasa de generación de \textit{e-waste} \parencite{dharCarbonImpactArtificial2020}.
+\end{itemize}
+
+\subsection{Riesgos epistémicos: opacidad algorítmica y sobreajuste}
+La dependencia de algoritmos de aprendizaje automático introduce incertidumbres sobre la interpretabilidad y la capacidad de generalización del modelo en entornos no estacionarios.
+
+
+
+%[Image of data processing flowchart]
+
+
+\begin{itemize}
+    \item \textbf{Limitación (Sobreajuste a condiciones de laboratorio):} Los modelos de aprendizaje automático puros pueden ajustarse excesivamente a las condiciones controladas del prototipo, perdiendo robustez al enfrentarse a la variabilidad de sustratos y microclimas en operación real.
+    \item \textbf{Estrategia (Modelado híbrido con restricciones físicas):} Se adopta un enfoque de inteligencia artificial explicable (XAI) mediante la integración con un modelo mecanístico (EDO) basado en el marco del \textit{Dynamic Energy Budget} (DEB). Esta integración no solo corrige el error residual, sino que impone restricciones biológicas en la función de pérdida del algoritmo, evitando predicciones no realistas (e.g., tasas de crecimiento negativas o emisiones superiores al carbono disponible) y manteniendo la interpretabilidad para el operario.
+\end{itemize}
+
+\subsection{Retos de escalamiento y brecha digital en contextos rurales}
+La transición del prototipo (TRL 4) a una implementación a escala (TRL 7–9) enfrenta barreras estructurales en contextos latinoamericanos, donde la conectividad y el acceso a infraestructura digital son desiguales.
+
+
+
+%[Image of edge computing architecture diagram]
+
+
+\begin{itemize}
+    \item \textbf{Desafío de conectividad:} Las arquitecturas centralizadas en la nube excluyen a productores en zonas con baja o nula cobertura móvil ("zonas grises"), potencialmente exacerbando inequidades tecnológicas.
+    \item \textbf{Oportunidad (Computación en el borde):} La arquitectura propuesta descentraliza la inteligencia mediante \textit{edge computing}, ejecutando los algoritmos críticos directamente en el nodo IoT. Esto permite operación autónoma y sincronización asíncrona de datos, garantizando funcionalidad incluso sin conexión continua.
+    \item \textbf{Accesibilidad económica:} El escalamiento depende de que el costo del sistema sea marginal respecto al valor del producto. El uso de plataformas embebidas de bajo costo (ESP32) y sensores comerciales busca democratizar el acceso para pequeños y medianos productores agroindustriales.
+\end{itemize}
+
+\subsection{Bioseguridad y gobernanza de datos}
+El proyecto se alinea con principios de innovación responsable y transparencia climática, cumpliendo con marcos regulatorios emergentes.
+
+\begin{itemize}
+    \item \textbf{Bioseguridad:} Aunque BSF no es vector de patógenos humanos, el diseño del sistema refuerza los protocolos de contención biológica. Mediante la detección temprana de anomalías en los parámetros ambientales (fugas o cambios térmicos súbitos), el sistema genera alertas críticas para la intervención manual inmediata, apoyando el cumplimiento de normativas fitosanitarias (ICA/UE) sin depender exclusivamente de barreras pasivas.
+    
+    \item \textbf{Integridad MRV:} Los registros de emisiones se gestionan bajo principios de trazabilidad digital y sellado de tiempo (\textit{timestamping}), garantizando que los datos sean auditables y consistentes con los requisitos de Medición, Reporte y Verificación (MRV) de estándares internacionales (IPCC, Verra). Esto mitiga el riesgo de \textit{greenwashing digital} y sienta las bases técnicas para la futura certificación de créditos de carbono.
+\end{itemize}
+
+\section{Fase 4: Integración para la gestión socio-ambiental y operativa}
+
+Para trascender el alcance puramente técnico y responder a la necesidad de una gestión integral, el sistema no se limita a la generación de datos, sino que integra un esquema de \textit{respuesta operativa} basado en la información predicha. Esta fase conecta la salida del algoritmo con la toma de decisiones humanas bajo el siguiente protocolo:
+
+\subsection{Protocolo de respuesta ante eventos de anaerobiosis}
+La predicción de picos de \ce{CH4} (indicador de anaerobiosis) activará alertas tempranas en el dashboard, diseñadas no solo como métricas técnicas, sino como instrucciones operativas claras para el productor (ej. Riesgo de metano alto: Se requiere volteo manual o aumento de aireación).
+\begin{itemize}
+    \item \textbf{Nivel Verde (Normal):} Emisiones dentro del rango aeróbico estándar. El sistema valida la acumulación de créditos de carbono.
+    \item \textbf{Nivel Ámbar (Preventivo):} Tendencia al alza en la relación \ce{CO2}/\ce{O2}. Sugiere revisión de humedad.
+    \item \textbf{Nivel Rojo (Crítico):} Detección de picos de \ce{CH4}. Se instruye intervención inmediata (volteo) para reoxigenar el sustrato, mitigando el impacto ambiental en tiempo real.
+\end{itemize}
+
+Este mecanismo garantiza que la predicción no sea un dato pasivo, sino un activador de control de procesos que reduce directamente la huella de carbono del tratamiento.

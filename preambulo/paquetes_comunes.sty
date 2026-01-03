@@ -1,35 +1,30 @@
-\ProvidesPackage{paquetes_comunes}
+% --- Identificación del Paquete ---
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{preambulo/paquetes_comunes}[2025/01/01 Paquetes comunes tesis]
 
-% --- Idioma (Babel funciona en ambos, inputenc NO va aquí) ---
-\usepackage[main=spanish,english]{babel}
+% --- Paquetes Básicos de Texto y Matemáticas ---
+% (Estos son seguros de cargar aquí)
 \usepackage{microtype}
-
-% --- Matemáticas y Química ---
-\usepackage{amsmath}
-\usepackage{tikz}
-\usetikzlibrary{calc,arrows.meta}
-\usepackage{chemformula} % Fundamental para tu tesis (CO2, CH4)
-
-% --- Tablas y Figuras ---
+\usepackage{amsmath, amssymb, amsfonts}
 \usepackage{graphicx}
-\usepackage{booktabs}    % Tablas profesionales
+\usepackage{color}
+\usepackage{xcolor}
 \usepackage{multirow}
-\usepackage{array}
-\usepackage{tabu}
-\usepackage{adjustbox}
-\usepackage{rotating}
-\usepackage[rgb]{xcolor}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage{float}
+\usepackage{url}
+\usepackage{enumitem}
 
-% --- Código y Verbatim ---
-\usepackage{minted}
-\usepackage{fancyvrb}
-\newenvironment{myverbatim}{\Verbatim}{\endVerbatim}
+% --- Configuración de Enlaces (Hyperref) ---
+% Se suele cargar al final, pero si da problemas, muévelo a tesis.tex
+%\usepackage[hidelinks]{hyperref}
 
-% --- Bibliografía ---
-\usepackage{natbib}
+% --- COMENTADOS PARA EVITAR CONFLICTOS ---
+% Comentamos babel para cargarlo con opciones específicas en tesis.tex
+% \usepackage[spanish]{babel} 
+% \usepackage[utf8]{inputenc} % Ya no es necesario en sistemas modernos
+% \usepackage{natbib}         % <--- CONFLICTIVO: Lo desactivamos porque usaremos BibLaTeX
 
-% --- Definiciones Universales ---
-\newcommand{\angstrom}{\textup{\AA}}
-\newcommand{\grad}{\ensuremath{^{\circ}}}
-\usepackage{epsfig}
+\endinput

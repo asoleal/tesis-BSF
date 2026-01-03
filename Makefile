@@ -10,11 +10,11 @@ help:
 all: tesis slides
 
 tesis:
-	$(DOCKER_CMD) sh -c "pdflatex tesis.tex && bibtex tesis && pdflatex tesis.tex && pdflatex tesis.tex"
+	$(DOCKER_CMD) sh -c "pdflatex tesis.tex && biber tesis && pdflatex tesis.tex && pdflatex tesis.tex"
 
 slides:
 	$(DOCKER_CMD) xelatex presentacion.tex
 
 clean:
-	rm -f *.aux *.log *.out *.toc *.lof *.lot *.bbl *.blg *.fls *.fdb_latexmk *.synctex.gz *.nav *.snm *.vrb
+	rm -f *.aux *.log *.out *.toc *.lof *.lot *.bbl *.blg *.fls *.fdb_latexmk *.synctex.gz *.nav *.snm *.vrb *.bcf *.run.xml
 	rm -f contenido/*.aux

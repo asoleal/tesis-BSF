@@ -1,0 +1,32 @@
+\section{Análisis Crítico: Limitaciones, Riesgos y Desafíos de Implementación}
+
+Si bien la integración de tecnologías digitales promete optimizar la bioconversión, este estudio adopta una postura "tecno-realista", reconociendo que la digitalización no es una solución exenta de externalidades. A continuación, se analizan las tensiones éticas, ambientales y operativas inherentes a la propuesta, así como las estrategias para su mitigación.
+
+\subsection{La Paradoja Ambiental: Materialidad Digital y E-Waste}
+Existe una tensión fundamental entre el objetivo de sostenibilidad del proceso (bioconversión) y la materialidad de la herramienta propuesta (electrónica). La implementación masiva de nodos IoT conlleva riesgos asociados a la **huella ecológica del hardware**: extracción de minerales raros para microchips y generación de residuos electrónicos (\textit{e-waste}).
+\begin{itemize}
+    \item \textbf{Riesgo:} La vida útil de los sensores en entornos agresivos (alta humedad, presencia de amoniaco y gases corrosivos propios de la descomposición) puede reducirse drásticamente, acelerando la tasa de reemplazo y generando basura electrónica.
+    \item \textbf{Mitigación:} El diseño prioriza arquitecturas modulares que permitan reemplazar solo el componente dañado (sensor) conservando el núcleo de procesamiento, y se favorece el uso de microcontroladores de bajo consumo energético para minimizar la huella de carbono operativa \parencite{dharCarbonImpactArtificial2020}.
+\end{itemize}
+
+\subsection{Riesgos Epistémicos: La "Caja Negra" Algorítmica}
+La dependencia de algoritmos de aprendizaje automático introduce el riesgo de opacidad en la toma de decisiones.
+\begin{itemize}
+    \item \textbf{Limitación:} Los modelos de *Machine Learning* pueden sufrir de \textit{overfitting} (sobreajuste) a las condiciones específicas del laboratorio, fallando al generalizar en entornos agroindustriales con sustratos variables.
+    \item \textbf{Estrategia:} Se adopta un enfoque de **IA Explicable (XAI)** mediante el uso de modelos híbridos. Al anclar la IA a un modelo mecanístico (EDO) basado en principios biológicos (DEB), se restringe el espacio de solución para evitar predicciones físicamente imposibles, garantizando que el sistema siga siendo interpretable por el operario humano.
+\end{itemize}
+
+\subsection{Retos de Escalamiento y Brecha Digital}
+La transición del prototipo (TRL 4) a la implementación real (TRL 7-9) enfrenta barreras estructurales en el contexto rural colombiano y latinoamericano.
+\begin{itemize}
+    \item \textbf{Desafío de Conectividad:} La dependencia de la nube para el procesamiento de datos puede excluir a productores en zonas con baja cobertura de internet ("zonas grises").
+    \item \textbf{Oportunidad (Edge Computing):} Para mitigar esto, la arquitectura propuesta descentraliza la inteligencia, procesando los algoritmos críticos en el borde (\textit{Edge}), lo que permite al sistema operar de forma autónoma y asíncrona, sincronizando datos solo cuando hay conexión disponible.
+    \item \textbf{Costo-Efectividad:} El escalamiento real depende de que el costo del sistema IoT sea marginal respecto al valor de la proteína producida. El uso de hardware de código abierto (ESP32) busca democratizar el acceso a esta tecnología para pequeños y medianos productores.
+\end{itemize}
+
+\subsection{Consideraciones de Bioseguridad y Gobernanza de Datos}
+Finalmente, el proyecto se adhiere a los principios de experimentación responsable y gobernanza climática:
+\begin{itemize}
+    \item \textbf{Bioseguridad:} Aunque \textit{Hermetia illucens} no es vector de enfermedades, se mantienen protocolos estrictos para evitar fugas y contaminación cruzada en el manejo de residuos.
+    \item \textbf{Integridad MRV:} Desde la perspectiva de datos, se garantiza la inmutabilidad y transparencia de los registros de emisiones, alineándose con los principios de verificabilidad exigidos por estándares internacionales como IPCC y Verra, evitando el riesgo de "Greenwashing" digital.
+\end{itemize}
