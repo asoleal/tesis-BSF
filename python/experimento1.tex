@@ -1,0 +1,139 @@
+\documentclass[12pt, a4paper]{article}
+
+% Paquetes para idioma y codificación
+\usepackage[utf8]{inputenc}
+\usepackage[spanish, es-tabla]{babel}
+
+% Paquetes matemáticos y gráficos
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{float}
+
+% Paquetes para código fuente
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Configuración de márgenes
+\geometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
+
+% Configuración de estilo para código Python
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.96,0.96,0.96}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2,
+    language=Python
+}
+
+\lstset{style=mystyle}
+
+% Título del documento
+\title{\textbf{Caracterización de la Dinámica Metabólica en BSF: Transición Aerobia-Anaerobia y Definición de Límites para PINNs}}
+\author{Análisis Experimental - Tesis BSF}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introducción}
+La precisión de las Redes Neuronales Informadas por la Física (PINNs) depende de la validez de las ecuaciones diferenciales subyacentes. El modelo de crecimiento de \textit{Hermetia illucens} asume una estequiometría aerobia ($O_2 \rightarrow CO_2$). Sin embargo, en sistemas de alta densidad larvaria, el agotamiento de oxígeno puede inducir rutas metabólicas anaerobias que violan las asunciones del modelo.
+
+Este capítulo analiza un experimento de "choque alimenticio" tras 48 horas de ayuno para determinar:
+\begin{enumerate}
+    \item La tasa metabólica máxima ($V_{max}$) post-ingesta (Efecto SDA).
+    \item El punto crítico de transición a la anaerobiosis (producción de metano).
+    \item El intervalo de tiempo válido para el entrenamiento de la red neuronal.
+\end{enumerate}
+
+\section{Metodología de Procesamiento de Datos}
+Se registraron las concentraciones de $CO_2$ y $CH_4$ en una cámara estática con 700 larvas y 250g de sustrato fresco. Para alinear temporalmente las series de tiempo y detectar automáticamente el inicio de la fermentación, se implementó el siguiente algoritmo en Python.
+
+\begin{lstlisting}[caption={Algoritmo para la detección de umbrales metabólicos y limpieza de datos}, label={lst:python_script}]
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+# 1. Carga de Datos Crudos
+# Archivos generados el 9 de Septiembre (Post-Ayuno)
+df_co2 = pd.read_csv('experimento_co2.csv', sep='\t', header=None, names=['Hora', 'CO2_ppm'])
+df_ch4 = pd.read_csv('experimento_ch4.csv', sep='\t', header=None, names=['Hora', 'CH4_ppm'])
+
+# Creacion de Timestamp para sincronizacion
+base_date = '2025-09-09'
+df_co2['Timestamp'] = pd.to_datetime(base_date + ' ' + df_co2['Hora'])
+df_ch4['Timestamp'] = pd.to_datetime(base_date + ' ' + df_ch4['Hora'])
+
+# 2. Fusion (Merge) y Normalizacion Temporal
+df = pd.merge(df_co2, df_ch4, on='Timestamp', suffixes=('_co2', '_ch4'))
+t0 = df['Timestamp'].iloc[0]
+df['Minutos'] = (df['Timestamp'] - t0).dt.total_seconds() / 60.0
+
+# 3. Deteccion de Fase Anaerobia
+# Se identifica el primer instante donde CH4 > 0
+corte_anaerobio = df[df['CH4_ppm'] > 0]
+
+if not corte_anaerobio.empty:
+    t_corte = corte_anaerobio.iloc[0]['Minutos']
+    co2_limite = corte_anaerobio.iloc[0]['CO2_ppm']
+else:
+    t_corte = df['Minutos'].max()
+
+# 4. Calculo de Pendiente (Solo Fase Aerobia Valida)
+# Se descartan los primeros 2 min (mezcla) y todo lo posterior al metano
+fase_aerobia = df[(df['Minutos'] > 2) & (df['Minutos'] < t_corte)]
+slope, intercept = np.polyfit(fase_aerobia['Minutos'], fase_aerobia['CO2_ppm'], 1)
+
+print(f"Tasa de Produccion de CO2: {slope:.2f} ppm/min")
+print(f"Inicio de Fermentacion (Corte): {t_corte:.2f} min")
+\end{lstlisting}
+
+\section{Resultados y Discusión}
+
+El análisis de la dinámica de gases revela tres fases metabólicas distintas, tal como se muestra en la Figura \ref{fig:transicion}.
+
+% IMPORTANTE: Asegúrate de tener la imagen 'grafica_transicion.png' en la misma carpeta
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{grafica_transicion.png}
+    \caption{Dinámica de gases en tiempo real. La línea azul representa la respiración celular ($CO_2$), mientras que la naranja indica fermentación metanogénica ($CH_4$). La línea roja vertical marca el límite de validez para el modelo PINN.}
+    \label{fig:transicion}
+\end{figure}
+
+\subsection{Fase 1: Latencia y Metabolismo Basal ($0 < t < 2$ min)}
+Inicialmente, se observa un incremento marginal de $CO_2$ ($\approx 27$ ppm en 2 min). Este periodo corresponde a la aclimatación de las larvas y la mezcla de gases en el espacio de cabeza. Biológicamente, representa el término de mantenimiento ($m$) en ausencia de asimilación activa.
+
+\subsection{Fase 2: Ventana Aerobia ($2 < t < 8$ min)}
+Se registra un incremento lineal abrupto de $CO_2$ con una pendiente aproximada de $900 \text{ ppm/min}$. Este fenómeno se atribuye a la \textbf{Acción Dinámica Específica (SDA)}, el costo energético asociado a la ingesta y procesamiento inmediato del alimento tras el ayuno. Durante esta ventana, la concentración de $CH_4$ permanece en 0 ppm, confirmando condiciones aerobias.
+
+\textbf{Implicación para la Tesis:} Estos son los únicos datos válidos para entrenar la PINN. La linealidad confirma que la tasa metabólica es constante mientras exista oxígeno disponible.
+
+\subsection{Fase 3: Colapso Aerobio ($t > 8$ min)}
+Al superar las $5600$ ppm de $CO_2$, el sistema entra en hipoxia crítica. Inmediatamente, el sensor detecta $CH_4$, indicando que la microbiota del sustrato y el tracto digestivo de las larvas han cambiado a metabolismo fermentativo.
+
+\section{Conclusión para el Modelo Matemático}
+Para garantizar la convergencia de la red neuronal y evitar el aprendizaje de dinámicas espurias, se establece el siguiente criterio de filtrado (\textit{Data Pruning}):
+$$ \mathcal{D}_{train} = \{ (t, CO_2) \mid CH_4(t) = 0 \land t > 2 \text{ min} \} $$
+Cualquier dato fuera de este rango introduciría error en la estimación de biomasa, ya que la producción de $CH_4$ representa una pérdida de carbono no contabilizada en el modelo de crecimiento estándar.
+
+\end{document}

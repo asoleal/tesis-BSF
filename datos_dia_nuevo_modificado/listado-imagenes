@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Archivo de salida (opcional)
+salida="lista_figuras.txt"
+
+# Limpiar archivo de salida si existe
+> "$salida"
+
+# Carpetas de interés
+carpetas=("9" "11" "13" "17")
+
+echo "🔍 Buscando figuras PNG en las carpetas: ${carpetas[*]}"
+echo "========================================="
+
+for carpeta in "${carpetas[@]}"; do
+    if [ -d "$carpeta" ]; then
+        echo -e "\n📂 Carpeta: $carpeta"
+        echo "----------------------------------------"
+        # Guardar en archivo y mostrar en pantalla
+        echo -e "\n📂 Carpeta: $carpeta" >> "$salida"
+        echo "----------------------------------------" >> "$salida"
+
+        encontradas=0
+        while IFS= read -r -d '' img; do
+            basename_img=$(basename "$img")
+            echo "  • $basename_img"
+            echo "  • $basename_img" >> "$salida"
+            ((encontradas++))
+        done < <(find "$carpeta" -name "*.png" -print0 | sort -zV)
+
+        if [ "$encontradas" -eq 0 ]; then
+            echo "  (ninguna imagen PNG encontrada)"
+            echo "  (ninguna imagen PNG encontrada)" >> "$salida"
+        else
+            echo "  → Total en $carpeta: $encontradas imágenes"
+            echo "  → Total en $carpeta: $encontradas imágenes" >> "$salida"
+        fi
+    else
+        echo -e "\n⚠️  Carpeta '$carpeta' no existe."
+        echo -e "\n⚠️  Carpeta '$carpeta' no existe." >> "$salida"
+    fi
+done
+
+echo -e "\n✅ Listado guardado en: $salida"

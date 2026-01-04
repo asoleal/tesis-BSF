@@ -1,0 +1,209 @@
+\documentclass[12pt, a4paper]{article}
+
+% --- PAQUETES ---
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+
+% --- CONFIGURACIÓN DE PÁGINA ---
+\geometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
+
+% --- CONFIGURACIÓN DE CÓDIGO ---
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+% --- TÍTULO ---
+\title{\textbf{Modelado Metabólico de \textit{Hermetia illucens} mediante Redes Neuronales Informadas por la Física (PINNs)}}
+\author{Metodología de Análisis y Resultados}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introducción}
+El objetivo de este estudio fue inferir las variables metabólicas latentes (no observables) del crecimiento larvario de la Mosca Soldado Negra (\textit{Hermetia illucens}) bajo dos dietas distintas (D1 y D4). Para ello, se utilizó una Red Neuronal Informada por la Física (PINN) basada en el modelo dinámico de Eriksen (2022), utilizando datos experimentales de respiración.
+
+\section{Metodología de Procesamiento de Datos}
+\label{sec:preprocessing}
+
+El flujo de trabajo para transformar las mediciones crudas de los sensores en datos aptos para el modelado computacional se diseñó para gestionar la variabilidad experimental y el ruido instrumental. El proceso constó de tres etapas secuenciales: extracción recursiva, cálculo de tasas metabólicas y corrección de línea base.
+
+\subsection{Estructura de Directorios y Extracción de Archivos}
+Los datos experimentales primarios no se encontraban centralizados, sino distribuidos en una estructura jerárquica de directorios basada en el tiempo de desarrollo larvario. Se desarrolló un algoritmo de búsqueda recursiva en Python para iterar sobre esta estructura.
+
+El conjunto de datos abarcó cuatro puntos temporales críticos, correspondientes a las carpetas raíz: \textbf{Día 9, Día 11, Día 13 y Día 17}. Dentro de cada carpeta diaria, el algoritmo procesó múltiples subdirectorios correspondientes a las réplicas biológicas, siguiendo esta estructura lógica:
+
+\begin{itemize}
+    \item \textbf{Nivel 1 (Tiempo):} Carpeta del día (e.g., \texttt{/9}, \texttt{/11}).
+    \item \textbf{Nivel 2 (Unidad Experimental):} Subcarpetas con nomenclatura variable (e.g., \texttt{experimento1\_D1\_voraz}, \texttt{control\_sustrato\_D4}). Un algoritmo de procesamiento de texto normalizó estos nombres en cuatro categorías estandarizadas:
+    \begin{itemize}
+        \item \texttt{D1\_Tratamiento} y \texttt{D4\_Tratamiento}
+        \item \texttt{Control\_Alimento\_D1} y \texttt{Control\_Alimento\_D4}
+    \end{itemize}
+    \item \textbf{Nivel 3 (Datos Crudos):} En cada unidad experimental se extrajeron dos archivos específicos:
+    \begin{itemize}
+        \item \texttt{experimento\_co2.csv}: Dinámica de CO$_2$.
+        \item \texttt{experimento\_ch4.csv}: Dinámica de CH$_4$.
+    \end{itemize}
+\end{itemize}
+
+Cabe destacar que, a pesar de la extensión \texttt{.csv}, los archivos crudos poseían un formato de valores separados por tabuladores (TSV) sin encabezados. De cada archivo se extrajo la serie temporal completa $(t, C)$, donde $t$ representa el tiempo de medición y $C$ la concentración acumulada en ppm.
+
+\subsection{Análisis de Curvas y Cálculo de Tasas}
+La variable de interés biológico para el modelo de Eriksen no es la concentración absoluta, sino la \textbf{tasa de producción} (la velocidad a la que las larvas generan gas). Para obtener este valor escalar a partir de las series temporales extraídas, se aplicó el siguiente protocolo a cada archivo:
+
+\begin{enumerate}
+    \item \textbf{Filtrado de Saturación del Sensor:} Se identificó una limitación instrumental en el sensor de CO$_2$ con un techo de medición cercano a los 6000 ppm. Para evitar subestimar la pendiente debido al "aplanamiento" de la curva por saturación, se aplicó un filtro de corte duro (hard threshold):
+    \begin{equation}
+        Datos_{validos} = \{ (t, C) \mid C < 5850 \text{ ppm} \}
+    \end{equation}
+    
+    \item \textbf{Regresión Lineal (Cálculo de Pendiente):} Sobre los datos válidos, se realizó una regresión lineal por mínimos cuadrados para obtener la pendiente $m$, que representa la tasa de producción bruta:
+    \begin{equation}
+        \frac{d[Gas]}{dt} \approx m = \frac{\sum (t_i - \bar{t})(C_i - \bar{C})}{\sum (t_i - \bar{t})^2}
+    \end{equation}
+    El resultado es una tasa en unidades de ppm/min para cada réplica experimental.
+\end{enumerate}
+
+Este proceso redujo miles de puntos de datos temporales a un único valor representativo por archivo, consolidándose todo en el archivo intermedio \texttt{datos\_finales\_PINN\_corregidos.csv}.
+
+\subsection{Corrección de Línea Base (Resta de Controles)}
+Finalmente, para aislar la respiración neta de las larvas de la emisión de fondo del sustrato (fermentación microbiana), se aplicó una sustracción dinámica pareada.
+
+A diferencia de restar una constante, se restó el promedio de los controles correspondientes al \textbf{mismo día} y \textbf{mismo gas}. Sea $R_{total}$ la tasa calculada para un tratamiento con larvas y $\overline{R_{control}}$ el promedio de las tasas de los sustratos solos para ese día:
+
+\begin{equation}
+    R_{neta} = \max\left(0, \; R_{total} - \overline{R_{control}}\right)
+\end{equation}
+
+El uso de la función $\max(0, \cdot)$ asegura la consistencia física (la respiración no puede ser negativa). El resultado final se exportó como \texttt{datos\_PINN\_netos.csv}, conteniendo exclusivamente las tasas metabólicas netas de CO$_2$ listas para el entrenamiento de la red neuronal.
+\section{Modelo Matemático (Eriksen 2022)}
+La PINN se fundamentó en la ecuación diferencial ordinaria (EDO) propuesta por Eriksen et al. (2022), que descompone la respiración en tres costos energéticos:
+
+\begin{equation}
+    \frac{dCO_2}{dt} = Y_g \cdot \frac{dB}{dt} + Y_l \cdot \frac{dL}{dt} + m \cdot B
+\end{equation}
+
+Donde:
+\begin{itemize}
+    \item $B(t)$: Biomasa estructural.
+    \item $L(t)$: Reservas de lípidos.
+    \item $Y_g, Y_l, m$: Parámetros de rendimiento y mantenimiento a ser inferidos por la IA.
+\end{itemize}
+
+\section{Implementación de la PINN}
+Se implementó una red neuronal profunda en \texttt{PyTorch} (clase \texttt{LarvaNet}) con la siguiente arquitectura:
+\begin{itemize}
+    \item \textbf{Entrada:} Tiempo ($t$) normalizado (escalado Min-Max).
+    \item \textbf{Capas Ocultas:} 2 capas densas de 32 neuronas con activación \texttt{Tanh}.
+    \item \textbf{Salida:} 2 neuronas representando $B(t)$ y $L(t)$.
+\end{itemize}
+
+La función de pérdida incluyó el residuo de la EDO física y una regularización para asegurar positividad biológica.
+
+\section{Resultados y Discusión}
+
+\subsection{Parámetros Metabólicos Descubiertos}
+La red neuronal convergió exitosamente (Loss $\approx 0$ para D4), permitiendo extraer los siguientes coeficientes bioenergéticos:
+
+\begin{table}[H]
+\centering
+\caption{Parámetros Bioenergéticos Inferidos por la IA}
+\label{tab:params}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Parámetro} & \textbf{Tratamiento D1 (Estrés)} & \textbf{Tratamiento D4 (Óptimo)} \\ \midrule
+$m$ (Mantenimiento) & 0.69581 & 0.58429 \\
+$Y_g$ (Costo Crecimiento) & 0.96518 & 0.85961 \\
+$Y_l$ (Costo Lípidos) & 0.85845 & 0.75689 \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Interpretación Biológica}
+\begin{enumerate}
+    \item \textbf{Costo de Mantenimiento:} El tratamiento D1 presentó un costo basal ($m$) un \textbf{19.1\% mayor} que el D4, indicando un estado de estrés metabólico.
+    \item \textbf{Eficiencia de Crecimiento:} El parámetro $Y_g$ fue menor en D4, lo que implica una mayor eficiencia en la conversión de sustrato a biomasa estructural.
+    \item \textbf{Dinámica de Lípidos:} La reconstrucción de variables latentes mostró que el pico de CO$_2$ en el día 11 del tratamiento D4 correspondió a una alta tasa de síntesis de lípidos y crecimiento, mientras que en D1 se observó una movilización (consumo) de reservas.
+\end{enumerate}
+
+\newpage
+\appendix
+\section{Código Fuente Relevante}
+
+\subsection{Extracción de Datos y Cálculo de Pendientes}
+\begin{lstlisting}[language=Python]
+def procesar_archivo_tsv(ruta_completa, dia, etiqueta, gas):
+    # Lectura de TSV sin encabezado
+    df = pd.read_csv(ruta_completa, sep='\t', header=None)
+    df_numerico = df.iloc[:, 1:].copy() # Omitir columna de hora
+    
+    # ... (Logica de iteracion) ...
+        
+        # Filtro de Saturacion
+        mask_validos = y_raw < 5850
+        y_final = y_raw[mask_validos]
+        
+        # Calculo de pendiente (Tasa de Produccion)
+        slope, _, _, _, _ = linregress(x_final, y_final)
+        
+    return resultados
+\end{lstlisting}
+
+\subsection{Definición de la PINN}
+\begin{lstlisting}[language=Python]
+class LarvaNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(1, 32), nn.Tanh(),
+            nn.Linear(32, 32), nn.Tanh(),
+            nn.Linear(32, 2)
+        )
+        # Parametros iniciales
+        self.raw_params = nn.Parameter(torch.tensor([0.5, 0.3, 0.1])) 
+
+def physics_loss(model, t, co2_medido):
+    B, L = model(t)
+    # Diferenciacion Automatica para obtener tasas dB/dt y dL/dt
+    dB_dt = torch.autograd.grad(B, t, grad_outputs=torch.ones_like(B), create_graph=True)[0]
+    dL_dt = torch.autograd.grad(L, t, grad_outputs=torch.ones_like(L), create_graph=True)[0]
+    
+    Y_g, Y_l, m = model.get_physics_params()
+    
+    # Ecuacion de Eriksen
+    co2_pred = (Y_g * dB_dt) + (Y_l * dL_dt) + (m * B)
+    
+    return torch.mean((co2_pred - co2_medido) ** 2), co2_pred
+\end{lstlisting}
+
+\end{document}

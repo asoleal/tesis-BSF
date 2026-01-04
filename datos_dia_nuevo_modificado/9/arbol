@@ -1,0 +1,51 @@
+.
+├── arbol
+├── D1R1C_1.jpeg
+├── D1R1C_2.jpeg
+├── D1R1c_4.jpeg
+├── D1R1C.jpeg
+├── experimento1_D1_voraz_tenian_hambre
+│   ├── comentarios.txt
+│   ├── datos_fusionados_9.csv
+│   ├── experimento_ch4.csv
+│   ├── experimento_ch4_grafica.png
+│   ├── experimento_co2.csv
+│   ├── experimento_co2_grafica.png
+│   ├── fusion.py
+│   ├── generar_ch4.py
+│   └── generar_co2.py
+├── experimento2_D4
+│   ├── experimento_ch4.csv
+│   ├── experimento_ch4_grafica.png
+│   ├── experimento_co2.csv
+│   ├── experimento_co2_grafica.png
+│   ├── generar_ch4.py
+│   └── generar_co2.py
+├── experimento3_D1_mas_real
+│   ├── experimento_ch4.csv
+│   ├── experimento_ch4_grafica.png
+│   ├── experimento_co2.csv
+│   ├── experimento_co2_grafica.png
+│   ├── generar_ch4.py
+│   └── generar_co2.py
+├── experimento4-alimento_D1
+│   ├── experimento_ch4.csv
+│   ├── experimento_ch4_grafica.png
+│   ├── experimento_co2.csv
+│   ├── experimento_co2_grafica.png
+│   ├── generar_ch4.py
+│   └── generar_co2.py
+├── experimento4-alimento-D4
+│   ├── experimento_ch4.csv
+│   ├── experimento_ch4_grafica.png
+│   ├── experimento_co2.csv
+│   ├── experimento_co2_grafica.png
+│   ├── generar_ch4.py
+│   └── generar_co2.py
+└── generacion_co2_larvas_D1
+    ├── analisis_co2_comparacion.png
+    ├── co2_larvas_completo2.py
+    ├── experimento_co2.csv
+    └── experimento_co2_.csv
+
+7 directories, 42 files

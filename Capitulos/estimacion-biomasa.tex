@@ -1,0 +1,87 @@
+\chapter{Estimación de la biomasa}
+\section{Introducción}
+La estimación precisa de la biomasa en larvas de \textit{Hermetia illucens} (BSF) es fundamental para optimizar los procesos de bioconversión a escala industrial. Los métodos tradicionales invasivos, que requieren la separación y pesaje de las larvas, interrumpen el proceso metabólico y no permiten un monitoreo continuo. En este estudio, proponemos un enfoque no destructivo basado en \textbf{Redes Neuronales Informadas por la Física (PINNs)}, utilizando la producción de gases metabólicos ($CO_2$) como variable observable para inferir variables latentes como la biomasa estructural y el contenido lipídico.
+
+\section{Fundamentación Teórica: El Modelo Bio-Matemático}
+Para dotar a la inteligencia artificial de ``sentido biológico'', nos basamos en el modelo dinámico de asimilación de nutrientes propuesto por \cite{eriksenDynamicModellingFeed2022}. Este modelo describe el flujo de masa y energía en las larvas basándose en principios de balance de materia.
+
+\subsection{Dinámica de Crecimiento y Lípidos}
+Consideramos a la larva compuesta principalmente por dos compartimentos de estado: biomasa estructural libre de grasa ($B$) y lípidos de reserva ($L$). La evolución temporal de estos estados se rige por un sistema de Ecuaciones Diferenciales Ordinarias (EDOs).
+
+La tasa de crecimiento de la estructura ($r_B$) sigue una cinética de saturación dependiente del peso actual y el peso máximo teórico ($B_{max}$):
+
+\begin{equation} \label{eq:growth}
+\frac{dB}{dt} = r_B = \mu_{max} \cdot \left( 1 - \left( \frac{B}{B_{max}} \right)^\beta \right) \cdot B
+\end{equation}
+
+Donde $\mu_{max}$ es la tasa específica máxima de crecimiento y $\beta$ es un parámetro de forma alométrico.
+
+Simultáneamente, la acumulación de lípidos ($r_L$) depende de la asimilación de nutrientes excedente tras cubrir los costos de crecimiento y mantenimiento:
+
+\begin{equation} \label{eq:lipids}
+\frac{dL}{dt} = r_L = f(Asimilacion) - Consumo_{metabolico}
+\end{equation}
+
+\subsection{El Observador: Producción de $CO_2$}
+Dado que medir $B$ y $L$ en tiempo real es inviable, utilizamos la tasa de producción de dióxido de carbono ($r_{CO2}$) como variable proxy. Según la estequiometría del metabolismo (Eriksen, Ec. 14), la producción de $CO_2$ es una combinación lineal de los procesos biológicos subyacentes:
+
+\begin{equation} \label{eq:co2_balance}
+r_{CO2}(t) = Y_{CO2/B} \cdot \frac{dB}{dt} + Y_{CO2/L} \cdot \frac{dL}{dt} + m_{CO2} \cdot B(t)
+\end{equation}
+
+Donde:
+\begin{itemize}
+    \item $Y_{CO2/B}$: Rendimiento de $CO_2$ asociado a la síntesis de estructura.
+    \item $Y_{CO2/L}$: Rendimiento de $CO_2$ asociado a la síntesis de lípidos.
+    \item $m_{CO2}$: Tasa de respiración de mantenimiento por unidad de biomasa.
+\end{itemize}
+
+Esta ecuación \eqref{eq:co2_balance} es el núcleo de nuestra estrategia PINN: nos permite conectar lo que medimos ($CO_2$) con lo que queremos saber ($B, L$).
+
+\section{Arquitectura de la Red Neuronal Informada por la Física (PINN)}
+A diferencia de las redes neuronales convencionales que solo ajustan datos (caja negra), la arquitectura propuesta integra las ecuaciones \eqref{eq:growth} y \eqref{eq:co2_balance} directamente en la función de coste durante el entrenamiento.
+
+\subsection{Definición del Problema Inverso}
+Definimos una red neuronal profunda $\mathcal{N}(t; \theta)$ parametrizada por pesos y sesgos $\theta$, que recibe como entrada el tiempo $t$ y predice las variables de estado:
+$$ \mathcal{N}(t) \rightarrow [\hat{B}(t), \hat{L}(t)] $$
+
+\subsection{Función de Pérdida Compuesta (Loss Function)}
+El entrenamiento busca minimizar una función de pérdida híbrida $\mathcal{L}_{Total}$:
+
+\begin{equation}
+\mathcal{L}_{Total} = w_{data}\mathcal{L}_{Data} + w_{physics}\mathcal{L}_{Physics} + w_{BC}\mathcal{L}_{BC}
+\end{equation}
+
+\begin{enumerate}
+    \item \textbf{Pérdida de Datos (Data Loss):} Penaliza la diferencia entre la tasa de $CO_2$ medida experimentalmente y la inferida por la red usando la ecuación \eqref{eq:co2_balance}.
+    $$ \mathcal{L}_{Data} = \frac{1}{N_{obs}} \sum_{i}^{N_{obs}} \left( r_{CO2}^{sensor}(t_i) - \left( Y \frac{d\hat{B}}{dt} + \dots \right) \right)^2 $$
+    
+    \item \textbf{Pérdida Física (Physics Loss):} Penaliza las predicciones que violan las leyes de crecimiento biológico. Se calcula mediante Diferenciación Automática (AD) de la red neuronal.
+    $$ \mathcal{L}_{Physics} = \left\| \frac{d\hat{B}}{dt} - f_{biol}(\hat{B}) \right\|^2 $$
+    
+    \item \textbf{Condiciones de Frontera (Boundary Conditions):} Ancla la solución a los valores físicos conocidos al inicio y final del experimento.
+    $$ \mathcal{L}_{BC} = (\hat{B}(0) - B_{inicial})^2 + (\hat{B}(t_{final}) - B_{final})^2 $$
+\end{enumerate}
+
+\section{Diseño Experimental}
+Para validar el modelo computacional, se diseñó un experimento de respirometría estática para capturar la dinámica metabólica de las larvas.
+
+\subsection{Configuración Biológica}
+Se utilizaron larvas de \textit{Hermetia illucens} alimentadas con una dieta estándar. Las unidades experimentales consistieron en contenedores de $20 \times 15 \times 30$ cm.
+\begin{itemize}
+    \item \textbf{Densidad Larvaria:} Aprox. 700 larvas por unidad.
+    \item \textbf{Sustrato:} 250 gramos de alimento (base húmeda).
+    \item \textbf{Duración:} 15 días de monitoreo continuo.
+\end{itemize}
+
+\subsection{Adquisición de Datos (Respirometría)}
+La medición de la tasa metabólica se realizó mediante un protocolo de cámara cerrada. Cada 48 horas (días 0, 2, 4, ..., 14), los contenedores se sellaron herméticamente por un periodo que dependía de la saturación de los sensores $6000$ ppms.
+
+Se emplearon sensores NDIR (\textit{Non-Dispersive Infrared}) validados para el monitoreo de concentraciones de $CO_2$ (ppm) y $CH_4$ (\%). La tasa de producción molar ($r_{CO2}$) se calculó mediante regresión lineal de la acumulación de gas en el espacio de cabeza durante la fase de cierre:
+
+\begin{equation}
+r_{CO2} [mol/h] = \frac{d[CO_2]}{dt} \cdot \frac{V_{headspace} \cdot P}{R \cdot T}
+\end{equation}
+
+Este conjunto de datos discretos de $r_{CO2}$ constituye la entrada de entrenamiento ($y_{true}$) para la red PINN.
+

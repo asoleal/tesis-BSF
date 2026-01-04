@@ -1,0 +1,132 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{pgffor}
+\usepackage{caption}
+\usepackage[T1]{fontenc} % Importante para los guiones bajos
+
+\geometry{left=2cm, right=2cm, top=2cm, bottom=2cm}
+
+\title{Reporte de Graficas por Experimento}
+\author{Usuario}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+% ---------------------------------------------------------
+% COMANDO DE INSERCIÓN
+% ---------------------------------------------------------
+\newcommand{\insertar}[3]{
+    \begin{figure}[H]
+        \centering
+        % #1=Carpeta, #2=Subcarpeta, #3=Archivo
+        \includegraphics[width=0.7\textwidth]{#1/#2/#3}
+        \caption{\detokenize{#3} (En: \detokenize{#1/#2})}
+    \end{figure}
+}
+
+% =========================================================
+% CARPETA 9
+% =========================================================
+\section*{Carpeta 9 de septiembre de 2025}
+\section{Dinámica de Emisiones en Sistema de Cámara Estática con Ventilación Discontinua}
+
+\subsection{Configuración Experimental}
+El diseño experimental consistió en un sistema de doble contención para desacoplar la unidad biológica de la unidad de medición. Las larvas neonatas y el sustrato (Dieta D1, alta carga proteica) se alojaron en un repositorio interno ventilado (unidad de cría), permitiendo el intercambio pasivo de gases. Para la cuantificación de emisiones, este repositorio se introdujo en un biorreactor instrumentado (cámara de medición hermética) equipado con sensores NDIR para $CO_{2}$ y $CH_{4}$.
+
+El protocolo de medición siguió un ciclo de ``Cierre-Ventilación-Reclosure'':
+\begin{enumerate}
+    \item \textbf{Fase de Medición 1 (T0):} Inserción del repositorio en la cámara y cierre hermético. Registro continuo hasta saturación.
+    \item \textbf{Fase de Ventilación Intermedia:} Apertura de la cámara y extracción del repositorio al ambiente exterior para permitir la re-oxigenación pasiva y disipación de gases acumulados en el espacio de cabeza.
+    \item \textbf{Fase de Medición 2 (T0 + 50 min):} Reintroducción del repositorio en la cámara y segundo cierre hermético.
+\end{enumerate}
+
+\subsection{Fase 1: Transición a la Anaerobiosis y ``Flash Metabólico''}
+Durante el primer intervalo de confinamiento, se registró una cinética respiratoria explosiva, atribuible al estado fisiológico de las larvas (alimentación compensatoria post-ayuno). La concentración de $CO_{2}$ ascendió a una tasa de $\approx 625 \text{ ppm min}^{-1}$, saturando el rango de detección del sensor ($>6000$ ppm) en $t < 9$ minutos.
+
+La producción de metano ($CH_{4}$) durante esta fase exhibió un comportamiento de umbral dependiente (Figura \ref{fig:fase1}). Las emisiones permanecieron en niveles no detectables (0 ppm) mientras existió disponibilidad de oxígeno, manifestándose un pico incipiente (800 ppm) únicamente tras la saturación de $CO_{2}$. Este comportamiento valida el modelo teórico de \cite{Ahlamine2024}, confirmando que la metanogénesis bacteriana es un evento secundario que se desencadena tras el agotamiento del oxígeno en el macro-ambiente.
+
+\subsection{Fase 2: Histéresis Metabólica y Falla de la Re-oxigenación Pasiva}
+Tras el periodo de ventilación ambiental y el posterior re-cierre del sistema, se observó un fenómeno crítico de histéresis biológica. A pesar de que el repositorio fue expuesto al aire, la segunda medición (Figura \ref{fig:fase2}) reveló una dinámica de gases radicalmente opuesta a la inicial.
+
+En lugar de un periodo de latencia, el metano se liberó de forma inmediata ($t=1.5$ min) y agresiva, alcanzando concentraciones de 8000 ppm (0.8\% vol) en paralelo al ascenso del $CO_{2}$. Esto indica que la ventilación pasiva del repositorio fue superficialmente efectiva pero insuficiente para penetrar la matriz del sustrato.
+
+\subsection{Discusión: Inercia Microbiana y Validación del Diseño}
+Estos resultados demuestran que una vez activadas las rutas metanogénicas (durante la hipoxia de la Fase 1), la comunidad microbiana entra en un estado de ``cebado'' (\textit{priming}). Las arqueas metanogénicas continuaron activas en el núcleo anaerobio del sustrato denso (pollo), desacoplándose de las condiciones atmosféricas externas.
+
+Esto valida empíricamente la crítica de \cite{Rossi2024} a los métodos estáticos y justifica la necesidad del sistema de control inteligente propuesto en esta investigación. Un sistema de ventilación pasiva o intermitente es incapaz de revertir la anaerobiosis una vez iniciada en sustratos de alta energía; se requiere ventilación forzada continua y monitoreo de $CH_{4}$ para prevenir la formación de estos núcleos de fermentación irreversibles, garantizando la capacidad de mitigación de GEI descrita por \cite{Xiang2024}.
+% Los simbolos % al final son OBLIGATORIOS para evitar espacios fantasmas
+\foreach \subcarpeta in {%
+    experimento1_D1_voraz_tenian_hambre,%
+    experimento2_D4,%
+    experimento3_D1_mas_real,%
+    experimento4-alimento_D1,%
+    experimento4-alimento-D4%
+}{
+    \insertar{9}{\subcarpeta}{experimento_ch4_grafica.png}
+    \insertar{9}{\subcarpeta}{experimento_co2_grafica.png}
+}
+
+% Imagen de comparacion (carpeta distinta)
+\insertar{9}{generacion_co2_larvas_D1}{analisis_co2_comparacion.png}
+
+\clearpage
+
+% =========================================================
+% CARPETA 11
+% =========================================================
+\section*{Carpeta 11}
+
+\foreach \subcarpeta in {%
+    experimento1_D1,%
+    experimento2_D4,%
+    experimento_alimento_D1,%
+    experimento_alimento_D4%
+}{
+    \insertar{11}{\subcarpeta}{experimento_ch4_grafica.png}
+    \insertar{11}{\subcarpeta}{experimento_co2_grafica.png}
+}
+
+\insertar{11}{generacion_co2_larvas}{analisis_co2_comparacion.png}
+
+\clearpage
+
+% =========================================================
+% CARPETA 13
+% =========================================================
+\section*{Carpeta 13}
+
+\foreach \subcarpeta in {%
+    experimento1_D1,%
+    experimento2_D4,%
+    experimento_alimento_D1,%
+    experimento_alimento_D4%
+}{
+    \insertar{13}{\subcarpeta}{experimento_ch4_grafica.png}
+    \insertar{13}{\subcarpeta}{experimento_co2_grafica.png}
+}
+
+\insertar{13}{generacion_co2_larvas}{analisis_co2_comparacion.png}
+
+\clearpage
+
+% =========================================================
+% CARPETA 17
+% =========================================================
+\section*{Carpeta 17}
+
+\foreach \subcarpeta in {%
+    alimento_D4,%
+    experimento_D4,%
+    larvas_solas%
+}{
+    \insertar{17}{\subcarpeta}{experimento_ch4_grafica.png}
+    \insertar{17}{\subcarpeta}{experimento_co2_grafica.png}
+}
+
+\end{document}

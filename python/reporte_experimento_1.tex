@@ -1,0 +1,70 @@
+
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{amsmath}
+\geometry{margin=2.5cm}
+
+\title{\textbf{Reporte Automático: Experimento BSF post-ayuno}}
+\author{Generado por Script de Tesis}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Resumen de Parámetros Calculados}
+El script de análisis procesó los datos crudos y determinó los siguientes valores críticos para el modelo:
+
+\begin{itemize}
+    \item \textbf{Tasa Metabólica Aerobia ($V_{max}$):} 969.93 ppm/min
+    \item \textbf{Tiempo de Quiebre Anaerobio:} 7.50 minutos
+    \item \textbf{Límite de $CO_2$ Válido:} 5644 ppm
+\end{itemize}
+
+\section{Visualización de Resultados}
+La Figura \ref{fig:gases} muestra la transición metabólica detectada. Se observa claramente el punto donde inicia la producción de metano.
+
+\begin{figure}[h]
+    \centering
+    % Inyectamos el nombre del archivo de la figura
+    \includegraphics[width=0.9\textwidth]{figura_dinamica_gases.pdf}
+    \caption{Dinámica de gases y zona de corte para el entrenamiento de la PINN.}
+    \label{fig:gases}
+\end{figure}
+
+\section{Análisis Fenomenológico e Interpretación de la Dinámica de Gases}
+
+Los datos recabados durante el experimento de re-alimentación post-ayuno (Figura \ref{fig:gases}) revelan una dicotomía metabólica clara, gobernada por la disponibilidad de oxígeno en el micro-ambiente de la cámara estática. El análisis de las series temporales de $CO_2$ y $CH_4$ permite deconstruir la respuesta fisiológica de \textit{Hermetia illucens} en tres fases críticas.
+
+\subsection{Fase I: Latencia y Activación Metabólica ($0 < t < 2$ min)}
+En los instantes iniciales tras el cierre de la cámara, se observa una tasa de producción de $CO_2$ marginal. Este comportamiento no indica ausencia de respiración, sino que refleja dos fenómenos concurrentes:
+\begin{enumerate}
+    \item \textbf{Inercia Física:} El tiempo necesario para la homogeneización de la mezcla de gases en el espacio de cabeza del reactor.
+    \item \textbf{Reconocimiento de Sustrato:} Las larvas, saliendo de un estado de hipometabolismo inducido por el ayuno (48h), requieren un periodo de reactivación sensorial y motora antes de iniciar la ingesta masiva.
+\end{enumerate}
+
+\subsection{Fase II: La Acción Dinámica Específica (SDA) ($2 < t < 8$ min)}
+La fase lineal de incremento abrupto de $CO_2$ (pendiente $\approx 900$ ppm/min) constituye la firma biológica más relevante para el modelo PINN. Fisiológicamente, esto corresponde a la \textbf{Acción Dinámica Específica (SDA)} o efecto térmico de la alimentación.
+
+Al reintroducir nutrientes, el metabolismo larvario no aumenta gradualmente, sino que exhibe una respuesta de "todo o nada" para maximizar la asimilación inmediata. Es crucial notar que durante esta ventana temporal, la concentración de metano ($CH_4$) se mantiene en niveles indetectables (0 ppm). Esto confirma que la totalidad del carbono emitido proviene de la respiración celular aerobia:
+\begin{equation}
+    C_6H_{12}O_6 + 6O_2 \rightarrow 6CO_2 + 6H_2O + \text{Energía (ATP/Calor)}
+\end{equation}
+Esta estequiometría valida el uso de las Ecuaciones Diferenciales Ordinarias (EDO) de Eriksen durante este intervalo, permitiendo correlacionar directamente la producción de $CO_2$ con la síntesis de biomasa estructural y lípidos.
+
+\subsection{Fase III: Punto de Quiebre y Transición Anaerobia ($t > 8$ min)}
+El hallazgo más significativo del experimento es la correlación temporal exacta entre la saturación de $CO_2$ ($\approx 5600$ ppm) y la aparición súbita de $CH_4$.
+
+Este evento marca el agotamiento del oxígeno disponible en la matriz porosa del sustrato. Ante la hipoxia, el ecosistema (larvas + microbiota intestinal/sustrato) activa rutas metabólicas de fermentación para mantener la producción de ATP, aunque con menor eficiencia energética. La aparición de metano indica la actividad de arqueas metanogénicas, un proceso que desacopla la relación lineal entre crecimiento y emisión de gases.
+
+\textbf{Implicación para el Modelado:}
+El "corte" observado en el minuto 8 no es un artefacto del sensor, sino un límite biológico del sistema cerrado. Cualquier intento de entrenar la Red Neuronal con datos posteriores a este umbral induciría errores graves, ya que el modelo físico (PINN) asume condiciones aerobias constantes. Por tanto, el conjunto de datos de entrenamiento debe ser estrictamente truncado en $t_{corte}$ donde $\frac{d[CH_4]}{dt} > 0$.
+
+\section{Conclusión}
+Para el entrenamiento de la red neuronal, se utilizará el intervalo temporal $t \in [2, 7.5]$. Los datos posteriores se descartan por violar la estequiometría aerobia.
+
+\end{document}
+    

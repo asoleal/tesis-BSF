@@ -1,0 +1,164 @@
+.
+├── 11
+│   ├── co2_larvas
+│   │   ├── analisis_co2_comparacion.png
+│   │   ├── co2_larvas_completo2.py
+│   │   ├── experimento_co2.csv
+│   │   └── experimento_co2_.csv
+│   ├── experimento_D1
+│   │   ├── experimento_ch4.csv
+│   │   ├── experimento_ch4_grafica.png
+│   │   ├── experimento_co2.csv
+│   │   ├── experimento_co2_grafica.png
+│   │   ├── generar_ch4.py
+│   │   └── generar_co2.py
+│   ├── experimento_D1_alimento
+│   │   ├── experimento_ch4.csv
+│   │   ├── experimento_ch4_grafica.png
+│   │   ├── experimento_co2.csv
+│   │   ├── experimento_co2_grafica.png
+│   │   ├── generar_ch4.py
+│   │   └── generar_co2.py
+│   ├── experimento_D4
+│   │   ├── experimento_ch4.csv
+│   │   ├── experimento_ch4_grafica.png
+│   │   ├── experimento_co2.csv
+│   │   ├── experimento_co2_grafica.png
+│   │   ├── generar_ch4.py
+│   │   └── generar_co2.py
+│   └── experimento_D4_alimento
+│       ├── experimento_ch4.csv
+│       ├── experimento_ch4_grafica.png
+│       ├── experimento_co2.csv
+│       ├── experimento_co2_grafica.png
+│       ├── generar_ch4.py
+│       └── generar_co2.py
+├── 13
+│   ├── co2_larvas
+│   │   ├── analisis_co2_comparacion.png
+│   │   ├── co2_larvas_completo2.py
+│   │   ├── experimento_co2.csv
+│   │   └── experimento_co2_.csv
+│   ├── experimento_D1
+│   │   ├── experimento_ch4.csv
+│   │   ├── experimento_ch4_grafica.png
+│   │   ├── experimento_co2.csv
+│   │   ├── experimento_co2_grafica.png
+│   │   ├── generar_ch4.py
+│   │   └── generar_co2.py
+│   ├── experimento_D1_alimento
+│   │   ├── experimento_ch4.csv
+│   │   ├── experimento_ch4_grafica.png
+│   │   ├── experimento_co2.csv
+│   │   ├── experimento_co2_grafica.png
+│   │   ├── generar_ch4.py
+│   │   └── generar_co2.py
+│   ├── experimento_D4
+│   │   ├── experimento_ch4.csv
+│   │   ├── experimento_ch4_grafica.png
+│   │   ├── experimento_co2.csv
+│   │   ├── experimento_co2_grafica.png
+│   │   ├── generar_ch4.py
+│   │   └── generar_co2.py
+│   └── experimento_D4_alimento
+│       ├── experimento_ch4.csv
+│       ├── experimento_ch4_grafica.png
+│       ├── experimento_co2.csv
+│       ├── experimento_co2_grafica.png
+│       ├── generar_ch4.py
+│       └── generar_co2.py
+├── 17
+│   ├── co2_larvas
+│   │   ├── experimento_ch4.csv
+│   │   ├── experimento_ch4_grafica.png
+│   │   ├── experimento_co2.csv
+│   │   ├── experimento_co2_grafica.png
+│   │   ├── generar_ch4.py
+│   │   └── generar_co2.py
+│   ├── experimento_D4
+│   │   ├── experimento_ch4.csv
+│   │   ├── experimento_ch4_grafica.png
+│   │   ├── experimento_co2.csv
+│   │   ├── experimento_co2_grafica.png
+│   │   ├── generar_ch4.py
+│   │   └── generar_co2.py
+│   └── experimento_D4_alimento
+│       ├── experimento_ch4.csv
+│       ├── experimento_ch4_grafica.png
+│       ├── experimento_co2.csv
+│       ├── experimento_co2_grafica.png
+│       ├── generar_ch4.py
+│       └── generar_co2.py
+├── 9
+│   ├── arbol
+│   ├── co2_larvas_D1
+│   │   ├── analisis_co2_comparacion.png
+│   │   ├── co2_larvas_completo2.py
+│   │   ├── experimento_co2.csv
+│   │   └── experimento_co2_.csv
+│   ├── D1R1C_1.jpeg
+│   ├── D1R1C_2.jpeg
+│   ├── D1R1c_4.jpeg
+│   ├── D1R1C.jpeg
+│   ├── experimento_D1
+│   │   ├── experimento_ch4.csv
+│   │   ├── experimento_ch4_grafica.png
+│   │   ├── experimento_co2.csv
+│   │   ├── experimento_co2_grafica.png
+│   │   ├── generar_ch4.py
+│   │   └── generar_co2.py
+│   ├── experimento_D1_alimento
+│   │   ├── experimento_ch4.csv
+│   │   ├── experimento_ch4_grafica.png
+│   │   ├── experimento_co2.csv
+│   │   ├── experimento_co2_grafica.png
+│   │   ├── generar_ch4.py
+│   │   └── generar_co2.py
+│   ├── experimento_D4
+│   │   ├── experimento_ch4.csv
+│   │   ├── experimento_ch4_grafica.png
+│   │   ├── experimento_co2.csv
+│   │   ├── experimento_co2_grafica.png
+│   │   ├── generar_ch4.py
+│   │   └── generar_co2.py
+│   └── experimento_D4_alimento
+│       ├── experimento_ch4.csv
+│       ├── experimento_ch4_grafica.png
+│       ├── experimento_co2.csv
+│       ├── experimento_co2_grafica.png
+│       ├── generar_ch4.py
+│       └── generar_co2.py
+├── arbol.txt
+├── articulo1
+│   ├── pinn_ia.aux
+│   ├── pinn_ia.fdb_latexmk
+│   ├── pinn_ia.fls
+│   ├── pinn_ia.log
+│   ├── pinn_ia.out
+│   ├── pinn_ia.pdf
+│   ├── pinn_ia.synctex.gz
+│   └── pinn_ia.tex
+├── buscando_rutas.py
+├── datos_filtrados.csv
+├── datos_filtrados.ods
+├── datos_finales_PINN_corregidos.csv
+├── datos_PINN_netos.csv
+├── descripcion de los experimentos.odt
+├── figuras_con_etiquetas.pdf
+├── figuras_unidas.pdf
+├── listado-imagenes
+├── lista_figuras.txt
+├── parametros.py
+├── pdf-figuras.aux
+├── pdf-figuras.fdb_latexmk
+├── pdf-figuras.fls
+├── pdf-figuras.log
+├── pdf-figuras.pdf
+├── pdf-figuras.synctex.gz
+├── pdf-figuras.tex
+├── pinn_eriksen1.py
+├── pinn_eriksen.py
+├── procesar_datos.py
+└── restar_controles.py
+
+24 directories, 138 files
