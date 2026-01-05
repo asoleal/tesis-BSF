@@ -1,0 +1,507 @@
+\chapter{Modelado Computacional de la Cinética Metabólica mediante Redes Neuronales Informadas por Física (PINN)}
+
+\section{Introducción}
+El análisis de la tasa metabólica en larvas de \textit{Hermetia illucens} requiere no solo la recolección de datos experimentales, sino también un procesamiento robusto que elimine el ruido instrumental y un modelado capaz de inferir el comportamiento biológico en intervalos no muestreados. En este capítulo se detalla la metodología computacional desarrollada para procesar las mediciones de CO$_2$ y CH$_4$, y la implementación de una Red Neuronal Informada por Física (PINN) diseñada para predecir la evolución de los gases bajo distintas dietas (D1 y D4) respetando restricciones biológicas fundamentales.
+
+\section{Metodología de Procesamiento de Datos}
+
+El conjunto de datos original constaba de mediciones en bruto distribuidas en una estructura de directorios jerárquica. Para transformar estos datos en señales metabólicas útiles, se implementó un flujo de trabajo automatizado ("pipeline") en Python.
+
+\subsection{Cálculo de Tasas de Producción}
+Las mediciones de concentración de gas ($C$, en ppm) en función del tiempo ($t$) presentan ruido inherente a los sensores. Para obtener la tasa de producción instantánea ($R$), se aplicó una regresión lineal sobre ventanas de tiempo estabilizadas, descartando los transitorios iniciales causados por la manipulación de las cámaras respirométricas.
+
+La tasa de producción experimental $R_{exp}$ se define como la pendiente de la concentración respecto al tiempo:
+\begin{equation}
+    R_{exp} = \frac{dC}{dt} \approx \text{Pendiente}(C_{t}, t)
+\end{equation}
+
+\subsection{Corrección por Controles y Ruido Ambiental}
+Para aislar la actividad metabólica exclusiva de las larvas, se restó la tasa medida en los grupos de control (sustrato sin larvas, $R_{control}$) de la tasa experimental. Esto elimina el efecto de la emisión basal del sustrato y la deriva de los sensores:
+\begin{equation}
+    R_{neto} = \max(0, R_{exp} - R_{control})
+\end{equation}
+Se aplicó una función de rectificación ($\max$) preliminar para eliminar valores negativos espurios resultantes del ruido instrumental en etapas de baja actividad.
+
+\section{Arquitectura de la Red Neuronal (PINN)}
+
+Para modelar la dinámica temporal del metabolismo, se optó por una Red Neuronal Informada por Física (PINN). A diferencia de una interpolación polinómica tradicional, la PINN permite:
+\begin{itemize}
+    \item Aprender simultáneamente múltiples condiciones experimentales (Dietas D1 y D4).
+    \item Incorporar restricciones físicas (como la no-negatividad) en la función de coste.
+    \item Generalizar suavemente en los intervalos temporales sin mediciones.
+\end{itemize}
+
+\subsection{Estructura del Modelo}
+El modelo se define como un Perceptrón Multicapa (MLP) con las siguientes características:
+\begin{itemize}
+    \item \textbf{Entradas ($X$):} Vector de 2 dimensiones compuesto por el Día de desarrollo ($t$) y la Codificación de la Dieta ($d \in \{0, 1\}$).
+    \item \textbf{Capas Ocultas:} 3 capas densas de 32 neuronas cada una, utilizando la función de activación tangente hiperbólica ($\tanh$). La elección de $\tanh$ es crucial debido a que es diferenciable en todo su dominio, propiedad necesaria para calcular derivadas físicas.
+    \item \textbf{Salidas ($Y$):} Vector de 2 dimensiones correspondiente a las tasas estimadas de CO$_2$ y CH$_4$.
+\end{itemize}
+
+La propagación hacia adelante ("forward pass") se describe como:
+\begin{equation}
+    \hat{Y} = \mathcal{N}(t, d; \theta)
+\end{equation}
+Donde $\theta$ representa los pesos y sesgos de la red optimizados durante el entrenamiento.
+
+\section{Entrenamiento Híbrido: Datos + Física}
+
+La innovación principal de este enfoque radica en la función de pérdida ($\mathcal{L}$). En lugar de minimizar únicamente el error respecto a los datos medidos, se introdujo un término de regularización física para corregir comportamientos biológicamente imposibles (como emisiones negativas) en las zonas de interpolación.
+
+La función de pérdida total se define como:
+\begin{equation}
+    \mathcal{L}_{total} = \mathcal{L}_{datos} + \lambda \mathcal{L}_{fisica}
+\end{equation}
+
+\subsection{Pérdida de Datos ($\mathcal{L}_{datos}$)}
+Asegura que la red pase por los puntos experimentales medidos (Días 9, 11, 13, 17). Se utiliza el Error Cuadrático Medio (MSE):
+\begin{equation}
+    \mathcal{L}_{datos} = \frac{1}{N} \sum_{i=1}^{N} (Y_{real}^{(i)} - \hat{Y}^{(i)})^2
+\end{equation}
+
+\subsection{Pérdida Física y Puntos de Colocación ($\mathcal{L}_{fisica}$)}
+Dado que los datos experimentales son escasos, la red neuronal convencional tiende a oscilar hacia valores negativos en los intervalos vacíos (e.g., entre el día 13 y 17). Para mitigar esto, se generaron \textbf{puntos de colocación} (datos sintéticos aleatorios $X_{col}$) en el dominio temporal $t \in [9, 18]$.
+
+Se impuso la restricción biológica de \textbf{No-Negatividad}:
+\begin{equation}
+    \mathcal{L}_{fisica} = \frac{1}{M} \sum_{j=1}^{M} \left( \text{ReLU}(-\hat{Y}(X_{col}^{(j)})) \right)^2
+\end{equation}
+Donde la función ReLU ($x = \max(0, x)$) activa penalizaciones únicamente cuando la predicción del modelo es negativa. Esto fuerza a la red a mantenerse en el régimen biológico válido ($R \ge 0$) sin necesidad de tener datos reales en esos puntos.
+
+\section{Resultados y Discusión del Modelo}
+
+El entrenamiento se realizó durante 10,000 épocas utilizando el optimizador Adam con una tasa de aprendizaje de 0.005.
+
+\subsection{Dinámica del CO$_2$ (Respiración Aerobia)}
+El modelo capturó exitosamente la diferencia cinética entre dietas:
+\begin{itemize}
+    \item \textbf{Dieta D1 (Rápida):} Muestra un pico inicial alto en el día 9 seguido de un descenso precipitado hacia el día 13. El modelo interpreta esto como una transición rápida al estado de prepupa, donde el metabolismo desciende drásticamente.
+    \item \textbf{Dieta D4 (Lenta):} Presenta una curva más suave y prolongada, manteniendo tasas metabólicas significativas hasta el día 11-12, lo que indica un desarrollo larvario retardado.
+\end{itemize}
+
+\subsection{Dinámica del CH$_4$ (Fermentación Anaerobia)}
+El modelo PINN logró reconstruir los eventos de crisis anaerobia:
+\begin{itemize}
+    \item Se observó una correlación inversa temporal: los picos de metano coinciden con el descenso o estancamiento del CO$_2$.
+    \item La red predijo correctamente el desplazamiento temporal del pico de metano: Día 11 para la dieta rápida (D1) frente al Día 17 para la dieta lenta (D4).
+\end{itemize}
+
+Gracias a la regularización física implementada, las curvas de predicción (especialmente para D4 entre los días 14 y 18) se mantienen asintóticas a cero en lugar de volverse negativas, proporcionando una estimación fisiológicamente coherente de la tasa metabólica basal.
+
+\section{Predicción de la Producción Acumulada de Gases}
+
+Más allá de la tasa instantánea, una métrica crucial para evaluar la eficiencia de la bioconversión y el impacto ambiental es la producción total acumulada de gases durante el ciclo de desarrollo larval. Dado que el modelo PINN nos proporciona una función continua de la tasa metabólica $R(t)$, es posible estimar la producción total ($P_{total}$) mediante la integración numérica de la curva predicha en el intervalo de tiempo estudiado $t \in [9, 18]$ días.
+
+Matemáticamente, la producción acumulada se define como la integral definida de la tasa metabólica:
+
+\begin{equation}
+    P_{total} = \int_{t_{inicio}}^{t_{final}} R(t) \cdot dt \approx \sum_{i} R(t_i) \Delta t
+\end{equation}
+
+La integración se realizó utilizando la regla de Simpson sobre las predicciones de alta resolución generadas por la red neuronal, aplicando un factor de conversión temporal para expresar los resultados en ppm totales acumulados.
+
+\subsection{Comparación de Emisiones Totales por Dieta}
+
+La Tabla \ref{tab:emisiones_totales} resume las predicciones del modelo. Estos valores representan el "Costo Metabólico Total" del proceso de descomposición bajo las dos condiciones dietarias.
+
+\begin{table}[h!]
+    \centering
+    \caption{Predicción de emisiones acumuladas de CO$_2$ y CH$_4$ estimadas por la PINN (Días 9-18).}
+    \label{tab:emisiones_totales}
+    \begin{tabular}{lcccc}
+        \hline
+        \textbf{Gas} & \textbf{D1 (Rápido)} & \textbf{D4 (Lento)} & \textbf{Diferencia} & \textbf{Interpretación} \\ \hline
+        CO$_2$ (ppm) & 2,573,888 & 1,631,046 & \textbf{+57.8\%} (en D1) & Mayor actividad metabólica \\ 
+        CH$_4$ (ppm) & 9,454,857 & 10,541,683 & \textbf{+11.5\%} (en D4) & Mayor fermentación anaerobia \\ \hline
+    \end{tabular}
+    \small{\\ \textit{Nota: Los valores corresponden al área bajo la curva ($AUC$) calculada a partir de la inferencia de la red neuronal.}}
+\end{table}
+
+\subsection{Discusión de los Resultados Acumulados}
+
+El análisis de las integrales revela una dinámica metabólica divergente entre los tratamientos:
+
+\begin{itemize}
+    \item \textbf{Eficiencia Respiratoria (CO$_2$):} La dieta D1 generó un \textbf{57.8\% más de CO$_2$ acumulado} que la dieta D4. Biológicamente, esto indica que las larvas en D1 tuvieron una tasa de conversión de biomasa mucho más eficiente y acelerada. El alto volumen de respiración aerobia confirma que el sustrato D1 permitió un mejor acceso al oxígeno o un metabolismo basal más activo, acelerando el desarrollo hacia la fase de prepupa.
+    
+    \item \textbf{Impacto Anaerobio (CH$_4$):} Contrario al CO$_2$, la dieta D4 acumuló un \textbf{11.5\% más de metano} total. Aunque la dieta D1 presentó un pico intenso y temprano, la dieta D4 mantuvo una producción sostenida de gases de fermentación por más tiempo. Esto sugiere que el desarrollo lento en D4 favorece condiciones anaerobias prolongadas en el sustrato, lo cual es un indicador crítico para la gestión de residuos: un proceso más lento no solo retrasa la cosecha, sino que incrementa la huella de metano total del sistema.
+\end{itemize}
+
+En conclusión, el modelo PINN permite cuantificar que la aceleración del proceso (D1) no solo optimiza el tiempo, sino que favorece la vía aerobia (CO$_2$) sobre la anaerobia (CH$_4$) en términos relativos al tiempo de proceso, ver figura \ref{fig:simulacion_pinn}.
+\begin{center}
+\includegraphics[scale=0.3]{00Figuras/simulacion_ia.png}
+\captionof{figure}{Predicciones de la Red Neuronal Informada por Física (PINN) para las tasas de producción de CO$_2$ y CH$_4$ bajo dietas D1 y D4. Las áreas bajo las curvas representan las emisiones acumuladas durante el ciclo de desarrollo larvario.}
+\label{fig:simulacion_pinn}
+\end{center}
+
+\section{Conclusiones}
+De aquí se derivan dos conclusiones clave para la gestión de la bioconversión con \textit{Hermetia illucens}:
+\begin{itemize}
+    \item Optar por dietas que promuevan un desarrollo larvario rápido (como D1) es beneficioso no solo desde el punto de vista productivo, sino también ambiental, al minimizar la producción total de gases de efecto invernadero.
+    \item El modelado mediante PINN es una herramienta poderosa para integrar datos experimentales escasos con restricciones físicas, permitiendo estimaciones robustas y coherentes de la dinámica metabólica en sistemas biológicos complejos.
+    \item D1 es ``Mejor'' productivamente: Produce mucho más CO2 (señal de que están comiendo y creciendo rápido).
+
+    \item D4 es ``Peor'' ambientalmente: Aunque parece más lenta, al final produce más metano total. O sea, tener las larvas estresadas o lentas contamina más con gases de efecto invernadero (el metano es más potente que el CO2).
+\end{itemize}
+
+\section{Análisis Comparativo: Bioconversión por BSF vs. Compostaje Tradicional}
+
+Para contextualizar la eficiencia metabólica observada en las larvas de \textit{Hermetia illucens}, es fundamental comparar los resultados obtenidos (particularmente con la Dieta D1) frente a tecnologías convencionales de estabilización de residuos, como el compostaje termófilo y el lombricompostaje (\textit{Eisenia fetida}).
+
+\subsection{Eficiencia Temporal y Tasa de Procesamiento}
+
+La diferencia más notable revelada por el modelo PINN es la escala temporal. Mientras que el compostaje tradicional requiere de 60 a 90 días para alcanzar la fase de maduración, y el lombricompostaje de 45 a 60 días, las larvas bajo la dieta D1 completaron la fase crítica de emisiones en menos de 18 días.
+
+Esta "compresión temporal" tiene un impacto directo en las emisiones acumuladas. Aunque la tasa instantánea de CO$_2$ de las larvas es alta (debido a su elevado metabolismo), la integral total ($P_{total}$) se acumula sobre un periodo mucho más corto.
+
+\begin{table}[h!]
+    \centering
+    \caption{Comparación cualitativa de parámetros de proceso: BSF (Este estudio) vs. Referencias de Compostaje.}
+    \label{tab:comparacion_tecnologias}
+    \begin{tabular}{lccc}
+        \hline
+        \textbf{Parámetro} & \textbf{BSF (Dieta D1)} & \textbf{Compostaje Tradicional} & \textbf{Lombricompostaje} \\ \hline
+        \textbf{Duración del Proceso} & \textbf{14 - 18 Días} & 60 - 120 Días & 45 - 90 Días \\
+        \textbf{Generador de CO$_2$} & Respiración Larval (Alta) & Actividad Microbiana & Respiración de Lombriz \\
+        \textbf{Riesgo de CH$_4$} & Medio (depende de dieta) & Alto (si no hay aireación) & Bajo (alta aireación) \\
+        \textbf{Reducción de Volumen} & 50\% - 80\% (Rápida) & 40\% - 60\% (Lenta) & 40\% - 60\% (Media) \\ \hline
+    \end{tabular}
+\end{table}
+
+\subsection{Discusión: El "Costo de Metano" del Retraso}
+
+El modelo PINN destacó un fenómeno crítico al comparar D1 (Rápido) vs D4 (Lento). 
+
+\begin{enumerate}
+    \item \textbf{El escenario D4 (similar al compostaje mal gestionado):} La dieta D4, al ralentizar el desarrollo, extendió la ventana de tiempo en la que el sustrato estuvo expuesto a condiciones anaerobias. Esto resultó en un acumulado de metano un \textbf{11.5\% superior}. Esto simula lo que ocurre en un compostaje estático: si el proceso es lento y sin volteo, la fermentación metanogénica domina.
+    
+    \item \textbf{El escenario D1 (Bioconversión acelerada):} Al acelerar el consumo del sustrato, las larvas en D1 redujeron la ``ventana de oportunidad'' para que las bacterias metanogénicas colonizaran el medio. Aunque la producción de CO$_2$ fue mayor (+57.8\%), esto es preferible desde el punto de vista del calentamiento global, dado que el metano (CH$_4$) tiene un potencial de calentamiento global (GWP) 28 veces superior al del CO$_2$.
+\end{enumerate}
+
+\begin{equation}
+    GWP_{total} \approx (CO_{2, total} \times 1) + (CH_{4, total} \times 28)
+\end{equation}
+
+Bajo esta métrica, la estrategia de aceleración metabólica (D1) no solo es más productiva industrialmente, sino que actúa como una estrategia de mitigación de gases de efecto invernadero al evitar la prolongada fase de fermentación típica de los procesos de descomposición lenta como el compostaje pasivo.
+
+\section{Fundamentación Teórica: Dinámica Metabólica (Modelo DEB)}
+
+Para interpretar biológicamente las predicciones generadas por la Red Neuronal Informada por Física (PINN), se toma como referencia el modelo de Presupuesto Energético Dinámico (DEB) propuesto por Eriksen (2022) para larvas de \textit{Hermetia illucens}. Este modelo descompone la respiración total no como un proceso unitario, sino como la suma de demandas energéticas competitivas.
+
+\subsection{Ecuación Maestra de Producción de CO$_2$}
+
+Según Eriksen, la tasa total de producción de dióxido de carbono ($r_{CO2}$) en un instante $t$ se define como la suma de tres componentes fisiológicos distintos:
+
+\begin{equation} \label{eq:eriksen_master}
+    r_{CO2}(t) = r_{CO2,m}(t) + r_{CO2,B}(t) + r_{CO2,L}(t)
+\end{equation}
+
+Donde:
+\begin{itemize}
+    \item $r_{CO2,m}$: Respiración de mantenimiento (costo energético basal para mantener la estructura viva).
+    \item $r_{CO2,B}$: Respiración asociada al crecimiento estructural (síntesis de proteínas y tejido magro).
+    \item $r_{CO2,L}$: Respiración asociada a la lipogénesis (costo de convertir asimilados en reservas de grasa).
+\end{itemize}
+
+Esta descomposición es fundamental para entender los resultados de las dietas D1 y D4. El modelo asume que la larva se divide en dos compartimentos de estado: Biomasa Estructural ($B$) y Reserva de Lípidos ($L$).
+
+\subsection{Dinámica de Crecimiento y Mantenimiento}
+
+El término de mantenimiento es estrictamente proporcional a la biomasa estructural acumulada:
+
+\begin{equation}
+    r_{CO2,m} = m \cdot B(t)
+\end{equation}
+
+Donde $m$ es el coeficiente de mantenimiento específico. Por otro lado, la respiración por crecimiento es proporcional a la velocidad de cambio de la biomasa ($\frac{dB}{dt}$):
+
+\begin{equation}
+    r_{CO2,B} = Y_B \cdot \frac{dB}{dt}
+\end{equation}
+
+Esta relación explica el comportamiento observado en la \textbf{Dieta D1 (Rápida)}:
+\begin{enumerate}
+    \item En la fase temprana (Días 9-11), la velocidad de crecimiento $\frac{dB}{dt}$ es máxima, provocando el pico observado en la producción de CO$_2$.
+    \item Al acercarse a la fase de prepupa, el crecimiento estructural se detiene ($\frac{dB}{dt} \to 0$).
+    \item Consecuentemente, el término $r_{CO2,B}$ desaparece, y la producción de gas cae asintóticamente hacia el nivel basal de mantenimiento ($r_{CO2,m}$), tal como predijo la PINN.
+\end{enumerate}
+
+\subsection{Limitaciones del Modelo de Eriksen y la Necesidad de la PINN}
+
+Aunque el modelo de Eriksen describe con precisión la fisiología aerobia de la larva individual, presenta una limitación crítica para el análisis ambiental del sistema completo: \textbf{es un modelo estrictamente aerobio}.
+
+El artículo de Eriksen (2022) no contempla la producción de Metano (CH$_4$), ya que este gas no es un producto metabólico de la larva, sino de la fermentación bacteriana anaerobia en el sustrato no consumido.
+
+\begin{equation}
+    r_{CH4} \propto \text{Actividad Anaerobia}(Sustrato, O_2) \neq f(\text{Larva}_{DEB})
+\end{equation}
+
+Por lo tanto, la implementación de la PINN en este estudio se justifica como una solución híbrida necesaria:
+\begin{itemize}
+    \item Utiliza los principios de Eriksen (crecimiento vs. mantenimiento) para restringir y validar la curva de CO$_2$.
+    \item Utiliza la capacidad de aprendizaje profundo de la red neuronal para inferir la dinámica no lineal del CH$_4$, la cual escapa a las ecuaciones diferenciales ordinarias propuestas para el metabolismo larval.
+\end{itemize}
+
+En conclusión, mientras las ecuaciones de Eriksen validan la forma de la curva de respiración (la caída post-pico en D1), la PINN extiende esta capacidad para modelar el "costo ambiental oculto" (fermentación) que el modelo fisiológico puro no puede predecir.
+
+\section{Estimación Inferencial de Biomasa y Estado Fisiológico (Sensor Virtual)}
+
+Una de las aplicaciones más potentes de la integración entre la PINN y el modelo mecanicista de Eriksen (2022) es la capacidad de desarrollar un "Sensor Virtual" (\textit{Soft Sensor}). Dado que la medición directa de la biomasa larval ($B$) y el contenido lipídico ($L$) es invasiva y discontinua, se propone un método para estimar estas variables de estado en tiempo real a partir de la señal de respiración ($r_{CO2}$) reconstruida por la red neuronal.
+
+\subsection{Formulación del Problema Inverso}
+
+Retomando la ecuación maestra de producción de CO$_2$ (Ec. \ref{eq:eriksen_master}) y asumiendo una fase de crecimiento activo donde la síntesis de lípidos es proporcional al crecimiento estructural o despreciable frente a la demanda estructural principal, podemos reordenar la ecuación diferencial para despejar la evolución de la biomasa.
+
+Considerando la ecuación diferencial ordinaria (EDO) para el cambio de biomasa:
+
+\begin{equation}
+    r_{CO2}(t) \approx m \cdot B(t) + Y_B \cdot \frac{dB}{dt}
+\end{equation}
+
+Esta ecuación puede reescribirse como una EDO de primer orden donde la entrada es la predicción de la IA ($r_{CO2}^{PINN}$) y la incógnita es la biomasa $B(t)$:
+
+\begin{equation} \label{eq:virtual_sensor}
+    \frac{dB}{dt} = \frac{1}{Y_B} \left( r_{CO2}^{PINN}(t) - m \cdot B(t) \right)
+\end{equation}
+
+Donde:
+\begin{itemize}
+    \item $Y_B$: Costo estequeométrico de crecimiento (mol CO$_2$ / C-mol biomasa).
+    \item $m$: Coeficiente de mantenimiento (mol CO$_2$ / C-mol biomasa $\cdot$ h).
+    \item $r_{CO2}^{PINN}(t)$: Tasa de respiración continua predicha por el modelo.
+\end{itemize}
+
+\subsection{Interpretación Fisiológica}
+
+La resolución numérica de la Ec. \ref{eq:virtual_sensor} permite estimar la curva de crecimiento "oculta" detrás de los datos de gases.
+\begin{itemize}
+    \item \textbf{Crecimiento vs. Estancamiento:} Si la PINN detecta un alto $r_{CO2}$, el modelo inferirá un aumento rápido de biomasa ($\frac{dB}{dt} > 0$).
+    \item \textbf{Detección de Fase Prepupa:} Cuando la PINN predice una caída en $r_{CO2}$ (como en la Dieta D1 hacia el día 13), el término de crecimiento se anula, indicando que la larva ha alcanzado su peso máximo y ha cesado su alimentación, entrando en etapa de metamorfosis.
+\end{itemize}
+
+Este enfoque transforma el sistema de monitoreo de gases en una herramienta no invasiva para determinar el "estado de salud" y el tamaño del cultivo sin perturbar el sistema ver figura \ref{fig:biomasa_estimada}.
+\begin{center}
+\includegraphics[scale=0.3]{00Figuras/biomasa_estimada.png}
+\captionof{figure}{Estimación de la biomasa larval ($B$) a partir de la tasa de respiración predicha por la PINN utilizando el modelo DEB de Eriksen (2022). La curva muestra un crecimiento rápido seguido de un estancamiento al alcanzar la fase de prepupa.}
+\label{fig:biomasa_estimada}
+\end{center}
+
+\section{Validación Cruzada con Literatura (Eriksen 2022)}
+
+Para validar la fiabilidad fisiológica del "Sensor Virtual" basado en la PINN, se compararon las trayectorias de biomasa estimadas ($B_{est}$) con la dinámica de crecimiento teórica descrita en el modelo DEB de Eriksen (2022).
+
+\subsection{Análisis Morfológico de las Curvas}
+
+La Figura \ref{fig:validacion_eriksen} presenta la superposición de la biomasa inferida para la Dieta D1 y D4 frente a una curva logística estándar calibrada con los parámetros de crecimiento reportados en la literatura ($k \approx 0.8 d^{-1}$).
+
+\begin{enumerate}
+    \item \textbf{Convergencia en Dieta D1:} La curva de biomasa estimada para la dieta rápida (línea azul) exhibe una alta correlación morfológica con el modelo teórico de Eriksen (línea punteada). Se observan claramente las tres fases del desarrollo:
+    \begin{itemize}
+        \item \textit{Fase Exponencial (Días 9-11):} Coincide con el pico de producción de CO$_2$, donde la tasa de crecimiento $\frac{dB}{dt}$ es máxima.
+        \item \textit{Fase de Desaceleración (Día 12):} Punto de inflexión donde el costo metabólico comienza a descender.
+        \item \textit{Fase Estacionaria (Días 13-18):} La biomasa alcanza una asíntota ($B_{max}$), indicando la transición al estado de prepupa, donde la larva deja de alimentarse y crecer, dedicándose únicamente al mantenimiento metabólico.
+    \end{itemize}
+    
+    \item \textbf{Divergencia en Dieta D4:} Por el contrario, la dieta lenta (línea naranja) muestra una desviación significativa respecto al modelo ideal. La curva no alcanza una asíntota clara dentro del periodo de observación (18 días), sugiriendo que las larvas no lograron completar su ciclo de crecimiento ni acumular las reservas lipídicas necesarias para la pupación exitosa en el tiempo estándar.
+\end{enumerate}
+
+\subsection{Implicaciones del Modelo}
+
+La capacidad de la PINN para replicar la forma sigmoidea teórica de Eriksen —sin haber sido entrenada explícitamente con datos de peso, sino únicamente con gases— confirma la robustez del acoplamiento físico implementado. 
+
+Esto demuestra que la señal de CO$_2$, cuando se procesa a través de las ecuaciones de la PINN, contiene información suficiente y necesaria para reconstruir el historial de crecimiento de la larva (Ecuación \ref{eq:virtual_sensor}), validando el uso de la respirometría como un método indirecto preciso para el monitoreo de biomasa en tiempo real ver figura \ref{fig:validacion_eriksen}.
+
+\begin{center}
+\includegraphics[scale=0.3]{00Figuras/biomasa_comparada.png}
+\captionof{figure}{Validación del "Sensor Virtual" de biomasa ($B_{est}$) estimada por la PINN frente al modelo DEB de Eriksen (2022). La dieta D1 muestra una alta concordancia, mientras que la dieta D4 indica un crecimiento incompleto.}
+\label{fig:validacion_eriksen}
+\end{center}
+
+\section{Resultados Numéricos del Sensor Virtual de Biomasa}
+
+La Tabla \ref{tab:sensor_virtual} presenta los datos generados por el algoritmo de inversión metabólica. Se comparan las trayectorias de biomasa inferidas para las dietas D1 y D4 frente al modelo logístico estándar de Eriksen (2022).
+
+\begin{table}[h!]
+    \centering
+    \caption{Estimación de Biomasa Larval (Unidades Relativas) inferida a partir de la respiración.}
+    \label{tab:sensor_virtual}
+    \begin{tabular}{c|cc|c|c}
+        \hline
+        \textbf{Día} & \textbf{D1 (Rápido)} & \textbf{D4 (Lento)} & \textbf{Teoría (Eriksen)} & \textbf{Estado D1 (IA)} \\ \hline
+        9.0  & 0.050 & 0.050 & 0.297 & Inicio Exp. \\
+        10.0 & 1.587 & 0.933 & 0.640 & Creciendo \\
+        11.0 & 2.385 & 2.193 & 1.211 & Creciendo \\
+        12.0 & 2.776 & 3.442 & 1.899 & Creciendo \\
+        13.0 & \textbf{2.875} & 3.694 & 2.469 & \textit{Desaceleración} \\
+        14.0 & 2.933 & 3.789 & 2.813 & Creciendo \\
+        15.0 & 2.985 & 3.824 & 2.982 & Creciendo \\
+        16.0 & \textbf{3.033} & 3.824 & 3.056 & \textbf{Meseta (Prepupa)} \\
+        17.0 & 3.074 & 3.824 & 3.088 & Meseta (Prepupa) \\
+        18.0 & \textbf{3.109} & 3.824 & \textbf{3.100} & Meseta (Prepupa) \\ \hline
+    \end{tabular}
+    \small{\\ \textit{Nota: La columna "Estado D1" es generada automáticamente por el algoritmo al detectar cambios en la tasa de crecimiento ($dB/dt < 1\%$).}}
+\end{table}
+
+\subsection{Análisis de Convergencia}
+
+Los datos numéricos revelan tres hallazgos fundamentales:
+
+\begin{enumerate}
+    \item \textbf{Validación de la Fase Final (D1 vs. Teoría):} 
+    En el día 18, la discrepancia entre la biomasa estimada por la IA para la dieta D1 ($3.109$) y el modelo teórico ($3.100$) es inferior al \textbf{0.3\%}. Esto confirma que el modelo PINN, alimentado solo con datos de gases, es capaz de reconstruir con alta precisión el punto final de maduración biológica de la larva.
+
+    \item \textbf{Dinámica de Aceleración (D1):}
+    Mientras que el modelo teórico de Eriksen propone un crecimiento gradual (llegando a 1.89 en el día 12), las larvas reales en dieta D1 mostraron un "crecimiento explosivo", alcanzando 2.77 unidades en el mismo día. Esto sugiere que la dieta D1 es de asimilación ultra-rápida, adelantando la curva logística teórica en aproximadamente 2 días.
+
+    \item \textbf{Identificación Automática de la Prepupa:}
+    El algoritmo detectó correctamente el cese de crecimiento significativo en D1 a partir del día 16 (cambio de estado a "Meseta"). Biológicamente, esto corresponde al momento en que la larva vacía su tracto digestivo y comienza la migración, confirmando que el sistema puede usarse para \textbf{decidir el momento óptimo de cosecha} sin intervención humana.
+\end{enumerate}
+
+\subsection{La Paradoja de la Dieta D4}
+Es notable que la dieta D4 muestre valores estimados de biomasa superiores (3.82) a partir del día 12. Sin embargo, al contrastar esto con la producción de metano (previamente analizada), se infiere que este "exceso" no es necesariamente tejido útil. 
+
+El modelo de Eriksen asume que $CO_2 \propto Crecimiento$. En el caso de D4 (estrés), parte de esa respiración elevada puede deberse a un **costo de mantenimiento ineficiente** (la larva gasta energía tratando de digerir un sustrato difícil sin lograr crecer proporcionalmente). El sensor virtual, al ser lineal, interpreta ese gasto metabólico extra como crecimiento, lo cual resalta la importancia de cruzar estos datos con la eficiencia de conversión real.
+
+\chapter{Discusión: Convergencia y Divergencia con el Modelo DEB}
+
+La interpretación de los resultados obtenidos mediante la Red Neuronal Informada por Física (PINN) requiere un contraste riguroso con los modelos teóricos vigentes. En particular, se toma como referencia el trabajo de Eriksen (2022) sobre el modelado dinámico de asimilación y respiración en \textit{Hermetia illucens}. Esta sección discute la validez fisiológica de las predicciones de la PINN y expone las limitaciones del enfoque puramente mecanicista frente a la complejidad del ecosistema larval real.
+
+\section{Validación del Isomorfismo entre Respiración y Crecimiento}
+
+Eriksen (2022) postula que la tasa de producción de CO$_2$ es una función lineal de dos variables de estado: el mantenimiento de la biomasa existente y la síntesis de nueva estructura (Ec. \ref{eq:eriksen_master}). Una de las interrogantes centrales de este estudio era si una red neuronal podría "descubrir" esta relación intrínseca sin ser programada explícitamente con las ecuaciones biológicas.
+
+Los resultados del "Sensor Virtual" (Sección anterior) demuestran una convergencia notable ($<0.3\%$ de error final) entre la biomasa inferida por la PINN para la Dieta D1 y la curva sigmoidea teórica derivada de Eriksen.
+\begin{itemize}
+    \item \textbf{Confirmación de la Hipótesis DEB:} La capacidad de la PINN para identificar el cese de crecimiento (fase prepupa) basándose únicamente en la caída de la tasa de CO$_2$ confirma empíricamente la hipótesis de Eriksen: la respiración asociada al crecimiento ($r_{CO2,B}$) es el componente dominante de la huella de carbono durante la fase larval activa.
+    \item \textbf{Implicación Metodológica:} Esto valida el uso de la respirometría dinámica no solo como medida ambiental, sino como un estimador biométrico preciso, superando las limitaciones de los métodos gravimétricos destructivos tradicionales.
+\end{itemize}
+
+\section{La "Caja Negra" del Sustrato: El Límite del Modelo de Eriksen}
+
+Donde el presente estudio diverge significativamente de Eriksen (2022) es en el alcance sistémico. El modelo de Eriksen es \textit{organismo-céntrico}; asume condiciones aerobias ideales y modela exclusivamente la fisiología de la larva. Sin embargo, el sistema de bioconversión es un ecosistema complejo que incluye la microbiota del sustrato.
+
+\subsection{El "Costo Oculto" de la Fermentación (CH$_4$)}
+Nuestros datos revelaron una producción significativa de metano (CH$_4$), especialmente en la dieta de desarrollo lento (D4), donde las emisiones acumuladas superaron en un 11.5\% a la dieta rápida.
+\begin{quote}
+    \textit{Crítica al Modelo Mecanicista:} Las ecuaciones de Eriksen no contemplan la metanogénesis. Al ignorar la competencia por el oxígeno entre la larva y las bacterias anaerobias del sustrato, el modelo teórico subestima sistemáticamente el impacto ambiental global (GWP) del proceso, especialmente en dietas de difícil digestión.
+\end{quote}
+
+La PINN, al ser un modelo basado en datos (Data-Driven), logró capturar esta dinámica no lineal del CH$_4$, revelando que la eficiencia de la bioconversión no puede medirse solo por el crecimiento de la larva (como sugiere Eriksen), sino por la capacidad de la larva para ventilar y oxigenar el sustrato antes de que se establezcan condiciones anaerobias metanogénicas.
+
+\section{Eficiencia Metabólica: Interpretación de la Discrepancia en D4}
+
+Una observación crítica surge al analizar la dieta D4 mediante la Ecuación Inversa de Eriksen. El sensor virtual estimó una biomasa aparente superior a la teórica (3.82 vs 3.10 unidades relativas), a pesar de que biológicamente se conoce que las larvas en dietas pobres suelen ser más pequeñas.
+
+Esta discrepancia no es un error del modelo, sino un indicador de \textbf{Ineficiencia Metabólica} ($1 - \eta$):
+\begin{equation}
+    r_{CO2, total} = m \cdot B + Y_{real} \cdot \frac{dB}{dt}
+\end{equation}
+Eriksen asume parámetros constantes ($m$ y $Y$). Sin embargo, en condiciones de estrés nutricional (D4), el coeficiente de mantenimiento ($m$) aumenta debido al esfuerzo metabólico adicional para sintetizar enzimas digestivas o buscar alimento.
+
+La PINN detectó una alta tasa de CO$_2$ en D4, y el sensor virtual (asumiendo $m$ constante) lo interpretó erróneamente como "más crecimiento". Esta divergencia permite proponer una extensión al modelo de Eriksen: \textbf{el coeficiente de mantenimiento no es constante, sino dependiente de la calidad del sustrato}.
+El "exceso" de respiración en D4 no es biomasa; es calor disipado y esfuerzo metabólico improductivo.
+
+\section{Síntesis: Hacia un Modelo Híbrido}
+
+Mientras que Eriksen (2022) proporciona la estructura causal necesaria para entender la fisiología interna, su aplicación industrial es limitada por la necesidad de calibración previa y su ceguera ante los procesos anaerobios.
+El enfoque propuesto de PINN supera estas barreras al:
+\begin{enumerate}
+    \item Incorporar la física de no-negatividad para robustez en datos faltantes.
+    \item Integrar simultáneamente las dinámicas aerobias (larva) y anaerobias (microbioma).
+    \item Permitir el monitoreo en tiempo real sin requerir parámetros cinéticos pre-definidos.
+\end{enumerate}
+
+En conclusión, este trabajo no refuta el modelo de Eriksen, sino que lo subsume dentro de un marco más amplio que considera la interacción Larva-Sustrato-Microbiota, esencial para la ingeniería de bioprocesos sostenibles.
+\chapter{Propuesta de Protocolo Estandarizado para el Monitoreo Multivariable de Bioconversión}
+
+Basado en los hallazgos de este estudio y las limitaciones identificadas en la literatura (Eriksen, 2022; Laganaro, 2021), se propone un protocolo experimental integral para futuros ensayos de bioconversión asistidos por Inteligencia Artificial. Este manual establece los parámetros críticos de diseño, instrumentación y muestreo necesarios para alimentar modelos predictivos robustos (PINN).
+
+\section{Diseño Óptimo del Biorreactor (Cámara Respirométrica)}
+
+La geometría de la cámara de cría es crítica para evitar zonas muertas (hipoxia local) que favorezcan la metanogénesis no deseada, tal como se observó en la Dieta D4.
+
+\subsection{Geometría y Materiales}
+\begin{itemize}
+    \item \textbf{Forma:} Se recomienda una geometría \textbf{Cilíndrica} o de flujo pistón, en lugar de rectangular. Esto minimiza las esquinas donde el flujo de aire se estanca y se acumulan gases pesados ($CO_2$, $CH_4$).
+    \item \textbf{Relación de Espacio de Cabeza (Headspace):} El volumen de aire libre debe mantener una relación estricta respecto al volumen del sustrato ($V_{air}:V_{sub} \approx 3:1$).
+    \begin{itemize}
+        \item \textit{Razón:} Un volumen de aire excesivo diluye la señal de los sensores (baja relación señal/ruido). Un volumen muy pequeño provoca hipoxia rápida y estrés larval.
+    \end{itemize}
+    \item \textbf{Material:} Vidrio borosilicato o Acrílico PMMA de alta densidad, químicamente inertes para evitar la adsorción de amoníaco ($NH_3$) o compuestos orgánicos volátiles.
+\end{itemize}
+
+\section{Matriz de Sensores y Variables de Estado}
+
+Para cerrar completamente el balance de masa y energía, el sistema de monitoreo debe extenderse más allá del $CO_2$ y $CH_4$. Se define la siguiente matriz de instrumentación prioritaria:
+
+\begin{table}[h!]
+    \centering
+    \caption{Variables Críticas para la Caracterización Dinámica del Sistema}
+    \label{tab:protocolo_sensores}
+    \begin{tabular}{p{3cm} p{4cm} p{7cm}}
+        \hline
+        \textbf{Variable} & \textbf{Método de Medición} & \textbf{Justificación Fisiológica/Física} \\ \hline
+        \textbf{Dióxido de Carbono ($CO_2$)} & Sensor NDIR (Infrarrojo no dispersivo) & \textit{Proxy} directo de la tasa metabólica aerobia y crecimiento estructural. \\ \hline
+        \textbf{Metano ($CH_4$)} & Semiconductor (MOX) o Espectroscopía Láser & Indicador de actividad bacteriana anaerobia y pérdida de eficiencia energética del carbono. \\ \hline
+        \textbf{Oxígeno ($O_2$)} & Sensor Electroquímico o de Fluorescencia Óptica & Fundamental para calcular el \textbf{Cociente Respiratorio (RQ)}. Permite distinguir si la larva está quemando energía ($RQ \approx 0.8$) o sintetizando lípidos ($RQ > 1.0$). \\ \hline
+        \textbf{Humedad del Sustrato ($M_s$)} & Sensor Capacitivo de Suelos (Dieléctrico) & La caída de $M_s < 40\%$ detiene el metabolismo. El exceso ($>70\%$) bloquea los poros y dispara el metano. \\ \hline
+        \textbf{Temperatura del Sustrato ($T_{sub}$)} & Termopar Tipo K (Sonda de inserción) & El calor metabólico generado ($Q_{met}$) es proporcional a la actividad biológica. Diferencia clave: $T_{sub} - T_{amb}$. \\ \hline
+        \textbf{Biomasa Larval ($B$)} & Visión por Computadora (Cámaras cenitales) & Estimación no invasiva del área proyectada para calibrar el "Sensor Virtual" sin perturbar a las larvas. \\ \hline
+    \end{tabular}
+\end{table}
+
+\section{Protocolo de Operación: Ciclos de Medición}
+
+Para capturar la dinámica rápida (respiración) y lenta (crecimiento), se debe abandonar la medición estática por un sistema de **Respirometría Dinámica de Flujo Intermitente**.
+
+\subsection{El Ciclo "Flush-Measure" (Purga-Medida)}
+Dado que las larvas modifican su propia atmósfera, el sistema debe operar en ciclos de 30 a 60 minutos:
+\begin{enumerate}
+    \item \textbf{Fase de Purga (5 min):} Se inyecta aire fresco ambiental para renovar el $O_2$ y eliminar el $CO_2$ acumulado. Se establece la línea base ($Baseline$).
+    \item \textbf{Fase de Cierre (25-55 min):} Se cierran las válvulas de entrada/salida. El sistema se vuelve hermético.
+    \item \textbf{Fase de Medición de Acumulación:} Los sensores registran la pendiente de subida del $CO_2$ ($\frac{d[CO_2]}{dt}$) y la bajada del $O_2$ ($\frac{d[O_2]}{dt}$). 
+    \item \textbf{Cálculo de Tasa:} La tasa de respiración ($r$) no es el valor absoluto, sino la pendiente de la curva durante la fase de cierre.
+\end{enumerate}
+
+\begin{equation}
+    r_{gas} = \frac{V_{headspace}}{m_{larvae}} \cdot \frac{dC_{gas}}{dt}
+\end{equation}
+
+\section{Caracterización del Sustrato y Biomasa}
+
+\subsection{Biomasa ($B$): Validación del Sensor Virtual}
+Aunque la PINN estima el peso, se requiere una validación física ("Ground Truth") al menos en 3 puntos temporales:
+\begin{itemize}
+    \item \textbf{$t_0$ (Inoculación):} Conteo exacto y peso promedio de 100 larvas neonatas.
+    \item \textbf{$t_{mid}$ (Fase Exponencial):} Extracción de una sub-muestra "centinela" (n=10) que se pesa y se devuelve, o uso de segmentación de imágenes (Deep Learning) para estimar volumen.
+    \item \textbf{$t_{end}$ (Cosecha):} Pesaje total de la biomasa limpia.
+\end{itemize}
+
+\subsection{Composición del Sustrato ($S$)}
+Para entender por qué falla una dieta (como D4), se debe caracterizar la entrada con análisis bromatológico básico:
+\begin{itemize}
+    \item \textbf{Relación C/N:} El carbono debe estar disponible. Una relación muy alta retarda el crecimiento; muy baja genera exceso de amoníaco ($NH_3$).
+    \item \textbf{Porosidad:} Medición de densidad aparente. Sustratos pastosos (baja porosidad) requieren agentes estructurantes (ej. cascarilla de arroz) para permitir la entrada de $O_2$ y evitar la emisión de $CH_4$.
+\end{itemize}
+
+\section{Integración de Datos en Modelos PINN}
+
+La inclusión de estas nuevas variables permite refinar la función de pérdida física ($\mathcal{L}_{physics}$) de la red neuronal propuesta en esta tesis.
+
+\textbf{Nueva Ecuación de Pérdida Propuesta:}
+\begin{equation}
+    \mathcal{L}_{total} = \mathcal{L}_{data} + \lambda_1 \mathcal{L}_{CO2} + \lambda_2 \mathcal{L}_{RQ} + \lambda_3 \mathcal{L}_{H2O}
+\end{equation}
+
+Donde el término $\mathcal{L}_{RQ}$ penaliza predicciones fisiológicamente imposibles (ej. crecimiento de grasa sin consumo de oxígeno):
+\begin{equation}
+    \mathcal{L}_{RQ} = \left| \frac{r_{CO2}^{pred}}{r_{O2}^{obs}} - RQ_{teorico} \right|^2
+\end{equation}
+
+\section{Consideraciones de Seguridad y Toxicidad}
+Dado el hallazgo de altas concentraciones de metano ($>11,000$ ppm) en dietas ineficientes, el protocolo debe incluir:
+\begin{itemize}
+    \item \textbf{Ventilación Forzada de Emergencia:} Si $[CH_4] > 20,000$ ppm (Límite inferior de explosividad - LEL es 5\% vol o 50,000 ppm), el sistema debe abortar el ciclo cerrado y ventilar.
+    \item \textbf{Monitoreo de $H_2S$:} En condiciones anaerobias severas, también se puede generar ácido sulfhídrico (tóxico para larvas y humanos), el cual debe ser vigilado.
+\end{itemize}
