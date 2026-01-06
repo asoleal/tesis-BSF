@@ -505,3 +505,914 @@ Dado el hallazgo de altas concentraciones de metano ($>11,000$ ppm) en dietas in
     \item \textbf{Ventilación Forzada de Emergencia:} Si $[CH_4] > 20,000$ ppm (Límite inferior de explosividad - LEL es 5\% vol o 50,000 ppm), el sistema debe abortar el ciclo cerrado y ventilar.
     \item \textbf{Monitoreo de $H_2S$:} En condiciones anaerobias severas, también se puede generar ácido sulfhídrico (tóxico para larvas y humanos), el cual debe ser vigilado.
 \end{itemize}
+
+\chapter{Revisión del modelo Matemático}
+
+Históricamente, la descripción matemática del crecimiento de las larvas de Mosca Soldado Negra (BSF) se ha fundamentado en modelos fenomenológicos clásicos. Diversos estudios han empleado ecuaciones sigmoidales de Gompertz y modelos logísticos de Richards y Verhulst para describir el aumento de tamaño y peso. Si bien el modelo logístico ha demostrado precisión para estimar el ancho corporal y tasas de crecimiento específicas —permitiendo incluso cuantificar la eficiencia neta de crecimiento al acoplarse con tasas de respiración—, estos enfoques presentan limitaciones conceptuales significativas. Existen alternativas más mecanicistas que describen el crecimiento en función de la asimilación de alimento y factores ambientales (temperatura, oxígeno), o modelos industriales de ``caja negra'' basados en la reducción de sustrato, pero estos últimos carecen de profundidad fisiológica.
+
+La principal deficiencia de los modelos tradicionales radica en su incapacidad para distinguir la composición bioquímica de la larva, tratando el peso húmedo como una variable homogénea. Sin embargo, la evidencia biológica demuestra que la composición de la larva varía drásticamente a lo largo de su ciclo vital. Las larvas funcionan como reservorios dinámicos que acumulan lípidos en el cuerpo graso (fat body) a medida que crecen, para luego removilizarlos rápidamente durante la etapa de prepupa. Esta acumulación es altamente dependiente de la dieta; el contenido de lípidos al momento de la cosecha puede oscilar entre un 8\% y un 47\% de la biomasa seca, presentando además una relación inversa con el contenido de agua debido a la naturaleza hidrofóbica del tejido adiposo. Esta variabilidad confirma que las tasas de ingesta y crecimiento estructural no están sincronizadas, un desacople que los modelos clásicos ignoran al asumir un crecimiento balanceado.
+
+Para abordar este vacío científico, \cite{eriksenDynamicModellingFeed2022}  propone un ``Modelo General Dinámico'' que trasciende la simple predicción de peso para abarcar la variabilidad observada en diferentes sustratos. La innovación central de esta propuesta es el desarrollo de un modelo híbrido que combina la cinética estable de la función logística con los principios de los modelos de Presupuesto Energético Dinámico (DEB, por sus siglas en inglés).
+
+El modelo estructura la biomasa larval en compartimentos fisiológicos diferenciados, permitiendo predecir tanto los flujos metabólicos como la composición final del producto. La arquitectura matemática propuesta define los siguientes componentes clave:
+
+Biomasa Estructural (B): Representa los componentes esenciales del cuerpo (proteínas, exoesqueleto) excluyendo las reservas grasas.
+
+Lípidos de Reserva (L): Constituye el almacenamiento energético variable que puede ser sintetizado o removilizado según la disponibilidad nutricional.
+
+Pool de Asimilados (A): Se conceptualiza como un estado transitorio de moléculas en la hemolinfa, derivadas de la digestión, disponibles para ser utilizadas antes de su conversión bioquímica definitiva.
+
+Bajo este esquema termodinámico, los nutrientes ingresan al pool de asimilados y se distribuyen para cubrir costos de mantenimiento (procesos vitales que no generan masa), o se destinan a procesos anabólicos de síntesis (crecimiento de estructura o lípidos). Es crucial destacar que el modelo incorpora el costo energético de la biosíntesis: una parte de los asimilados se metaboliza inevitablemente a CO$_2$ y calor para financiar la construcción de nuevos tejidos. De esta forma, la propuesta de Eriksen permite simular una fisiología realista donde la acumulación de grasa y el crecimiento estructural compiten y se regulan mutuamente en función de la energía disponible.
+
+El modelo matemático propuesto por \parencite{eriksenDynamicModellingFeed2022} se fundamenta en un balance de masa 
+aplicado al pool de asimilados ($A$), bajo la asunción de estado estacionario ($\frac{dA}{dt} \approx 0$) 
+dado que la masa de metabolitos libres es despreciable en comparación con los flujos de energía que 
+atraviesan el sistema. La ecuación de conservación resultante establece que la tasa 
+de asimilación de alimento ($r_A$) se distribuye entre la síntesis de tejidos y los costos respiratorios:
+
+\begin{equation}
+\frac{dA}{dt} = 0 = r_A - (r_B + r_L + r_{CO2,m} + r_{CO2,B} + r_{CO2,L})
+\end{equation}
+
+Donde $r_B$ y $r_L$ representan las tasas de síntesis de biomasa estructural y lípidos de reserva 
+respectivamente, mientras que los términos $r_{CO2}$ cuantifican el carbono perdido por respiración 
+debido al mantenimiento basal ($m$) y a los costos energéticos de los procesos anabólicos de síntesis ($B, L$). 
+A partir de este balance, la dinámica de crecimiento se describe mediante dos ecuaciones diferenciales. 
+El aumento de la biomasa estructural ($B$) es directo:
+
+\begin{equation}
+\frac{dB}{dt} = r_B
+\end{equation}
+
+Mientras que la acumulación de lípidos totales ($L_{tot}$) incorpora una distinción fisiológica clave:
+
+\begin{equation}
+\frac{dL_{tot}}{dt} = r_L + \delta_{L,B} r_B
+\end{equation}
+
+En esta última expresión, $r_L$ corresponde a la acumulación variable de reservas energéticas, 
+mientras que el término $\delta_{L,B} r_B$ representa la fracción obligatoria de lípidos estructurales 
+(como membranas celulares) que se sintetizan proporcionalmente al crecimiento del tejido magro, 
+permitiendo así diferenciar entre el crecimiento esencial y el almacenamiento de energía. $L_{tot}$
+se define como la suma de los lípidos estructurales y los de reserva, y es la variable que determina la calidad nutricional final de la larva.
+
+La cinética de entrada de energía al sistema se modela mediante la tasa de asimilación 
+de alimento ($r_A$), la cual se define como el producto entre la tasa específica de asimilación ($a$) 
+y la biomasa estructural vigente ($B$), estableciendo la relación $r_A = a B$, que significa la cantidad de alimento que entra al sistema, $a$ es la voracidad del tejido, y $B$ es la biomasa estructural que se asimila, es la declaración de que el \textit{El sistema se construye a sí mismo}. En ingeniería de reactores, esto es una reacción autocatalítica, donde la velocidad de reacción depende de la concentración del reactivo (biomasa).  La tasa específica de asimilación ($a$) es una función dependiente del estadio de desarrollo larval ($I$) y de la densidad de biomasa relativa ($\frac{B}{B_{max}}$), donde $B_{max}$ es la biomasa estructural máxima alcanzable bajo condiciones ideales.
+
+Esto impone que el crecimiento inicial debe ser exponencial (tasa constante $a_{max}$) durante los primeros instars. No es una opción estadística, es una consecuencia mecánica. Tiene más células, tiene más bocas, come más, crece más. Así, el modelo matemático debe ser:
+\begin{equation}
+\frac{dB}{dt}  \approx  B
+\end{equation}
+
+El mecanismo de freno, ningún mecanismo puede crecer para siempre, es la limitación de recursos. A medida que la larva crece, el espacio en el sustrato se vuelve limitado, la competencia por alimento aumenta y la eficiencia de asimilación disminuye. Este fenómeno se modela mediante una función logística que reduce la tasa específica de asimilación ($a$) a medida que la biomasa estructural ($B$) se aproxima a su valor máximo ($B_{max}$).
+
+\begin{equation}
+a = a_{max} \left( 1 - \left( \frac{B}{B_{max}} \right)^\alpha \right)
+\end{equation}
+
+A medida que $B\rightarrow B_{max}$, la tasa de asimilación $a$ tiende a cero, reflejando la saturación del sistema y la imposibilidad de continuar creciendo indefinidamente. El coeficiente $\alpha$ ajusta la forma de esta desaceleración, permitiendo flexibilidad en la modelación de diferentes respuestas fisiológicas. En particular, cuando $\alpha=1$, la función se reduce al modelo logístico clásico de Verhulst.
+
+Debido al comportamiento de las larvas de \textit{H. illucens}, que atraviesan varios estadios o \textit{instars} durante su desarrollo, a que la biología opera en fases discretas, el modelo adapta la función de la tasa específica de asimilación ($a$) para reflejar estos cambios fisiológicos a lo largo del ciclo de vida larval. Para $I < 6$ (los primeros cinco instars), la larva exhibe un crecimiento exponencial sostenido por una tasa máxima constante ($a_{max}$). Al alcanzar el sexto instar ($I = 6$), el modelo introduce un mecanismo de regulación dependiente de la densidad, donde la asimilación disminuye logísticamente a medida que la biomasa estructural ($B$) se aproxima a su límite biológico ($B_{max}$). Finalmente, en la etapa de prepupa ($I > 6$), el modelo impone el cese de la alimentación ($a=0$), obligando al organismo a depender exclusivamente de sus reservas endógenas.
+
+
+Finalmente, la función completa para la tasa específica de asimilación ($a$) se expresa como:
+
+\begin{equation}
+a = \begin{cases} 
+a_{max}, & I < 6 \\
+a_{max} \left( 1 - \left( \frac{B}{B_{max}} \right)^\alpha \right), & I = 6 \\
+0, & I > 6 
+\end{cases}
+\end{equation}
+
+El crecimiento de la biomasa estructural en las larvas de \textit{Hermetia illucens} depende 
+directamente de la tasa específica de crecimiento estructural, denotada como $\mu_B$. 
+Esta tasa representa la capacidad del organismo para transformar la energía asimilada en 
+nuevos tejidos corporales permanentes. Durante los estadios larvales activos, el crecimiento 
+estructural ocurre de manera proporcional a la biomasa existente ($B$), lo que puede describirse 
+mediante una cinética de primer orden. Sin embargo, cuando la larva alcanza el estadio de prepupa, 
+el crecimiento estructural se detiene completamente, reflejando un cambio fisiológico asociado 
+al inicio del proceso de metamorfosis.
+
+Matemáticamente, este comportamiento se expresa como una función por tramos dependiente del 
+estadio de desarrollo ($I$), donde la tasa de producción de biomasa estructural ($r_B$) es activa 
+únicamente durante los instars tempranos y medios:
+
+\begin{equation}
+r_B = \begin{cases} 
+\mu_B B, & I \leq 6 \\
+0, & I > 6 
+\end{cases}
+\end{equation}
+
+Una vez superado el umbral de desarrollo ($I > 6$), la tasa se anula, concordando con la evidencia 
+experimental que indica la ausencia de incremento de masa magra durante la fase de prepupa.
+
+Desde un punto de vista bioenergético, el potencial teórico para la tasa específica de crecimiento 
+estructural ($\mu_B$) está determinado por el balance estricto entre la tasa específica de asimilación 
+de nutrientes ($a$) y la tasa específica de respiración ($q$):
+
+\begin{equation}
+\mu_B = a - q
+\end{equation}
+
+Este balance establece que el crecimiento solo es posible cuando la energía asimilada excede las 
+pérdidas metabólicas. En condiciones de equilibrio, el metabolismo se orientaría exclusivamente 
+al mantenimiento, sin ganancia neta de estructura.
+
+Para cerrar el balance, la respiración ($q$) se modela descomponiéndola en dos demandas energéticas 
+distintas: el costo de mantenimiento basal ($m$) y el costo asociado a la biosíntesis ($Y_B \mu_B$):
+
+\begin{equation}
+q = Y_B \mu_B + m
+\end{equation}
+
+Donde $Y_B$ es el coeficiente de rendimiento que cuantifica la ineficiencia termodinámica inherente 
+a la formación de nuevos tejidos. Esta formulación permite separar explícitamente la energía destinada 
+a sostener la vida ($m$) de la energía disipada obligatoriamente durante el proceso de crecimiento.
+
+En conjunto, este enfoque proporciona una representación mecanicista del desarrollo de BSF, 
+integrando asimilación, respiración y ontogenia. El modelo resulta especialmente útil para analizar 
+la eficiencia de bioconversión y estimar emisiones de gases de efecto invernadero, vinculando 
+directamente la ganancia de biomasa con la producción metabólica de $CO_2$.
+
+El coeficiente adimensional $Y_B$ representa el costo energético asociado a la producción de 
+biomasa estructural, relacionando los requerimientos metabólicos con la conversión de alimento 
+asimilado en tejido corporal permanente. Este parámetro incorpora las pérdidas energéticas 
+inherentes a la síntesis bioquímica y actúa como un factor de penalización sobre el crecimiento. 
+En un escenario ideal de equilibrio estricto, la tasa específica de crecimiento podría describirse 
+únicamente mediante el balance asimilación-respiración. Sin embargo, en las larvas de 
+\textit{H. illucens}, este equilibrio no se cumple debido a la ontogenia de la composición corporal.
+
+Estudios previos demuestran que la composición bioquímica de la larva depende del tamaño y la edad, 
+observándose un incremento progresivo del contenido lipídico durante el desarrollo. Esto implica que, 
+en estadios tardíos, una fracción creciente de los asimilados se desvía del crecimiento estructural 
+hacia el almacenamiento de lípidos. En consecuencia, la tasa real de crecimiento estructural 
+($\mu_B$) cae por debajo del potencial teórico predicho por el balance energético simple.
+
+Para capturar este comportamiento fisiológico, el modelo define $\mu_B$ mediante una expresión 
+compuesta que integra el potencial bioenergético con una función logística restrictiva dependiente del peso:
+
+\begin{equation}
+\mu_B = \left( \frac{a - m}{1 + Y_B} \right) \left( 1 - \left( \frac{B}{B_{\max}} \right)^{\beta} \right)
+\label{eq:muB}
+\end{equation}
+
+Donde el primer término cuantifica el potencial máximo de crecimiento permitido por la ingesta neta y 
+el costo de biosíntesis, mientras que el segundo término introduce una limitación progresiva a medida 
+que la biomasa ($B$) se aproxima a su máximo ($B_{\max}$). El parámetro $\beta$ controla la ``agresividad''
+de este freno fisiológico: valores elevados de $\beta$ mantienen el crecimiento estructural cerca de su 
+potencial máximo durante más tiempo (reducción abrupta al final), mientras que valores bajos inician 
+la desaceleración tempranamente. Por tanto, un valor pequeño de $\beta$ se asocia con una mayor y más 
+temprana acumulación de lípidos, producto del desacoplamiento gradual entre la asimilación y la 
+formación de estructura.
+
+Finalmente, la producción de dióxido de carbono asociada específicamente a la síntesis de nuevos 
+tejidos ($r_{\mathrm{CO_2},B}$) se modela como proporcional a la tasa de crecimiento estructural ($r_B$), 
+utilizando el coeficiente de ineficiencia $Y_B$:
+
+\begin{equation}
+r_{\mathrm{CO_2},B} = Y_B \, r_B
+\label{eq:CO2B}
+\end{equation}
+
+Esta relación vincula directamente el anabolismo con las emisiones de gases, permitiendo la validación 
+del modelo mediante respirometría en sistemas controlados.
+
+Bajo el supuesto de estado estacionario para el pool de asimilados, la acumulación de 
+lípidos de reserva ($r_L$) se determina como el residual del balance energético, calculado 
+como la diferencia entre la tasa total de asimilación y la suma de todos los procesos 
+metabólicos obligatorios (crecimiento estructural y respiración de mantenimiento). 
+En este esquema, los lípidos ($L$) actúan como el verdadero reservorio energético ("buffer") 
+del organismo, amortiguando las fluctuaciones entre la oferta de nutrientes y la demanda metabólica.
+En este modelo, los lípidos de reserva cumplen la función de un buffer metabólico, actuando como un reservorio energético que amortigua los desequilibrios temporales entre la asimilación de nutrientes y las demandas metabólicas del organismo. Cuando la energía asimilada excede los requerimientos asociados al crecimiento estructural y al mantenimiento, el excedente se almacena en forma de lípidos; por el contrario, en situaciones de déficit energético, estos lípidos son movilizados y retornan al pool de asimilados. Este mecanismo permite estabilizar el metabolismo larval frente a fluctuaciones en la disponibilidad de alimento y desacoplar la asimilación instantánea de los procesos de crecimiento y mantenimiento.
+
+La dinámica de este reservorio es termodinámicamente asimétrica: mientras que la movilización 
+de reservas es un proceso de degradación directa, la acumulación implica la síntesis de nuevas 
+moléculas, lo que conlleva un costo energético. Matemáticamente, esto se modela mediante una 
+función por tramos que distingue entre condiciones de superávit y déficit:
+
+\begin{equation}
+r_L =
+\begin{cases}
+\dfrac{r_A - \left( r_B + r_{\mathrm{CO_2},m} + r_{\mathrm{CO_2},B} \right)}{1 + Y_L}, & \text{si } r_A > \text{Demandas} \quad (\text{Acumulación}) \\[15pt]
+r_A - \left( r_B + r_{\mathrm{CO_2},m} + r_{\mathrm{CO_2},B} \right), & \text{si } r_A \leq \text{Demandas} \quad (\text{Movilización})
+\end{cases}
+\label{eq:rL}
+\end{equation}
+
+Donde $r_A$ es la tasa de asimilación total y el denominador $(1 + Y_L)$ en el primer caso 
+refleja la penalización por biosíntesis. $Y_L$ es el coeficiente estequiométrico que representa 
+la cantidad de energía que debe disiparse para sintetizar una unidad de lípidos.
+
+Para cerrar el balance de masa de carbono, el modelo cuantifica explícitamente la producción 
+de dióxido de carbono asociada a esta síntesis de reservas ($r_{\mathrm{CO_2},L}$). Esta tasa 
+es proporcional a la velocidad de acumulación de grasa, pero solo existe cuando el organismo 
+está en balance positivo:
+
+\begin{equation}
+r_{\mathrm{CO_2},L} = 
+\begin{cases} 
+Y_L r_L, & r_L > 0 \\
+0, & r_L \leq 0 
+\end{cases}
+\end{equation}
+
+Esta formulación asegura que el modelo respete las leyes de la termodinámica: crear reservas 
+genera emisiones ($CO_2$) y calor, mientras que consumirlas simplemente reintroduce el carbono 
+al flujo metabólico para ser oxidado en procesos de mantenimiento o estructura.
+
+Finalmente, el modelo completa el balance de carbono integrando el costo metabólico de la 
+lipogénesis. Dado que la síntesis de reservas es un proceso anabólico que consume ATP, 
+genera una producción adicional de dióxido de carbono que debe cuantificarse. La tasa de 
+producción de $CO_2$ asociada específicamente a la reserva lipídica ($r_{\mathrm{CO_2},L}$) 
+se modela como una función condicional:
+
+\begin{equation}
+r_{\mathrm{CO_2},L} =
+\begin{cases}
+Y_L \, r_L, & r_L \geq 0 \\
+0, & r_L < 0
+\end{cases}
+\label{eq:CO2L}
+\end{equation}
+
+Donde $Y_L$ representa el costo energético de convertir asimilados en triglicéridos. Esta 
+formulación implica que solo la síntesis neta genera emisiones extra, mientras que la movilización 
+($r_L < 0$) se considera energéticamente neutra en términos de costos de biosíntesis directos. 
+Así, la tasa total de respiración del organismo ($r_{\mathrm{CO_2}}$) se obtiene mediante la suma 
+aditiva de sus tres componentes metabólicos fundamentales: mantenimiento, crecimiento estructural 
+y almacenamiento de reservas:
+
+\begin{equation}
+r_{\mathrm{CO_2}} = r_{\mathrm{CO_2},m} + r_{\mathrm{CO_2},B} + r_{\mathrm{CO_2},L}
+\label{eq:CO2total}
+\end{equation}
+
+Esta ecuación permite vincular la actividad respirométrica total con el estado fisiológico de la larva, 
+facilitando la validación experimental mediante sensores de gases.
+
+Para la aplicación operativa del modelo, es necesario determinar el estadio de desarrollo 
+(número de instar, $I$) en función del tiempo, ya que este parámetro controla los cambios 
+en la tasa de alimentación. En ausencia de un peso crítico experimentalmente definido para 
+\textit{H. illucens}, el modelo estima el estadio larval correlacionando la biomasa estructural 
+actual ($B$) con la biomasa estructural máxima potencial ($B_{\max,0}$). Se define así una 
+función de estado discreta:
+
+\begin{equation}
+I =
+\begin{cases}
+1\text{--}5, & B < \frac{B_{\max,0}}{\delta_I} \\[8pt]
+6, & \frac{B_{\max,0}}{\delta_I} \leq B < B_{\max,0} \\[10pt]
+7 \text{ (Prepupa)}, & B \geq B_{\max,0}
+\end{cases}
+\label{eq:instar}
+\end{equation}
+
+En esta expresión, $\delta_I$ representa la razón de incremento de tamaño característica entre 
+la penúltima y la última muda. Esta lógica de control establece que mientras la biomasa sea 
+inferior al umbral definido por $\delta_I$, la larva mantiene un comportamiento de crecimiento 
+exponencial (Instars 1-5). Al superar este umbral, entra en el último estadio de alimentación 
+(Instar 6), activando el freno logístico de crecimiento, hasta alcanzar el tamaño máximo que 
+desencadena la fase de prepupa ($I=7$) y el cese de la alimentación.
+
+Las larvas de \textit{Hermetia illucens} presentan una alta variabilidad en el peso final alcanzado, 
+siendo el sexto instar el responsable de la mayor proporción de ganancia de masa corporal. 
+La evidencia experimental indica que un bajo peso final suele correlacionarse con tasas de 
+crecimiento reducidas y una prolongación del tiempo de residencia en el instar 6. Este fenómeno, 
+común en insectos holometábolos como la mosca de la fruta, sugiere que una vez superado un 
+peso crítico, el incremento de masa continúa, pero las condiciones ambientales y nutricionales 
+imponen un compromiso entre la tasa de crecimiento y el tamaño final.
+
+Con el fin de capturar matemáticamente esta relación inversa entre el peso final y el tiempo de 
+desarrollo, el modelo abandona la asunción de una biomasa estructural máxima constante. En su 
+lugar, define $B_{\max}$ como una variable dependiente del tiempo, asumiendo que el potencial 
+de crecimiento disminuye linealmente si la larva no logra pupar dentro de una ventana temporal 
+óptima ($t_{p,\min}$). Esta dependencia se formaliza mediante la siguiente función por tramos:
+
+\begin{equation}
+B_{\max}(t) =
+\begin{cases}
+B_{\max,0}, & t < t_{p,\min} \\[8pt]
+B_{\max,0} - \rho \left( t - t_{p,\min} \right), & t \geq t_{p,\min}
+\end{cases}
+\label{eq:Bmax_time}
+\end{equation}
+
+Donde $B_{\max,0}$ representa el techo biológico de crecimiento en condiciones ideales, $t_{p,\min}$ 
+es el tiempo mínimo fisiológico requerido para completar el desarrollo, y $\rho$ es un coeficiente 
+de penalización que cuantifica la tasa diaria de pérdida de potencial de crecimiento.
+
+Esta formulación introduce una ``fricción temporal'' en el sistema: introduce una penalización 
+progresiva sobre el crecimiento estructural en escenarios de desarrollo retardado. Esto refleja 
+las limitaciones hormonales que fuerzan la metamorfosis incluso con pesos subóptimos para evitar 
+la depredación o muerte por inanición. De este modo, el modelo integra explícitamente el efecto 
+del tiempo cronológico sobre el estado final, permitiendo reproducir la variabilidad de tallas 
+observada en lotes heterogéneos de \textit{H. illucens}.
+
+\appendix
+\chapter{Implementación Computacional y Algoritmos}
+
+Este apéndice documenta la infraestructura de software desarrollada para la modelación de la bioconversión. Se detallan los algoritmos de preprocesamiento, la arquitectura de la Red Neuronal Informada por Física (PINN), el "Sensor Virtual" basado en ecuaciones diferenciales y el script de análisis forense para la dieta D4.
+
+\section{Configuración del Entorno y Librerías}
+
+El modelo fue implementado en Python 3.9 utilizando el ecosistema de cálculo científico estándar y el framework de aprendizaje profundo PyTorch.
+
+\begin{lstlisting}[language=Python, caption=Librerías y configuración inicial, frame=single, basicstyle=\small\ttfamily]
+import torch
+import torch.nn as nn
+import numpy as np
+import pandas as pd
+from scipy.integrate import simpson
+
+# Configuracion de dispositivo (GPU si esta disponible para aceleracion)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+# Semilla para reproducibilidad cientifica
+torch.manual_seed(42)
+np.random.seed(42)
+\end{lstlisting}
+
+\section{Arquitectura de la PINN}
+
+El núcleo del sistema es un Perceptrón Multicapa (MLP) modificado para respetar restricciones físicas.
+
+\subsection{Definición de la Red Neuronal}
+
+La red toma como entrada el tiempo y el identificador de la dieta, y predice simultáneamente las tasas de $CO_2$ y $CH_4$.
+
+\begin{lstlisting}[language=Python, caption=Clase de la Red Neuronal (PINN), frame=single, basicstyle=\small\ttfamily]
+class PINN(nn.Module):
+    def __init__(self):
+        super(PINN, self).__init__()
+        # Entrada: 2 neuronas (Tiempo, ID_Dieta)
+        # Capas Ocultas: 4 capas de 64 neuronas para capturar no-linealidades
+        self.net = nn.Sequential(
+            nn.Linear(2, 64),
+            nn.Tanh(), # Funcion de activacion suave (diferenciable)
+            nn.Linear(64, 64),
+            nn.Tanh(),
+            nn.Linear(64, 64),
+            nn.Tanh(),
+            nn.Linear(64, 64),
+            nn.Tanh(),
+            # Salida: 2 neuronas (Tasa CO2, Tasa CH4)
+            nn.Linear(64, 2) 
+        )
+
+    def forward(self, x):
+        return self.net(x)
+\end{lstlisting}
+
+\subsection{Función de Pérdida Informada por Física}
+
+La innovación principal radica en la función de costo ($\mathcal{L}_{total}$). A diferencia de una red convencional, esta penaliza las predicciones biológicamente imposibles (valores negativos de concentración).
+
+\begin{lstlisting}[language=Python, caption=Entrenamiento con Restricción Física, frame=single, basicstyle=\small\ttfamily]
+def train_step(model, optimizer, x_data, y_data):
+    model.train()
+    optimizer.zero_grad()
+    
+    # 1. Prediccion del modelo
+    predictions = model(x_data)
+    
+    # 2. Perdida de Datos (MSE): Ajuste a las mediciones reales
+    loss_data = nn.MSELoss()(predictions, y_data)
+    
+    # 3. Perdida Fisica (Restriccion de No-Negatividad)
+    # Penaliza si la red predice concentraciones < 0
+    # Se usa ReLU(-pred) para capturar solo los negativos
+    physics_violation = torch.relu(-predictions) 
+    loss_physics = torch.mean(physics_violation ** 2)
+    
+    # 4. Perdida Total Ponderada
+    # lambda_phys = 10.0 da peso fuerte a la coherencia fisica
+    total_loss = loss_data + (10.0 * loss_physics)
+    
+    total_loss.backward()
+    optimizer.step()
+    return total_loss.item()
+\end{lstlisting}
+
+\section{Algoritmo del Sensor Virtual (Estimación de Biomasa)}
+
+Este módulo implementa la inversión numérica del modelo DEB de Eriksen (2022). Transforma la serie temporal de $CO_2$ predicha por la PINN en una curva de crecimiento de biomasa ($B$).
+
+\textbf{Fundamento Matemático:}
+Se resuelve la EDO: $\frac{dB}{dt} = \frac{1}{Y_B} (r_{CO2} - m \cdot B)$, utilizando el método de Euler.
+
+\begin{lstlisting}[language=Python, caption=Implementación del Sensor Virtual (Inversa de Eriksen), frame=single, basicstyle=\small\ttfamily]
+def sensor_virtual_biomasa(tasa_co2, dias, Y_B=1.5, m=0.15):
+    """
+    Inputs:
+        tasa_co2: Array de predicciones de la PINN
+        dias: Vector de tiempo
+        Y_B: Costo de crecimiento (parametro biologico)
+        m: Coeficiente de mantenimiento
+    Output:
+        biomasa: Estimacion del peso larval acumulado
+    """
+    dt = dias[1] - dias[0] # Paso de tiempo
+    
+    # Normalizacion de la tasa (ajuste de escala ppm -> moles relativos)
+    factor_escala = np.max(tasa_co2) / 2.5 
+    tasa_norm = tasa_co2 / factor_escala
+    
+    biomasa = [0.05] # Condicion inicial (peso larva neonata/juvenil)
+    
+    for i in range(len(tasa_norm) - 1):
+        r_co2_actual = tasa_norm[i]
+        B_actual = biomasa[-1]
+        
+        # Ecuacion Diferencial Discretizada
+        # Crecimiento = (Respiracion - Mantenimiento) / Costo
+        tasa_crecimiento = (r_co2_actual - (m * B_actual)) / Y_B
+        
+        # Restriccion: No crecimiento negativo (salvo inanicion extrema)
+        if tasa_crecimiento < 0: tasa_crecimiento = 0
+        
+        # Integracion (Euler Forward)
+        B_siguiente = B_actual + tasa_crecimiento * dt
+        biomasa.append(B_siguiente)
+        
+    return np.array(biomasa)
+\end{lstlisting}
+
+\section{Script de Análisis Forense: Dieta D4 (Larvas Solas)}
+
+Este código fue diseñado específicamente para procesar los datos de respirometría ex-situ al final del experimento, permitiendo calcular la relación de emisión $CH_4/CO_2$ y demostrar la disbiosis intestinal.
+
+\begin{lstlisting}[language=Python, caption=Cálculo de Pendientes y Ratios Metabólicos, frame=single, basicstyle=\small\ttfamily]
+import numpy as np
+import pandas as pd
+
+# 1. Carga y Limpieza de Datos Crudos
+# Datos provenientes del sensor en formato CSV string
+raw_data = """2025-09-17,14:04:56,838,0 ... (datos completos)"""
+
+data = []
+for line in raw_data.strip().split('\n'):
+    parts = line.split(',')
+    clean_parts = [p for p in parts if p.strip() != '']
+    # Estructura: Fecha, Hora, CO2, CH4
+    data.append({
+        'datetime': f"{clean_parts[0]} {clean_parts[1]}",
+        'CO2': float(clean_parts[2]),
+        'CH4': float(clean_parts[3])
+    })
+
+df = pd.DataFrame(data)
+df['datetime'] = pd.to_datetime(df['datetime'])
+
+# 2. Calculo de Tiempo Relativo (Minutos)
+start_time = df['datetime'].iloc[0]
+df['minutos'] = (df['datetime'] - start_time).dt.total_seconds() / 60.0
+
+# 3. Calculo de Velocidades de Emision (Slope)
+# Se analiza el periodo activo (> 6 min) usando regresion lineal
+df_active = df[df['minutos'] > 6].copy()
+
+# Pendiente CO2 (Respiracion Aerobia)
+coef_co2 = np.polyfit(df_active['minutos'], df_active['CO2'], 1)
+tasa_co2 = coef_co2[0] 
+
+# Pendiente CH4 (Fermentacion Anaerobia)
+coef_ch4 = np.polyfit(df_active['minutos'], df_active['CH4'], 1)
+tasa_ch4 = coef_ch4[0] 
+
+# 4. Calculo del Ratio de Disbiosis
+ratio = tasa_ch4 / tasa_co2
+
+print(f"Velocidad CO2: {tasa_co2:.2f} ppm/min")
+print(f"Velocidad CH4: {tasa_ch4:.2f} ppm/min")
+print(f"Ratio CH4/CO2: {ratio:.1f}")
+# Resultado esperado: Ratio > 19.0 (Indicativo de reactor anaerobio)
+\end{lstlisting}
+
+El siguiente es el codigo donde se entrena el algorimo con los datos obtenidos y se generan las graficas correspondientes:
+
+\begin{lstlisting}[language=Python, caption=Visualización de Datos y Pendientes, frame=single, basicstyle=\small\ttfamily]
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
+
+# ==========================================
+# 1. CONFIGURACIÓN Y PREPARACIÓN DE DATOS
+# ==========================================
+
+file_path = 'datos_entrenamiento_PINN.csv'
+try:
+    df = pd.read_csv(file_path)
+except FileNotFoundError:
+    print(f"Error: No encuentro '{file_path}'. Ejecuta primero procesar_todo.py")
+    exit()
+
+# Pivotamos la tabla para tener CO2 y CH4 como columnas
+# (Si hay duplicados, tomamos el promedio)
+df_pivot = df.pivot_table(index=['dia', 'dieta'], columns='gas_tipo', values='tasa_neta', aggfunc='mean').reset_index()
+df_pivot.columns = ['dia', 'dieta', 'co2_rate', 'ch4_rate']
+
+print("Datos organizados:")
+print(df_pivot)
+
+# Preparar Arrays Numpy
+X_data = df_pivot[['dia', 'dieta']].values.astype(np.float32)
+y_data = df_pivot[['co2_rate', 'ch4_rate']].values.astype(np.float32)
+
+# --- NORMALIZACIÓN ---
+scaler_x = MinMaxScaler()
+scaler_y = MinMaxScaler()
+
+X_norm = scaler_x.fit_transform(X_data)
+y_norm = scaler_y.fit_transform(y_data)
+
+# Tensores PyTorch (Datos Reales)
+inputs = torch.tensor(X_norm, dtype=torch.float32, requires_grad=True)
+targets = torch.tensor(y_norm, dtype=torch.float32)
+
+# ==========================================
+# 2. ARQUITECTURA PINN
+# ==========================================
+
+class BioPINN(nn.Module):
+    def __init__(self):
+        super(BioPINN, self).__init__()
+        # 2 Entradas (Dia, Dieta) -> Capas Ocultas -> 2 Salidas (CO2, CH4)
+        self.hidden1 = nn.Linear(2, 32)
+        self.hidden2 = nn.Linear(32, 32)
+        self.hidden3 = nn.Linear(32, 32)
+        self.output = nn.Linear(32, 2)
+        self.activation = nn.Tanh() # Tanh es ideal para física continua
+
+    def forward(self, x):
+        x = self.activation(self.hidden1(x))
+        x = self.activation(self.hidden2(x))
+        x = self.activation(self.hidden3(x))
+        x = self.output(x)
+        return x
+
+model = BioPINN()
+optimizer = optim.Adam(model.parameters(), lr=0.005)
+
+# ==========================================
+# 3. ENTRENAMIENTO CON FÍSICA (PHYSICS LOSS)
+# ==========================================
+
+epochs = 10000
+loss_history = []
+
+print("\nIniciando entrenamiento híbrido (Datos + Física)...")
+
+for epoch in range(epochs):
+    optimizer.zero_grad()
+
+    # --- A. PÉRDIDA DE DATOS (Supervisada) ---
+    # La IA debe pasar por los puntos reales medidos
+    outputs_data = model(inputs)
+    loss_data = nn.MSELoss()(outputs_data, targets)
+
+    # --- B. PÉRDIDA FÍSICA (No Supervisada / Collocation Points) ---
+    # Generamos "días fantasma" aleatorios para vigilar los huecos
+    # Queremos asegurar que la predicción NUNCA sea negativa en todo el rango
+
+    # 100 puntos aleatorios entre día 9 y 18
+    random_days = (torch.rand(100, 1) * 9) + 9
+
+    # Normalizamos estos días aleatorios usando el mismo scaler
+    # Nota: Creamos una columna dummy de dieta para que el scaler funcione, luego extraemos solo día
+    dummy_input = np.column_stack((random_days.numpy(), np.zeros(100)))
+    random_days_norm = torch.tensor(scaler_x.transform(dummy_input), dtype=torch.float32)[:, 0].view(-1, 1)
+
+    # Dietas aleatorias (0 o 1)
+    random_diets = torch.randint(0, 2, (100, 1)).float()
+
+    # Input físico completo
+    physics_inputs = torch.cat((random_days_norm, random_diets), dim=1)
+
+    # Predicción en los días fantasma
+    outputs_physics = model(physics_inputs)
+
+    # REGLA DE ORO: No Negatividad (ReLU de -x)
+    # Si x es positivo, error es 0. Si x es negativo (-5), error es 5^2 = 25.
+    loss_negativity = torch.mean(torch.relu(-outputs_physics)**2) * 10 # Peso x10 para forzar cumplimiento
+
+    loss_physics = loss_negativity
+
+    # --- C. SUMA TOTAL ---
+    loss_total = loss_data + loss_physics
+
+    loss_total.backward()
+    optimizer.step()
+
+    if epoch % 1000 == 0:
+        print(f"Epoch {epoch}: Data Loss {loss_data.item():.6f} + Physics Loss {loss_physics.item():.6f}")
+
+# ==========================================
+# 4. VISUALIZACIÓN FINAL (PANELES SEPARADOS)
+# ==========================================
+
+# Generar rango suave para graficar líneas
+days_range = np.linspace(9, 18, 100)
+
+# --- Predicciones D1 (Rápido) ---
+input_D1 = np.column_stack((days_range, np.zeros_like(days_range)))
+tensor_D1 = torch.tensor(scaler_x.transform(input_D1), dtype=torch.float32)
+pred_D1_real = scaler_y.inverse_transform(model(tensor_D1).detach().numpy())
+
+# --- Predicciones D4 (Lento) ---
+input_D4 = np.column_stack((days_range, np.ones_like(days_range)))
+tensor_D4 = torch.tensor(scaler_x.transform(input_D4), dtype=torch.float32)
+pred_D4_real = scaler_y.inverse_transform(model(tensor_D4).detach().numpy())
+
+# --- CONFIGURACIÓN GRÁFICA ---
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(18, 6))
+
+# === GRÁFICA 1: CO2 (Respiración) ===
+# Datos Reales
+ax1.scatter(df_pivot[df_pivot['dieta']==0]['dia'], df_pivot[df_pivot['dieta']==0]['co2_rate'],
+            color='blue', s=80, zorder=5, label='Real D1 (Rápido)')
+ax1.scatter(df_pivot[df_pivot['dieta']==1]['dia'], df_pivot[df_pivot['dieta']==1]['co2_rate'],
+            color='orange', s=80, zorder=5, label='Real D4 (Lento)')
+
+# Predicciones IA
+ax1.plot(days_range, pred_D1_real[:, 0], 'b-', linewidth=2.5, label='IA D1')
+ax1.plot(days_range, pred_D4_real[:, 0], color='orange', linestyle='-', linewidth=2.5, label='IA D4')
+
+ax1.set_title("Respiración Aerobia (CO2)")
+ax1.set_xlabel("Días")
+ax1.set_ylabel("Tasa CO2 (ppm/min)")
+ax1.legend()
+ax1.grid(True, alpha=0.3)
+
+# === GRÁFICA 2: CH4 (Fermentación) ===
+# Datos Reales
+ax2.scatter(df_pivot[df_pivot['dieta']==0]['dia'], df_pivot[df_pivot['dieta']==0]['ch4_rate'],
+            color='blue', marker='x', s=100, linewidth=2, zorder=5, label='Real D1 (Rápido)')
+ax2.scatter(df_pivot[df_pivot['dieta']==1]['dia'], df_pivot[df_pivot['dieta']==1]['ch4_rate'],
+            color='orange', marker='x', s=100, linewidth=2, zorder=5, label='Real D4 (Lento)')
+
+# Predicciones IA
+ax2.plot(days_range, pred_D1_real[:, 1], 'b--', linewidth=2.5, label='IA D1')
+ax2.plot(days_range, pred_D4_real[:, 1], color='orange', linestyle='--', linewidth=2.5, label='IA D4')
+
+ax2.set_title("Fermentación Anaerobia (CH4)")
+ax2.set_xlabel("Días")
+ax2.set_ylabel("Tasa CH4 (ppm/min)")
+ax2.legend()
+ax2.grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+print("¡Proceso completado! Gráfica generada.")
+
+from scipy.integrate import simpson
+
+# --- CÁLCULO DE TOTALES ACUMULADOS (INTEGRAL) ---
+print("\n" + "="*40)
+print("PREDICCIONES DE PRODUCCIÓN TOTAL ACUMULADA")
+print("="*40)
+
+# Función para integrar: Área bajo la curva de Tasa (ppm/min) vs Tiempo (Días)
+# Factor de conversión: 1 día = 1440 minutos
+# Fórmula: Integral = Suma(Tasa * dt) * 1440
+
+def calcular_integral(tasa_predicha, dias):
+    # tasa_predicha es un array de valores de y
+    # dias es el eje x
+    area = simpson(tasa_predicha, x=dias)
+    return area * 1440 # Convertir días a minutos
+
+# 1. CO2 Totales
+total_co2_d1 = calcular_integral(pred_D1_real[:, 0], days_range)
+total_co2_d4 = calcular_integral(pred_D4_real[:, 0], days_range)
+
+# 2. CH4 Totales
+total_ch4_d1 = calcular_integral(pred_D1_real[:, 1], days_range)
+total_ch4_d4 = calcular_integral(pred_D4_real[:, 1], days_range)
+
+print(f"CO2 ACUMULADO D1 (Rápido): {total_co2_d1:.0f} ppm acumulados")
+print(f"CO2 ACUMULADO D4 (Lento):  {total_co2_d4:.0f} ppm acumulados")
+print("-" * 30)
+print(f"CH4 ACUMULADO D1 (Rápido): {total_ch4_d1:.0f} ppm acumulados")
+print(f"CH4 ACUMULADO D4 (Lento):  {total_ch4_d4:.0f} ppm acumulados")
+
+# ==========================================
+# 6. SENSOR VIRTUAL: ESTIMACIÓN DE BIOMASA (B)
+# ==========================================
+# Parámetros aproximados basados en literatura (Eriksen/Luedeking-Piret)
+# Nota: Estos valores son teóricos. Para precisión exacta se requiere calibración.
+Y_B = 1.5   # Costo de crecimiento (Cuanto CO2 cuesta hacer 1g de larva)
+m_coeff = 0.1 # Costo de mantenimiento (Cuanto respira 1g de larva quieta)
+
+def sensor_virtual_biomasa(tasa_co2_predicha, dias, Y_B, m):
+    """
+    Resuelve la EDO: dB/dt = (r_CO2 - m*B) / Y_B
+    Usamos el método de Euler simple para integrar paso a paso.
+    """
+    dt = dias[1] - dias[0] # Paso de tiempo
+    biomasa = [0.1] # Biomasa inicial (asumimos larvas pequeñas 0.1g o unidad arbitraria)
+
+    for i in range(len(tasa_co2_predicha) - 1):
+        r_co2 = tasa_co2_predicha[i]
+        B_actual = biomasa[-1]
+
+        # Ecuación Inversa de Eriksen
+        dB_dt = (r_co2 - (m * B_actual)) / Y_B
+
+        # Evitar crecimiento negativo (biológicamente la larva no se encoge drásticamente comiendo)
+        if dB_dt < 0: dB_dt = 0
+
+        B_siguiente = B_actual + dB_dt * dt
+        biomasa.append(B_siguiente)
+
+    return np.array(biomasa)
+
+# Calcular Biomasa Virtual para D1 y D4
+# Nota: Normalizamos la tasa dividiendo por 100 para que los números de biomasa sean manejables
+# (Esto asume que la tasa está en ppm y queremos una unidad arbitraria de masa)
+factor_escala = 100.0
+biomasa_est_D1 = sensor_virtual_biomasa(pred_D1_real[:, 0]/factor_escala, days_range, Y_B, m_coeff)
+biomasa_est_D4 = sensor_virtual_biomasa(pred_D4_real[:, 0]/factor_escala, days_range, Y_B, m_coeff)
+
+# --- GRAFICAR BIOMASA ESTIMADA ---
+plt.figure(figsize=(10, 6))
+
+plt.plot(days_range, biomasa_est_D1, 'b-', linewidth=3, label='Biomasa Estimada D1 (Rápido)')
+plt.plot(days_range, biomasa_est_D4, color='orange', linestyle='-', linewidth=3, label='Biomasa Estimada D4 (Lento)')
+
+plt.title("Sensor Virtual: Estimación de Crecimiento Larval basada en CO2")
+plt.xlabel("Días")
+plt.ylabel("Biomasa Acumulada (Unidades Arbitrarias)")
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.show()
+
+print("Sensor Virtual ejecutado. Revisa la gráfica de crecimiento estimado.")
+
+# ==========================================
+# 7. VALIDACIÓN: SENSOR VIRTUAL VS TEORÍA ERIKSEN
+# ==========================================
+
+# Parámetros Biológicos (Aproximados de Literatura)
+Y_B = 1.5   # Costo de Crecimiento (mol CO2 / C-mol biomasa)
+m_coeff = 0.15 # Mantenimiento (mol CO2 / C-mol biomasa * día)
+
+def sensor_virtual_biomasa(tasa_co2, dias, Y_B, m):
+    """
+    Integra la EDO inversa: dB/dt = (r_CO2 - m*B) / Y_B
+    """
+    dt = dias[1] - dias[0]
+    # Normalizamos la tasa para obtener unidades de biomasa relativas (0 a 1 aprox)
+    # Esto es necesario porque no tenemos la conversión exacta a moles reales,
+    # pero la FORMA de la curva es lo que importa.
+    tasa_norm = tasa_co2 / np.max(tasa_co2) * 2.5
+
+    biomasa = [0.05] # Biomasa inicial (larva pequeña)
+
+    for i in range(len(tasa_norm) - 1):
+        r_co2 = tasa_norm[i]
+        B_actual = biomasa[-1]
+
+        # Ecuación fundamental de Eriksen despejada para Crecimiento
+        tasa_crecimiento = (r_co2 - (m * B_actual)) / Y_B
+
+        # Restricción biológica: La larva no se encoge (salvo inanición extrema)
+        if tasa_crecimiento < 0: tasa_crecimiento = 0
+
+        B_siguiente = B_actual + tasa_crecimiento * dt
+        biomasa.append(B_siguiente)
+
+    return np.array(biomasa)
+
+# 1. Calcular Biomasa Inferida por la IA
+biomasa_D1 = sensor_virtual_biomasa(pred_D1_real[:, 0], days_range, Y_B, m_coeff)
+biomasa_D4 = sensor_virtual_biomasa(pred_D4_real[:, 0], days_range, Y_B, m_coeff)
+
+# 2. Generar Curva Teórica Ideal (Sigmoidea de Eriksen)
+# B(t) = B_max / (1 + exp(-k * (t - t_mid)))
+B_max_ref = np.max(biomasa_D1) # Usamos D1 como referencia de "éxito"
+k_eriksen = 0.9  # Tasa de crecimiento típica en literatura
+t_mid = 11.5     # Día de máxima velocidad de crecimiento
+
+curva_teorica = B_max_ref / (1 + np.exp(-k_eriksen * (days_range - t_mid)))
+
+# --- GRÁFICA FINAL ---
+plt.figure(figsize=(12, 7))
+
+# Curva Teórica (Lo que dice el libro)
+plt.plot(days_range, curva_teorica, 'k--', linewidth=2, alpha=0.6, label='Teoría Eriksen (Modelo Ideal)')
+
+# Curvas Reales Inferidas (Lo que dice tu IA)
+plt.plot(days_range, biomasa_D1, 'b-', linewidth=4, alpha=0.9, label='IA: Dieta D1 (Rápida)')
+plt.plot(days_range, biomasa_D4, 'orange', linewidth=4, alpha=0.9, label='IA: Dieta D4 (Lenta)')
+
+# Decoración
+plt.fill_between(days_range, biomasa_D1, alpha=0.1, color='blue')
+plt.title("Sensor Virtual: Estimación de Biomasa basada en Respiración (PINN)", fontsize=14)
+plt.xlabel("Días de Desarrollo", fontsize=12)
+plt.ylabel("Biomasa Acumulada (Unidades Relativas)", fontsize=12)
+plt.legend(fontsize=11, loc='upper left')
+plt.grid(True, linestyle=':', alpha=0.6)
+
+# Anotaciones
+idx_max = np.argmax(biomasa_D1)
+plt.annotate('Fase Prepupa\n(Crecimiento Detenido)',
+             xy=(days_range[idx_max], biomasa_D1[idx_max]),
+             xytext=(14, biomasa_D1[idx_max]*0.8),
+             arrowprops=dict(facecolor='black', shrink=0.05))
+
+plt.tight_layout()
+plt.show()
+print("¡Gráfica generada! Analicemos las curvas...")
+
+import numpy as np
+import pandas as pd
+
+# ==========================================
+# 7. GENERACIÓN DE DATOS: SENSOR VIRTUAL (BIOMASA)
+# ==========================================
+
+print("\n" + "="*50)
+print("EJECUTANDO SENSOR VIRTUAL (ESTIMACIÓN DE BIOMASA)")
+print("="*50)
+
+# --- 1. Definición de Parámetros Biológicos (Aproximación) ---
+# Y_B: Rendimiento (Cuánto CO2 cuesta crear estructura).
+# m: Mantenimiento (Cuánto CO2 cuesta mantener la estructura).
+Y_B = 1.5
+m_coeff = 0.15
+
+# --- 2. Función del Sensor Virtual (Inversa de Eriksen) ---
+def sensor_virtual_biomasa_numerico(tasa_co2, dias, Y_B, m):
+    dt = dias[1] - dias[0]
+
+    # Normalización para unidades relativas (0 a 100% del tamaño final esperado)
+    # Esto es crucial porque la tasa_co2 está en ppm, no en moles exactos.
+    # Usamos un factor de escala basado en el máximo de D1 para tener una referencia.
+    factor_escala = np.max(tasa_co2) / 2.5
+    tasa_norm = tasa_co2 / factor_escala
+
+    biomasa = [0.05] # Iniciamos con una "semilla" de biomasa (larva pequeña)
+
+    for i in range(len(tasa_norm) - 1):
+        r_co2 = tasa_norm[i]
+        B_actual = biomasa[-1]
+
+        # Ecuación diferencial inversa: Crecimiento = (RespiraciónTotal - Mantenimiento) / CostoCrecimiento
+        tasa_crecimiento = (r_co2 - (m * B_actual)) / Y_B
+
+        # Restricción física: No crecimiento negativo (a menos que sea inanición extrema)
+        if tasa_crecimiento < 0: tasa_crecimiento = 0
+
+        B_siguiente = B_actual + tasa_crecimiento * dt
+        biomasa.append(B_siguiente)
+
+    return np.array(biomasa)
+
+# --- 3. Calcular las Curvas ---
+# Usamos las predicciones de CO2 que ya tienes en memoria (pred_D1_real y pred_D4_real)
+bio_est_D1 = sensor_virtual_biomasa_numerico(pred_D1_real[:, 0], days_range, Y_B, m_coeff)
+bio_est_D4 = sensor_virtual_biomasa_numerico(pred_D4_real[:, 0], days_range, Y_B, m_coeff)
+
+# Calcular curva teórica Eriksen (Sigmoidea Ideal) para comparar
+# Parámetros ajustados al máximo de D1 para comparar la FORMA
+B_max_ref = np.max(bio_est_D1)
+k_eriksen = 0.9
+t_mid = 11.5
+bio_teorica = B_max_ref / (1 + np.exp(-k_eriksen * (days_range - t_mid)))
+
+# --- 4. IMPRIMIR TABLA DE DATOS PARA ANÁLISIS ---
+# Seleccionamos índices representativos (uno por día aprox) para no imprimir 1000 lineas
+indices = np.linspace(0, len(days_range)-1, 10, dtype=int)
+
+print(f"{'DÍA':<6} | {'D1 ESTIMADA':<12} | {'D4 ESTIMADA':<12} | {'TEORÍA ERIKSEN':<15} | {'ESTADO D1'}")
+print("-" * 75)
+
+for i in indices:
+    dia = days_range[i]
+    d1_val = bio_est_D1[i]
+    d4_val = bio_est_D4[i]
+    teo_val = bio_teorica[i]
+
+    # Determinar estado simple
+    estado = "Creciendo"
+    if i > 0:
+        # Si creció menos del 1% respecto al punto anterior del loop (aprox)
+        if (d1_val - bio_est_D1[indices[indices.tolist().index(i)-1]]) < 0.05:
+            estado = "Meseta (Prepupa)"
+
+    if dia < 10: estado = "Inicio Exp."
+
+    print(f"{dia:.1f}   | {d1_val:.4f}       | {d4_val:.4f}       | {teo_val:.4f}          | {estado}")
+
+print("-" * 75)
+print("Copia esta tabla y pégala en el chat para analizarla.")
+# ==========================================
+\end{lstlisting}
+
