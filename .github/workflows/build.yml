@@ -9,29 +9,26 @@ on:
 jobs:
   build_latex:
     runs-on: ubuntu-latest
+    # Usamos la misma imagen potente que usas localmente
     container: texlive/texlive:latest
 
     steps:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      # --- COMPILACIÓN DE LA TESIS ---
-      # Ejecutamos los comandos directos para no llamar a Docker desde el Makefile
-      - name: Compilar Tesis (Directo)
-        run: |
-          pdflatex -interaction=nonstopmode tesis.tex
-          biber tesis
-          pdflatex -interaction=nonstopmode tesis.tex
-          pdflatex -interaction=nonstopmode tesis.tex
+      # IMPORTANTE: Configuramos git para confiar en el directorio
+      # (Evita error "dubious ownership" al correr comandos git dentro del container)
+      - name: Configurar Git Safe Directory
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
 
-      # --- COMPILACIÓN DE LA PRESENTACIÓN ---
-      - name: Compilar Presentación (Directo)
-        if: always() # Ejecutar aunque falle la tesis
+      # --- COMPILACIÓN ---
+      # Usamos latexmk con xelatex, EXACTAMENTE como en tu Makefile local.
+      # El flag -f fuerza la generación del PDF aunque falten referencias.
+
+      - name: Compilar Tesis y Presentación
         run: |
-          pdflatex -interaction=nonstopmode presentacion.tex
-          # No necesitamos biber aquí si no hay citas, si las hay, descomenta la linea de abajo:
-          # biber presentacion || true
-          pdflatex -interaction=nonstopmode presentacion.tex
+          latexmk -xelatex -synctex=1 -interaction=nonstopmode -file-line-error -outdir=. -f tesis.tex
+          latexmk -xelatex -synctex=1 -interaction=nonstopmode -file-line-error -outdir=. -f presentacion.tex
 
       # --- SUBIR RESULTADOS ---
       - name: Subir PDFs
