@@ -1,4 +1,4 @@
-# Archivos temporales de LaTeX
+# --- Archivos temporales de LaTeX ---
 *.aux
 *.log
 *.out
@@ -15,11 +15,22 @@
 *.vrb
 *.dvi
 
-# Archivos PDF (Opcional: A veces es bueno ignorarlos para no inflar el repo)
-# tesis.pdf
-# presentacion.pdf
+# Faltaban estos (específicos de XeLaTeX y Biber):
+*.xdv
+*.bcf
+*.run.xml
+*.bbl-SAVE-ERROR
+*.bcf-SAVE-ERROR
 
-# Archivos de sistema
+# Archivos PDF
+# (Descomenta estas líneas si prefieres NO guardar el PDF en el historial)
+#tesis.pdf
+#presentacion.pdf
+
+# --- Archivos de sistema y Editores ---
 .DS_Store
 Thumbs.db
 _minted*
+
+# Scripts de utilidad temporal
+limpiar.py

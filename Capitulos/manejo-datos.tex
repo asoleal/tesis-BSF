@@ -632,6 +632,25 @@ Donde $Y_B$ es el coeficiente de rendimiento que cuantifica la ineficiencia term
 a la formación de nuevos tejidos. Esta formulación permite separar explícitamente la energía destinada 
 a sostener la vida ($m$) de la energía disipada obligatoriamente durante el proceso de crecimiento.
 
+Es fundamental distinguir entre los costos metabólicos asociados al mantenimiento de la biomasa 
+existente y aquellos requeridos para la síntesis de nuevos tejidos. Mientras que el parámetro $m$ 
+define la tasa específica de respiración de mantenimiento, la cual depende de la biomasa acumulada ($B$), 
+la producción de dióxido de carbono asociada al crecimiento estructural, denotada como 
+$r_{\mathrm{CO_2},B}$, está vinculada directamente a la actividad anabólica. Para cuantificar 
+esta contribución, el modelo utiliza el coeficiente de rendimiento $Y_B$, el cual representa 
+el costo energético de biosíntesis por unidad de biomasa estructural producida. En consecuencia, 
+$r_{\mathrm{CO_2},B}$ se calcula como el producto entre el costo de crecimiento y la tasa de 
+crecimiento estructural ($r_B$), de acuerdo con la expresión:
+
+\begin{equation}
+r_{\mathrm{CO_2},B} = Y_B \, r_B
+\label{eq:CO2_growth}
+\end{equation}
+
+Esta formulación asume que la emisión de gases por crecimiento es nula cuando la larva no está 
+incrementando su biomasa estructural (e.g., durante la fase de prepupa o en condiciones de inanición), 
+independientemente de las emisiones basales regidas por el parámetro $m$.
+
 En conjunto, este enfoque proporciona una representación mecanicista del desarrollo de BSF, 
 integrando asimilación, respiración y ontogenia. El modelo resulta especialmente útil para analizar 
 la eficiencia de bioconversión y estimar emisiones de gases de efecto invernadero, vinculando 
@@ -810,6 +829,130 @@ las limitaciones hormonales que fuerzan la metamorfosis incluso con pesos subóp
 la depredación o muerte por inanición. De este modo, el modelo integra explícitamente el efecto 
 del tiempo cronológico sobre el estado final, permitiendo reproducir la variabilidad de tallas 
 observada en lotes heterogéneos de \textit{H. illucens}.
+
+\section{Arquitectura de la Red Neuronal Informada por la Física (PINN)}
+
+Para abordar la estimación de variables de estado no observables (biomasa estructural vs. reservas lipídicas) 
+a partir de datos macroscópicos limitados, se propone una arquitectura de Red Neuronal Informada por la 
+Física (PINN). A diferencia de los modelos de caja negra convencionales, que aprenden mapeos estadísticos 
+directos entre entradas y salidas, la PINN incorpora las leyes mecanicistas derivadas en las secciones 
+anteriores como restricciones duras dentro de la función de pérdida durante el entrenamiento.
+
+La red neuronal se define como una función aproximadora $f_{\theta}(t, x)$, donde $\theta$ representa 
+los parámetros entrenables (pesos y sesgos), $t$ es el tiempo y $x$ agrupa las condiciones ambientales 
+(temperatura, dieta). La salida de la red predice el vector de estado desacoplado:
+
+\begin{equation}
+[\hat{B}, \hat{L}] = f_{\theta}(t, x)
+\end{equation}
+
+La novedad de este enfoque radica en la construcción de la función de pérdida total ($\mathcal{L}_{total}$), 
+la cual combina el error observacional con el "error físico" o residual de las ecuaciones diferenciales ordinarias (ODEs):
+
+\begin{equation}
+\mathcal{L}_{total} = \lambda_{data}\mathcal{L}_{data} + \lambda_{phy}\mathcal{L}_{phy}
+\end{equation}
+
+Donde $\mathcal{L}_{data}$ penaliza la discrepancia entre el peso total predicho ($\hat{W} = \hat{B} + \hat{L}$) 
+y el peso experimental medido. Por su parte, $\mathcal{L}_{phy}$ evalúa el cumplimiento de los balances 
+de masa y energía definidos por el modelo biológico. Específicamente, para la dinámica de crecimiento 
+estructural y lipídico, el residual físico se define como:
+
+\begin{equation}
+\mathcal{L}_{phy} = \left\| \frac{d\hat{B}}{dt} - r_B(\hat{B}, I) \right\|^2 + 
+\left\| \frac{d\hat{L}}{dt} - r_L(\hat{B}, \hat{L}, a) \right\|^2
+\end{equation}
+
+Esta formulación fuerza a la red neuronal a respetar el "freno logístico" del crecimiento estructural 
+(Eq. \ref{eq:muB}) y la asimetría termodinámica de la acumulación de lípidos (Eq. \ref{eq:rL}). 
+De este modo, la PINN actúa como un observador de estados no lineal: utiliza la física gobernante 
+para inferir la composición interna de la larva (ratio $B/L$), una variable que no puede medirse 
+directamente sin métodos destructivos, garantizando que las predicciones sean termodinámicamente 
+consistentes incluso en regiones del espacio de estados con escasos datos experimentales.
+
+\subsection{Integración de Datos Experimentales de Respirometría (Dieta-Específica)}
+
+La disponibilidad de series temporales de concentración de $CO_2$ para diferentes tratamientos dietarios (D1, D4) permite plantear el entrenamiento de la PINN como un problema inverso de estimación de parámetros. En este esquema, el $CO_2$ actúa como la variable observable principal que restringe la dinámica oculta del crecimiento ($B$) y la acumulación de lípidos ($L$).
+
+Para capturar la heterogeneidad metabólica inducida por la dieta, se incorpora un término adicional a la función de pérdida que penaliza la discrepancia entre la tasa de producción de $CO_2$ medida experimentalmente ($r_{CO_2}^{exp}$) y la estimada por el modelo físico ($\hat{r}_{CO_2}$):
+
+\begin{equation}
+\mathcal{L}_{CO_2} = \frac{1}{N} \sum_{i=1}^{N} \left\| r_{CO_2}^{exp}(t_i) - \left( m\hat{B}(t_i) + Y_B \hat{r}_B(t_i) + Y_L \hat{r}_L(t_i) \right) \right\|^2
+\end{equation}
+
+Donde $\hat{B}$, $\hat{r}_B$ y $\hat{r}_L$ son las predicciones de estado y tasas inferidas por la red neuronal en el instante $t_i$.
+
+Esta formulación es crítica porque permite desacoplar los efectos de la dieta. Dado que las dietas D1 y D4 pueden diferir tanto en su digestibilidad (afectando la entrada $r_A$) como en su costo energético de procesamiento, la PINN ajustará los parámetros bioenergéticos para minimizar el error de $CO_2$.
+
+Si se observa experimentalmente que la Dieta D4 genera mayores niveles de $CO_2$ sin un aumento proporcional en la biomasa final, el término $\mathcal{L}_{CO_2}$ forzará al modelo a:
+1.  Aumentar el coeficiente de mantenimiento ($m$) o los costos de síntesis ($Y_B, Y_L$) para esa dieta específica.
+2.  O bien, reducir la eficiencia de asimilación, desviando el flujo de carbono hacia la respiración en lugar de la estructura.
+
+De esta manera, la red neuronal no solo predice el crecimiento, sino que **caracteriza la eficiencia termodinámica** de cada sustrato, proporcionando un perfil metabólico cuantitativo (e.g., "La dieta D4 presenta un costo energético de síntesis un 20\% mayor que D1").
+
+\subsection{Extensión del Modelo: Balance de Carbono Total y Restricciones Temporales}
+
+La inclusión de mediciones de metano ($CH_4$) junto al dióxido de carbono ($CO_2$), sumada a la variabilidad observada en el tiempo hasta la etapa de prepupa (3 días para D1 vs. 4 días para D2), requiere una adaptación de la función de costo de la PINN para cerrar el balance de masa global y explicar la diferencia en la velocidad de desarrollo.
+
+\subsubsection{Integración de Emisiones Anaeróbicas ($CH_4$)}
+Aunque el metabolismo de \textit{H. illucens} es predominantemente aeróbico, la presencia de $CH_4$ indica actividad microbiana anaeróbica en el sustrato, compitiendo por el carbono disponible. Para la PINN, esto se modela como una tasa de pérdida de carbono total ($r_{C,gas}$):
+
+\begin{equation}
+r_{C,gas}(t) = \frac{12}{44}r_{CO_2}(t) + \frac{12}{16}r_{CH_4}(t)
+\end{equation}
+
+Donde los coeficientes representan la fracción molar de carbono en cada gas. La red neuronal se entrena para predecir los flujos metabólicos internos de tal manera que la suma de la respiración larval y la pérdida anaeróbica coincida con el carbono gaseoso total medido por los sensores.
+
+\subsubsection{Condición de Frontera de Prepupa (Time-to-Target)}
+El hecho de que las larvas en la Dieta 1 alcancen el estadio de prepupa en 3 días, mientras que en la Dieta 2 requieran 4 días, sugiere diferencias fundamentales en la Tasa Específica de Asimilación ($a$) o en el umbral de Biomasa Máxima ($B_{\max}$).
+
+Para capturar esto, se introduce una condición de frontera de "Estado Final" en la función de pérdida. Dado que el estado de prepupa implica el cese de la alimentación y la maximización de la biomasa estructural, se impone la siguiente restricción en el tiempo final $t_f$ específico de cada dieta ($t_{f,D1}=3, t_{f,D2}=4$):
+
+\begin{equation}
+\mathcal{L}_{final} = \left\| \hat{B}(t_f) - B_{\max}(t_f) \right\|^2 + \left\| \frac{d\hat{B}}{dt}\bigg|_{t_f} \right\|^2
+\end{equation}
+
+Esta ecuación fuerza a la red neuronal a encontrar una trayectoria de crecimiento que "aterrice" suavemente en el valor máximo exactamente en el día observado experimentalmente.
+
+\subsubsection{Interpretación Física de la Diferencia D1 vs D2}
+Al entrenar la PINN con estas restricciones, el modelo revelará automáticamente el mecanismo subyacente del retraso en D2 a través de los parámetros identificados:
+\begin{itemize}
+    \item Si la PINN ajusta un valor de asimilación $a_{D2} < a_{D1}$, indica que la Dieta 2 es nutricionalmente pobre o difícil de digerir.
+    \item Si la PINN ajusta un mayor costo de mantenimiento $m_{D2} > m_{D1}$ correlacionado con picos de $CH_4$, sugiere que las condiciones anaeróbicas (estrés ambiental) obligaron a la larva a gastar más energía en supervivencia, retrasando su crecimiento.
+\end{itemize}
+
+\subsection{Desacople de la Respiración Microbiana y Larval}
+
+Un desafío crítico en la respirometría de sistemas de bioconversión es distinguir la actividad metabólica 
+del insecto de la descomposición microbiana natural del sustrato. Gracias a la disponibilidad de datos 
+de monitoreo exclusivos del alimento fermentado sin presencia larval (Control de Sustrato), es posible 
+incorporar este flujo basal como una entrada conocida en el modelo.
+
+Definimos la tasa de emisión de $CO_2$ del control microbiano como $r_{CO_2, micro}(t)$. 
+En consecuencia, la función de pérdida asociada a las emisiones gaseosas en la PINN se reestructura 
+para considerar la aditividad de las fuentes:
+
+\begin{equation}
+\mathcal{L}_{CO_2} = \left\| r_{CO_2}^{sensor}(t) - \left( \underbrace{r_{CO_2, micro}(t)}_{\text{Dato Control}} + \underbrace{\left( m\hat{B} + Y_B \hat{r}_B + Y_L \hat{r}_L \right)}_{\text{Predicción Larval (PINN)}} \right) \right\|^2
+\end{equation}
+
+Esta formulación tiene dos ventajas fundamentales para la identificación de los parámetros bioenergéticos:
+
+\begin{enumerate}
+    \item \textbf{Eliminación de Ruido de Fondo:} Al restar explícitamente la dinámica de fermentación 
+    natural del sustrato, la red neuronal se focaliza exclusivamente en aprender los parámetros 
+    fisiológicos de la larva ($m, Y_B, Y_L$), evitando que la actividad bacteriana se malinterprete 
+    como crecimiento larval.
+    
+    \item \textbf{Análisis de Interacción (Efecto de Aeración):} En el caso del metano ($CH_4$), 
+    se espera que $r_{CH_4}^{sensor} < r_{CH_4, micro}$, dado que la actividad de tunelado de las 
+    larvas aera el sustrato e inhibe la metanogénesis anaeróbica. La diferencia entre el control y 
+    el tratamiento cuantifica la "capacidad de ingeniería ecosistémica" de la larva para oxigenar su medio.
+\end{enumerate}
+
+Para la implementación computacional, los datos del control se interpolan mediante \textit{splines} 
+cúbicos para proporcionar una señal continua $r_{CO_2, micro}(t)$ que pueda ser evaluada en cualquier 
+instante temporal requerido por el solucionador de la PINN.
 
 \appendix
 \chapter{Implementación Computacional y Algoritmos}

@@ -1,13 +1,17 @@
 % Esta es la Plantilla UNAL en LaTeX - FINAL (Todas las bibliografías conectadas)
 \documentclass[10pt,spanish,fleqn,openany,twoside,letterpaper]{book}
 
-% --- 1. Configuración de Idioma y Codificación ---
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage{lmodern}
+% --- 1. Configuración de Idioma y Fuentes (MODERNO PARA XELATEX) ---
+\usepackage{fontspec}
+% Configuración automática de fuentes Latin Modern (estándar de LaTeX)
+\setmainfont{Latin Modern Roman}
+\setsansfont{Latin Modern Sans}
+\setmonofont{Latin Modern Mono}
+
 \usepackage[spanish,es-tabla]{babel}
 
 % --- 2. Carga modular ---
+% Asegúrate de que 'preambulo/paquetes_comunes.sty' NO cargue inputenc/fontenc
 \usepackage{preambulo/paquetes_comunes}
 
 % --- 3. Metadatos ---
@@ -25,11 +29,11 @@
 \DefineBibliographyExtras{spanish}{\def\keywordname{Referencias}}
 
 % --- 5. Paquetes Específicos ---
-\usepackage{longtable}   
-\usepackage{tabularx}    
-\usepackage{array}       
-\usepackage{lscape}      
-\usepackage{pgfgantt}    
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{lscape}
+\usepackage{pgfgantt}
 
 \usepackage{rotating}
 \usepackage{chemformula}
@@ -39,35 +43,42 @@
 \usepackage[version=4]{mhchem}
 
 \usepackage{layout}
+% hidelinks quita los recuadros rojos de los links
 \usepackage[hidelinks]{hyperref}
 \usepackage{fancyhdr}
 \usepackage{titlesec}
 \usepackage{listings}
-\usepackage{xcolor}
+%\usepackage{xcolor}
 
-\lstset{
-    inputencoding=utf8,          % Asegura que lea UTF-8
-    extendedchars=true,          % Permite caracteres extendidos
-    literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
-             {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
-             {ñ}{{\~n}}1 {Ñ}{{\~N}}1, % Mapea tildes y eñes automáticamente
-    backgroundcolor=\color{backcolour},   
+% Definición de colores personalizados
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+% Configuración de Listings (LIMPIA PARA XELATEX)
+% Nota: En XeLaTeX no necesitas 'inputencoding' ni 'literate' para tildes.
+% Solo las necesitas si usas caracteres especiales que tu fuente Mono no tenga.
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
     commentstyle=\color{codegreen},
     keywordstyle=\color{magenta},
     numberstyle=\tiny\color{codegray},
     stringstyle=\color{codepurple},
     basicstyle=\ttfamily\footnotesize,
-    breakatwhitespace=false,         
-    breaklines=true,                 
-    captionpos=b,                    
-    keepspaces=true,                 
-    numbers=left,                    
-    numbersep=5pt,                  
-    showspaces=false,                
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
     showstringspaces=false,
-    showtabs=false,                  
+    showtabs=false,
     tabsize=2
 }
+\lstset{style=mystyle}
+
 % --- 6. MÁRGENES Y ESPACIADO ---
 \setlength{\voffset}{-0.25in}
 \setlength{\headwidth}{467pt}
@@ -80,56 +91,22 @@
 \setlength{\textheight}{650pt}
 \setlength{\textwidth}{467pt}
 \setlength{\headsep}{5pt}
-\setlength{\parindent}{0pt} 
+\setlength{\parindent}{0pt}
 \setlength{\baselineskip}{10pt plus 5pt minus 5pt}
 
 % --- 7. Datos de la Tesis ---
 \renewcommand{\studentname}{John Jairo Leal Gómez}
-\renewcommand{\thesisname}{Sistema Híbrido para Predicción de Emisiones de CO$_2$ y CH$_4$ en la Bioconversión de Residuos con \textit{Hermetia illucens}}
+% Usamos \texorpdfstring para proteger las fórmulas en los metadatos del PDF
+\renewcommand{\thesisname}{Sistema Híbrido para Predicción de Emisiones de \texorpdfstring{CO$_2$}{CO2} y \texorpdfstring{CH$_4$}{CH4} en la Bioconversión de Residuos con \textit{Hermetia illucens}}
 \renewcommand{\issuedate}{2025}
 \renewcommand{\submissiondate}{Abril}
 \renewcommand{\director}{Dr. Luis Octavio González Salcedo}
 \renewcommand{\codirector}{Dr. Luis Fernando Mejía Rodríguez}
 \newcommand{\codirectora}{Dra. Sorany Milena Barrientos Grajales}
 \renewcommand{\academictitle}{Doctor (PhD)}
-\renewcommand{\sede}{Sede Palmira} 
+\renewcommand{\sede}{Sede Palmira}
 \renewcommand{\department}{Doctorado en Estudios Ambientales}
 \renewcommand{\faculty}{Facultad de Ingeniería y Administración}
-
-% Definición de colores personalizados
-\definecolor{codegreen}{rgb}{0,0.6,0}
-\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{codepurple}{rgb}{0.58,0,0.82}
-\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
-
-% Definición del estilo "mystyle"
-\lstdefinestyle{mystyle}{
-    backgroundcolor=\color{backcolour},   
-    commentstyle=\color{codegreen},
-    keywordstyle=\color{magenta},
-    numberstyle=\tiny\color{codegray},
-    stringstyle=\color{codepurple},
-    basicstyle=\ttfamily\footnotesize,
-    breakatwhitespace=false,         
-    breaklines=true,                 
-    captionpos=b,                    
-    keepspaces=true,                 
-    numbers=left,                    
-    numbersep=5pt,                  
-    showspaces=false,                
-    showstringspaces=false,
-    showtabs=false,                  
-    tabsize=2,
-    inputencoding=utf8,
-    extendedchars=true,
-    % AQUI ESTA LA CLAVE: Agregamos el signo ¡ a la lista
-    literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 
-             {ñ}{{\~n}}1 {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 
-             {Ú}{{\'U}}1 {Ñ}{{\~N}}1 {¡}{{\textexclamdown}}1
-}
-% Aplicar el estilo por defecto
-\lstset{style=mystyle}
-% =========================================================
 
 % ==========================================
 %    INICIO DEL DOCUMENTO
@@ -186,11 +163,10 @@
 % --- CAPÍTULOS ---
 \pagenumbering{arabic}
 \setlength{\parskip}{1em} 
-
 %\include{Capitulos/introduccion}
 %\include{Capitulos/marco-teorico}
-%\include{Capitulos/estimacion-biomasa}
-\include{Capitulos/manejo-datos}
+\include{Capitulos/estimacion-biomasa}
+%\include{Capitulos/manejo-datos}
 
 %\include{Capitulos/Pregunta}
 %\include{Capitulos/planteamiento}
@@ -200,6 +176,7 @@
 %\input{Capitulos/metodologia.tex}
 %\input{Capitulos/costos.tex}
 %\input{Capitulos/resultados_esperados.tex}
+%\input{referencias.tex}
 
 % --- BIBLIOGRAFÍA ---
 \setlength{\parskip}{0.5em} 
