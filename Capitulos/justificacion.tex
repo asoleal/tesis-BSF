@@ -1,0 +1,23 @@
+La necesidad de desarrollar un sistema híbrido de monitoreo no responde únicamente a una demanda de mercado, sino a una brecha fundamental en la capacidad de los modelos actuales para representar la realidad física del proceso. Esta brecha se ve agravada por la escasa integración de tecnologías de monitoreo con modelos predictivos capaces de resolver las limitaciones estructurales de los enfoques existentes.
+
+\subsection{Limitaciones de los Modelos Bioenergéticos Deterministas}
+El modelo bioenergético de referencia de \textcite{eriksenDynamicModellingFeed2022}, aunque robusto para describir la relación promedio entre biomasa y respiración bajo condiciones controladas de laboratorio, opera bajo el supuesto de homogeneidad larval y condiciones macroscópicas estables. Sin embargo, estudios recientes han documentado que las larvas de \textit{H. illucens} forman agregaciones dinámicas que se comportan como fluidos activos \parencite{koAirFluidizedAggregatesBlack2021}, generando heterogeneidad espacial en el sustrato (gradientes térmicos) que no es capturada por las ecuaciones diferenciales ordinarias deterministas \parencite{tomberlinBugBookBlackSoldier2025}. Esta heterogeneidad sugiere la existencia de microambientes con variabilidad en la disponibilidad de oxígeno --- hipótesis que esta tesis validará experimentalmente mediante el análisis de residuos sistemáticos entre el modelo Eriksen y las mediciones de \ce{CO2} en tiempo real.
+
+\subsection{La Arquitectura Híbrida como Solución Metodológica}
+Esta limitación física justifica la bifurcación del problema en dos frentes complementarios que esta tesis aborda mediante una arquitectura computacional híbrida:
+
+\begin{enumerate}
+    \item \textbf{Sensor Virtual de Biomasa:} La estimación de la biomasa larval $B(t)$ a partir de variables operativas observables (densidad inicial, temperatura, humedad) constituye un problema inverso intrínsecamente no lineal. Esta investigación justifica el uso de una red neuronal \textit{feedforward} para mapear estas relaciones complejas, actuando como un sensor virtual capaz de inferir el estado del sistema sin muestreos destructivos. La elección de $B(t)$ como variable de estado intermedia permite (a) interpretar el modelo mediante una variable biológicamente significativa, (b) reutilizar $B(t)$ para múltiples salidas (detección de prepupación, optimización de cosecha), y (c) reducir la dimensionalidad del problema mediante una representación compacta del estado del sistema.
+    
+    \item \textbf{PINN Genuina para Predicción de Emisiones:} Para la estimación de las emisiones de \ce{CO2}, implementamos una Red Neuronal Informada por la Física (PINN) \textit{genuina} según la formulación original de \textcite{raissiPhysicsinformedNeuralNetworks2019}. A diferencia de los filtros de Kalman que asumen desviaciones gaussianas aditivas, las agregaciones larvales inducen desviaciones sistemáticas y no lineales que requieren un componente de aprendizaje capaz de modelar funciones arbitrarias sin supuestos paramétricos restrictivos. La PINN resuelve directamente la ecuación diferencial del modelo Eriksen:
+    \[
+    \frac{dB}{dt} = f_{\text{Eriksen}}(B; \theta)
+    \]
+    donde la red neuronal $\mathcal{N}(t; \mathbf{w})$ tiene como salida la biomasa $B(t)$ y sus parámetros $\mathbf{w}$ se optimizan minimizando el residual físico como objetivo primario:
+    \[
+    \mathcal{L}(\mathbf{w}) = \underbrace{\frac{1}{N}\sum_{i=1}^{N} \left\| \mathcal{N}(t_i; \mathbf{w}) - B_{\text{sensor}}(t_i) \right\|_2^2}_{\text{Ajuste a datos}} + \lambda \underbrace{\frac{1}{M}\sum_{j=1}^{M} \left\| \frac{\partial \mathcal{N}}{\partial t}(t_j; \mathbf{w}) - f_{\text{Eriksen}}(\mathcal{N}(t_j; \mathbf{w}); \theta) \right\|_2^2}_{\text{Residual de la EDO}}
+    \]
+    La tasa de \ce{CO2} se obtiene posteriormente mediante la relación bioenergética del modelo Eriksen: $\dot{V}_{\ce{CO2}} = Y_{\ce{CO2}} \cdot \frac{dB}{dt}$. Esta formulación garantiza que las predicciones obedezcan a la estructura de conservación de masa del sistema biológico, sin requerir grandes volúmenes de datos etiquetados.
+\end{enumerate}
+
+En conclusión, la arquitectura propuesta supera las implementaciones actuales que operan con parámetros fijos y carecen de retroalimentación en tiempo real \parencite{kamilaris2017review,liuOptimizingDataPipelines2023}, proporcionando una herramienta capaz de validar factores de emisión dinámicos y optimizar el proceso en escenarios industriales reales mediante la preservación explícita de las leyes de conservación en el espacio de búsqueda del aprendizaje automático.
