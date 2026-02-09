@@ -5,7 +5,7 @@ El análisis de la tasa metabólica en larvas de \textit{Hermetia illucens} requ
 
 \section{Metodología de Procesamiento de Datos}
 
-El conjunto de datos original constaba de mediciones en bruto distribuidas en una estructura de directorios jerárquica. Para transformar estos datos en señales metabólicas útiles, se implementó un flujo de trabajo automatizado ("pipeline") en Python.
+El conjunto de datos original constaba de mediciones en bruto distribuidas en una estructura de directorios jerárquica. Para transformar estos datos en señales metabólicas útiles, se implementó un flujo de trabajo automatizado (``pipeline'') en Python.
 
 \subsection{Cálculo de Tasas de Producción}
 Las mediciones de concentración de gas ($C$, en ppm) en función del tiempo ($t$) presentan ruido inherente a los sensores. Para obtener la tasa de producción instantánea ($R$), se aplicó una regresión lineal sobre ventanas de tiempo estabilizadas, descartando los transitorios iniciales causados por la manipulación de las cámaras respirométricas.
