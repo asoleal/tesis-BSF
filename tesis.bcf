@@ -3102,6 +3102,42 @@
     <bcf:citekey order="22" intorder="1">raissiPhysicsinformedNeuralNetworks2019</bcf:citekey>
     <bcf:citekey order="23" intorder="1">kamilaris2017review</bcf:citekey>
     <bcf:citekey order="23" intorder="2">liuOptimizingDataPipelines2023</bcf:citekey>
+    <bcf:citekey order="24" intorder="1">eriksenDynamicModellingFeed2022</bcf:citekey>
+    <bcf:citekey order="25" intorder="1">eriksenDynamicModellingFeed2022</bcf:citekey>
+    <bcf:citekey order="26" intorder="1">FAO2021</bcf:citekey>
+    <bcf:citekey order="26" intorder="2">Leddin2024</bcf:citekey>
+    <bcf:citekey order="27" intorder="1">kongEvaluatingGreenhouseGas2012</bcf:citekey>
+    <bcf:citekey order="27" intorder="2">nordahlGreenhouseGasAir2023</bcf:citekey>
+    <bcf:citekey order="28" intorder="1">Surendra2016</bcf:citekey>
+    <bcf:citekey order="28" intorder="2">bermudezComprehensiveUtilizationBlack2023</bcf:citekey>
+    <bcf:citekey order="28" intorder="3">singhInclusiveApproachOrganic2019</bcf:citekey>
+    <bcf:citekey order="29" intorder="1">dienerConversionOrganicMaterial2009</bcf:citekey>
+    <bcf:citekey order="30" intorder="1">rossiEstimatingDynamicsGreenhouse2024</bcf:citekey>
+    <bcf:citekey order="30" intorder="2">bekkerImpactSubstrateMoisture2021a</bcf:citekey>
+    <bcf:citekey order="30" intorder="3">eriksenDynamicModellingFeed2022</bcf:citekey>
+    <bcf:citekey order="31" intorder="1">jenkinsProcessingPoultryManure2025</bcf:citekey>
+    <bcf:citekey order="32" intorder="1">elsayedConversionProteinrichWaste2024</bcf:citekey>
+    <bcf:citekey order="32" intorder="2">brunoValorizationOrganicWaste2025</bcf:citekey>
+    <bcf:citekey order="33" intorder="1">rossiEstimatingDynamicsGreenhouse2024</bcf:citekey>
+    <bcf:citekey order="34" intorder="1">fuhrmannComprehensiveIndustryrelevantBlack2025</bcf:citekey>
+    <bcf:citekey order="35" intorder="1">elsayedConversionProteinrichWaste2024</bcf:citekey>
+    <bcf:citekey order="35" intorder="2">brunoValorizationOrganicWaste2025</bcf:citekey>
+    <bcf:citekey order="36" intorder="1">bekkerImpactSubstrateMoisture2021a</bcf:citekey>
+    <bcf:citekey order="36" intorder="2">rossiEstimatingDynamicsGreenhouse2024</bcf:citekey>
+    <bcf:citekey order="37" intorder="1">winAnaerobicDigestionBlack2018</bcf:citekey>
+    <bcf:citekey order="37" intorder="2">ahlamineMathematicalAnalysisAnaerobic2024</bcf:citekey>
+    <bcf:citekey order="38" intorder="1">bekkerImpactSubstrateMoisture2021a</bcf:citekey>
+    <bcf:citekey order="38" intorder="2">rossiEstimatingDynamicsGreenhouse2024</bcf:citekey>
+    <bcf:citekey order="39" intorder="1">rajRealTimeEstimation2023</bcf:citekey>
+    <bcf:citekey order="39" intorder="2">duobieneDevelopmentWirelessSensor2022</bcf:citekey>
+    <bcf:citekey order="39" intorder="3">yavariArtEMonArtificialIntelligence2023</bcf:citekey>
+    <bcf:citekey order="40" intorder="1">weichertReviewMachineLearning2019</bcf:citekey>
+    <bcf:citekey order="40" intorder="2">chenOptimizationModelProcess2021</bcf:citekey>
+    <bcf:citekey order="41" intorder="1">kobelskiModelbasedProcessOptimization2024a</bcf:citekey>
+    <bcf:citekey order="41" intorder="2">guillaumeAsymptoticEstimatedDigestibility2023</bcf:citekey>
+    <bcf:citekey order="42" intorder="1">burrelHowMachineThinks2016</bcf:citekey>
+    <bcf:citekey order="43" intorder="1">adadiPeekingBlackBoxSurvey2018</bcf:citekey>
+    <bcf:citekey order="44" intorder="1">carolanAutomatedAgrifoodFutures2020</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="apa">

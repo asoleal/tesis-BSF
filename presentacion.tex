@@ -1,46 +1,602 @@
-\documentclass[aspectratio=169]{beamer}
+\documentclass[aspectratio=169, 10pt]{beamer}
 
-% --- Configuración de Idioma (Igual a la tesis) ---
+% =============================================================================
+% 1. CONFIGURACIÓN BÁSICA Y PAQUETES
+% =============================================================================
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{tikz}
+% --- LIBRERÍAS TIKZ (ACTUALIZADO) ---
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, shadows, shapes.symbols}
 
-% --- Carga Modular ---
-% Esto carga tus configuraciones compartidas
-\usepackage{preambulo/paquetes_comunes}
-\input{preambulo/variables}
+% --- LIBRERÍAS TIKZ (CORREGIDO: SE AGREGÓ 'shadows') ---
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, shadows}
 
-% --- Configuración Beamer ---
-\usetheme{default}
-\usecolortheme{dove} 
+% =============================================================================
+% 2. TEMA
+% =============================================================================
+\usetheme{Madrid}
+\usecolortheme{beaver}
+\setbeamercolor{structure}{fg=darkred}
 
-\title{\thesisname}
-\author{\studentname}
-\institute{\department \ \faculty \ \university}
-\date{\today}
+% =============================================================================
+% 3. METADATOS
+% =============================================================================
+\title[Sistema Híbrido BSF]{Sistema Híbrido para Predicción de Emisiones}
+\subtitle{Integración de Modelos Mecanísticos y Redes Neuronales}
+\author{John Jairo Leal Gómez}
+\institute[UNAL]{Universidad Nacional de Colombia}
+\date{2025}
 
-% --- Paquetes de Química y Unidades (SOLUCIÓN AL ERROR) ---
-\usepackage{chemformula} % Para usar el comando \ch{}
-\usepackage{chemfig}     % Para estructuras químicas
-\usepackage{chemmacros}  % Macros químicos
-\usepackage{siunitx}     % Para unidades (SI)
-\usepackage[version=4]{mhchem} % Alternativa química
-
-% ==========================================
-%    INICIO DE LAS DIAPOSITIVAS
-% ==========================================
 \begin{document}
 
+% --- TÍTULO ---
 \begin{frame}
-\titlepage
+    \titlepage
 \end{frame}
 
-% Ejemplo para probar que funciona
-\begin{frame}{Prueba de Química}
-    Aquí probamos la fórmula que fallaba antes:
-    \vspace{1cm}
-    
-    Producimos \ch{CH4} y \ch{CO2} sin errores.
+% --- AGENDA ---
+\begin{frame}{Índice General}
+    \tableofcontents
 \end{frame}
 
+% =============================================================================
+% SECCIÓN 1: MARCO GENERAL
+% =============================================================================
+\section{Marco General}
+
+\begin{frame}{Marco General: Sistema Híbrido Físico-Digital}
+    \begin{columns}[T]
+        % --- COLUMNA IZQUIERDA ---
+        \column{0.5\textwidth}
+
+        \begin{block}{1. El Desafío: La ``Caja Negra''}
+            Actualmente, para conocer el estado de las larvas hay que abrir el biorreactor, alterando el proceso. Además, existe alta incertidumbre en la medición de emisiones (GEI).
+        \end{block}
+
+        \begin{alertblock}{2. La Propuesta: Sensor Virtual (PINNs)}
+            Proponemos un sistema híbrido que permite ``ver'' dentro del reactor usando solo los gases de salida:
+            \vspace{0.2em}
+            \begin{itemize}
+                \item \textbf{Física (Modelo Eriksen):} Aporta las leyes biológicas de crecimiento y respiración (CO$_2$).
+                \item \textbf{IA (Red Neuronal):} Compensa las limitaciones del modelo y estima lo desconocido (CH$_4$).
+            \end{itemize}
+        \end{alertblock}
+
+        % --- COLUMNA DERECHA ---
+        \column{0.5\textwidth}
+        \centering
+        \begin{tikzpicture}[
+            scale=0.52, transform shape,
+            box/.style={rectangle, draw=black!60, rounded corners, fill=white, align=center, font=\normalsize, minimum width=2.5cm, minimum height=1cm, text width=2.6cm},
+            arrow/.style={->, thick, >=stealth, color=black!80}
+        ]
+            % Nivel 1: Realidad
+            \node[box, fill=green!10] (bio) {Biorreactor BSF\\(Larvas + Residuos)};
+            \node[right=0.2cm of bio, font=\small, text width=2cm, align=left] {Generación real\\de Gases};
+
+            % Nivel 2: Datos
+            \node[box, fill=gray!10, below=0.8cm of bio] (sensor) {Sensores Off-Gas\\(CO$_2$, CH$_4$)};
+
+            % Nivel 3: El Sistema Híbrido
+            \node[rectangle, draw=blue!50, dashed, fill=blue!5, below=1.5cm of sensor, minimum width=4.8cm, minimum height=2.8cm] (hybrid) {};
+            \node[below=1.5cm of sensor, font=\bfseries\large, color=blue!80!black] {SISTEMA HÍBRIDO};
+
+            % Componentes internos
+            \node[rectangle, draw, fill=white, below=2.6cm of sensor, xshift=-1.2cm, font=\scriptsize, align=center, text width=1.8cm] (model) {Modelo Eriksen\\(Física)};
+            \node[rectangle, draw, fill=white, below=2.6cm of sensor, xshift=1.2cm, font=\scriptsize, align=center, text width=1.8cm] (nn) {Red Neuronal\\(Datos)};
+
+            % Nivel 4: Resultado
+            \node[star, star points=10, draw, fill=yellow!40, below=0.6cm of hybrid, align=center, font=\bfseries, text width=2.2cm] (result) {Sensor Virtual\\(Biomasa)};
+
+            % Conexiones
+            \draw[arrow] (bio) -- (sensor);
+            \draw[arrow] (sensor) -- (hybrid);
+            \draw[arrow] (hybrid) -- (result);
+            \draw[<->, dashed] (model) -- (nn);
+        \end{tikzpicture}
+    \end{columns}
+\end{frame}
+
+% =============================================================================
+% SECCIÓN 2: JUSTIFICACIÓN
+% =============================================================================
+\section{Justificación}
+
+\begin{frame}{Justificación Ambiental y Estado del Arte}
+    \begin{columns}[T]
+        % --- IZQUIERDA ---
+        \column{0.48\textwidth}
+        \vspace{-0.5cm}
+        \begin{alertblock}{La Problemática: Incertidumbre en GEI}
+            La literatura reciente (Mertenat et al., 2019; Parodi et al., 2020) señala desafíos críticos:
+            \vspace{0.3em}
+            \begin{itemize}
+                \item \textbf{Emisiones Ocultas:} Riesgo de generar \textbf{Metano (CH$_4$)} (28x CO$_2$) en zonas anaerobias.
+                \item \textbf{Vacío de Datos:} Falta monitoreo en \textbf{tiempo real} para cerrar balances de masa.
+                \item \textbf{Caja Negra Biológica:} Se desconoce el flujo de carbono interno.
+            \end{itemize}
+        \end{alertblock}
+
+        % --- DERECHA ---
+        \column{0.48\textwidth}
+        \vspace{-0.25cm}
+        \begin{exampleblock}{¿Por qué un Modelo Metabólico?}
+            Para cerrar el \textbf{Balance de Carbono}, necesitamos cuantificar la respiración:
+            \vspace{0.3em}
+            \begin{itemize}
+                \item \textbf{Huella de Carbono:} Eriksen (2022) calcula cuánto Carbono se emite como CO$_2$ vs. cuánto se fija en biomasa.
+                \item \textbf{Detección de Anomalías:} Desviaciones entre CO$_2$ predicho y medido indican problemas.
+                \item \textbf{Optimización:} Maximizar bioconversión reduciendo pérdidas gaseosas.
+            \end{itemize}
+        \end{exampleblock}
+    \end{columns}
+    \vspace{0.5cm}
+    \centering
+    \small \textit{``Lo que no se mide, no se puede gestionar''.}
+\end{frame}
+
+% =============================================================================
+% SECCIÓN 3: EL MODELO DE ERIKSEN (DETALLADO)
+% =============================================================================
+\section{Desglose del Modelo Matemático}
+
+% --- DIAPOSITIVA DIAGRAMA ---
+\begin{frame}{Modelo DEB de Eriksen: Flujos Metabólicos}
+    \begin{columns}[T]
+        \column{0.4\textwidth}
+        \begin{block}{La Lógica del Carbono}
+            El alimento entra al pool de \textbf{Asimilados ($A$)} y se distribuye. El $CO_2$ se genera como un ``costo'' en tres puntos:
+        \end{block}
+        \small
+        \begin{enumerate}
+            \item \textbf{$r_{CO2,m}$ (Mantenimiento):} Costo fijo de vivir.
+            \item \textbf{$r_{CO2,B}$ (Estructura):} Costo de crecer ($B$).
+            \item \textbf{$r_{CO2,L}$ (Lípidos):} Costo de engordar ($L$).
+        \end{enumerate}
+
+        \column{0.6\textwidth}
+        \centering
+        \vspace{1.5cm} % Ajuste vertical
+
+        \begin{tikzpicture}[scale=0.85, transform shape,
+            box/.style={rectangle, draw=black, thick, rounded corners, fill=white, align=center, font=\footnotesize\bfseries, minimum height=1cm, drop shadow},
+            gas/.style={rectangle, draw=black, dashed, thick, fill=gray!5, minimum width=4cm, minimum height=0.8cm},
+            arrow/.style={->, ultra thick, >=stealth, color=black}
+        ]
+            % Fondo
+            \draw[fill=gray!10, draw=none, rounded corners=15pt] (-3.5, -1.5) rectangle (3.5, 1.5);
+            \node[gray!40, font=\tiny, anchor=south] at (0,-1.5) {Larva};
+
+            % Nodos
+            \node[box, text width=2cm] (A) at (0, 0) {Asimilados\\$A$};
+            \node[box, text width=2cm] (B) at (-3, 0) {Estructura\\$B$};
+            \node[box, text width=2cm] (L) at (3, 0) {Lípidos\\$L$};
+            \node[gas] (CO2) at (0, 2.5) {\Large CO$_2$};
+
+            % Flujos (CORREGIDO: SE ELIMINÓ 'border')
+            \draw[arrow] (0, -1.5) -- node[fill=white, inner sep=1pt, font=\tiny] {$r_A$} (A);
+            \draw[arrow] (A) -- node[below, font=\tiny] {$r_B$} (B);
+
+            \draw[arrow] ([yshift=2mm]A.east) -- node[above, font=\tiny] {$r_L$} ([yshift=2mm]L.west);
+            \draw[arrow] ([yshift=-2mm]L.west) -- ([yshift=-2mm]A.east);
+
+            % CO2
+            \draw[arrow] (A.north) -- node[fill=white, inner sep=1pt, font=\tiny] {$r_{CO2,m}$} (CO2.south);
+            \draw[arrow] (-1.5, 0.2) -- (-1.5, 2.1) node[midway, fill=white, inner sep=1pt, font=\tiny] {$r_{CO2,B}$};
+            \draw[arrow] (1.5, 0.2) -- (1.5, 2.1) node[midway, fill=white, inner sep=1pt, font=\tiny] {$r_{CO2,L}$};
+        \end{tikzpicture}
+    \end{columns}
+\end{frame}
+
+% --- DIAPOSITIVA 1: ECUACIÓN MAESTRA ---
+\begin{frame}{1. Descomposición de la Señal de CO$_2$}
+    \begin{block}{La Ecuación Maestra }
+        Lo que miden nuestros sensores no es un valor único, sino la suma de tres procesos fisiológicos distintos:
+    \end{block}
+
+    \vspace{0.2cm}
+    \centering
+    \large
+    \begin{equation}
+        r_{CO2} = \underbrace{r_{CO2,m}}_{\text{Mantenimiento}} + \underbrace{r_{CO2,B}}_{\text{Crecimiento}} + \underbrace{r_{CO2,L}}_{\text{Reservas (Grasa)}} \tag{Ec. 14}
+    \end{equation}
+    \normalsize
+
+    \vspace{0.4cm}
+    \begin{itemize}
+        \item \textbf{El Reto:} El sensor nos da el total. La IA debe ``desmezclar'' esta señal para saber si las larvas están creciendo o solo engordando.
+    \end{itemize}
+\end{frame}
+
+% --- DIAPOSITIVA 2: ASIMILACIÓN ---
+\begin{frame}{2. El Motor: Asimilación y Apetito ($r_A$)}
+    La producción de gas empieza por la boca.
+
+    \vspace{0.2cm}
+    \begin{columns}[T]
+        \column{0.48\textwidth}
+        \textbf{Fase Exponencial (Ec. 4)}
+        $$ r_A = a \cdot B $$
+        \small La ingesta es proporcional al tamaño ($B$).
+        \textit{Más grandes = Comen más = Más CO$_2$.}
+
+        \column{0.48\textwidth}
+        \textbf{Freno de Saciedad (Ec. 5)}
+        $$ a = a_{max} \left( 1 - \left( \frac{B}{B_{max}} \right)^\alpha \right) $$
+        \small Cuando la larva se acerca a su tamaño máximo ($B \to B_{max}$), deja de comer.
+    \end{columns}
+
+    \vspace{0.4cm}
+    \centering
+    \begin{alertblock}{Interpretación del Sensor}
+        Si el CO$_2$ cae repentinamente, puede ser que las larvas hayan alcanzado su $B_{max}$ (saciedad) y no falta de oxígeno.
+    \end{alertblock}
+\end{frame}
+
+% --- DIAPOSITIVA 3A: DEFINICIÓN DE r_L (EL TANQUE) ---
+\begin{frame}{3 Dinámica de Lípidos ($r_L$): El Tanque de Reserva}
+    A diferencia de la estructura ($B$) que siempre crece, los lípidos ($L$) funcionan como una batería: se cargan o se descargan.
+
+    \begin{block}{El Balance de Energía (Ec. 12)}
+        La tasa de cambio de lípidos ($r_L$) es simplemente lo que sobra después de pagar los gastos obligatorios:
+
+        \vspace{0.2em}
+        \centering
+        \large
+        $$ r_L = \frac{\overbrace{r_A}^{\text{Ingresos}} - (\overbrace{r_B + r_{CO2,m} + r_{CO2,B}}^{\text{Gastos Obligatorios}})}{1 + Y_L} $$
+    \end{block}
+
+    \vspace{0.3cm}
+    \begin{columns}[T]
+        \column{0.5\textwidth}
+        \textbf{Caso 1: Superávit ($r_L > 0$)}
+        \small
+        Si la larva come más de lo que gasta, el exceso se guarda como aceite.
+        \textcolor{green!60!black}{\textbf{$\rightarrow$ Acumulación}}
+
+        \column{0.5\textwidth}
+        \textbf{Caso 2: Déficit ($r_L < 0$)}
+        \small
+        Si falta comida, la larva ``quema'' sus reservas para mantenerse viva.
+        \textcolor{red}{\textbf{$\rightarrow$ Movilización}}
+    \end{columns}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% =============================================================================
+% BLOQUE DE DIAPOSITIVAS CORREGIDAS (SIN ERRORES LR MODE)
+% =============================================================================
+
+% --- 1. MANTENIMIENTO (ROJO) ---
+\begin{frame}{El Costo de Mantenimiento ($r_{CO2,m}$): El Impuesto a la Vida}
+    \centering
+    \textbf{\large ¿Cuánto ``cuesta'' simplemente existir?}
+    \vspace{0.2cm}
+
+    % Diagrama Central
+    \begin{tikzpicture}[
+        node distance=1.2cm,
+        process/.style={rectangle, draw=red!80, fill=red!10, thick, rounded corners, minimum height=1cm, minimum width=2.5cm, align=center},
+        input/.style={rectangle, draw=none, fill=blue!10, text=blue!60!black, font=\bfseries},
+        status/.style={rectangle, draw=none, fill=green!10, text=green!60!black, font=\bfseries},
+        gas/.style={cloud, draw=gray, fill=gray!10, aspect=2, minimum width=1.5cm, font=\small},
+        arrow/.style={->, ultra thick, >=stealth, color=black!70}
+    ]
+        \node[process] (mach) {\textbf{Metabolismo Basal}};
+        \node[input, left=0.8cm of mach] (in) {Biomasa ($B$)};
+        \node[status, right=0.8cm of mach] (out) {Vida};
+        \node[gas, above=0.8cm of mach] (co2) {CO$_2$};
+
+        \draw[arrow] (in) -- (mach);
+        \draw[arrow] (mach) -- (out);
+        \draw[arrow, dashed, color=red!60!black] (mach) -- node[midway, right, font=\footnotesize, text=red!70!black] {Gasto ($m$)} (co2);
+    \end{tikzpicture}
+
+    % Ecuación
+    \begin{block}{La Ecuación del Mantenimiento}
+        \centering \large
+        $ r_{CO2,m} = m \cdot B $
+    \end{block}
+
+    % CONCLUSIÓN (Usando Alertblock para evitar error LR Mode)
+    \begin{alertblock}{Interpretación y Dato Clave}
+        \small
+        Es la energía para mantener gradientes iónicos y reparar células.
+        \par\vspace{0.1cm}
+        \textbf{Ojo al Sensor:} Este componente \textbf{nunca es cero} y aumenta linealmente con el tamaño. Si hay muchas larvas, habrá CO$_2$ de fondo.
+    \end{alertblock}
+\end{frame}
+
+% --- 2. CRECIMIENTO (AZUL) ---
+\begin{frame}{El Costo de Crecer ($r_{CO2,B}$): Síntesis de Estructura}
+    \centering
+    \textbf{\large ¿Cuánto ``cuesta'' fabricar nuevo tejido?}
+    \vspace{0.2cm}
+
+    % Diagrama Central
+    \begin{tikzpicture}[
+        node distance=1.2cm,
+        process/.style={rectangle, draw=blue!80, fill=blue!10, thick, rounded corners, minimum height=1cm, minimum width=2.5cm, align=center},
+        input/.style={rectangle, draw=none, fill=green!10, text=green!30!black, font=\bfseries},
+        output/.style={rectangle, draw=none, fill=blue!20, text=blue!60!black, font=\bfseries},
+        gas/.style={cloud, draw=gray, fill=gray!10, aspect=2, minimum width=1.5cm, font=\small},
+        arrow/.style={->, ultra thick, >=stealth, color=black!70}
+    ]
+        \node[process] (mach) {\textbf{Anabolismo}};
+        \node[input, left=0.8cm of mach] (in) {Aminoácidos};
+        \node[output, right=0.8cm of mach] (out) {Tejido ($r_B$)};
+        \node[gas, above=0.8cm of mach] (co2) {CO$_2$};
+
+        \draw[arrow] (in) -- (mach);
+        \draw[arrow] (mach) -- (out);
+        \draw[arrow, dashed, color=red!60!black] (mach) -- node[midway, right, font=\footnotesize, text=red!70!black] {Costo ($Y_B$)} (co2);
+    \end{tikzpicture}
+
+    % Ecuación
+    \begin{block}{La Ecuación del Crecimiento}
+        \centering \large
+        $ r_{CO2,B} = Y_B \cdot r_B $
+    \end{block}
+
+    % CONCLUSIÓN
+    \begin{exampleblock}{Interpretación y Dato Clave}
+        \small
+        $Y_B$ es el CO$_2$ liberado al sintetizar proteínas y quitina.
+        \par\vspace{0.1cm}
+        \textbf{Ojo al Sensor:} A diferencia de la grasa, este componente \textbf{cae a cero} cuando la larva madura ($B \to B_{max}$).
+    \end{exampleblock}
+\end{frame}
+
+% --- 3. LÍPIDOS / Y_L (AZUL/NARANJA) ---
+\begin{frame}{La Relación Estequiométrica ($Y_L$)}
+    \centering
+    \textbf{\large ¿Por qué la producción de grasa genera gas?}
+    \vspace{0.2cm}
+
+    % Diagrama Central
+    \begin{tikzpicture}[
+        node distance=1.2cm,
+        process/.style={rectangle, draw=blue!80, fill=blue!5, thick, rounded corners, minimum height=1cm, minimum width=2.5cm, align=center},
+        input/.style={rectangle, draw=none, fill=green!10, text=green!30!black, font=\bfseries},
+        output/.style={rectangle, draw=none, fill=orange!10, text=orange!60!black, font=\bfseries},
+        gas/.style={cloud, draw=gray, fill=gray!10, aspect=2, minimum width=1.5cm, font=\small},
+        arrow/.style={->, ultra thick, >=stealth, color=black!70}
+    ]
+        \node[process] (mach) {\textbf{Biosíntesis}};
+        \node[input, left=0.8cm of mach] (in) {Nutrientes};
+        \node[output, right=0.8cm of mach] (out) {Lípidos ($r_L$)};
+        \node[gas, above=0.8cm of mach] (co2) {CO$_2$};
+
+        \draw[arrow] (in) -- (mach);
+        \draw[arrow] (mach) -- (out);
+        \draw[arrow, dashed, color=red!60!black] (mach) -- node[midway, right, font=\footnotesize, text=red!70!black] {Costo ($Y_L$)} (co2);
+    \end{tikzpicture}
+
+    % Ecuación
+    \begin{block}{La Ecuación Causa-Efecto}
+        \centering \large
+        $ r_{CO2,L} = Y_L \cdot r_L $
+    \end{block}
+
+    % CONCLUSIÓN
+    \begin{exampleblock}{Conclusión Final}
+        \small
+        Transformar carbohidratos en lípidos requiere romper moléculas (Ineficiencia).
+        \par\vspace{0.1cm}
+        \textbf{Importante:} Como $Y_L$ es constante, un aumento en el CO$_2$ (sin crecimiento $B$) implica un aumento en las reservas de grasa.
+    \end{exampleblock}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% --- DIAPOSITIVA 4: EL PROBLEMA DEL SUSTRATO (BACTERIAS) ---
+\begin{frame}{4. El ``Factor Oculto'': La Actividad Microbiana Exógena}
+
+    \begin{block}{El Contexto Real: Fermentación}
+        Nuestro sustrato no es estéril. Es un alimento fermentado cargado de \textbf{microorganismos (bacterias y hongos)} que compiten por los nutrientes y respiran activamente.
+    \end{block}
+
+    \vspace{0.2cm}
+
+    \begin{alertblock}{La Limitación del Modelo de Eriksen}
+        El modelo mecanístico asume que el sustrato es inerte.
+        \begin{itemize}
+            \item \textbf{Hipótesis de Eriksen:} Todo el CO$_2$ generado proviene del metabolismo de la larva.
+            \item \textbf{Nuestra Realidad:} El sensor mide la suma total:
+            $$ \text{CO}_{2,\text{Sensor}} = \underbrace{\text{CO}_{2,\text{Larvas}}}_{\text{Señal Útil}} + \underbrace{\text{CO}_{2,\text{Bacterias}}}_{\text{Ruido/Interferencia}} $$
+        \end{itemize}
+    \end{alertblock}
+
+    \vspace{0.2cm}
+
+    \textbf{El Dilema Analítico:}
+    Si las bacterias generan calor y CO$_2$ por su cuenta... \textbf{¿Cómo sabemos si un aumento en el sensor se debe a que las larvas están creciendo mucho, o simplemente a que el sustrato se está pudriendo más rápido?}
+
+    \vspace{0.2cm}
+    \textit{Este es el punto ciego del modelo matemático que la Red Neuronal debe ayudarnos a resolver.}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% --- DIAPOSITIVA 5: FASE DE PREPUPA (EL APAGADO) ---
+\begin{frame}{5. El Cambio de Fase: La Transición a Prepupa}
+    ¿Qué pasa cuando la larva decide que ya está lista?
+
+    \begin{block}{El Cese de la Alimentación ($r_A \to 0$)}
+        Al alcanzar el peso crítico ($B_{max}$), la larva vacía su intestino y deja de comer. Matemáticamente, esto colapsa el modelo:
+        $$ r_A = 0 \quad \Rightarrow \quad r_B = 0 \quad \text{y} \quad r_L = 0 $$
+    \end{block}
+
+    \vspace{0.3cm}
+
+    \textbf{Consecuencias en la Señal del Sensor:}
+    \begin{itemize}
+        \item \textbf{Caída Drástica:} Los componentes de crecimiento ($r_{CO2,B}$) y lípidos ($r_{CO2,L}$) desaparecen.
+        \item \textbf{Solo Mantenimiento:} La larva sigue respirando ($r_{CO2,m}$), pero la señal total cae abruptamente.
+        \item \textbf{Movilización de Reservas:} Si no se cosecha rápido, la larva empieza a consumir su propia grasa ($r_L < 0$) para moverse y buscar un lugar seco.
+    \end{itemize}
+
+    \vspace{0.2cm}
+    \begin{alertblock}{Alerta de Cosecha}
+        El sensor detecta este ``silencio metabólico''. Es la señal inequívoca de que el proceso ha terminado. \textbf{Cada hora extra es pérdida de peso.}
+    \end{alertblock}
+\end{frame}
+
+% --- DIAPOSITIVA 6: EL METANO (EL PUNTO CIEGO) ---
+\begin{frame}{6. El Monitor de Salud del Proceso: Metano ($CH_4$)}
+
+    \begin{alertblock}{El Gran Ausente en Eriksen}
+        El modelo de Eriksen asume condiciones aeróbicas ideales. En su ecuación, el Carbono solo sale como CO$_2$ o Biomasa.
+        \vspace{0.1cm}
+        \textbf{Sin embargo:} Ignora la formación de zonas muertas (sin oxígeno) en el biorreactor.
+    \end{alertblock}
+
+    \vspace{0.3cm}
+
+    \begin{block}{¿Por qué el CH$_4$ es vital para nosotros?}
+        Más allá del cambio climático (28x GWP), el Metano es el \textbf{termómetro de la salud del proceso}:
+    \end{block}
+
+    \vspace{0.2cm}
+    \small
+    \begin{enumerate}
+        \item \textbf{Indicador de Anaerobiosis:} Si el sensor detecta CH$_4$, significa que el sustrato está compactado o saturado de agua.
+        \item \textbf{Competencia Desleal:} Las bacterias metanogénicas consumen el carbono que debería ir a la larva.
+        \item \textbf{Toxicidad:} Condiciones anaerobias generan amoníaco y ácidos que inhiben el crecimiento de la larva.
+    \end{enumerate}
+
+    \vspace{0.2cm}
+    \centering
+    \textit{Conclusión: Mientras el modelo físico (Eriksen) sigue el CO$_2$, nuestra Red Neuronal vigila el CH$_4$ para alertar sobre fallas operativas.}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% --- DIAPOSITIVA 4: COSECHA Y ESTADIOS (MEJORADA) ---
+\begin{frame}{4. Dinámica de Estadios y Ventana de Cosecha ($B_{max}$)}
+    El fin del proceso no es aleatorio. Depende de alcanzar ``umbrales de peso'' antes de que el tiempo se agote.
+
+    % BLOQUE SUPERIOR: CÓMO SABE LA LARVA EN QUÉ ETAPA ESTÁ
+    \begin{block}{1. El Disparador del Cambio: Peso Crítico (Ec. 15)}
+        La transición entre estadios (Instar $j \to j+1$) ocurre estrictamente cuando la estructura ($B$) supera un umbral fijo ($W_j$):
+        $$ \text{Estadio} = j \quad \iff \quad W_{j-1} \le B < W_j $$
+        \footnotesize \textit{Esto implica que si faltan nutrientes, la larva se queda ``estancada'' en un estadio joven, retrasando todo el ciclo.}
+    \end{block}
+\end{frame}
+\begin{frame}
+
+    % COLUMNAS: LA CARRERA CONTRA EL TIEMPO
+    \begin{columns}[T]
+        \column{0.55\textwidth}
+        \begin{alertblock}{2. La Penalización Fisiológica (Ec. 16)}
+            El potencial máximo de crecimiento ($B_{max}$) no es constante. Si la larva tarda mucho en crecer ($t > t_{p,min}$), su ``techo'' baja:
+            $$ B_{max}(t) = B_{max,0} - \underbrace{\rho \cdot (t - t_{p,min})}_{\text{Pérdida de Potencial}} $$
+        \end{alertblock}
+
+        \column{0.45\textwidth}
+        \vspace{0.2cm}
+        \textbf{Interpretación de Componentes:}
+        \begin{itemize}
+            \item \textbf{$B_{max,0}$:} Tamaño ideal genético.
+            \item \textbf{$t_{p,min}$:} Tiempo mínimo biológico para pupar.
+            \item \textbf{$\rho$ (Rho):} Tasa de deterioro.
+        \end{itemize}
+    \end{columns}
+
+    \vspace{0.3cm}
+
+    % CONCLUSIÓN DE INGENIERÍA
+    \begin{exampleblock}{El Dilema de Control}
+        \small
+        Si el proceso es lento (baja temperatura/mala comida), $t$ aumenta. Según la Ec. 16, $B_{max}$ disminuye.
+        \textbf{Resultado:} Las larvas puparán siendo más pequeñas. El sensor detectará una caída prematura del $CO_2$ ($r_B \to 0$), indicando una cosecha de bajo rendimiento.
+    \end{exampleblock}
+\end{frame}% ============================================================================
+%******************************************************************************
+% =============================================================================
+% SECCIÓN 4: SIMULACIÓN Y CONVERSIÓN DE DATOS
+% =============================================================================
+\section{Simulación y Métricas Industriales}
+
+% --- DIAPOSITIVA 6: DE TASAS A CRECIMIENTO (Ecs. 17 y 18) ---
+\begin{frame}{6. Del ``Respiro Instantáneo'' al Crecimiento Acumulado}
+    El sensor mide lo que pasa en un instante ($t$), pero necesitamos saber el peso total acumulado. Eriksen resuelve esto numéricamente (Método de Euler):
+
+    \vspace{0.3cm}
+
+    \begin{block}{Integración en el Tiempo (Ecs. 17 y 18)}
+        El estado futuro ($t + \Delta t$) depende del estado actual más la tasa de crecimiento calculada a partir del CO$_2$:
+        \begin{align}
+            B_{t+\Delta t} &= B_t + \underbrace{r_{B,t}}_{\text{Deducido del } CO_2} \cdot \Delta t \tag{Ec. 17} \\
+            L_{tot, t+\Delta t} &= L_{tot, t} + \underbrace{(r_{L,t} + \delta_L r_{B,t})}_{\text{Grasa sintetizada}} \cdot \Delta t \tag{Ec. 18}
+        \end{align}
+    \end{block}
+
+    \vspace{0.2cm}
+    \textbf{La Función del Sensor Virtual:}
+    \begin{itemize}
+        \item El sensor mide el $r_{CO2}$ en tiempo real.
+        \item El modelo ``despeja'' $r_B$ y $r_L$ de esa señal.
+        \item \textbf{Resultado:} Podemos graficar la curva de crecimiento día a día sin pesar físicamente las larvas.
+    \end{itemize}
+\end{frame}
+
+% --- DIAPOSITIVA 7: MÉTRICAS INDUSTRIALES (Ecs. 19 y 22) ---
+\begin{frame}{7. Traducción a Métricas de la Industria (Peso y Calidad)}
+    El modelo calcula ``Moles de Carbono'', pero la industria vende ``Kilogramos de Larva''. ¿Cómo se relacionan?
+
+    \vspace{0.2cm}
+
+    \begin{columns}[T]
+        \column{0.5\textwidth}
+        \begin{exampleblock}{Peso Seco ($X_{DW}$) - Ec. 19}
+            Convierte la estructura ($B$) y los lípidos ($L$) en materia seca, considerando que el carbono es solo una fracción ($\delta_C$) del tejido:
+            $$ X_{DW} = \frac{(1-\delta_{L,B})B}{\delta_{C,B}\delta_O} + \frac{L_{tot}}{\delta_{C,L}} $$
+        \end{exampleblock}
+
+        \column{0.5\textwidth}
+        \begin{alertblock}{Peso Húmedo ($X_{WW}$) - Ec. 22}
+            Es lo que realmente pesa la cosecha. Depende crucialmente del contenido de agua, que varía inversamente a la grasa:
+            $$ \delta_{DW} = \frac{X_{DW}}{X_{WW}} $$
+        \end{alertblock}
+    \end{columns}
+
+    \vspace{0.5cm}
+    \centering
+    \small
+    \textbf{Conexión Crítica con el CO$_2$:}\\
+    Si el sensor detecta alta producción de lípidos ($r_{CO2,L} \uparrow$), la ecuación 22 predice que el porcentaje de materia seca aumentará (las larvas grasosas tienen menos agua).
+\end{frame}
+% =============================================================================
+% CIERRE
+% =============================================================================
+\section{Conclusiones}
+
+% --- DIAPOSITIVA: CONCLUSIONES Y TRABAJO FUTURO ---
+\begin{frame}{Conclusiones y Perspectivas del Proyecto}
+
+    \begin{block}{1. Validación del concepto ``Sensor Virtual''}
+        Hemos demostrado teóricamente que existe una correlación estequiométrica directa entre la tasa de respiración ($r_{CO2}$) y la acumulación de biomasa ($B$) y lípidos ($L$).
+        \begin{itemize}
+            \item \footnotesize \textit{Esto confirma que es posible monitorear el crecimiento sin perturbar el sistema.}
+        \end{itemize}
+    \end{block}
+
+    \vspace{0.2cm}
+
+    \begin{alertblock}{2. La Brecha del Modelo Mecanístico}
+        El modelo de Eriksen es insuficiente para escenarios reales con residuos orgánicos, ya que ignora:
+        \begin{itemize}
+            \item La carga microbiana del sustrato (ruido en la señal de CO$_2$).
+            \item La generación de Metano (CH$_4$) como indicador de falla anaerobia.
+        \end{itemize}
+    \end{alertblock}
+
+    \vspace{0.2cm}
+
+    \begin{exampleblock}{3. La Propuesta de Valor (En Desarrollo)}
+        La integración de una \textbf{Red Neuronal} permitirá desacoplar la señal biológica:
+        $$ \text{Señal Total} \xrightarrow{\text{Red Neuronal}} \text{Larva (Útil)} + \text{Bacteria (Ruido)} $$
+        \footnotesize \textit{Actualmente estamos en fase de entrenamiento para validar esta separación con datos experimentales.}
+    \end{exampleblock}
+
+\end{frame}
 \end{document}
