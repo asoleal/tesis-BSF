@@ -492,24 +492,34 @@ Procesos alternativos a comparar:
 
 \begin{table}[H]
 \centering
+\small % Ayuda a que quepa más contenido cómodamente
 \caption{Variables del sistema y sus relaciones con GEI}
 \label{tab:variables_gei}
-\begin{tabular}{|l|l|l|l|l|}
-\hline
-\textbf{Variable} & \textbf{Tipo} & \textbf{Sensor requerido} & \textbf{Frecuencia} & \textbf{Relacion con GEI} \\ \hline
-\textbf{CO\textsubscript{2}} & Directa & NDIR (0--10,000 ppm) & 1 min & $\propto$ metabolismo aerobico larval + actividad microbiana \\ \hline
-\textbf{CH\textsubscript{4}} & Directa & Sensor MOS/electroquimico & 5 min & $\propto$ zonas anaerobicas en sustrato (funcion de humedad $>$70\% y compactacion) \\ \hline
-\textbf{Temperatura} & Directa & Termopar PT100 & 1 min & Controla Q\textsubscript{10} metabolico: $R(T) = R_{25} \times 2^{((T-25)/10)}$ \\ \hline
-\textbf{Humedad relativa} & Directa & Capacitivo & 1 min & $>$75\% $\rightarrow$ riesgo de anaerobiosis $\rightarrow$ $\uparrow$CH\textsubscript{4} \\ \hline
-\textbf{pH} & Directa & Electrodo combinado & 10 min & $<$5.5 $\rightarrow$ inhibicion microbiana; $>$8.0 $\rightarrow$ $\uparrow$NH\textsubscript{3} volatilizacion \\ \hline
-\textbf{Conductividad} & Directa & Sonda de 4 anillos & 10 min & $\propto$ acumulacion de sales (NH\textsubscript{4}\textsuperscript{+}, K\textsuperscript{+}) $\rightarrow$ estres larval \\ \hline
-\textbf{O\textsubscript{2}} & Directa & Sensor optico & 1 min & $<$15\% $\rightarrow$ inicio de condiciones anaerobicas \\ \hline
-\textbf{Biomasa larval} & Latente & Inference PGNN & 24h & $\propto$ eficiencia de conversion de carbono (FCE) \\ \hline
-\textbf{N\textsubscript{2}O} & Latente & Inference PGNN & 1h & $f$(pH, NO\textsubscript{3}\textsuperscript{-} residual, humedad, T) \\ \hline
-\textbf{Actividad microbiana} & Latente & Inference PGNN & 1h & $\propto$ tasa de mineralizacion del C \\ \hline
-\end{tabular}
-\end{table}
+\begin{tabularx}{\textwidth}{@{} l l l X @{}}
+\toprule
+\textbf{Variable} & \textbf{Sensor / Método} & \textbf{Frecuencia} & \textbf{Relación con GEI / Impacto} \\
+\midrule
 
+% GRUPO 1: VARIABLES DIRECTAS
+\multicolumn{4}{l}{\textit{\textbf{Variables Directas (Medición física)}}} \\
+$CO_2$ & NDIR (0--10k ppm) & 1 min & $\propto$ metabolismo aeróbico + actividad microbiana \\
+$CH_4$ & MOS / Electroquímico & 5 min & $\propto$ zonas anaeróbicas (si humedad $>\SI{70}{\percent}$ y hay compactación) \\
+Temperatura & Termopar PT100 & 1 min & Controla tasa metabólica ($Q_{10}$): $R(T) = R_{25} \times 2^{\frac{T-25}{10}}$ \\
+Humedad Rel. & Capacitivo & 1 min & $>\SI{75}{\percent} \rightarrow$ riesgo anaerobiosis $\rightarrow \uparrow CH_4$ \\
+pH & Electrodo combinado & 10 min & $<5.5 \rightarrow$ inhibición; $>8.0 \rightarrow \uparrow NH_3$ (volatilización) \\
+Conductividad & Sonda 4 anillos & 10 min & $\propto$ acúmulo de sales ($NH_4^+$, $K^+$) $\rightarrow$ estrés larval \\
+$O_2$ & Sensor óptico & 1 min & $<\SI{15}{\percent} \rightarrow$ inicio de condiciones anaeróbicas \\
+
+\addlinespace % Espacio separador elegante
+
+% GRUPO 2: VARIABLES LATENTES
+\multicolumn{4}{l}{\textit{\textbf{Variables Latentes (Inferidas vía PGNN)}}} \\
+Biomasa & Inferencia (Soft-sensor) & 24 h & $\propto$ Eficiencia de Conversión de Carbono (FCE) \\
+$N_2O$ & Inferencia (Soft-sensor) & 1 h & Función compleja $f(pH, NO_3^-\text{res}, H, T)$ \\
+Actividad Mic. & Inferencia (Soft-sensor) & 1 h & $\propto$ tasa de mineralización del Carbono \\
+\bottomrule
+\end{tabularx}
+\end{table}
 \subsection{Relaciones bioquimicas clave para la PGNN}
 
 \subsubsection{Balance de carbono diferencial}

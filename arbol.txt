@@ -1,0 +1,261 @@
+.
+├── 00Figuras
+│   ├── 00f00EscudoUN2016.jpg
+│   ├── biomasa_comparada.png
+│   ├── biomasa_estimada.png
+│   ├── captura_reporte_turnitin.png
+│   ├── DG_FLUJO_GENERAL.png
+│   ├── esquema.jpeg
+│   ├── gant.png
+│   ├── localizacion_ciat.png
+│   ├── localizacion.jpg
+│   ├── localizacion.png
+│   ├── MapaLeal.pdf
+│   └── simulacion_ia.png
+├── arbol.txt
+├── archivos_bib
+│   ├── bibliografia_tesis_leal.bib
+│   ├── Bibliografia_unificada_1.bib
+│   ├── Bibliografia_unificada.bib
+│   ├── referencias.bib
+│   └── Referencias.bib
+├── candidatura
+│   ├── defensa.aux
+│   ├── defensa.log
+│   ├── defensa.out
+│   ├── defensa.pdf
+│   ├── defensa.tex
+│   └── defensa.toc
+├── Capitulos
+│   ├── alcance_limitaciones.tex
+│   ├── antecedentes.tex
+│   ├── costos.tex
+│   ├── desarrollo-hardware.tex
+│   ├── estimacion-biomasa.aux
+│   ├── estimacion-biomasa.tex
+│   ├── introduccion.tex
+│   ├── justificacion.tex
+│   ├── manejo-datos.aux
+│   ├── manejo-datos.tex
+│   ├── marco-teorico.tex
+│   ├── metodologia.tex
+│   ├── objetivo_General.tex
+│   ├── planteamiento.tex
+│   ├── Pregunta.tex
+│   ├── resultados_esperados.tex
+│   └── riesgos-tecnologicos.tex
+├── contenido
+│   ├── 0000.tex
+│   ├── 00Abreviaturas.aux
+│   ├── 00Abreviaturas.tex
+│   ├── 00Agradecimientos.aux
+│   ├── 00Agradecimientos.tex
+│   ├── 00ResumenAbstract.aux
+│   └── 00ResumenAbstract.tex
+├── datos_dia_nuevo_modificado
+│   ├── 11
+│   │   ├── co2_larvas
+│   │   │   ├── analisis_co2_comparacion.png
+│   │   │   ├── co2_larvas_completo2.py
+│   │   │   ├── experimento_co2.csv
+│   │   │   └── experimento_co2_.csv
+│   │   ├── experimento_D1
+│   │   │   ├── experimento_ch4.csv
+│   │   │   ├── experimento_ch4_grafica.png
+│   │   │   ├── experimento_co2.csv
+│   │   │   ├── experimento_co2_grafica.png
+│   │   │   ├── generar_ch4.py
+│   │   │   └── generar_co2.py
+│   │   ├── experimento_D1_alimento
+│   │   │   ├── experimento_ch4.csv
+│   │   │   ├── experimento_ch4_grafica.png
+│   │   │   ├── experimento_co2.csv
+│   │   │   ├── experimento_co2_grafica.png
+│   │   │   ├── generar_ch4.py
+│   │   │   └── generar_co2.py
+│   │   ├── experimento_D4
+│   │   │   ├── experimento_ch4.csv
+│   │   │   ├── experimento_ch4_grafica.png
+│   │   │   ├── experimento_co2.csv
+│   │   │   ├── experimento_co2_grafica.png
+│   │   │   ├── generar_ch4.py
+│   │   │   └── generar_co2.py
+│   │   └── experimento_D4_alimento
+│   │       ├── experimento_ch4.csv
+│   │       ├── experimento_ch4_grafica.png
+│   │       ├── experimento_co2.csv
+│   │       ├── experimento_co2_grafica.png
+│   │       ├── generar_ch4.py
+│   │       └── generar_co2.py
+│   ├── 13
+│   │   ├── co2_larvas
+│   │   │   ├── analisis_co2_comparacion.png
+│   │   │   ├── co2_larvas_completo2.py
+│   │   │   ├── experimento_co2.csv
+│   │   │   └── experimento_co2_.csv
+│   │   ├── experimento_D1
+│   │   │   ├── experimento_ch4.csv
+│   │   │   ├── experimento_ch4_grafica.png
+│   │   │   ├── experimento_co2.csv
+│   │   │   ├── experimento_co2_grafica.png
+│   │   │   ├── generar_ch4.py
+│   │   │   └── generar_co2.py
+│   │   ├── experimento_D1_alimento
+│   │   │   ├── experimento_ch4.csv
+│   │   │   ├── experimento_ch4_grafica.png
+│   │   │   ├── experimento_co2.csv
+│   │   │   ├── experimento_co2_grafica.png
+│   │   │   ├── generar_ch4.py
+│   │   │   └── generar_co2.py
+│   │   ├── experimento_D4
+│   │   │   ├── experimento_ch4.csv
+│   │   │   ├── experimento_ch4_grafica.png
+│   │   │   ├── experimento_co2.csv
+│   │   │   ├── experimento_co2_grafica.png
+│   │   │   ├── generar_ch4.py
+│   │   │   └── generar_co2.py
+│   │   └── experimento_D4_alimento
+│   │       ├── experimento_ch4.csv
+│   │       ├── experimento_ch4_grafica.png
+│   │       ├── experimento_co2.csv
+│   │       ├── experimento_co2_grafica.png
+│   │       ├── generar_ch4.py
+│   │       └── generar_co2.py
+│   ├── 17
+│   │   ├── co2_larvas
+│   │   │   ├── experimento_ch4.csv
+│   │   │   ├── experimento_ch4_grafica.png
+│   │   │   ├── experimento_co2.csv
+│   │   │   ├── experimento_co2_grafica.png
+│   │   │   ├── generar_ch4.py
+│   │   │   └── generar_co2.py
+│   │   ├── experimento_D4
+│   │   │   ├── experimento_ch4.csv
+│   │   │   ├── experimento_ch4_grafica.png
+│   │   │   ├── experimento_co2.csv
+│   │   │   ├── experimento_co2_grafica.png
+│   │   │   ├── generar_ch4.py
+│   │   │   └── generar_co2.py
+│   │   └── experimento_D4_alimento
+│   │       ├── experimento_ch4.csv
+│   │       ├── experimento_ch4_grafica.png
+│   │       ├── experimento_co2.csv
+│   │       ├── experimento_co2_grafica.png
+│   │       ├── generar_ch4.py
+│   │       └── generar_co2.py
+│   ├── 9
+│   │   ├── arbol
+│   │   ├── co2_larvas_D1
+│   │   │   ├── analisis_co2_comparacion.png
+│   │   │   ├── co2_larvas_completo2.py
+│   │   │   ├── experimento_co2.csv
+│   │   │   └── experimento_co2_.csv
+│   │   ├── D1R1C_1.jpeg
+│   │   ├── D1R1C_2.jpeg
+│   │   ├── D1R1c_4.jpeg
+│   │   ├── D1R1C.jpeg
+│   │   ├── experimento_D1
+│   │   │   ├── experimento_ch4.csv
+│   │   │   ├── experimento_ch4_grafica.png
+│   │   │   ├── experimento_co2.csv
+│   │   │   ├── experimento_co2_grafica.png
+│   │   │   ├── generar_ch4.py
+│   │   │   └── generar_co2.py
+│   │   ├── experimento_D1_alimento
+│   │   │   ├── experimento_ch4.csv
+│   │   │   ├── experimento_ch4_grafica.png
+│   │   │   ├── experimento_co2.csv
+│   │   │   ├── experimento_co2_grafica.png
+│   │   │   ├── generar_ch4.py
+│   │   │   └── generar_co2.py
+│   │   ├── experimento_D4
+│   │   │   ├── experimento_ch4.csv
+│   │   │   ├── experimento_ch4_grafica.png
+│   │   │   ├── experimento_co2.csv
+│   │   │   ├── experimento_co2_grafica.png
+│   │   │   ├── generar_ch4.py
+│   │   │   └── generar_co2.py
+│   │   └── experimento_D4_alimento
+│   │       ├── experimento_ch4.csv
+│   │       ├── experimento_ch4_grafica.png
+│   │       ├── experimento_co2.csv
+│   │       ├── experimento_co2_grafica.png
+│   │       ├── generar_ch4.py
+│   │       └── generar_co2.py
+│   ├── arbol.txt
+│   ├── articulo1
+│   │   ├── pinn_ia.pdf
+│   │   └── pinn_ia.tex
+│   ├── buscando_rutas.py
+│   ├── comparar_tasas.py
+│   ├── datos_entrenamiento_PINN.csv
+│   ├── datos_filtrados.csv
+│   ├── datos_filtrados.ods
+│   ├── datos_finales_PINN_corregidos.csv
+│   ├── datos_PINN_netos.csv
+│   ├── descripcion de los experimentos.odt
+│   ├── entrenar_pinn.py
+│   ├── figuras_con_etiquetas.pdf
+│   ├── figuras_unidas.pdf
+│   ├── limpieza_datos1.py
+│   ├── listado-imagenes
+│   ├── lista_figuras.txt
+│   ├── parametros.py
+│   ├── pdf-figuras.pdf
+│   ├── pdf-figuras.tex
+│   ├── pinn_eriksen1.py
+│   ├── pinn_eriksen.py
+│   ├── procesar_datos.py
+│   ├── procesar_todo.py
+│   ├── restar_controles.py
+│   └── verificar_datos.py
+├── datos-journal
+│   └── journal.pone.0276605.s003.xlsx - Sheet1.csv
+├── Dockerfile
+├── dtvstyle.bst
+├── dtvstyle.dbj
+├── Dynamic modelling of feed assimilation-edo.pdf
+├── enfoque-ambiental
+│   ├── propuesta.aux
+│   ├── propuesta.log
+│   ├── propuesta.out
+│   ├── propuesta.pdf
+│   ├── propuesta.tex
+│   └── propuesta.toc
+├── estructura_proyecto.txt
+├── limpiar.py
+├── Makefile
+├── preambulo
+│   ├── paquetes_comunes.sty
+│   └── variables.tex
+├── presentacion.pdf
+├── presentacion.tex
+├── python
+│   ├── automatizar.py
+│   ├── experimento1.tex
+│   ├── experimento_ch4.csv
+│   ├── experimento_co2.csv
+│   ├── figura_dinamica_gases.pdf
+│   ├── figura_dinamica_gases.png
+│   ├── reporte_experimento_1.pdf
+│   └── reporte_experimento_1.tex
+├── Referencias.bib
+├── referencias.tex
+├── tesis.aux
+├── tesis.bbl
+├── tesis.bcf
+├── tesis.blg
+├── tesis.fdb_latexmk
+├── tesis.fls
+├── tesis.lof
+├── tesis.log
+├── tesis.lot
+├── tesis.out
+├── tesis.pdf
+├── tesis.run.xml
+├── tesis.synctex.gz
+├── tesis.tex
+├── tesis.toc
+└── tesis.xdv
+
+34 directories, 225 files
