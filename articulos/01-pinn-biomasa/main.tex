@@ -51,7 +51,7 @@
 \maketitle
 
 \section{Introducción}
-El objetivo de este estudio fue inferir las variables metabólicas latentes (no observables) del crecimiento larvario de la Mosca Soldado Negra (\textit{Hermetia illucens}) bajo dos dietas distintas (D1 y D4). Para ello, se utilizó una Red Neuronal Informada por la Física (PINN) basada en el modelo dinámico de Eriksen (2022), utilizando datos experimentales de respiración.
+El objetivo de este estudio fue inferir las variables metabólicas latentes (no observables) del crecimiento larvario de la Mosca Soldado Negra (\textit{Hermetia illucens}) bajo dos dietas distintas (D1 y D4). Para ello, se utilizó una Red Neuronal Informada por la Física (PINN) basada en el modelo dinámico de Eriksen (2022) \cite{eriksenDynamicModellingFeed2022}, utilizando datos experimentales de respiración.
 
 \section{Metodología de Procesamiento de Datos}
 \label{sec:preprocessing}
@@ -206,5 +206,5 @@ def physics_loss(model, t, co2_medido):
     return torch.mean((co2_pred - co2_medido) ** 2), co2_pred
 \end{lstlisting}
 \bibliographystyle{plain}
-\bibliography{bibliografia/referencias}
+\bibliography{bibliografia/bibliografia_tesis_leal}
 \end{document}

@@ -1,0 +1,17 @@
+\section{Introducción}
+
+El monitoreo ambiental en tiempo real es fundamental para comprender y optimizar procesos biotecnológicos como la bioconversión de residuos orgánicos mediante larvas de \textit{Hermetia illucens} (Mosca Soldado Negra). La medición continua de parámetros como la concentración de gases (CO$_2$, CH$_4$), temperatura y humedad permite evaluar la actividad metabólica, detectar condiciones de estrés (ej. anaerobiosis) y cuantificar el impacto ambiental del proceso \cite{eriksenDynamicModellingFeed2022}.
+
+Sin embargo, los equipos comerciales para monitoreo de gases suelen tener un costo elevado (del orden de miles de dólares), lo que limita su adopción en entornos de investigación con presupuestos reducidos o en aplicaciones de campo a gran escala. Además, muchos sistemas son cerrados, dificultando la integración con plataformas de análisis de datos o el acceso a los datos crudos.
+
+Como alternativa, los sensores de bajo costo basados en tecnología NDIR (infrarrojo no dispersivo) han demostrado ser una opción viable para aplicaciones ambientales \cite{biagiDevelopmentMachineLearningbased2024}. Combinados con microcontroladores de bajo costo y plataformas de código abierto, es posible construir sistemas de adquisición de datos flexibles, escalables y con precisión suficiente para monitoreo biológico.
+
+En este artículo se describe el diseño, construcción y validación de un sistema de hardware de bajo costo específicamente desarrollado para el monitoreo de la bioconversión con \textit{H. illucens}. El sistema integra:
+
+\begin{itemize}
+    \item Sensores NDIR para CO$_2$ y CH$_4$ (modelos SCD30 y MH-441D respectivamente), junto con sensores de temperatura y humedad.
+    \item Una tarjeta electrónica basada en ESP32 que gestiona la adquisición, el almacenamiento local y la transmisión de datos.
+    \item Un dashboard web que visualiza en tiempo real las variables medidas, permite la descarga de históricos y genera alertas automáticas.
+\end{itemize}
+
+El sistema se validó mediante pruebas de funcionamiento continuo durante 7 días en condiciones reales de cultivo, comparando sus lecturas con un equipo de referencia (cromatógrafo de gases) y evaluando su estabilidad y consumo energético. Los resultados muestran que el hardware propuesto alcanza una precisión comparable a la de equipos comerciales (error medio < 5\% para CO$_2$) con un costo total de materiales inferior a 200 USD, lo que lo convierte en una herramienta accesible y reproducible para la comunidad científica.
