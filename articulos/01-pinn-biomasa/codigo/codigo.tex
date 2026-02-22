@@ -1,0 +1,46 @@
+
+\subsection{Extracción de Datos y Cálculo de Pendientes}
+\begin{lstlisting}[language=Python]
+def procesar_archivo_tsv(ruta_completa, dia, etiqueta, gas):
+    # Lectura de TSV sin encabezado
+    df = pd.read_csv(ruta_completa, sep='\t', header=None)
+    df_numerico = df.iloc[:, 1:].copy() # Omitir columna de hora
+    
+    # ... (Logica de iteracion) ...
+        
+        # Filtro de Saturacion
+        mask_validos = y_raw < 5850
+        y_final = y_raw[mask_validos]
+        
+        # Calculo de pendiente (Tasa de Produccion)
+        slope, _, _, _, _ = linregress(x_final, y_final)
+        
+    return resultados
+\end{lstlisting}
+
+\subsection{Definición de la PINN}
+\begin{lstlisting}[language=Python]
+class LarvaNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(1, 32), nn.Tanh(),
+            nn.Linear(32, 32), nn.Tanh(),
+            nn.Linear(32, 2)
+        )
+        # Parametros iniciales
+        self.raw_params = nn.Parameter(torch.tensor([0.5, 0.3, 0.1])) 
+
+def physics_loss(model, t, co2_medido):
+    B, L = model(t)
+    # Diferenciacion Automatica para obtener tasas dB/dt y dL/dt
+    dB_dt = torch.autograd.grad(B, t, grad_outputs=torch.ones_like(B), create_graph=True)[0]
+    dL_dt = torch.autograd.grad(L, t, grad_outputs=torch.ones_like(L), create_graph=True)[0]
+    
+    Y_g, Y_l, m = model.get_physics_params()
+    
+    # Ecuacion de Eriksen
+    co2_pred = (Y_g * dB_dt) + (Y_l * dL_dt) + (m * B)
+    
+    return torch.mean((co2_pred - co2_medido) ** 2), co2_pred
+\end{lstlisting}
