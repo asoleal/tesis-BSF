@@ -1,0 +1,95 @@
+% !TEX program = xelatex
+\documentclass[11pt,a4paper]{article}
+
+% Geometría
+\usepackage{geometry}
+\geometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
+
+% Fuente robusta (sin fontspec)
+\usepackage{lmodern} % evita errores de "font not found"
+
+% Idioma
+\usepackage[spanish]{babel}
+
+% Matemáticas y símbolos
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+% Figuras
+\usepackage{graphicx}
+
+% Bibliografía (biblatex + biber, estilo autor-año estándar)
+\usepackage[backend=biber,style=authoryear]{biblatex}
+\addbibresource{bibliografia/bibliografia_tesis_leal.bib}
+
+% Hipervínculos (casi siempre al final)
+\usepackage[hidelinks]{hyperref}
+
+\title{\textbf{Estimación de la Producción de CO$_2$ y Biomasa en el Cultivo de Mosca Soldado Negra (\textit{Hermetia illucens})}}
+\author{John Jairo Leal G$^{1}$ \and Luis Fernando Mejía Rodríguez$^{1}$}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+El monitoreo de la dinámica de crecimiento de la mosca soldado negra (\textit{Hermetia illucens}) es fundamental para la optimización de procesos de bioconversión a escala industrial. Sin embargo, el metabolismo larvario suele tratarse como una ``caja negra''. Este artículo presenta un enfoque computacional híbrido para estimar y predecir la producción de CO$_2$ y el crecimiento de la biomasa estructural. Se implementó una red neuronal multicapa (MLP) para estimar dinámicamente el parámetro de peso máximo ($B_{max}$), acoplada a métodos de integración numérica (Runge-Kutta de cuarto orden y Euler) para resolver el modelo metabólico hacia adelante.
+
+\textbf{Palabras clave:} Hermetia illucens, bioconversión, redes neuronales, Runge-Kutta, modelado dinámico, CO$_2$.
+\end{abstract}
+
+\section{Introducción}
+En éste artículo se quiere comparar el modelo de la biomasa larvarl $B(t)$ 
+propuesto por \parencite{eriksenDynamicModellingFeed2022}, con el entrenamiento de una red neuronal. Con lo cual queremos probar la red para verificar el comportamiento
+
+La Mosca Soldado Negra (\textit{Hermetia illucens}) se ha posicionado como una alternativa tecnológica relevante para la valorización de residuos orgánicos dentro de esquemas de bioeconomía circular, debido a su capacidad de transformar sustratos heterogéneos en biomasa larvaria aprovechable y subproductos con valor agronómico. Camperio2025,Gold2020 \cite{goldEffectsRearingSystem2022} Esta conversión biológica, sin embargo, exhibe una alta variabilidad asociada a la calidad del sustrato, la humedad, la densidad larvaria y las condiciones ambientales, lo que dificulta garantizar rendimientos estables a escala piloto e industrial. \cite{eriksenDynamicModellingFeed2022} Camporio2025
+
+En términos operacionales, la variable de interés no es únicamente la biomasa total, sino su partición en fracciones funcionales, particularmente la biomasa estructural y las reservas (p.\,ej., lípidos), ya que dichas fracciones determinan tanto la calidad del producto como la eficiencia del proceso. \cite{eriksenDynamicModellingFeed2022} Por ello, los modelos dinámicos de crecimiento que representan compartimentos y flujos metabólicos (asimilación, mantenimiento, crecimiento y almacenamiento) resultan útiles para interpretar ensayos y comparar condiciones de cultivo, incluyendo la predicción explícita de la producción de CO$_2$ como salida del metabolismo. \cite{eriksenDynamicModellingFeed2022}
+
+No obstante, el monitoreo directo del crecimiento larvario suele requerir muestreos destructivos o manipulación frecuente (pesaje, separación del sustrato), lo cual introduce perturbaciones, demanda mano de obra y limita la resolución temporal de las mediciones. En contraste, la respirometría ofrece una medición no invasiva del intercambio gaseoso y permite capturar de manera continua la actividad metabólica del cultivo, con evidencia de correlaciones entre variables de intercambio gaseoso (CO$_2$, O$_2$ y cociente respiratorio) y el desempeño productivo y la composición corporal. GasExchange2025,ETHZ2024
+
+En este contexto, una estrategia prometedora consiste en integrar mediciones respirométricas con modelos mecanísticos para construir \textit{sensores virtuales} de variables latentes (p.\,ej., biomasa estructural) y, a su vez, habilitar capacidades predictivas. Sin embargo, en condiciones reales de operación, parámetros clave del modelo pueden variar en el tiempo por cambios en el sustrato, la etapa de desarrollo larvario y el estrés ambiental, lo que reduce la utilidad de calibraciones estáticas. \cite{eriksenDynamicModellingFeed2022}
+
+Este trabajo propone un sistema híbrido de monitoreo y predicción que combina (i) un modelo dinámico basado en balances de carbono y (ii) una red neuronal profunda tipo MLP (moscaleal5) para estimar parámetros dinámicos del proceso, específicamente el parámetro asociado a la biomasa máxima $B_{max}(t)$. Con el parámetro estimado, el modelo mecanístico se resuelve hacia adelante mediante integración numérica (Euler y Runge--Kutta de cuarto orden), generando trayectorias de biomasa estructural y acumulación de CO$_2$ comparables con datos experimentales. El objetivo es reducir la dependencia de muestreos invasivos, aumentar la resolución temporal del monitoreo y mejorar la capacidad de predicción bajo condiciones variables de cultivo.
+
+\section{Materiales y Métodos}
+
+\subsection{Configuración Experimental y Adquisición de Datos}
+Durante el proceso de bioconversión, se monitoreó la tasa de respiración de las larvas de \textit{H. illucens}. Se recolectaron datos empíricos de emisiones de CO$_2$ a lo largo de un periodo de 5 días. \cite{adadiPeekingBlackBoxSurvey2018}
+
+\textit{[TODO: Describir aquí el tipo de recipiente o biorreactor utilizado, el sensor de CO$_2$ empleado, la cantidad o peso inicial de las larvas y la composición de la dieta/sustrato. Especificar también la frecuencia de muestreo de los datos en horas distintas].} 
+\cite{aAIControlledSmart2024,eriksenDynamicModellingFeed2022}
+\subsection{Modelo Dinámico de Crecimiento y Producción de CO$_2$}
+Para describir el metabolismo de la larva, se adaptó un modelo dinámico basado en balances de carbono. La tasa de cambio de la biomasa estructural ($\frac{dB}{dt}$) se definió en función de una tasa de asimilación específica ($a$), una tasa de mantenimiento ($m = 0.08$), y el rendimiento de la biomasa ($Y_B = 0.44$).
+
+La producción total de CO$_2$ ($r_{CO2,total}$) se calculó como la suma de tres flujos metabólicos principales:
+\begin{enumerate}
+    \item \textbf{Mantenimiento ($r_{CO2,m}$):} CO$_2$ derivado del metabolismo basal de la larva, calculado como $m \cdot B$.
+    \item \textbf{Síntesis de Biomasa ($r_{CO2,B}$):} CO$_2$ liberado durante la formación de nuevo tejido estructural, proporcional al crecimiento derivado ($Y_B \cdot \frac{dB}{dt}$).
+    \item \textbf{Síntesis de Lípidos ($r_{CO2,L}$):} CO$_2$ asociado al almacenamiento de reservas energéticas, asumiendo un rendimiento de lípidos de $Y_L = 0.42$.
+\end{enumerate}
+
+La ecuación diferencial rectora para la acumulación de dióxido de carbono en el sistema está dada por:
+\begin{equation}
+    \frac{dCO_2}{dt} = r_{CO2,m} + r_{CO2,B} + r_{CO2,L}
+\end{equation}
+
+\subsection{Arquitectura Computacional Híbrida}
+Para superar las limitaciones de la estimación de parámetros estáticos, se diseñó un enfoque computacional que acopla el aprendizaje automático con métodos numéricos de integración.
+
+\subsubsection{Red Neuronal para la Estimación de Parámetros}
+Se implementó una red neuronal multicapa (MLP) utilizando la API Keras de TensorFlow para estimar dinámicamente el parámetro de biomasa máxima ($B_{max}$) en función del tiempo ($t$). La arquitectura secuencial consistió en una capa de entrada, dos capas densas ocultas de 64 neuronas cada una con funciones de activación ReLU, y una capa de salida lineal. El modelo fue optimizado mediante el algoritmo Adam, utilizando el Error Cuadrático Medio (MSE) como función de pérdida, entrenado durante 100 épocas.
+
+\subsubsection{Integración Numérica (Forward Modeling)}
+Una vez estimado el comportamiento de $B_{max}(t)$ mediante la red neuronal, las ecuaciones diferenciales ordinarias del sistema metabólico se resolvieron numéricamente. Se implementaron y compararon dos algoritmos clásicos de valor inicial: el método de Euler y el método de Runge-Kutta de cuarto orden (RK4). Estos métodos evaluaron interactivamente la función de crecimiento con un paso de tiempo $dt = 0.1$, permitiendo integrar la tasa de producción de CO$_2$ para obtener la curva predecida de acumulación de gas a lo largo del cultivo.
+
+\section{Resultados y Discusión}
+\textit{[TODO: Esta sección se redactará una vez que crucemos las simulaciones de la red neuronal y los métodos numéricos con los datos experimentales de 5 días. Aquí incluiremos las gráficas de comparación entre RK4, Euler y los datos reales de CO$_2$].}
+
+\section{Conclusiones}
+\textit{[TODO: Pendiente de redacción basada en los resultados finales].}
+\printbibliography
+
+\end{document}

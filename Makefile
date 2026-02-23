@@ -1,31 +1,83 @@
-DOCKER_IMG = tesis-bsf
-CURRENT_DIR = $(shell pwd)
-# Capturamos tu usuario local para que Docker no cree archivos como 'root'
-UID = $(shell id -u)
-GID = $(shell id -g)
+# Variables de configuración
+DOCKER_IMG  := tesis-bsf
+CURRENT_DIR := $(shell pwd)
+UID         := $(shell id -u)
+GID         := $(shell id -g)
 
-# --user $(UID):$(GID) es la clave para evitar problemas de permisos
-DOCKER_CMD = docker run --rm --user $(UID):$(GID) -v "$(CURRENT_DIR):/src" -w /src $(DOCKER_IMG)
 
-.PHONY: all tesis slides clean help
+# Base Docker (sin -t para evitar errores de TTY en procesos automáticos)
+DOCKER_BASE := docker run --rm -i --user $(UID):$(GID) \
+    -v "$(CURRENT_DIR):/src" -w /src
+
+
+# Colores (opcional)
+YELLOW := \033[0;33m
+NC     := \033[0m
+
+
+# Permite recetas con prefijo '>' en vez de TAB (para conservar espacios)
+.RECIPEPREFIX := >
+
+
+.PHONY: all tesis slides articulos clean help watch-tesis watch-art
+
 
 help:
-	@echo "Opciones: make tesis, make slides, make clean"
+>    @echo "Uso del Makefile:"
+>    @echo "  make tesis         - Compila la tesis principal"
+>    @echo "  make slides        - Compila las presentaciones"
+>    @echo "  make articulos     - Compila todos los artículos en articulos/"
+>    @echo "  make watch-tesis   - Auto-compilar al guardar (latexmk -pvc)"
+>    @echo "  make watch-art DIR=nombre-carpeta - Watch de un artículo"
+>    @echo "  make clean         - Elimina temporales"
 
-all: tesis slides
+
+all: tesis slides articulos
+
 
 tesis:
-	# Usamos latexmk con la opción -xelatex.
-	# -interaction=nonstopmode evita que se congele si hay un error.
-	$(DOCKER_CMD) latexmk -xelatex -synctex=1 -interaction=nonstopmode -file-line-error -outdir=. tesis.tex
+>    @echo "$(YELLOW)Compilando tesis...$(NC)"
+>    $(DOCKER_BASE) -w /src/tesis $(DOCKER_IMG) \
+>        latexmk -xelatex -synctex=1 -interaction=nonstopmode -file-line-error -halt-on-error -outdir=. tesis.tex
+
 
 slides:
-	$(DOCKER_CMD) latexmk -xelatex -f -synctex=1 -interaction=nonstopmode -file-line-error -outdir=. presentacion.tex
+>    @echo "$(YELLOW)Compilando presentación...$(NC)"
+>    $(DOCKER_BASE) -w /src/presentacion $(DOCKER_IMG) \
+>        latexmk -xelatex -synctex=1 -interaction=nonstopmode -file-line-error -halt-on-error -outdir=. presentacion.tex
+
+
+articulos:
+>    @for art in $$(find articulos -name "main.tex"); do \
+>        dir=$$(dirname $$art); \
+>        echo "$(YELLOW)Limpiando $$art en /src/$$dir$(NC)"; \
+>        $(DOCKER_BASE) -w /src/$$dir $(DOCKER_IMG) latexmk -C; \
+>        echo "$(YELLOW)Compilando $$art en /src/$$dir$(NC)"; \
+>        $(DOCKER_BASE) -w /src/$$dir $(DOCKER_IMG) \
+>            latexmk -xelatex -synctex=1 -interaction=nonstopmode -file-line-error -halt-on-error -outdir=. main.tex; \
+>    done
+
+
+watch-tesis:
+>    @echo "$(YELLOW)Watch tesis (Ctrl+C para detener).$(NC)"
+>    $(DOCKER_BASE) -w /src/tesis $(DOCKER_IMG) \
+>        latexmk -xelatex -pvc -view=none -synctex=1 -interaction=nonstopmode -file-line-error -halt-on-error -outdir=. tesis.tex
+
+
+watch-art:
+>    @if [ -z "$(DIR)" ]; then \
+>        echo "Error: usa DIR=. Ej: make watch-art DIR=04-hardware-dashboard"; \
+>        exit 1; \
+>    fi
+>    @echo "$(YELLOW)Watch artículo $(DIR) (Ctrl+C para detener).$(NC)"
+>    $(DOCKER_BASE) -w /src/articulos/$(DIR) $(DOCKER_IMG) \
+>        latexmk -xelatex -pvc -view=none -synctex=1 -interaction=nonstopmode -file-line-error -halt-on-error -outdir=. main.tex
+
 
 clean:
-	# latexmk tiene su propio comando de limpieza (-C limpia todo, -c solo temporales)
-	# Pero mantenemos tu limpieza manual para asegurar
-	rm -f *.aux *.log *.out *.toc *.lof *.lot *.bbl *.blg *.fls *.fdb_latexmk *.synctex.gz *.nav *.snm *.vrb *.bcf *.run.xml *.xdv
-	rm -f contenido/*.aux
-	# Borrar PDFs también si quieres un clean total
-	# rm -f tesis.pdf presentacion.pdf
+>    @echo "Limpiando archivos temporales..."
+>    find . -type f \( -name "*.aux" -o -name "*.log" -o -name "*.out" -o -name "*.toc" -o \
+>        -name "*.fls" -o -name "*.fdb_latexmk" -o -name "*.synctex.gz" -o \
+>        -name "*.xdv" -o -name "*.bcf" -o -name "*.run.xml" -o -name "*.bbl" -o \
+>        -name "*.blg" -o -name "*.snm" -o -name "*.nav" -o -name "*.vrb" \) -delete
+>    @echo "Limpieza completada."

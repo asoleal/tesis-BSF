@@ -1,0 +1,23 @@
+FROM debian:bookworm-slim
+
+RUN apt-get update && apt-get install -y \
+    perl wget xz-utils ca-certificates fontconfig make ghostscript \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /tmp/texlive
+
+# Descarga instalador TeX Live
+RUN wget -qO- https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz \
+  | tar xz --strip-components=1
+
+# Copia el profile desde tu repo al contenedor
+COPY texlive.profile /tmp/texlive/texlive.profile
+
+# Instala TeX Live 2026 (no interactivo)
+RUN ./install-tl -profile /tmp/texlive/texlive.profile
+
+# Asegura PATH
+ENV PATH="/usr/local/texlive/2026/bin/x86_64-linux:${PATH}"
+
+WORKDIR /src
+CMD ["/bin/bash"]

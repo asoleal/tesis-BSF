@@ -1,0 +1,59 @@
+\documentclass[12pt, a4paper]{elsarticle}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\usepackage[backend=biber,style=apa]{biblatex}
+\addbibresource{bibliografia/bibliografia_tesis_leal.bib}
+
+
+% Configuración de página
+\usepackage[a4paper, margin=2.5cm]{geometry}
+
+% Título
+\title{Diseño y validación de un sistema de adquisición de datos de bajo costo\\para monitoreo ambiental en bioprocesos con \textit{Hermetia illucens}}
+\author{Tu Nombre \\ Universidad}
+\date{\today}
+\usepackage{hyperref}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Resumen del artículo: se describe el diseño electrónico, el firmware, la arquitectura de comunicaciones y el dashboard web desarrollados para el monitoreo continuo de CO$_2$, CH$_4$, temperatura y humedad en experimentos de bioconversión. Se presentan pruebas de funcionamiento, consumo energético y fiabilidad en condiciones de alta humedad.
+\end{abstract}
+
+\begin{keyword}
+low-cost sensors \sep IoT \sep embedded systems \sep black soldier fly \sep environmental monitoring
+\end{keyword}
+
+\section{Introducción}
+\input{secciones/01-introduccion}
+
+\section{Diseño del sistema}
+\input{secciones/02-diseno}
+
+\section{Implementación}
+\input{secciones/03-implementacion}
+
+\section{Resultados y validación}
+\input{secciones/04-resultados}
+
+\section{Discusión}
+\input{secciones/05-discusion}
+
+\section{Conclusiones}
+\input{secciones/06-conclusiones}
+
+\section*{Agradecimientos}
+% Opcional
+
+\printbibliography
+
+\end{document}

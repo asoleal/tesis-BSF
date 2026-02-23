@@ -1,0 +1,12 @@
+FROM debian:bookworm-slim
+
+RUN apt-get update && apt-get install -y \
+    perl wget xz-utils ca-certificates fontconfig make \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /tmp/texlive
+
+RUN wget -qO- https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz \
+  | tar xz --strip-components=1
+
+CMD ["/bin/bash"]

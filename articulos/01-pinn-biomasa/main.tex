@@ -1,0 +1,66 @@
+\documentclass[12pt, a4paper]{article}
+
+% --- PAQUETES ---
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+
+\usepackage[backend=biber,style=apa]{biblatex}
+\addbibresource{bibliografia/bibliografia_tesis_leal.bib}
+
+% --- CONFIGURACIÓN DE PÁGINA ---
+\geometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
+
+% --- CONFIGURACIÓN DE CÓDIGO ---
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+% --- TÍTULO ---
+\title{\textbf{Modelado Metabólico de \textit{Hermetia illucens} mediante Redes Neuronales Informadas por la Física (PINNs)}}
+\author{Metodología de Análisis y Resultados}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introducción}
+\input{secciones/introduccion.tex}
+\section{Resultados y Discusión}
+\input{secciones/resultados.tex}
+\newpage
+\appendix
+\section{Código Fuente Relevante}
+\input{codigo/codigo.tex}
+
+\printbibliography
+\end{document}

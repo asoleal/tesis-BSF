@@ -9,26 +9,34 @@ on:
 jobs:
   build_latex:
     runs-on: ubuntu-latest
-    # Usamos la misma imagen potente que usas localmente
+
+    # TeX Live dentro de contenedor
     container: texlive/texlive:latest
 
     steps:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      # IMPORTANTE: Configuramos git para confiar en el directorio
-      # (Evita error "dubious ownership" al correr comandos git dentro del container)
+      # Evita error "dubious ownership" al correr git dentro del container
       - name: Configurar Git Safe Directory
-        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      # Necesario para XeLaTeX + fontspec (p.ej., Latin Modern Roman/Sans)
+      - name: Instalar fuentes para XeLaTeX (fontspec)
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends fontconfig fonts-lmodern
+          fc-cache -f -v
 
       # --- COMPILACIÓN ---
-      # Usamos latexmk con xelatex, EXACTAMENTE como en tu Makefile local.
-      # El flag -f fuerza la generación del PDF aunque falten referencias.
-
-      - name: Compilar Tesis y Presentación
+      # Sin -f: si hay error real, el workflow debe fallar.
+      - name: Compilar Tesis
         run: |
-          latexmk -xelatex -synctex=1 -interaction=nonstopmode -file-line-error -outdir=. -f tesis.tex
-          latexmk -xelatex -synctex=1 -interaction=nonstopmode -file-line-error -outdir=. -f presentacion.tex
+          latexmk -pdfxe -interaction=nonstopmode -file-line-error -halt-on-error tesis/tesis.tex
+
+      - name: Compilar Presentación
+        run: |
+          latexmk -pdfxe -interaction=nonstopmode -file-line-error -halt-on-error presentacion/presentacion.tex
 
       # --- SUBIR RESULTADOS ---
       - name: Subir PDFs
@@ -36,6 +44,6 @@ jobs:
         with:
           name: Documentos_Finales
           path: |
-            tesis.pdf
-            presentacion.pdf
-          if-no-files-found: warn
+            tesis/tesis.pdf
+            presentacion/presentacion.pdf
+          if-no-files-found: error
