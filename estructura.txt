@@ -255,16 +255,7 @@
 │   ├── bom
 │   ├── esquematicos
 │   └── pcbs
-├── main.aux
-├── main.bcf
-├── main.fdb_latexmk
-├── main.fls
-├── main.log
-├── main.out
 ├── main.pdf
-├── main.run.xml
-├── main.synctex.gz
-├── main.xdv
 ├── Makefile
 ├── presentacion
 │   ├── presentacion.pdf
@@ -329,10 +320,12 @@
 │   │   ├── paquetes_comunes.sty
 │   │   └── variables.tex
 │   ├── referencias.tex -> ../recursos-comunes/bibliografia/referencias.tex
-│   ├── tesis.lof
-│   ├── tesis.lot
+│   ├── tesis.aux
+│   ├── tesis.fdb_latexmk
+│   ├── tesis.fls
+│   ├── tesis.log
 │   ├── tesis.pdf
 │   └── tesis.tex
 └── texlive.profile
 
-92 directories, 244 files
+92 directories, 237 files
