@@ -2,41 +2,40 @@ name: Compilar Tesis y Presentación
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: [ "main", "master", "reorganizacion-estructura" ] # Añadí tu rama de trabajo
   pull_request:
     branches: [ "main", "master" ]
 
 jobs:
   build_latex:
     runs-on: ubuntu-latest
-
-    # TeX Live dentro de contenedor
     container: texlive/texlive:latest
 
     steps:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      # Evita error "dubious ownership" al correr git dentro del container
       - name: Configurar Git Safe Directory
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
-      # Necesario para XeLaTeX + fontspec (p.ej., Latin Modern Roman/Sans)
       - name: Instalar fuentes para XeLaTeX (fontspec)
         run: |
           apt-get update
           apt-get install -y --no-install-recommends fontconfig fonts-lmodern
           fc-cache -f -v
 
-      # --- COMPILACIÓN ---
-      # Sin -f: si hay error real, el workflow debe fallar.
+      # --- COMPILACIÓN DE TESIS ---
       - name: Compilar Tesis
+        working-directory: ./tesis  # <--- Crucial: Entra a la carpeta tesis
         run: |
-          latexmk -pdfxe -interaction=nonstopmode -file-line-error -halt-on-error tesis/tesis.tex
+          # Al estar dentro de /tesis, latexmk encuentra 'preambulo/' sin problemas
+          latexmk -pdfxe -interaction=nonstopmode -file-line-error -halt-on-error tesis.tex
 
+      # --- COMPILACIÓN DE PRESENTACIÓN ---
       - name: Compilar Presentación
+        working-directory: ./presentacion # <--- Crucial: Entra a la carpeta presentacion
         run: |
-          latexmk -pdfxe -interaction=nonstopmode -file-line-error -halt-on-error presentacion/presentacion.tex
+          latexmk -pdfxe -interaction=nonstopmode -file-line-error -halt-on-error presentacion.tex
 
       # --- SUBIR RESULTADOS ---
       - name: Subir PDFs
