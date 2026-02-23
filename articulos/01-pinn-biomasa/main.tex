@@ -12,6 +12,9 @@
 \usepackage{xcolor}
 \usepackage{float}
 
+\usepackage[backend=biber,style=apa]{biblatex}
+\addbibresource{bibliografia/bibliografia_tesis_leal.bib}
+
 % --- CONFIGURACIÓN DE PÁGINA ---
 \geometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
 
@@ -58,6 +61,6 @@
 \appendix
 \section{Código Fuente Relevante}
 \input{codigo/codigo.tex}
-\bibliographystyle{plain}
-\bibliography{bibliografia/bibliografia_tesis_leal}
+
+\printbibliography
 \end{document}

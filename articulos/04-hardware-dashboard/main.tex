@@ -3,11 +3,14 @@
 \usepackage[spanish]{babel}
 \usepackage{amsmath, amssymb}
 \usepackage{graphicx}
-\usepackage{hyperref}
 \usepackage{booktabs}
 \usepackage{float}
 \usepackage{caption}
 \usepackage{subcaption}
+
+\usepackage[backend=biber,style=apa]{biblatex}
+\addbibresource{bibliografia/bibliografia_tesis_leal.bib}
+
 
 % Configuración de página
 \usepackage[a4paper, margin=2.5cm]{geometry}
@@ -16,6 +19,7 @@
 \title{Diseño y validación de un sistema de adquisición de datos de bajo costo\\para monitoreo ambiental en bioprocesos con \textit{Hermetia illucens}}
 \author{Tu Nombre \\ Universidad}
 \date{\today}
+\usepackage{hyperref}
 
 \begin{document}
 
@@ -50,7 +54,6 @@ low-cost sensors \sep IoT \sep embedded systems \sep black soldier fly \sep envi
 \section*{Agradecimientos}
 % Opcional
 
-\bibliographystyle{plain}
-\bibliography{bibliografia/bibliografia_tesis_leal}
+\printbibliography
 
 \end{document}

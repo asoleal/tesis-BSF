@@ -1,68 +1,83 @@
 # Variables de configuración
-DOCKER_IMG  = tesis-bsf
-CURRENT_DIR = $(shell pwd)
-UID         = $(shell id -u)
-GID         = $(shell id -g)
+DOCKER_IMG  := tesis-bsf
+CURRENT_DIR := $(shell pwd)
+UID         := $(shell id -u)
+GID         := $(shell id -g)
 
-# Comando base de Docker
-# Se usa -it para interactividad y ver errores en tiempo real
-DOCKER_CMD  = docker run --rm -it --user $(UID):$(GID) -v "$(CURRENT_DIR):/src" -w /src
 
-# Colores para mensajes (opcional, para mejor legibilidad)
-YELLOW = \033[0;33m
-NC     = \033[0m
+# Base Docker (sin -t para evitar errores de TTY en procesos automáticos)
+DOCKER_BASE := docker run --rm -i --user $(UID):$(GID) \
+    -v "$(CURRENT_DIR):/src" -w /src
+
+
+# Colores (opcional)
+YELLOW := \033[0;33m
+NC     := \033[0m
+
+
+# Permite recetas con prefijo '>' en vez de TAB (para conservar espacios)
+.RECIPEPREFIX := >
+
 
 .PHONY: all tesis slides articulos clean help watch-tesis watch-art
 
+
 help:
-	@echo "Uso del Makefile:"
-	@echo "  make tesis         - Compila la tesis principal"
-	@echo "  make slides        - Compila las presentaciones"
-	@echo "  make articulos     - Compila todos los artículos en la carpeta articulos/"
-	@echo "  make watch-tesis   - Monitoreo continuo de la tesis (auto-compilar al guardar)"
-	@echo "  make watch-art DIR=nombre-carpeta - Monitoreo continuo de un artículo"
-	@echo "  make clean         - Elimina todos los archivos temporales de LaTeX"
+>    @echo "Uso del Makefile:"
+>    @echo "  make tesis         - Compila la tesis principal"
+>    @echo "  make slides        - Compila las presentaciones"
+>    @echo "  make articulos     - Compila todos los artículos en articulos/"
+>    @echo "  make watch-tesis   - Auto-compilar al guardar (latexmk -pvc)"
+>    @echo "  make watch-art DIR=nombre-carpeta - Watch de un artículo"
+>    @echo "  make clean         - Elimina temporales"
+
 
 all: tesis slides articulos
 
-# --- Reglas de Compilación Única ---
 
 tesis:
-	@echo "$(YELLOW)Compilando tesis...$(NC)"
-	$(DOCKER_CMD)/tesis $(DOCKER_IMG) latexmk -xelatex -synctex=1 -interaction=nonstopmode -file-line-error -outdir=. tesis.tex
+>    @echo "$(YELLOW)Compilando tesis...$(NC)"
+>    $(DOCKER_BASE) -w /src/tesis $(DOCKER_IMG) \
+>        latexmk -xelatex -synctex=1 -interaction=nonstopmode -file-line-error -halt-on-error -outdir=. tesis.tex
+
 
 slides:
-	@echo "$(YELLOW)Compilando presentación...$(NC)"
-	$(DOCKER_CMD)/presentacion $(DOCKER_IMG) latexmk -xelatex -f -synctex=1 -interaction=nonstopmode -file-line-error -outdir=. presentacion.tex
+>    @echo "$(YELLOW)Compilando presentación...$(NC)"
+>    $(DOCKER_BASE) -w /src/presentacion $(DOCKER_IMG) \
+>        latexmk -xelatex -synctex=1 -interaction=nonstopmode -file-line-error -halt-on-error -outdir=. presentacion.tex
+
 
 articulos:
-	@for art in $$(find articulos -name "main.tex"); do \
-		dir=$$(dirname $$art); \
-		echo "$(YELLOW)Compilando $$art en /src/$$dir$(NC)"; \
-		$(DOCKER_CMD)/$$dir $(DOCKER_IMG) latexmk -C; \
-		$(DOCKER_CMD)/$$dir $(DOCKER_IMG) latexmk -xelatex -synctex=1 -interaction=nonstopmode -file-line-error -outdir=. main.tex; \
-	done
+>    @for art in $$(find articulos -name "main.tex"); do \
+>        dir=$$(dirname $$art); \
+>        echo "$(YELLOW)Limpiando $$art en /src/$$dir$(NC)"; \
+>        $(DOCKER_BASE) -w /src/$$dir $(DOCKER_IMG) latexmk -C; \
+>        echo "$(YELLOW)Compilando $$art en /src/$$dir$(NC)"; \
+>        $(DOCKER_BASE) -w /src/$$dir $(DOCKER_IMG) \
+>            latexmk -xelatex -synctex=1 -interaction=nonstopmode -file-line-error -halt-on-error -outdir=. main.tex; \
+>    done
 
-# --- Reglas de Monitoreo Continuo (Watch Mode) ---
 
 watch-tesis:
-	@echo "$(YELLOW)Modo watch activado para la Tesis. Presiona Ctrl+C para detener.$(NC)"
-	$(DOCKER_CMD)/tesis $(DOCKER_IMG) latexmk -xelatex -pvc -interaction=nonstopmode -outdir=. tesis.tex
+>    @echo "$(YELLOW)Watch tesis (Ctrl+C para detener).$(NC)"
+>    $(DOCKER_BASE) -w /src/tesis $(DOCKER_IMG) \
+>        latexmk -xelatex -pvc -view=none -synctex=1 -interaction=nonstopmode -file-line-error -halt-on-error -outdir=. tesis.tex
+
 
 watch-art:
-	@if [ -z "$(DIR)" ]; then \
-		echo "Error: Debes especificar el directorio. Ejemplo: make watch-art DIR=04-hardware-dashboard"; \
-		exit 1; \
-	fi
-	@echo "$(YELLOW)Modo watch activado para $(DIR). Presiona Ctrl+C para detener.$(NC)"
-	$(DOCKER_CMD)/articulos/$(DIR) $(DOCKER_IMG) latexmk -xelatex -pvc -interaction=nonstopmode -outdir=. main.tex
+>    @if [ -z "$(DIR)" ]; then \
+>        echo "Error: usa DIR=. Ej: make watch-art DIR=04-hardware-dashboard"; \
+>        exit 1; \
+>    fi
+>    @echo "$(YELLOW)Watch artículo $(DIR) (Ctrl+C para detener).$(NC)"
+>    $(DOCKER_BASE) -w /src/articulos/$(DIR) $(DOCKER_IMG) \
+>        latexmk -xelatex -pvc -view=none -synctex=1 -interaction=nonstopmode -file-line-error -halt-on-error -outdir=. main.tex
 
-# --- Limpieza ---
 
 clean:
-	@echo "Limpiando archivos temporales..."
-	find . -type f \( -name "*.aux" -o -name "*.log" -o -name "*.out" -o -name "*.toc" -o \
-	                  -name "*.fls" -o -name "*.fdb_latexmk" -o -name "*.synctex.gz" -o \
-	                  -name "*.xdv" -o -name "*.bcf" -o -name "*.run.xml" -o -name "*.bbl" -o \
-	                  -name "*.blg" -o -name "*.snm" -o -name "*.nav" -o -name "*.vrb" \) -delete
-	@echo "Limpieza completada."
+>    @echo "Limpiando archivos temporales..."
+>    find . -type f \( -name "*.aux" -o -name "*.log" -o -name "*.out" -o -name "*.toc" -o \
+>        -name "*.fls" -o -name "*.fdb_latexmk" -o -name "*.synctex.gz" -o \
+>        -name "*.xdv" -o -name "*.bcf" -o -name "*.run.xml" -o -name "*.bbl" -o \
+>        -name "*.blg" -o -name "*.snm" -o -name "*.nav" -o -name "*.vrb" \) -delete
+>    @echo "Limpieza completada."

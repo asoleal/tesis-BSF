@@ -3,6 +3,10 @@
 \usepackage[spanish]{babel}
 \usepackage{amsmath}
 \usepackage{graphicx}
+
+\usepackage[backend=biber,style=apa]{biblatex}
+\addbibresource{bibliografia/bibliografia_tesis_leal.bib}
+
 \usepackage{hyperref}
 
 \title{Validación metrológica de un sistema de sensores de bajo costo para monitoreo de gases en bioconversión}
@@ -28,8 +32,7 @@ Texto de introducción.
 \section{Discusión}
 \section{Conclusiones}
 
-% Bibliografía comentada para evitar errores mientras se escribe
-% \bibliographystyle{plain}
-% \bibliography{bibliografia/bibliografia_tesis_leal}
+\printbibliography
+
 
 \end{document}

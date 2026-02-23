@@ -1,0 +1,23 @@
+
+\subsection{Parámetros Metabólicos Descubiertos}
+La red neuronal convergió exitosamente (Loss $\approx 0$ para D4), permitiendo extraer los siguientes coeficientes bioenergéticos:
+
+\begin{table}[H]
+\centering
+\caption{Parámetros Bioenergéticos Inferidos por la IA}
+\label{tab:params}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Parámetro} & \textbf{Tratamiento D1 (Estrés)} & \textbf{Tratamiento D4 (Óptimo)} \\ \midrule
+$m$ (Mantenimiento) & 0.69581 & 0.58429 \\
+$Y_g$ (Costo Crecimiento) & 0.96518 & 0.85961 \\
+$Y_l$ (Costo Lípidos) & 0.85845 & 0.75689 \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Interpretación Biológica}
+\begin{enumerate}
+    \item \textbf{Costo de Mantenimiento:} El tratamiento D1 presentó un costo basal ($m$) un \textbf{19.1\% mayor} que el D4, indicando un estado de estrés metabólico.
+    \item \textbf{Eficiencia de Crecimiento:} El parámetro $Y_g$ fue menor en D4, lo que implica una mayor eficiencia en la conversión de sustrato a biomasa estructural.
+    \item \textbf{Dinámica de Lípidos:} La reconstrucción de variables latentes mostró que el pico de CO$_2$ en el día 11 del tratamiento D4 correspondió a una alta tasa de síntesis de lípidos y crecimiento, mientras que en D1 se observó una movilización (consumo) de reservas.
+\end{enumerate}

@@ -1,0 +1,12 @@
+selected_scheme scheme-full
+TEXDIR /usr/local/texlive/2026
+TEXMFLOCAL /usr/local/texlive/texmf-local
+TEXMFSYSCONFIG /usr/local/texlive/2026/texmf-config
+TEXMFSYSVAR /usr/local/texlive/2026/texmf-var
+option_doc 0
+option_src 0
+option_autobackup 0
+option_adjustrepo 1
+option_desktop_integration 0
+option_file_assocs 0
+option_path 1

@@ -1,36 +1,97 @@
-# --- Archivos temporales de LaTeX ---
+# =========================
+# LaTeX / latexmk / biber
+# =========================
 *.aux
 *.log
 *.out
 *.toc
 *.lof
 *.lot
-*.bbl
-*.blg
 *.fls
 *.fdb_latexmk
+*.synctex
 *.synctex.gz
+*.dvi
+*.xdv
 *.nav
 *.snm
 *.vrb
-*.dvi
 
-# Faltaban estos (específicos de XeLaTeX y Biber):
-*.xdv
+# BibLaTeX/Biber
 *.bcf
 *.run.xml
-*.bbl-SAVE-ERROR
+*.bbl
+*.blg
+*-blx.bib
+
+# latexmk/compilación con fallos
 *.bcf-SAVE-ERROR
+*.bbl-SAVE-ERROR
 
-# Archivos PDF
-# (Descomenta estas líneas si prefieres NO guardar el PDF en el historial)
-#tesis.pdf
-#presentacion.pdf
+# Otros temporales comunes
+*.acn
+*.acr
+*.alg
+*.glg
+*.glo
+*.gls
+*.glsdefs
+*.ist
+*.nlo
+*.nls
+*.idx
+*.ind
+*.ilg
+*.loa
+*.xdy
+*.slo
+*.sls
+*.tdo
 
-# --- Archivos de sistema y Editores ---
+# =========================
+# PDFs y artefactos
+# =========================
+# Si NO quieres versionar PDFs generados, deja esto activo:
+*.pdf
+
+# Si SÍ quieres versionar algunos PDFs finales, puedes “des-ignorar” así:
+#!tesis/tesis.pdf
+#!presentacion/presentacion.pdf
+
+# =========================
+# minted / pygments
+# =========================
+_minted*
+*.pyg
+
+# =========================
+# Editores / IDE
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# OS
+# =========================
 .DS_Store
 Thumbs.db
-_minted*
 
-# Scripts de utilidad temporal
-limpiar.py
+# =========================
+# Python (si aplica)
+# =========================
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# =========================
+# Docker build outputs (si llegas a guardar tarballs)
+# =========================
+*.tar
+
+# No versionar symlinks/atajos locales ni data link de articulos
+articulos/**/bibliografia
+
+# Incluir datos del articulo 00
+!articulos/00-red-neuronal-biomasa/datos/
