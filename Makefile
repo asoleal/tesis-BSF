@@ -48,14 +48,12 @@ slides:
 
 articulos:
 >	@echo "Compilando artículos uno por uno..."
->	@for dir in articulos/*/ ; do \
->		if [ -f "$$dir/main.tex" ]; then \
->			echo "------------------------------------------"; \
->			echo "PROCESANDO: $$dir"; \
->			echo "------------------------------------------"; \
->			-(cd $$dir && latexmk -C && \
->			 latexmk -pdfxe -interaction=nonstopmode -file-line-error -halt-on-error main.tex); \
->		fi \
+>	@find articulos -name "main.tex" | while read -r main_file; do \
+>		dir=$$(dirname "$$main_file"); \
+>		echo "--------------------------------------------------"; \
+>		echo "Compilando artículo en: $$dir"; \
+>		echo "--------------------------------------------------"; \
+>		(cd "$$dir" && latexmk -pdfxe -interaction=nonstopmode -file-line-error -halt-on-error main.tex); \
 >	done
 
 solo-art:
