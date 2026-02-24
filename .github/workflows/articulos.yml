@@ -4,43 +4,41 @@ on:
   push:
     paths:
       - 'articulos/**'
-      - 'Makefile'
   workflow_dispatch:
 
 jobs:
-  # Paso A: Detectar qué carpetas existen
-  detectar-carpetas:
+  detectar-cambios:
     runs-on: ubuntu-latest
     outputs:
-      carpetas: ${{ steps.set-matrix.outputs.dirs }}
+      # Aquí guardaremos solo las carpetas que tuvieron cambios
+      carpetas: ${{ steps.filter.outputs.changes }}
     steps:
       - uses: actions/checkout@v4
-      - id: set-matrix
-        # Este comando busca carpetas dentro de 'articulos/' y las formatea para GitHub
-        run: |
-          DIRS=$(find articulos -maxdepth 1 -mindepth 1 -type d -printf '"%p",' | sed 's/,$//')
-          echo "dirs=[$DIRS]" >> $GITHUB_OUTPUT
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          # Filtramos: si cambia algo en articulos/art1, la clave es 'articulos/art1'
+          filters: |
+            articulos/01-nombre-art: 'articulos/01-nombre-art/**'
+            articulos/02-nombre-art: 'articulos/02-nombre-art/**'
 
-  # Paso B: Compilar cada carpeta por separado
   compilar:
-    needs: detectar-carpetas
+    needs: detectar-cambios
+    if: ${{ needs.detectar-cambios.outputs.carpetas != '[]' }}
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/asoleal/tesis-bsf-base:latest
     strategy:
-      fail-fast: false  # Si un artículo falla, que los demás sigan compilando
       matrix:
-        carpeta: ${{ fromJson(needs.detectar-carpetas.outputs.carpetas) }}
+        # Solo ejecutará la matrix para las carpetas detectadas en el filtro
+        carpeta: ${{ fromJson(needs.detectar-cambios.outputs.carpetas) }}
     
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Compilando ${{ matrix.carpeta }}
+      - name: Compilando solo el cambio
         run: make articulo dir=${{ matrix.carpeta }}
-
-      - name: Guardar PDF del artículo
+      - name: Guardar PDF
         uses: actions/upload-artifact@v4
         with:
-          # El nombre del archivo incluirá el nombre de la carpeta
-          name: pdf-${{ strategy.job-index }}
+          name: ${{ matrix.carpeta }}
           path: ${{ matrix.carpeta }}/*.pdf

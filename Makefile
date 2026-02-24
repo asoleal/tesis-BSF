@@ -37,6 +37,7 @@ articulos:
 # Uso: make articulo dir=articulos/nombre-del-articulo
 # ... (tus variables anteriores)
 
+# Compilar un artículo específico (detecta el archivo .tex automáticamente)
 articulo:
 	@if [ -z "$(dir)" ]; then \
 		echo "Error: Indica la carpeta. Ejemplo: make articulo dir=articulos/articulo-01"; \
@@ -45,8 +46,9 @@ articulo:
 	@echo "==> Buscando archivo principal en: $(dir)..."
 	$(eval MAIN_FILE=$(shell ls $(dir)/*.tex | head -n 1))
 	@echo "==> Compilando $$(basename $(MAIN_FILE))..."
-	(cd $(dir) && $(LATEXMK) $$(basename $(MAIN_FILE)).tex)
-        
+	# Eliminamos el .tex manual porque MAIN_FILE ya lo trae o basename lo limpia correctamente
+	(cd $(dir) && $(LATEXMK) $$(basename $$(notdir $(MAIN_FILE))))
+            
 # Limpiar archivos temporales de LaTeX
 clean:
 	@echo "==> Limpiando archivos auxiliares..."
