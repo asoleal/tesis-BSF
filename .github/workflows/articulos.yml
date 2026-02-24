@@ -7,43 +7,44 @@ on:
   workflow_dispatch:
 
 jobs:
+  detectar:
+    runs-on: ubuntu-latest
+    outputs:
+      carpetas: ${{ steps.filter.outputs.changes }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          # Aquí listamos tus carpetas. Solo se activará la que cambie.
+          filters: |
+            articulos/00-red-neuronal: 'articulos/00-red-neuronal/**'
+            articulos/01-pinn-biomasa: 'articulos/01-pinn-biomasa/**'
+            articulos/02-sensores-calibracion: 'articulos/02-sensores-calibracion/**'
+            articulos/03-pgnn-sistema: 'articulos/03-pgnn-sistema/**'
+            articulos/04-hardware-dashboard: 'articulos/04-hardware-dashboard/**'
+
   build:
+    needs: detectar
+    # Solo corre si detectó cambios en alguna de esas carpetas
+    if: ${{ needs.detectar.outputs.carpetas != '[]' }}
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/asoleal/tesis-bsf-base:latest
+    strategy:
+      matrix:
+        # Crea un trabajo independiente por cada carpeta que cambió
+        carpeta: ${{ fromJson(needs.detectar.outputs.carpetas) }}
     
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 2  # Cambiado de 0 a 2 para comparar el commit actual con el anterior
-
-      - name: Compilar Carpetas Modificadas
+      - name: Compilar Artículo
         run: |
-          echo "DEBUG: Iniciando detección..."
+          echo "Compilando artículo en: ${{ matrix.carpeta }}"
+          make articulo dir=${{ matrix.carpeta }}
           
-          # Comparamos el commit anterior (HEAD^) con el actual (HEAD)
-          MODIFIED_DIRS=$(git diff --name-only HEAD^ HEAD 2>/dev/null | grep '^articulos/' | cut -d/ -f1,2 | sort -u || echo "")
-          
-          if [ -z "$MODIFIED_DIRS" ]; then
-            echo "DEBUG: No se detectaron cambios específicos en este commit. Revisando si es un push nuevo..."
-            # Si HEAD^ falla (por ejemplo, en el primer push de la rama), listamos todo
-            MODIFIED_DIRS=$(find articulos -maxdepth 1 -mindepth 1 -type d)
-          fi
-          
-          echo "DEBUG: Carpetas a procesar: '$MODIFIED_DIRS'"
-
-          for dir in $MODIFIED_DIRS; do
-            if [ -d "$dir" ]; then
-              echo "==> Compilando: $dir"
-              make articulo dir=$dir || echo "ERROR: Falló la compilación de $dir"
-              
-              echo "==> Verificando PDF en $dir:"
-              ls -lh $dir/*.pdf 2>/dev/null || echo "ALERTA: No se generó PDF en $dir"
-            fi
-          done
-          
-      - name: Subir PDFs
+      - name: Subir PDF
         uses: actions/upload-artifact@v4
         with:
-          name: articulos-pdf
-          path: articulos/**/*.pdf
+          name: pdf-${{ strategy.job-index }}
+          path: ${{ matrix.carpeta }}/*.pdf
