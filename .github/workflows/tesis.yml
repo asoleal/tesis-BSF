@@ -4,7 +4,6 @@ on:
   push:
     paths:
       - 'tesis/**'       
-      - 'Makefile'       
   workflow_dispatch:     
 
 jobs:

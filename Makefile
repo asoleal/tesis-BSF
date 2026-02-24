@@ -7,7 +7,7 @@ LATEXMK = latexmk -pdfxe -interaction=nonstopmode -file-line-error -halt-on-erro
 
 # --- Reglas Principales ---
 
-.PHONY: all tesis presentacion articulos clean
+.PHONY: all tesis presentacion articulos clean articulo
 
 # Por defecto, si escribes solo 'make', compila todo
 all: tesis presentacion articulos
@@ -33,8 +33,7 @@ articulos:
 		(cd "$$dir" && $(LATEXMK) main.tex); \
 	done
 
-
-# --- Regla corregida para evitar el error .tex.tex ---
+# --- Regla para compilar un artículo específico ---
 articulo:
 	@if [ -z "$(dir)" ]; then \
 		echo "Error: Indica la carpeta. Ejemplo: make articulo dir=articulos/01-nombre"; \
@@ -48,12 +47,9 @@ articulo:
         
 # Limpiar archivos temporales de LaTeX
 clean:
-    @echo "==> Limpiando archivos auxiliares..."
-    # Limpia raíz, tesis y presentación
-    latexmk -C tesis/tesis.tex || true
-    latexmk -C presentacion/presentacion.tex || true
-    # Limpia todos los artículos
-    find articulos -name "*.tex" -execdir latexmk -C \;
-    # Borra carpetas temporales de minted y archivos específicos de Beamer
-    find . -type d -name "_minted*" -exec rm -rf {} +
-    rm -f *.nav *.snm *.vrb
+	@echo "==> Limpiando archivos auxiliares..."
+	latexmk -C tesis/tesis.tex || true
+	latexmk -C presentacion/presentacion.tex || true
+	find articulos -name "*.tex" -execdir latexmk -C \;
+	find . -type d -name "_minted*" -exec rm -rf {} +
+	rm -f *.nav *.snm *.vrb
