@@ -19,31 +19,29 @@ jobs:
 
       - name: Compilar Carpetas Modificadas
         run: |
-          echo "DEBUG: Evento es ${{ github.event_name }}"
+          echo "DEBUG: Iniciando detección..."
           
-          if [ "${{ github.event_name }}" = "push" ]; then
-            echo "DEBUG: Comparando ${{ github.event.before }} con ${{ github.sha }}"
-            MODIFIED_DIRS=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^articulos/' | cut -d/ -f1,2 | sort -u)
-          else
+          # Intentamos el diff, pero si falla, MODIFIED_DIRS quedará vacío
+          MODIFIED_DIRS=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} 2>/dev/null | grep '^articulos/' | cut -d/ -f1,2 | sort -u || echo "")
+          
+          # Si el diff falló o no devolvió nada, listamos todas las carpetas manualmente
+          if [ -z "$MODIFIED_DIRS" ]; then
+            echo "DEBUG: No se pudo comparar commits o no hay cambios. Compilando todo en articulos/..."
             MODIFIED_DIRS=$(find articulos -maxdepth 1 -mindepth 1 -type d)
           fi
           
-          echo "DEBUG: Carpetas detectadas: '$MODIFIED_DIRS'"
-
-          if [ -z "$MODIFIED_DIRS" ]; then
-            echo "ATENCIÓN: No se detectaron carpetas modificadas."
-            exit 0
-          fi
+          echo "DEBUG: Carpetas a procesar: '$MODIFIED_DIRS'"
 
           for dir in $MODIFIED_DIRS; do
             if [ -d "$dir" ]; then
-              echo "==> Iniciando compilación de: $dir"
-              make articulo dir=$dir
-              echo "==> Contenido de $dir tras compilar:"
-              ls -R $dir | grep .pdf || echo "ERROR: No se encontró PDF en $dir"
+              echo "==> Compilando: $dir"
+              make articulo dir=$dir || echo "ERROR: Falló la compilación de $dir"
+              
+              echo "==> Verificando PDF en $dir:"
+              ls -lh $dir/*.pdf 2>/dev/null || echo "ALERTA: No se generó PDF en $dir"
             fi
           done
-
+          
       - name: Subir PDFs
         uses: actions/upload-artifact@v4
         with:
