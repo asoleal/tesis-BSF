@@ -1,8 +1,10 @@
 name: Compilar Presentacion
+
 on:
   push:
     paths:
       - 'presentacion.tex'
+      - 'Makefile'
   workflow_dispatch:
 
 jobs:
@@ -10,11 +12,23 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/asoleal/tesis-bsf-base:latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout del codigo
+        uses: actions/checkout@v4
+
       - name: Compilar Presentacion
         run: make presentacion
-      - uses: actions/upload-artifact@v4
+
+      - name: Listar archivos para verificar ruta
+        run: ls -R
+
+      - name: Subir PDF de la Presentacion
+        uses: actions/upload-artifact@v4
         with:
           name: presentacion-pdf
-          path: presentacion.pdf
+          # El comodín **/*.pdf busca en la raíz y en cualquier subcarpeta
+          path: "**/*.pdf"
+          # Excluimos los de la tesis si ya existen para no duplicar
+          exclude: tesis/*.pdf
+          retention-days: 5

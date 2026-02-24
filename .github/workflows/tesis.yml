@@ -1,22 +1,32 @@
 name: Compilar Tesis
+
 on:
   push:
     paths:
-      - 'tesis.tex'
-      - 'preambulo/**'
-      - 'bibliografia.bib'
-  workflow_dispatch: # Permite compilarla manualmente
+      - 'tesis/**'
+      - 'Makefile'
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/asoleal/tesis-bsf-base:latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout del codigo
+        uses: actions/checkout@v4
+
       - name: Compilar Tesis
         run: make tesis
-      - uses: actions/upload-artifact@v4
+
+      - name: Listar archivos para verificar ruta
+        run: ls -R tesis/
+
+      - name: Subir PDF de la Tesis
+        uses: actions/upload-artifact@v4
         with:
           name: tesis-pdf
-          path: tesis/tesis.pdf
+          # Busca cualquier PDF dentro de la carpeta tesis/
+          path: tesis/*.pdf
+          retention-days: 5
