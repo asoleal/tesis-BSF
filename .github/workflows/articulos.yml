@@ -15,18 +15,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 
+          fetch-depth: 2  # Cambiado de 0 a 2 para comparar el commit actual con el anterior
 
       - name: Compilar Carpetas Modificadas
         run: |
           echo "DEBUG: Iniciando detección..."
           
-          # Intentamos el diff, pero si falla, MODIFIED_DIRS quedará vacío
-          MODIFIED_DIRS=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} 2>/dev/null | grep '^articulos/' | cut -d/ -f1,2 | sort -u || echo "")
+          # Comparamos el commit anterior (HEAD^) con el actual (HEAD)
+          MODIFIED_DIRS=$(git diff --name-only HEAD^ HEAD 2>/dev/null | grep '^articulos/' | cut -d/ -f1,2 | sort -u || echo "")
           
-          # Si el diff falló o no devolvió nada, listamos todas las carpetas manualmente
           if [ -z "$MODIFIED_DIRS" ]; then
-            echo "DEBUG: No se pudo comparar commits o no hay cambios. Compilando todo en articulos/..."
+            echo "DEBUG: No se detectaron cambios específicos en este commit. Revisando si es un push nuevo..."
+            # Si HEAD^ falla (por ejemplo, en el primer push de la rama), listamos todo
             MODIFIED_DIRS=$(find articulos -maxdepth 1 -mindepth 1 -type d)
           fi
           
