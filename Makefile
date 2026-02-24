@@ -46,17 +46,25 @@ slides:
 >    $(DOCKER_BASE) -w /src/presentacion $(DOCKER_IMG) \
 >        latexmk -xelatex -synctex=1 -interaction=nonstopmode -file-line-error -halt-on-error -outdir=. presentacion.tex
 
-
 articulos:
->    @for art in $$(find articulos -name "main.tex"); do \
->        dir=$$(dirname $$art); \
->        echo "$(YELLOW)Limpiando $$art en /src/$$dir$(NC)"; \
->        $(DOCKER_BASE) -w /src/$$dir $(DOCKER_IMG) latexmk -C; \
->        echo "$(YELLOW)Compilando $$art en /src/$$dir$(NC)"; \
->        $(DOCKER_BASE) -w /src/$$dir $(DOCKER_IMG) \
->            latexmk -xelatex -synctex=1 -interaction=nonstopmode -file-line-error -halt-on-error -outdir=. main.tex; \
->    done
+>	@echo "Compilando artículos uno por uno..."
+>	@for dir in articulos/*/ ; do \
+>		if [ -f "$$dir/main.tex" ]; then \
+>			echo "------------------------------------------"; \
+>			echo "PROCESANDO: $$dir"; \
+>			echo "------------------------------------------"; \
+>			-(cd $$dir && latexmk -C && \
+>			 latexmk -pdfxe -interaction=nonstopmode -file-line-error -halt-on-error main.tex); \
+>		fi \
+>	done
 
+solo-art:
+>	@if [ -z "$(DIR)" ]; then \
+>		echo "Error: Debes especificar la carpeta. Ejemplo: make solo-art DIR=00-red-neuronal"; \
+>		exit 1; \
+>	fi
+>	@echo "Compilando únicamente: articulos/$(DIR)/"
+>	@(cd articulos/$(DIR) && latexmk -pdfxe -interaction=nonstopmode -file-line-error -halt-on-error main.tex)
 
 watch-tesis:
 >    @echo "$(YELLOW)Watch tesis (Ctrl+C para detener).$(NC)"

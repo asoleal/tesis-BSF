@@ -1,34 +1,27 @@
 % !TEX program = xelatex
 \documentclass[11pt,a4paper]{article}
 
-% Geometría
+% Geometría y Fuentes
 \usepackage{geometry}
 \geometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
+\usepackage{fontspec}
+\usepackage{csquotes}
+\usepackage[spanish, es-nodecimaldot]{babel}
 
-% Fuente robusta (sin fontspec)
-\usepackage{lmodern} % evita errores de "font not found"
+% PARCHE para evitar error de hooks en TeX Live 2025
+\makeatletter
+\let\bbl@sh@active@arg\relax
+\makeatother
 
-% Idioma
-\usepackage[spanish]{babel}
-
-% Matemáticas y símbolos
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{amssymb}
-
-% Figuras
-\usepackage{graphicx}
-
-% Bibliografía (biblatex + biber, estilo autor-año estándar)
+% Bibliografía (Apuntando a la raíz del repo con rutas verificadas)
 \usepackage[backend=biber,style=authoryear]{biblatex}
-\addbibresource{bibliografia/bibliografia_tesis_leal.bib}
+\addbibresource{../../archivos_bib/bibliografia_tesis_leal.bib}
+\addbibresource{../../recursos-comunes/bibliografia/Referencias.bib}
 
-% Hipervínculos (casi siempre al final)
 \usepackage[hidelinks]{hyperref}
 
-\title{\textbf{Estimación de la Producción de CO$_2$ y Biomasa en el Cultivo de Mosca Soldado Negra (\textit{Hermetia illucens})}}
-\author{John Jairo Leal G$^{1}$ \and Luis Fernando Mejía Rodríguez$^{1}$}
-\date{\today}
+\title{\textbf{Estimación de la Producción de CO$_2$ y Biomasa}}
+\author{John Jairo Leal G. \and Luis Fernando Mejía R.}
 
 \begin{document}
 
@@ -41,6 +34,10 @@ El monitoreo de la dinámica de crecimiento de la mosca soldado negra (\textit{H
 \end{abstract}
 
 \section{Introducción}
+
+Probando la compilación de solo este artículo
+
+
 En éste artículo se quiere comparar el modelo de la biomasa larvarl $B(t)$ 
 propuesto por \parencite{eriksenDynamicModellingFeed2022}, con el entrenamiento de una red neuronal. Con lo cual queremos probar la red para verificar el comportamiento
 

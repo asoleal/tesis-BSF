@@ -1,8 +1,8 @@
-name: Compilar Tesis y Presentación
+name: Compilar Tesis, Presentación y Artículos
 
 on:
   push:
-    branches: [ "main", "master", "reorganizacion-estructura" ] # Añadí tu rama de trabajo
+    branches: [ "main", "master", "reorganizacion-estructura" ]
   pull_request:
     branches: [ "main", "master" ]
 
@@ -18,7 +18,7 @@ jobs:
       - name: Configurar Git Safe Directory
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
-      - name: Instalar fuentes para XeLaTeX (fontspec)
+      - name: Instalar fuentes para XeLaTeX
         run: |
           apt-get update
           apt-get install -y --no-install-recommends fontconfig fonts-lmodern
@@ -26,16 +26,31 @@ jobs:
 
       # --- COMPILACIÓN DE TESIS ---
       - name: Compilar Tesis
-        working-directory: ./tesis  # <--- Crucial: Entra a la carpeta tesis
+        working-directory: ./tesis
         run: |
-          # Al estar dentro de /tesis, latexmk encuentra 'preambulo/' sin problemas
           latexmk -pdfxe -interaction=nonstopmode -file-line-error -halt-on-error tesis.tex
 
       # --- COMPILACIÓN DE PRESENTACIÓN ---
       - name: Compilar Presentación
-        working-directory: ./presentacion # <--- Crucial: Entra a la carpeta presentacion
+        working-directory: ./presentacion
         run: |
           latexmk -pdfxe -interaction=nonstopmode -file-line-error -halt-on-error presentacion.tex
+
+      # --- COMPILACIÓN AUTOMÁTICA DE ARTÍCULOS ---
+      - name: Compilar todos los artículos (Ciclo Automático)
+        run: |
+          # Busca todos los archivos main.tex dentro de articulos/
+          find articulos -name "main.tex" | while read -r main_file; do
+            # Obtiene la carpeta que contiene ese main.tex
+            dir=$(dirname "$main_file")
+            echo "--------------------------------------------------"
+            echo "Compilando artículo en: $dir"
+            echo "--------------------------------------------------"
+            
+            # Ejecuta latexmk dentro de esa carpeta específica
+            latexmk -pdfxe -interaction=nonstopmode -file-line-error -halt-on-error \
+                    -working-directory="$dir" "$main_file"
+          done
 
       # --- SUBIR RESULTADOS ---
       - name: Subir PDFs
@@ -45,4 +60,5 @@ jobs:
           path: |
             tesis/tesis.pdf
             presentacion/presentacion.pdf
+            articulos/**/*.pdf
           if-no-files-found: error

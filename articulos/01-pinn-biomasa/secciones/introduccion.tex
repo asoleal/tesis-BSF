@@ -51,7 +51,7 @@ La variable de interés biológico para el modelo de Eriksen no es la concentrac
 \begin{enumerate}
     \item \textbf{Filtrado de Saturación del Sensor:} Se identificó una limitación instrumental en el sensor de CO$_2$ con un techo de medición cercano a los 6000 ppm. Para evitar subestimar la pendiente debido al "aplanamiento" de la curva por saturación, se aplicó un filtro de corte duro (hard threshold):
     \begin{equation}
-        Datos_{validos} = \{ (t, C) \mid C < 5850 \text{ ppm} \}
+        D_{validos} = \{ (t, C) \mid C < 5850 \, \text{ppm} \}
     \end{equation}
     
     \item \textbf{Regresión Lineal (Cálculo de Pendiente):} Sobre los datos válidos, se realizó una regresión lineal por mínimos cuadrados para obtener la pendiente $m$, que representa la tasa de producción bruta:
