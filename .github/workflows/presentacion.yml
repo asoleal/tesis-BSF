@@ -1,0 +1,20 @@
+name: Compilar Presentacion
+on:
+  push:
+    paths:
+      - 'presentacion.tex'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/asoleal/tesis-bsf-base:latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compilar Presentacion
+        run: make presentacion
+      - uses: actions/upload-artifact@v4
+        with:
+          name: presentacion-pdf
+          path: presentacion.pdf

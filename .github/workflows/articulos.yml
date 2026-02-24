@@ -1,0 +1,20 @@
+name: Compilar Articulos
+on:
+  push:
+    paths:
+      - 'articulos/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/asoleal/tesis-bsf-base:latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compilar Articulos Modificados
+        run: make articulos
+      - uses: actions/upload-artifact@v4
+        with:
+          name: articulos-pdf
+          path: articulos/**/*.pdf
