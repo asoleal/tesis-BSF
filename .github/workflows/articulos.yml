@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - 'articulos/**'
-  workflow_dispatch:
+  workflow_dispatch: # Para cuando quieras forzar la compilación
 
 jobs:
   build:
@@ -15,22 +15,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Trae todo el historial para poder comparar cambios
+          fetch-depth: 0 
 
       - name: Compilar Carpetas Modificadas
         run: |
-          # 1. Identificar carpetas en 'articulos/' con cambios respecto al commit anterior
-          # Usamos HEAD^1 para comparar con el commit previo
-          MODIFIED_DIRS=$(git diff --name-only HEAD^1 HEAD | grep '^articulos/' | cut -d/ -f1,2 | sort -u)
+          # Si es un push, comparamos con el commit anterior. 
+          # Si es manual o el primer commit, listamos todas las carpetas.
+          if [ "${{ github.event_name }}" = "push" ]; then
+            MODIFIED_DIRS=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^articulos/' | cut -d/ -f1,2 | sort -u)
+          else
+            MODIFIED_DIRS=$(find articulos -maxdepth 1 -mindepth 1 -type d)
+          fi
           
           if [ -z "$MODIFIED_DIRS" ]; then
-            echo "No se detectaron cambios en artículos."
+            echo "No se detectaron cambios."
             exit 0
           fi
 
-          echo "Carpetas a compilar: $MODIFIED_DIRS"
-
-          # 2. Ejecutar el Makefile por cada carpeta detectada
           for dir in $MODIFIED_DIRS; do
             if [ -d "$dir" ]; then
               make articulo dir=$dir
