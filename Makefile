@@ -33,6 +33,16 @@ articulos:
 		(cd "$$dir" && $(LATEXMK) main.tex); \
 	done
 
+# Compilar un artículo específico
+# Uso: make articulo dir=articulos/nombre-del-articulo
+articulo:
+	@if [ -z "$(dir)" ]; then \
+		echo "Error: Indica la carpeta. Ejemplo: make articulo dir=articulos/articulo-01"; \
+		exit 1; \
+	fi
+	@echo "==> Compilando artículo individual en: $(dir)..."
+	(cd $(dir) && $(LATEXMK) main.tex)
+    
 # Limpiar archivos temporales de LaTeX
 clean:
 	@echo "==> Limpiando archivos auxiliares..."

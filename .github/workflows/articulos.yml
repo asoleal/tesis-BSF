@@ -1,20 +1,46 @@
 name: Compilar Articulos
+
 on:
   push:
     paths:
       - 'articulos/**'
+      - 'Makefile'
   workflow_dispatch:
 
 jobs:
-  build:
+  # Paso A: Detectar qué carpetas existen
+  detectar-carpetas:
+    runs-on: ubuntu-latest
+    outputs:
+      carpetas: ${{ steps.set-matrix.outputs.dirs }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: set-matrix
+        # Este comando busca carpetas dentro de 'articulos/' y las formatea para GitHub
+        run: |
+          DIRS=$(find articulos -maxdepth 1 -mindepth 1 -type d -printf '"%p",' | sed 's/,$//')
+          echo "dirs=[$DIRS]" >> $GITHUB_OUTPUT
+
+  # Paso B: Compilar cada carpeta por separado
+  compilar:
+    needs: detectar-carpetas
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/asoleal/tesis-bsf-base:latest
+    strategy:
+      fail-fast: false  # Si un artículo falla, que los demás sigan compilando
+      matrix:
+        carpeta: ${{ fromJson(needs.detectar-carpetas.outputs.carpetas) }}
+    
     steps:
       - uses: actions/checkout@v4
-      - name: Compilar Articulos Modificados
-        run: make articulos
-      - uses: actions/upload-artifact@v4
+      
+      - name: Compilando ${{ matrix.carpeta }}
+        run: make articulo dir=${{ matrix.carpeta }}
+
+      - name: Guardar PDF del artículo
+        uses: actions/upload-artifact@v4
         with:
-          name: articulos-pdf
-          path: articulos/**/*.pdf
+          # El nombre del archivo incluirá el nombre de la carpeta
+          name: pdf-${{ strategy.job-index }}
+          path: ${{ matrix.carpeta }}/*.pdf
