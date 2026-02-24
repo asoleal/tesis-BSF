@@ -1,5 +1,30 @@
-name: Compilar Articulos
+- name: Compilar Carpetas Modificadas
+        run: |
+          echo "DEBUG: Evento es ${{ github.event_name }}"
+          
+          if [ "${{ github.event_name }}" = "push" ]; then
+            # Agregamos un eco para ver qué commits está comparando
+            echo "DEBUG: Comparando ${{ github.event.before }} con ${{ github.sha }}"
+            MODIFIED_DIRS=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^articulos/' | cut -d/ -f1,2 | sort -u)
+          else
+            MODIFIED_DIRS=$(find articulos -maxdepth 1 -mindepth 1 -type d)
+          fi
+          
+          echo "DEBUG: Carpetas detectadas para compilar: '$MODIFIED_DIRS'"
 
+          if [ -z "$MODIFIED_DIRS" ]; then
+            echo "ATENCIÓN: No se detectaron carpetas modificadas."
+            exit 0
+          fi
+
+          for dir in $MODIFIED_DIRS; do
+            if [ -d "$dir" ]; then
+              echo "==> Iniciando compilación de: $dir"
+              make articulo dir=$dir
+              echo "==> Contenido de $dir después de compilar:"
+              ls -R $dir | grep .pdf || echo "ERROR: No se encontró PDF en $dir"
+            fi
+          done
 on:
   push:
     paths:
