@@ -7,38 +7,38 @@ on:
   workflow_dispatch:
 
 jobs:
-  detectar-cambios:
-    runs-on: ubuntu-latest
-    outputs:
-      # Aquí guardaremos solo las carpetas que tuvieron cambios
-      carpetas: ${{ steps.filter.outputs.changes }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
-        id: filter
-        with:
-          # Filtramos: si cambia algo en articulos/art1, la clave es 'articulos/art1'
-          filters: |
-            articulos/01-nombre-art: 'articulos/01-nombre-art/**'
-            articulos/02-nombre-art: 'articulos/02-nombre-art/**'
-
-  compilar:
-    needs: detectar-cambios
-    if: ${{ needs.detectar-cambios.outputs.carpetas != '[]' }}
+  build:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/asoleal/tesis-bsf-base:latest
-    strategy:
-      matrix:
-        # Solo ejecutará la matrix para las carpetas detectadas en el filtro
-        carpeta: ${{ fromJson(needs.detectar-cambios.outputs.carpetas) }}
     
     steps:
       - uses: actions/checkout@v4
-      - name: Compilando solo el cambio
-        run: make articulo dir=${{ matrix.carpeta }}
-      - name: Guardar PDF
+        with:
+          fetch-depth: 0 # Trae todo el historial para poder comparar cambios
+
+      - name: Compilar Carpetas Modificadas
+        run: |
+          # 1. Identificar carpetas en 'articulos/' con cambios respecto al commit anterior
+          # Usamos HEAD^1 para comparar con el commit previo
+          MODIFIED_DIRS=$(git diff --name-only HEAD^1 HEAD | grep '^articulos/' | cut -d/ -f1,2 | sort -u)
+          
+          if [ -z "$MODIFIED_DIRS" ]; then
+            echo "No se detectaron cambios en artículos."
+            exit 0
+          fi
+
+          echo "Carpetas a compilar: $MODIFIED_DIRS"
+
+          # 2. Ejecutar el Makefile por cada carpeta detectada
+          for dir in $MODIFIED_DIRS; do
+            if [ -d "$dir" ]; then
+              make articulo dir=$dir
+            fi
+          done
+
+      - name: Subir PDFs
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.carpeta }}
-          path: ${{ matrix.carpeta }}/*.pdf
+          name: articulos-pdf
+          path: articulos/**/*.pdf
