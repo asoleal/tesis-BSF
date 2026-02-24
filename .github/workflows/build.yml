@@ -1,64 +1,36 @@
-name: Compilar Tesis, Presentación y Artículos
+name: Compilar Tesis y Articulos
 
 on:
   push:
-    branches: [ "main", "master", "reorganizacion-estructura" ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ "main", "master" ]
+    branches: [ main, master ]
+  workflow_dispatch: # Permite ejecutarlo manualmente
 
 jobs:
-  build_latex:
+  build:
     runs-on: ubuntu-latest
-    container: texlive/texlive:latest
+    
+    # Usamos la imagen que acabas de subir
+    container:
+      image: ghcr.io/asoleal/tesis-bsf-base:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - name: Descargar repositorio
+      - name: Checkout del codigo
         uses: actions/checkout@v4
 
-      - name: Configurar Git Safe Directory
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
-
-      - name: Instalar fuentes para XeLaTeX
+      - name: Compilar todos los articulos
         run: |
-          apt-get update
-          apt-get install -y --no-install-recommends fontconfig fonts-lmodern
-          fc-cache -f -v
+          make articulos
 
-      # --- COMPILACIÓN DE TESIS ---
-      - name: Compilar Tesis
-        working-directory: ./tesis
-        run: |
-          latexmk -pdfxe -interaction=nonstopmode -file-line-error -halt-on-error tesis.tex
-
-      # --- COMPILACIÓN DE PRESENTACIÓN ---
-      - name: Compilar Presentación
-        working-directory: ./presentacion
-        run: |
-          latexmk -pdfxe -interaction=nonstopmode -file-line-error -halt-on-error presentacion.tex
-
-      # --- COMPILACIÓN AUTOMÁTICA DE ARTÍCULOS ---
-      - name: Compilar todos los artículos (Ciclo Automático)
-        run: |
-          # Busca todos los archivos main.tex dentro de articulos/
-          find articulos -name "main.tex" | while read -r main_file; do
-            # Obtiene la carpeta que contiene ese main.tex
-            dir=$(dirname "$main_file")
-            echo "--------------------------------------------------"
-            echo "Compilando artículo en: $dir"
-            echo "--------------------------------------------------"
-            
-            # Ejecuta latexmk dentro de esa carpeta específica
-            latexmk -pdfxe -interaction=nonstopmode -file-line-error -halt-on-error \
-                    -working-directory="$dir" "$main_file"
-          done
-
-      # --- SUBIR RESULTADOS ---
-      - name: Subir PDFs
+      - name: Subir PDFs como artefactos
+        if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: Documentos_Finales
+          name: articulos-pdf
           path: |
-            tesis/tesis.pdf
-            presentacion/presentacion.pdf
             articulos/**/*.pdf
-          if-no-files-found: error
+          retention-days: 5
