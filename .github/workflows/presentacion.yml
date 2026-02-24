@@ -20,15 +20,10 @@ jobs:
       - name: Compilar Presentacion
         run: make presentacion
 
-      - name: Listar archivos para verificar ruta
-        run: ls -R
-
       - name: Subir PDF de la Presentacion
         uses: actions/upload-artifact@v4
         with:
           name: presentacion-pdf
-          # El comodín **/*.pdf busca en la raíz y en cualquier subcarpeta
-          path: "**/*.pdf"
-          # Excluimos los de la tesis si ya existen para no duplicar
-          exclude: tesis/*.pdf
+          # Apuntamos específicamente al archivo que genera tu Makefile
+          path: presentacion/presentacion.pdf
           retention-days: 5
