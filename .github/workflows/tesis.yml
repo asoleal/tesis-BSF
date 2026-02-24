@@ -3,9 +3,9 @@ name: Compilar Tesis
 on:
   push:
     paths:
-      - 'tesis/**'
-      - 'Makefile'
-  workflow_dispatch:
+      - 'tesis/**'       # Solo si cambian archivos dentro de tesis/
+      - 'Makefile'       # O si cambias el Makefile global
+  workflow_dispatch:     # Permite ejecución manual
 
 jobs:
   build:

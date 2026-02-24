@@ -34,7 +34,7 @@ articulos:
 	done
 
 
-# Compilar un artículo específico (detecta el archivo .tex automáticamente)
+# --- Regla corregida para evitar el error .tex.tex ---
 articulo:
 	@if [ -z "$(dir)" ]; then \
 		echo "Error: Indica la carpeta. Ejemplo: make articulo dir=articulos/01-nombre"; \
@@ -45,7 +45,7 @@ articulo:
 	FILENAME=$$(basename $$FILE .tex); \
 	echo "==> Compilando $$FILENAME.tex..."; \
 	(cd $(dir) && $(LATEXMK) $$FILENAME)
-    
+        
 # Limpiar archivos temporales de LaTeX
 clean:
 	@echo "==> Limpiando archivos auxiliares..."

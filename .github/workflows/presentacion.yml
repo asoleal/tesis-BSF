@@ -3,7 +3,7 @@ name: Compilar Presentacion
 on:
   push:
     paths:
-      - 'presentacion.tex'
+      - 'presentacion/**'
       - 'Makefile'
   workflow_dispatch:
 
