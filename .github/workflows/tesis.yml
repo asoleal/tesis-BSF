@@ -3,25 +3,47 @@ name: Compilar Tesis
 on:
   push:
     paths:
-      - 'tesis/**'       
-  workflow_dispatch:     
+      - 'tesis/**'
+      - 'Makefile'
+      - '.github/workflows/tesis.yml'
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: read
+
     container:
-      image: ghcr.io/asoleal/tesis-bsf-base:latest
+      image: ghcr.io/asoleal/tesis-bsf-base:sha-7c75eab
+      
+    defaults:
+      run:
+        shell: bash
 
     steps:
-      - name: Checkout del codigo
+      - name: Checkout del código
         uses: actions/checkout@v4
 
-      - name: Compilar Tesis
+      - name: Verificar herramientas
+        run: |
+          xelatex --version
+          latexmk -v
+          biber --version
+          make --version
+
+      - name: Compilar tesis
         run: make tesis
 
-      - name: Subir PDF de la Tesis
+      - name: Verificar PDF generado
+        run: test -f tesis/tesis.pdf
+
+      - name: Subir PDF de la tesis
         uses: actions/upload-artifact@v4
         with:
           name: tesis-pdf
-          path: tesis/tesis.pdf # Apuntamos directamente al archivo generado
-          retention-days: 5
+          path: tesis/tesis.pdf
+          retention-days: 7
+          if-no-files-found: error

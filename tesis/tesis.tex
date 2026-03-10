@@ -48,7 +48,9 @@
 \usepackage{fancyhdr}
 \usepackage{titlesec}
 \usepackage{listings}
-%\usepackage{xcolor}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
 
 % Definición de colores personalizados
 \definecolor{codegreen}{rgb}{0,0.6,0}
@@ -180,152 +182,142 @@
 
 %===============================================================
 %===============================================================
-
-
 % ---------------------------------------------------------
 % CAPÍTULO 1: INTRODUCCIÓN
 % ---------------------------------------------------------
 \chapter{Introducción}
 
-\section{Contexto de la Gestión de Residuos Agroindustriales}
-% Panorama general y el rol de la BSF.
+\section{Contexto de la gestión de residuos agroindustriales}
 \input{Capitulos/introduccion.tex}
-\section{Planteamiento del Problema}
-% La "caja negra" de la bioconversión.
+
+\section{Planteamiento del problema}
 \input{Capitulos/planteamiento.tex}
 
 \section{Justificación}
-% Por qué híbrido (Sensores + IA + Física) es mejor.
 \input{Capitulos/justificacion.tex}
-\section{Objetivos de la Investigación}
+
+%\section{Pregunta de investigación e hipótesis}
+%\input{Capitulos/pregunta_hipotesis.tex}
+
+\section{Objetivos de la investigación}
 \input{Capitulos/objetivo_General.tex}
-%\section{Alcance y Limitaciones}
-% Escala de laboratorio, dietas D1/D4.
+
+\section{Alcance y limitaciones}
 \input{Capitulos/alcance_limitaciones.tex}
+
+
 % ---------------------------------------------------------
-% CAPÍTULO 2: MARCO TEÓRICO
+% CAPÍTULO 2: MARCO CONCEPTUAL Y TEÓRICO
 % ---------------------------------------------------------
-\chapter{Marco Teórico}
+\chapter{Marco conceptual y teórico}
+
+%\section{Bioconversión de residuos con \textit{Hermetia illucens}}
+%\input{Capitulos/marco_bsf.tex}
+
+%\section{Producción de \ce{CO2} y \ce{CH4} en sistemas de bioconversión}
+%\input{Capitulos/marco_gases.tex}
+
+%\section{Respirometría, control de línea base y análisis de tasas}
+%\input{Capitulos/marco_respirometria.tex}
+
+%\section{Modelado mecanicista de la respiración}
+%\input{Capitulos/marco_modelo_mecanicista.tex}
+
+%\section{Modelado híbrido e inferencia con redes neuronales}
+%\input{Capitulos/marco_pinn.tex}
+
+%\section{Métricas de desempeño ambiental y comparación con otros procesos}
+%\input{Capitulos/marco_metricas.tex}
+
 \input{Capitulos/marco-teorico.tex}
-%\section{Bioenergética de \textit{Hermetia illucens}}
-% Modelos DEB, Eriksen, metabolismo.
-% \subsection{Fundamentos del Metabolismo de Insectos}
-    % Introducción general (anabolismo/catabolismo).
-
-%    \subsection{Modelos de Crecimiento: El Enfoque de Eriksen}
-    % Aquí explicas detalladamente el modelo de Eriksen.
-    % Pones sus ecuaciones originales y sus gráficos típicos.
-
-%    \subsection{Respirometría y Tasa Metabólica: Estudios de Laganaro}
-    % Aquí explicas la relación entre consumo de O2/producción de CO2
-    % y biomasa que estableció Laganaro.
-
-
-%\section{Tecnologías de Monitoreo de Gases}
-% Sensores NDIR, interferencia de humedad.
-
-%\section{Modelado Híbrido y PINNs}
-% Physics-Informed Neural Networks vs Pure Data-Driven.
-
-%\section{Métricas de Sustentabilidad en Bioconversión}
-% GWP, factores de emisión.
-%%=======================================
-%Autor Clave: A. Mertenat (Eawag, Suiza)
-
-%Si vas a hablar de \ce{CH4}, \ce{CO2} y "Métricas Ambientales", Mertenat es la referencia mundial. Eriksen te dice cuánto crece la larva, pero Mertenat es quien estudió cuánto contamina el proceso si no se airea bien.
-
-%    Paper Obligatorio: “Direct measurement of greenhouse gas emissions from the bioconversion of biowaste by black soldier fly larvae” (Mertenat et al., 2019).
-
 
 
 % ---------------------------------------------------------
-% CAPÍTULO 3: DESARROLLO (HARDWARE)
+% CAPÍTULO 3: METODOLOGÍA
 % ---------------------------------------------------------
-%\chapter{Desarrollo del Sistema de Instrumentación (IoT)}
+%\chapter{Metodología}
 
-%\section{Diseño y Configuración del Hardware}
-%    \subsection{Arquitectura del Módulo de Sensores}
-%    \subsection{Acondicionamiento de Señal y Control de Humedad}
+%\section{Diseño experimental y condiciones de estudio}
+%\input{Capitulos/metodologia_diseno.tex}
 
-%\section{Calibración y Validación Metrológica}
-%    \subsection{Protocolo Experimental de Calibración}
-%    \subsection{Análisis de Error (MAPE) y Deriva Temporal}
+%\section{Sistema de instrumentación y adquisición de datos}
+%\input{Capitulos/metodologia_instrumentacion.tex}
 
-% ---------------------------------------------------------
-% CAPÍTULO 4: DESARROLLO (SOFTWARE/MODELO)
-% ---------------------------------------------------------
-%\chapter{Formulación del Marco Híbrido (Modelo + IA)}
+%\section{Procesamiento de datos de \ce{CO2} y \ce{CH4}}
+%\input{Capitulos/metodologia_preprocesamiento.tex}
 
-%\section{Modelado Mecanístico Base (Adaptación de Eriksen-Laganaro)}
-% NOTA EL CAMBIO DE TÍTULO ARRIBA
+%\section{Corrección por controles y cálculo de tasas netas}
+%\input{Capitulos/metodologia_controles.tex}
 
-%    \subsection{Formulación de las Ecuaciones Diferenciales (EDO)}
-    % Aquí dices: "Basado en la teoría expuesta en la Sec 2.1,
-    % definimos el siguiente sistema de ecuaciones para el modelo híbrido..."
-    % Ecuación: dBiomasa/dt = f(Respiración, Y, m)
+%\section{Integración de emisiones y cálculo de métricas ambientales}
+%\input{Capitulos/metodologia_metricas.tex}
 
-%    \subsection{Parametrización Biológica}
-    % Aquí defines los valores de Y y m que sacaste de sus papers
-    % para alimentar tu modelo.
+%\section{Modelo matemático y esquema híbrido de predicción}
+%\input{Capitulos/metodologia_modelado.tex}
 
-%\section{Arquitectura de la Red Neuronal Informada por Física}
-% Estructura de la red, función de pérdida compuesta.
-%%=============================================
-%Autor Clave: Maziar Raissi / G.E. Karniadakis (Brown University)
+%\section{Estrategia de validación y análisis comparativo con literatura}
+%\input{Capitulos/metodologia_validacion.tex}
 
-%No puedes presentar una tesis sobre PINNs (Physics-Informed Neural Networks) sin citar a sus creadores. Ellos definieron cómo meter una Ecuación Diferencial dentro de la función de pérdida de una red neuronal.
-
-%    Paper Obligatorio: “Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations” (Raissi et al., 2019).
-
-
-%\section{Algoritmo del Sensor Virtual de Biomasa}
-% Problema inverso e inferencia de estados.
 
 % ---------------------------------------------------------
-% CAPÍTULO 5: RESULTADOS METABÓLICOS
+% CAPÍTULO 4: RESULTADOS DE INSTRUMENTACIÓN Y CALIDAD DE DATOS
 % ---------------------------------------------------------
-%\chapter{Resultados: Dinámica Metabólica y Validación del Modelo}
+%\chapter{Resultados de instrumentación y calidad de datos}
 
-%\section{Predicción de Tasas de Respiración (\ce{CO2})}
-% Comparativa Modelo vs Realidad (Dietas D1, D4).
+%\section{Desempeño metrológico de los sensores}
+%\input{Capitulos/resultados_sensores.tex}
 
-%\section{Desempeño del Sensor Virtual de Biomasa}
-%    \subsection{Inferencia de Curvas de Crecimiento}
-%    \subsection{Detección de Fases de Desarrollo (Prepupa)}
+%\section{Calidad de señal, ruido, deriva y saturación}
+%\input{Capitulos/resultados_calidad_senal.tex}
 
-% ---------------------------------------------------------
-% CAPÍTULO 6: RESULTADOS AMBIENTALES
-% ---------------------------------------------------------
-%\chapter{Resultados: Evaluación de Desempeño Ambiental}
+%\section{Comportamiento de los controles de sustrato}
+%\input{Capitulos/resultados_controles.tex}
 
-%%=================================
-% Autor Clave: C. Lalander (SLU, Suecia)
-
-%Lalander es la autoridad en balance de masas y reducción de sólidos volátiles. Para validar que tu "Sensor Virtual" funciona, necesitas relacionar el \ce{CO2} perdido con el peso seco que desaparece del sustrato.
-
-%    Paper Sugerido: “High waste-to-biomass conversion and efficient Salmonella spp. reduction using black soldier fly for waste recycling” (Lalander et al., 2015) o sus revisiones más recientes.
-
-%\section{Detección de Eventos de Anaerobiosis}
-% Análisis de picos de \ce{CH4}.
-
-%\section{Balance de Carbono y Métricas Globales}
-%    \subsection{Carbono Emitido vs. Retenido}
-%    \subsection{Comparativa Dinámica vs. Factores Estáticos}
 
 % ---------------------------------------------------------
-% CAPÍTULO 7: CONCLUSIONES
+% CAPÍTULO 5: RESULTADOS DEL PROCESO Y EVALUACIÓN AMBIENTAL
 % ---------------------------------------------------------
-%\chapter{Conclusiones y Recomendaciones}
+%\chapter{Resultados del proceso y evaluación ambiental}
 
-%\section{Conclusiones Generales}
-%\section{Contribuciones Originales}
-%\section{Trabajo Futuro}
+%\section{Dinámica temporal de \ce{CO2} y \ce{CH4}}
+%\input{Capitulos/resultados_dinamica_gases.tex}
 
-%===============================================================
-%===============================================================
+%\section{Comparación entre tratamientos o dietas}
+%\input{Capitulos/resultados_tratamientos.tex}
+
+%\section{Emisiones acumuladas y partición aerobia/anaerobia}
+%\input{Capitulos/resultados_acumulados.tex}
+
+%\section{Métricas de desempeño ambiental del bioproceso}
+%\input{Capitulos/resultados_metricas.tex}
+
+%\section{Aporte del modelo mecanicista y del modelo híbrido}
+%\input{Capitulos/resultados_modelado.tex}
+
+%\section{Comparación con compostaje, lombricompostaje y otros procesos}
+%\input{Capitulos/resultados_comparacion.tex}
 
 
-% --- BIBLIOGRAFÍA ---
+% ---------------------------------------------------------
+% CAPÍTULO 6: DISCUSIÓN, CONCLUSIONES Y RECOMENDACIONES
+% ---------------------------------------------------------
+%\chapter{Discusión, conclusiones y recomendaciones}
+
+%\section{Discusión integral de los hallazgos}
+%\input{Capitulos/discusion.tex}
+
+%\section{Conclusiones}
+%\input{Capitulos/conclusiones.tex}
+
+%\section{Limitaciones del estudio}
+%\input{Capitulos/limitaciones_finales.tex}
+
+%\section{Recomendaciones y trabajo futuro}
+%\input{Capitulos/recomendaciones.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Bibliografia
+
 \setlength{\parskip}{0.5em} 
 \addcontentsline{toc}{chapter}{Referencias Bibliográficas} 
 \pagestyle{plain}
