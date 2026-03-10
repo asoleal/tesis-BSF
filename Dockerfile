@@ -1,21 +1,26 @@
-# Usamos la imagen oficial completa de TeX Live (aprox. 4GB)
-# Garantiza que tienes todos los paquetes: fontspec, biber, xelatex, etc.
 FROM texlive/texlive:latest
 
-# Metadatos
 LABEL maintainer="jjlg"
-LABEL description="Entorno para compilar Tesis BSF con XeLaTeX"
+LABEL org.opencontainers.image.title="tesis-bsf-base"
+LABEL org.opencontainers.image.description="Entorno reproducible para compilar la tesis BSF con XeLaTeX, Biber y latexmk"
+LABEL org.opencontainers.image.source="https://github.com/asoleal/tesis-BSF"
 
-# Instalamos 'make' por si quisieras correr el make DENTRO del contenedor
-# (aunque tu estrategia actual es correrlo desde fuera, esto da flexibilidad)
-RUN apt-get update && apt-get install -y make && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      make \
+      fontconfig \
+      locales && \
+    rm -rf /var/lib/apt/lists/*
 
-# Pre-generamos la caché de fuentes para LuaLaTeX/XeLaTeX
-# Esto evita que la primera compilación sea lenta o falle buscando fuentes
-RUN luaotfload-tool --update
+RUN sed -i '/es_CO.UTF-8/s/^# //g' /etc/locale.gen && \
+    locale-gen
 
-# Configuramos el directorio de trabajo
+ENV LANG=es_CO.UTF-8
+ENV LANGUAGE=es_CO:es
+ENV LC_ALL=es_CO.UTF-8
+
+RUN fc-cache -fv
+
 WORKDIR /src
 
-# Comando por defecto (útil para debug si corres 'docker run -it tesis-bsf')
 CMD ["/bin/bash"]
