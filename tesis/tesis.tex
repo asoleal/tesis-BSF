@@ -165,23 +165,6 @@
 % --- CAPÍTULOS ---
 \pagenumbering{arabic}
 \setlength{\parskip}{1em} 
-%\include{Capitulos/introduccion}
-%\include{Capitulos/marco-teorico}
-%\include{Capitulos/estimacion-biomasa}
-%\include{Capitulos/manejo-datos}
-
-%\include{Capitulos/Pregunta}
-%\include{Capitulos/planteamiento}
-%\input{Capitulos/antecedentes}
-
-%\input{Capitulos/objetivo_General.tex}
-%\input{Capitulos/metodologia.tex}
-%\input{Capitulos/costos.tex}
-%\input{Capitulos/resultados_esperados.tex}
-%\input{referencias.tex}
-
-%===============================================================
-%===============================================================
 % ---------------------------------------------------------
 % CAPÍTULO 1: INTRODUCCIÓN
 % ---------------------------------------------------------
@@ -196,9 +179,6 @@
 \section{Justificación}
 \input{Capitulos/justificacion.tex}
 
-%\section{Pregunta de investigación e hipótesis}
-%\input{Capitulos/pregunta_hipotesis.tex}
-
 \section{Objetivos de la investigación}
 \input{Capitulos/objetivo_General.tex}
 
@@ -210,109 +190,135 @@
 % CAPÍTULO 2: MARCO CONCEPTUAL Y TEÓRICO
 % ---------------------------------------------------------
 \chapter{Marco conceptual y teórico}
-
-%\section{Bioconversión de residuos con \textit{Hermetia illucens}}
-%\input{Capitulos/marco_bsf.tex}
-
-%\section{Producción de \ce{CO2} y \ce{CH4} en sistemas de bioconversión}
-%\input{Capitulos/marco_gases.tex}
-
-%\section{Respirometría, control de línea base y análisis de tasas}
-%\input{Capitulos/marco_respirometria.tex}
-
-%\section{Modelado mecanicista de la respiración}
-%\input{Capitulos/marco_modelo_mecanicista.tex}
-
-%\section{Modelado híbrido e inferencia con redes neuronales}
-%\input{Capitulos/marco_pinn.tex}
-
-%\section{Métricas de desempeño ambiental y comparación con otros procesos}
-%\input{Capitulos/marco_metricas.tex}
-
 \input{Capitulos/marco-teorico.tex}
 
 
 % ---------------------------------------------------------
-% CAPÍTULO 3: METODOLOGÍA
+% CAPÍTULO 3: METODOLOGÍA GENERAL
 % ---------------------------------------------------------
-%\chapter{Metodología}
-
-%\section{Diseño experimental y condiciones de estudio}
+\chapter{Metodología general del sistema híbrido}
+\input{Capitulos/metodologia.tex}
+\section{Diseño experimental y condiciones de estudio}
 %\input{Capitulos/metodologia_diseno.tex}
 
-%\section{Sistema de instrumentación y adquisición de datos}
+\section{Sistema de instrumentación y adquisición de datos}
 %\input{Capitulos/metodologia_instrumentacion.tex}
 
-%\section{Procesamiento de datos de \ce{CO2} y \ce{CH4}}
+\section{Procesamiento de datos y pretratamiento de señales}
 %\input{Capitulos/metodologia_preprocesamiento.tex}
 
-%\section{Corrección por controles y cálculo de tasas netas}
-%\input{Capitulos/metodologia_controles.tex}
-
-%\section{Integración de emisiones y cálculo de métricas ambientales}
-%\input{Capitulos/metodologia_metricas.tex}
-
-%\section{Modelo matemático y esquema híbrido de predicción}
+\section{Modelo mecanístico basado en EDO}
 %\input{Capitulos/metodologia_modelado.tex}
 
-%\section{Estrategia de validación y análisis comparativo con literatura}
+\section{Esquema de integración con redes neuronales}
+%\input{Capitulos/metodologia_integracion.tex}
+
+\section{Estrategia de validación y métricas de evaluación}
 %\input{Capitulos/metodologia_validacion.tex}
 
 
 % ---------------------------------------------------------
-% CAPÍTULO 4: RESULTADOS DE INSTRUMENTACIÓN Y CALIDAD DE DATOS
+% CAPÍTULO 4: OBJETIVO ESPECÍFICO 1
 % ---------------------------------------------------------
-%\chapter{Resultados de instrumentación y calidad de datos}
+\chapter{Instrumentación y calibración del módulo de sensores}
 
-%\section{Desempeño metrológico de los sensores}
-%\input{Capitulos/resultados_sensores.tex}
+\section{Configuración del sistema NDIR}
+%\input{Capitulos/oe1_configuracion.tex}
 
-%\section{Calidad de señal, ruido, deriva y saturación}
-%\input{Capitulos/resultados_calidad_senal.tex}
+\section{Protocolo de calibración frente al instrumento de referencia}
+%\input{Capitulos/oe1_calibracion.tex}
 
-%\section{Comportamiento de los controles de sustrato}
-%\input{Capitulos/resultados_controles.tex}
+\section{Evaluación de precisión, desviación y error MAPE}
+%\input{Capitulos/oe1_mape.tex}
 
-
-% ---------------------------------------------------------
-% CAPÍTULO 5: RESULTADOS DEL PROCESO Y EVALUACIÓN AMBIENTAL
-% ---------------------------------------------------------
-%\chapter{Resultados del proceso y evaluación ambiental}
-
-%\section{Dinámica temporal de \ce{CO2} y \ce{CH4}}
-%\input{Capitulos/resultados_dinamica_gases.tex}
-
-%\section{Comparación entre tratamientos o dietas}
-%\input{Capitulos/resultados_tratamientos.tex}
-
-%\section{Emisiones acumuladas y partición aerobia/anaerobia}
-%\input{Capitulos/resultados_acumulados.tex}
-
-%\section{Métricas de desempeño ambiental del bioproceso}
-%\input{Capitulos/resultados_metricas.tex}
-
-%\section{Aporte del modelo mecanicista y del modelo híbrido}
-%\input{Capitulos/resultados_modelado.tex}
-
-%\section{Comparación con compostaje, lombricompostaje y otros procesos}
-%\input{Capitulos/resultados_comparacion.tex}
+\section{Desempeño bajo condiciones de temperatura y humedad del cultivo}
+%\input{Capitulos/oe1_condiciones.tex}
 
 
 % ---------------------------------------------------------
-% CAPÍTULO 6: DISCUSIÓN, CONCLUSIONES Y RECOMENDACIONES
+% CAPÍTULO 5: OBJETIVO ESPECÍFICO 2
 % ---------------------------------------------------------
-%\chapter{Discusión, conclusiones y recomendaciones}
+\chapter{Adaptación y parametrización del modelo matemático}
 
-%\section{Discusión integral de los hallazgos}
-%\input{Capitulos/discusion.tex}
+\section{Formulación bioenergética del modelo de EDO}
+%\input{Capitulos/oe2_formulacion.tex}
 
-%\section{Conclusiones}
-%\input{Capitulos/conclusiones.tex}
+\section{Parametrización del modelo para \textit{Hermetia illucens}}
+%\input{Capitulos/oe2_parametrizacion.tex}
 
-%\section{Limitaciones del estudio}
+\section{Estimación de la tasa de respiración de \ce{CO2}}
+%\input{Capitulos/oe2_estimacion_co2.tex}
+
+\section{Evaluación de capacidad predictiva en ventanas temporales}
+%\input{Capitulos/oe2_validacion.tex}
+
+
+% ---------------------------------------------------------
+% CAPÍTULO 6: OBJETIVO ESPECÍFICO 3
+% ---------------------------------------------------------
+\chapter{Integración híbrida con aprendizaje automático}
+
+\section{Diseño del algoritmo de estimación de estados}
+%\input{Capitulos/oe3_algoritmo.tex}
+
+\section{Inferencia de biomasa larval a partir de datos operativos}
+%\input{Capitulos/oe3_biomasa.tex}
+
+\section{Acoplamiento de la biomasa estimada al modelo mecanístico}
+%\input{Capitulos/oe3_acoplamiento.tex}
+
+\section{Mejora en la precisión de la estimación de \ce{CO2}}
+%\input{Capitulos/oe3_mejora_precision.tex}
+
+
+% ---------------------------------------------------------
+% CAPÍTULO 7: OBJETIVO ESPECÍFICO 4
+% ---------------------------------------------------------
+\chapter{Validación ambiental del sistema híbrido}
+
+\section{Detección de eventos de anaerobiosis mediante \ce{CH4}}
+%\input{Capitulos/oe4_anaerobiosis.tex}
+
+\section{Cuantificación del carbono emitido durante la bioconversión}
+%\input{Capitulos/oe4_carbono.tex}
+
+\section{Construcción de métricas dinámicas de desempeño ambiental}
+%\input{Capitulos/oe4_metricas.tex}
+
+\section{Contraste con estimaciones estáticas tradicionales}
+%\input{Capitulos/oe4_contraste.tex}
+
+
+% ---------------------------------------------------------
+% CAPÍTULO 8: DISCUSIÓN GENERAL
+% ---------------------------------------------------------
+\chapter{Discusión general}
+
+\section{Aporte de la instrumentación al monitoreo del bioproceso}
+%\input{Capitulos/discusion_oe1.tex}
+
+\section{Alcances y limitaciones del modelo mecanístico}
+%\input{Capitulos/discusion_oe2.tex}
+
+\section{Valor agregado de la integración híbrida}
+%\input{Capitulos/discusion_oe3.tex}
+
+\section{Utilidad del sistema para la gestión ambiental}
+%\input{Capitulos/discusion_oe4.tex}
+
+\section{Limitaciones globales del estudio}
 %\input{Capitulos/limitaciones_finales.tex}
 
-%\section{Recomendaciones y trabajo futuro}
+
+% ---------------------------------------------------------
+% CAPÍTULO 9: CONCLUSIONES Y RECOMENDACIONES
+% ---------------------------------------------------------
+\chapter{Conclusiones y recomendaciones}
+
+\section{Conclusiones generales}
+%\input{Capitulos/conclusiones.tex}
+
+\section{Recomendaciones y trabajo futuro}
 %\input{Capitulos/recomendaciones.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

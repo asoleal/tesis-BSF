@@ -1,5 +1,3 @@
-\section{Alcance y Limitaciones}
-
 \subsection{Alcance de la Investigación}
 El presente trabajo se circunscribe al desarrollo, implementación y validación computacional de un sistema híbrido de inteligencia artificial para la modelación de bioprocesos.
 \begin{itemize}
@@ -15,5 +13,5 @@ A pesar de la robustez del enfoque híbrido, se reconocen las siguientes limitac
     \item \textbf{Especificidad del Sustrato:} Si bien las PINNs mejoran la capacidad de generalización respecto a las redes puramente estadísticas, la precisión del modelo está acotada al dominio químico de los sustratos utilizados en el entrenamiento. El modelo no contempla la inhibición metabólica por contaminantes exógenos (e.g., metales pesados, pesticidas) ni matrices de residuos con relaciones C/N extremas no representadas en el conjunto de datos.
     \item \textbf{Resolución Espacial:} El modelo opera bajo una aproximación de parámetros concentrados (\textit{lumped-parameter model}) o 0D-temporal. Aunque el término residual de la PINN captura implícitamente las ineficiencias causadas por la heterogeneidad espacial (fluidos activos), el modelo no resuelve explícitamente los gradientes tridimensionales de temperatura y oxígeno dentro del reactor, lo cual requeriría un acople con Dinámica de Fluidos Computacional (CFD) fuera del alcance de esta tesis.
     \item \textbf{Régimen Operativo:} Los algoritmos están diseñados y validados para sistemas de operación por lotes (\textit{batch}). Su aplicación directa a sistemas de alimentación continua o reactores de flujo vertical podría requerir un reentrenamiento o ajustes en la arquitectura de la red para capturar la dinámica de estado estacionario.
-    \item \textbf{Dependencia de Datos:} La eficacia del "sensor virtual" depende de la calidad de los datos de entrada (temperatura, humedad ambiental, densidad inicial). Errores instrumentales significativos o deriva en los sensores físicos de bajo costo podrían propagar incertidumbre a las predicciones del modelo híbrido.
+    \item \textbf{Dependencia de Datos:} La eficacia del ``sensor virtual'' depende de la calidad de los datos de entrada (temperatura, humedad ambiental, densidad inicial). Errores instrumentales significativos o deriva en los sensores físicos de bajo costo podrían propagar incertidumbre a las predicciones del modelo híbrido.
 \end{itemize}
