@@ -30,7 +30,7 @@ jobs:
     if: ${{ needs.detectar.outputs.carpetas != '[]' }}
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/asoleal/tesis-bsf-base:latest
+      image: ghcr.io/asoleal/tesis-bsf-base:sha-7c75eab
     strategy:
       matrix:
         # Crea un trabajo independiente por cada carpeta que cambió

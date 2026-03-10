@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/asoleal/tesis-bsf-base:latest
+      image: ghcr.io/asoleal/tesis-bsf-base:sha-7c75eab
 
     steps:
       - name: Checkout del codigo
