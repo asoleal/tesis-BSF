@@ -1,74 +1,152 @@
 %!TEX root = tesis.tex
 
 La gestión de residuos agroindustriales constituye un problema ambiental estratégico
-no solo por el volumen creciente de materia orgánica generada, sino por sus
-implicaciones sobre el cambio climático, la calidad ambiental y la sostenibilidad
-de los sistemas productivos. A escala global, cerca de un tercio de los alimentos
-producidos para consumo humano se pierde o desperdicia, equivalente a aproximadamente
-1.3 mil millones de toneladas por año, lo que evidencia la magnitud de los flujos
-orgánicos que terminan fuera de circuitos eficientes de aprovechamiento~\parencite{foodandagricultureorganizationoftheunitednationsfaoEmissionsDueAgriculture2020}.
-Cuando estos residuos no son gestionados bajo condiciones controladas, su degradación
-puede convertirse en una fuente relevante de gases de efecto invernadero (GEI),
-particularmente dióxido de carbono (\ce{CO2}) y metano (\ce{CH4}).
+por sus implicaciones sobre el cambio climático, la calidad ambiental y la
+sostenibilidad de los sistemas productivos. A escala global, una fracción
+significativa de la biomasa residual generada en las cadenas agroalimentarias no
+se reincorpora de manera eficiente a circuitos de aprovechamiento, sino que es
+dispuesta o transformada bajo condiciones que favorecen pérdidas de carbono y
+emisiones de gases de efecto invernadero (GEI). En este contexto, la fracción
+orgánica de los residuos adquiere especial relevancia, dado que su degradación
+biológica puede generar emisiones de dióxido de carbono (\ce{CO2}) y, bajo
+condiciones anaerobias, de metano (\ce{CH4}), un gas con mayor potencial de
+calentamiento global que el \ce{CO2}.
 
-En Colombia, esta problemática adquiere especial importancia por el peso del sector
-agropecuario y por la relevancia del componente AFOLU en la estructura nacional de
-emisiones. Los compromisos climáticos del país incluyen la meta de reducir en 51\%
-las emisiones proyectadas a 2030, lo cual exige fortalecer las capacidades de
-medición, reporte y verificación, especialmente en sectores donde persisten
-incertidumbres significativas sobre las fuentes y magnitudes reales de emisión.
+En Colombia, esta problemática resulta particularmente relevante por la relación
+entre la producción agropecuaria, la generación de residuos orgánicos y la
+estructura nacional de emisiones. El Inventario Nacional de Emisiones y
+Absorciones Atmosféricas presentado por el IDEAM muestra que las categorías
+asociadas a agricultura, silvicultura y otros usos de la tierra, junto con
+aquellas vinculadas a residuos, mantienen un peso importante dentro del perfil
+nacional de GEI, lo que refuerza la necesidad de mejorar la caracterización de
+fuentes y procesos con alta variabilidad e incertidumbre
+\parencite{institutodehidrologiameteorologiayestudiosambientales-ideamInventarioNacionalEmisiones2024}.
+Esta necesidad es consistente, además, con la Contribución Determinada a Nivel
+Nacional (NDC) actualizada de Colombia, en la cual el país ratificó la meta de
+reducir en 51\% sus emisiones proyectadas al año 2030 y reconoció la economía
+circular como una estrategia relevante para la mitigación
+\parencite{republicadecolombiacomoinstitucionContribucionDeterminadaNivel}.
 
-En este marco, los residuos orgánicos agroindustriales representan un frente
-prioritario, dado que su manejo inadecuado puede favorecer procesos anaerobios
-asociados a emisiones de \ce{CH4}, un gas con alto potencial de calentamiento
-global en comparación con el \ce{CO2}.
+Desde esta perspectiva, el tratamiento de residuos orgánicos no puede evaluarse
+únicamente en función de la reducción de volumen, la estabilización del material
+o la obtención de subproductos. También debe valorarse a partir de su desempeño
+ambiental real, particularmente de las emisiones generadas durante el proceso.
+Métodos convencionales como el compostaje abierto o la disposición en rellenos
+sanitarios presentan limitaciones importantes: el primero puede emitir
+\ce{CH4} y \ce{N2O} cuando no se mantienen condiciones adecuadas de aireación,
+humedad y temperatura, mientras que el segundo favorece procesos anaerobios
+ampliamente reconocidos como fuente de metano. En consecuencia, la selección de
+tecnologías de tratamiento exige incorporar criterios de eficiencia climática,
+además de los criterios operativos tradicionales.
 
-Los métodos convencionales de tratamiento, como el compostaje abierto o la disposición
-en rellenos sanitarios, presentan limitaciones importantes desde la perspectiva
-ambiental. Aunque el compostaje puede constituir una alternativa de valorización,
-su desempeño depende de condiciones operativas estrictas y, bajo manejo deficiente,
-puede generar emisiones relevantes de \ce{CH4} y \ce{N2O}. En el caso de la disposición
-final, la degradación anaerobia de la fracción orgánica se reconoce ampliamente como
-una fuente importante de metano. En consecuencia, la evaluación ambiental de las
-tecnologías de tratamiento no puede basarse únicamente en la reducción de volumen o
-en la estabilidad del residuo, sino también en su perfil real de emisiones.
+En este escenario, la bioconversión de residuos mediante \textit{Hermetia
+illucens} ha emergido como una alternativa promisoria dentro de enfoques de
+economía circular y valorización de subproductos orgánicos. Su interés radica en
+la capacidad de transformar sustratos residuales en biomasa de valor agregado y
+en materiales potencialmente aprovechables en tiempos inferiores a los de otras
+rutas biológicas convencionales. No obstante, la sostenibilidad de esta
+tecnología no debe asumirse de forma automática. Su desempeño ambiental depende
+de las condiciones del sustrato, de la interacción entre larvas y microbiota, y
+de la dinámica de oxigenación del medio, factores que pueden inducir transiciones
+entre estados predominantemente aerobios y anaerobios con efectos directos sobre
+las emisiones de GEI.
 
-En este escenario, la bioconversión de residuos mediante \textit{Hermetia illucens}
-ha emergido como una alternativa prometedora dentro de enfoques de economía circular.
-Este proceso permite transformar residuos orgánicos en biomasa de valor agregado y
-en subproductos potencialmente aprovechables, al tiempo que reduce el tiempo de
-tratamiento respecto de otras rutas biológicas convencionales. Sin embargo, la
-sostenibilidad de esta tecnología no debe asumirse de manera automática: también
-requiere ser evaluada en función de las emisiones generadas durante el proceso,
-su desempeño ambiental integral y su contribución neta a la sostenibilidad del
-sistema de gestión de residuos, particularmente en relación con las transiciones
-entre condiciones aerobias y anaerobias en el sustrato.
+Uno de los principales vacíos en este campo es que la evaluación de emisiones en
+procesos de bioconversión suele apoyarse en mediciones puntuales, campañas
+discontinuas o factores de emisión genéricos. Este tipo de aproximaciones resulta
+insuficiente para describir procesos biológicos altamente dinámicos, en los que
+las emisiones cambian con el tiempo en función de la humedad, la temperatura, la
+densidad larval, la composición del sustrato y el estado metabólico del sistema.
+Como resultado, persisten incertidumbres que limitan la comparación rigurosa
+entre tecnologías, la identificación de eventos críticos de emisión y la
+incorporación de información robusta en inventarios, análisis ambientales y
+estrategias de mitigación.
 
-Desde la perspectiva de la gestión ambiental, uno de los principales problemas es
-que las metodologías convencionales de monitoreo suelen apoyarse en mediciones
-puntuales o discontinuas, insuficientes para capturar la dinámica temporal de las
-emisiones. La incertidumbre asociada al uso de factores de emisión genéricos o
-estáticos en procesos biológicos complejos puede comprometer la confiabilidad de los
-reportes ambientales y de las evaluaciones comparativas entre tecnologías
-\parencite{painterCommunicatingClimateFutures2024}. Esta limitación reduce la capacidad
-de identificar eventos críticos, comparar adecuadamente tecnologías de tratamiento e
-incorporar información robusta en inventarios o estrategias de mitigación. Por ello,
-la medición de GEI en sistemas de bioconversión no debe entenderse solo como un
-ejercicio analítico, sino como una herramienta para la toma de decisiones ambientales.
+Frente a esta brecha, la integración de sensórica, modelado matemático y
+aprendizaje automático ofrece una oportunidad metodológica para desarrollar
+sistemas híbridos de monitoreo capaces de estimar emisiones de manera continua,
+dinámica y operativamente útil. Este enfoque resulta especialmente pertinente en
+la bioconversión con \textit{H. illucens}, donde las emisiones emergen de
+interacciones no lineales entre el sustrato, la biomasa, las condiciones
+microambientales y el tiempo de residencia. En este sentido, más que registrar
+concentraciones instantáneas, el reto científico consiste en construir
+herramientas que permitan interpretar la dinámica del proceso y fortalecer la
+gestión ambiental de esta tecnología.
 
-En este contexto, la integración de sensórica, modelado matemático y aprendizaje
-automático abre una oportunidad para desarrollar sistemas híbridos de monitoreo
-capaces de estimar emisiones de manera más continua, dinámica y operativamente útil.
-Este tipo de enfoque resulta especialmente pertinente en procesos biológicos complejos,
-donde las emisiones dependen de interacciones no lineales entre sustrato, biomasa,
-condiciones microambientales y tiempo de residencia. Así, más que medir únicamente
-concentraciones instantáneas, el reto consiste en construir herramientas que permitan
-interpretar la dinámica del proceso y apoyar su gestión ambiental.
+En consecuencia, esta investigación se ubica en la intersección entre gestión de
+residuos agroindustriales, cambio climático, monitoreo ambiental y modelación
+computacional, ver figura \ref{fig:posicionamiento_tesis}. Su pertinencia radica en que responde a una necesidad concreta del
+contexto colombiano: generar herramientas de estimación dinámica que contribuyan
+a evaluar con mayor precisión el desempeño ambiental de la bioconversión de
+residuos con \textit{Hermetia illucens}, y aportar evidencia útil para la
+mitigación de GEI y la transición hacia sistemas agroindustriales más
+sostenibles.
 
-En consecuencia, esta investigación se sitúa en la intersección entre gestión de
-residuos, cambio climático, monitoreo ambiental y modelación computacional. Su
-pertinencia en el campo de los Estudios Ambientales radica en que aborda una brecha
-crítica: la necesidad de contar con sistemas de estimación dinámica de emisiones
-que permitan evaluar con mayor precisión el desempeño ambiental de la bioconversión
-de residuos con \textit{Hermetia illucens}, y aportar evidencia útil para la
-mitigación de GEI y la transición hacia sistemas agroindustriales más sostenibles.
+\shorthandoff{>}
+\shorthandoff{<}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    every node/.style={font=\small},
+    area/.style={
+        ellipse,
+        draw,
+        thick,
+        minimum width=4.2cm,
+        minimum height=2.2cm,
+        fill opacity=0.18,
+        text opacity=1,
+        align=center,
+        font=\small\bfseries
+    },
+    thesis/.style={
+        rectangle,
+        rounded corners=6pt,
+        draw=black!80,
+        very thick,
+        fill=white,
+        text width=4.0cm,
+        align=center,
+        font=\footnotesize,
+        inner sep=6pt
+    }
+]
+
+% Cuatro elipses en las esquinas
+\node[area, fill=blue!40] (A) at (-3.0,  2.4)
+    {Gestión de\\residuos\\agroindustriales};
+
+\node[area, fill=green!40] (B) at ( 3.0,  2.4)
+    {Cambio\\climático y\\emisiones GEI};
+
+\node[area, fill=orange!40] (C) at (-3.0, -2.4)
+    {Monitoreo\\ambiental y\\sensórica};
+
+\node[area, fill=purple!40] (D) at ( 3.0, -2.4)
+    {Modelación\\computacional\\e IA};
+
+% Flechas desde las áreas hacia el centro
+\draw[->, thick, blue!60]   (A) -- (0, 0);
+\draw[->, thick, green!60]  (B) -- (0, 0);
+\draw[->, thick, orange!60] (C) -- (0, 0);
+\draw[->, thick, purple!60] (D) -- (0, 0);
+
+% Nodo central: la tesis
+\node[thesis] (T) at (0, 0) {
+    \textbf{Tesis}\\[4pt]
+    Estimación dinámica\\de emisiones en\\
+    bioconversión con\\
+    \textit{Hermetia illucens}\\[4pt]
+    \textcolor{gray}{(contexto colombiano)}
+};
+
+\end{tikzpicture}
+\caption{Posicionamiento de la investigación en la intersección de cuatro
+áreas temáticas: gestión de residuos agroindustriales, cambio climático,
+monitoreo ambiental y modelación computacional.}
+\label{fig:posicionamiento_tesis}
+\end{figure}
+
+\shorthandon{<}
+\shorthandon{>}
