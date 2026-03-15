@@ -3,9 +3,8 @@
 
 % --- 1. Configuración de Idioma y Fuentes (MODERNO PARA XELATEX) ---
 \usepackage{fontspec}
-% Configuración automática de fuentes Latin Modern (estándar de LaTeX)
-\setmainfont{Latin Modern Roman}
-\setsansfont{Latin Modern Sans}
+\setmainfont{TeX Gyre Termes}
+\setsansfont{TeX Gyre Heros}
 \setmonofont{Latin Modern Mono}
 
 \usepackage[spanish,es-tabla]{babel}
@@ -19,12 +18,19 @@
 
 % --- 4. Bibliografía Moderna (BibLaTeX APA) ---
 \usepackage{csquotes}
-\usepackage[backend=biber,style=apa,maxcitenames=2,maxbibnames=99,giveninits=true,uniquename=false]{biblatex}
+\usepackage[
+    backend=biber,
+    style=apa,
+    maxcitenames=2,
+    maxbibnames=99,
+    giveninits=true,
+    uniquename=false
+]{biblatex}
 
 % >>>> AQUÍ ESTÁ EL ARREGLO: Cargamos TODOS los archivos .bib <<<<
 \addbibresource{../archivos_bib/bibliografia_tesis_leal.bib}
-\addbibresource{../recursos-comunes/bibliografia/Bibliografia_unificada.bib}
-\addbibresource{../recursos-comunes/bibliografia/Referencias.bib}
+%\addbibresource{../recursos-comunes/bibliografia/Bibliografia_unificada.bib}
+%\addbibresource{../recursos-comunes/bibliografia/Referencias.bib}
 
 \DefineBibliographyExtras{spanish}{\def\keywordname{Referencias}}
 
@@ -43,14 +49,12 @@
 \usepackage[version=4]{mhchem}
 
 \usepackage{layout}
-% hidelinks quita los recuadros rojos de los links
 \usepackage[hidelinks]{hyperref}
 \usepackage{fancyhdr}
 \usepackage{titlesec}
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{graphicx}
-\usepackage[hidelinks]{hyperref}
 
 % Definición de colores personalizados
 \definecolor{codegreen}{rgb}{0,0.6,0}
@@ -59,8 +63,6 @@
 \definecolor{backcolour}{rgb}{0.95,0.95,0.92}
 
 % Configuración de Listings (LIMPIA PARA XELATEX)
-% Nota: En XeLaTeX no necesitas 'inputencoding' ni 'literate' para tildes.
-% Solo las necesitas si usas caracteres especiales que tu fuente Mono no tenga.
 \lstdefinestyle{mystyle}{
     backgroundcolor=\color{backcolour},
     commentstyle=\color{codegreen},
@@ -98,17 +100,26 @@
 
 % --- 7. Datos de la Tesis ---
 \renewcommand{\studentname}{John Jairo Leal Gómez}
-% Usamos \texorpdfstring para proteger las fórmulas en los metadatos del PDF
 \renewcommand{\thesisname}{Sistema Híbrido para Predicción de Emisiones de \texorpdfstring{CO$_2$}{CO2} y \texorpdfstring{CH$_4$}{CH4} en la Bioconversión de Residuos con \textit{Hermetia illucens}}
+\renewcommand{\thesisnameeng}{Hybrid System for Predicting \texorpdfstring{CO$_2$}{CO2} and \texorpdfstring{CH$_4$}{CH4} Emissions in Waste Bioconversion with \textit{Hermetia illucens}}
 \renewcommand{\issuedate}{2025}
-\renewcommand{\submissiondate}{Abril}
+\renewcommand{\submissiondate}{Abril de 2025}
 \renewcommand{\director}{Dr. Luis Octavio González Salcedo}
+\renewcommand{\directortitle}{Directora}
 \renewcommand{\codirector}{Dr. Luis Fernando Mejía Rodríguez}
+\renewcommand{\codirectortitle}{Codirector}
 \newcommand{\codirectora}{Dra. Sorany Milena Barrientos Grajales}
-\renewcommand{\academictitle}{Doctor (PhD)}
-\renewcommand{\sede}{Sede Palmira}
+\newcommand{\codirectoratitle}{Codirectora}
+\renewcommand{\academictitle}{Doctor en Estudios Ambientales}
+\renewcommand{\sede}{Palmira}
 \renewcommand{\department}{Doctorado en Estudios Ambientales}
 \renewcommand{\faculty}{Facultad de Ingeniería y Administración}
+\renewcommand{\university}{Universidad Nacional de Colombia}
+
+% Si tu archivo variables.tex define estos campos, puedes dejarlos también llenos:
+\renewcommand{\departmenttwo}{Facultad de Ingeniería y Administración}
+\renewcommand{\palabrasclave}{Hermetia illucens, bioconversión de residuos, emisiones de gases, dióxido de carbono, metano, redes neuronales informadas por la física}
+\renewcommand{\keywords}{Hermetia illucens, waste bioconversion, gas emissions, carbon dioxide, methane, physics-informed neural networks}
 
 % ==========================================
 %    INICIO DEL DOCUMENTO
@@ -161,165 +172,132 @@
 \tableofcontents
 \clearpage
 }
-
-% --- CAPÍTULOS ---
+% =========================================================
+% CAPÍTULOS - ESTRUCTURA RECOMENDADA
+% Comentados los \input que probablemente aún no existen
+% =========================================================
 \pagenumbering{arabic}
-\setlength{\parskip}{1em} 
+\setlength{\parskip}{1em}
+
 % ---------------------------------------------------------
 % CAPÍTULO 1: INTRODUCCIÓN
 % ---------------------------------------------------------
 \chapter{Introducción}
 
-\section{Contexto de la gestión de residuos agroindustriales}
-\input{Capitulos/introduccion.tex}
+\section{Contexto: gestión de residuos agroindustriales y emisiones GEI}
+\input{Capitulos/introduccion_contexto.tex}
 
 \section{Planteamiento del problema}
 \input{Capitulos/planteamiento.tex}
 
-\section{Justificación}
+\section{Justificación ambiental y técnica}
 \input{Capitulos/justificacion.tex}
 
 \section{Objetivos de la investigación}
+% Usa el nombre que ya tenías si ese sí existe:
 \input{Capitulos/objetivo_General.tex}
+% \input{Capitulos/objetivo_general.tex}
 
 \section{Alcance y limitaciones}
 \input{Capitulos/alcance_limitaciones.tex}
 
+% ---------------------------------------------------------
+% CAPÍTULO 2: MARCO DE REFERENCIA
+% ---------------------------------------------------------
+\chapter{Marco de referencia para la gestión ambiental de residuos}
+
+\section{Bioconversión con \textit{Hermetia illucens}: estado del arte}
+% \input{Capitulos/marco_bsf_estado_arte.tex}
+
+\section{Emisiones de GEI en tratamientos biológicos: BSF vs.\ compostaje}
+% \input{Capitulos/marco_gei_comparacion.tex}
+
+\section{Monitoreo ambiental: de métodos estáticos a sistemas dinámicos}
+% \input{Capitulos/marco_monitoreo.tex}
+
+\section{Enfoque de sistemas híbridos para evaluación ambiental}
+% \input{Capitulos/marco_sistemas_hibridos.tex}
 
 % ---------------------------------------------------------
-% CAPÍTULO 2: MARCO CONCEPTUAL Y TEÓRICO
+% CAPÍTULO 3: METODOLOGÍA
 % ---------------------------------------------------------
-\chapter{Marco conceptual y teórico}
-\input{Capitulos/marco-teorico.tex}
+\chapter{Metodología del sistema híbrido de monitoreo}
 
-
-% ---------------------------------------------------------
-% CAPÍTULO 3: METODOLOGÍA GENERAL
-% ---------------------------------------------------------
-\chapter{Metodología general del sistema híbrido}
-\input{Capitulos/metodologia.tex}
 \section{Diseño experimental y condiciones de estudio}
-%\input{Capitulos/metodologia_diseno.tex}
+% \input{Capitulos/metodologia_diseno_experimental.tex}
 
-\section{Sistema de instrumentación y adquisición de datos}
-%\input{Capitulos/metodologia_instrumentacion.tex}
+\section{Diseño conceptual del sistema de monitoreo ambiental}
+% \input{Capitulos/metodologia_diseno_conceptual.tex}
 
-\section{Procesamiento de datos y pretratamiento de señales}
-%\input{Capitulos/metodologia_preprocesamiento.tex}
+\section{Módulo de instrumentación y adquisición de datos}
+% \input{Capitulos/metodologia_instrumentacion.tex}
 
-\section{Modelo mecanístico basado en EDO}
-%\input{Capitulos/metodologia_modelado.tex}
+\section{Estructura del modelo de estimación de emisiones}
+% \input{Capitulos/metodologia_modelo.tex}
 
-\section{Esquema de integración con redes neuronales}
-%\input{Capitulos/metodologia_integracion.tex}
-
-\section{Estrategia de validación y métricas de evaluación}
-%\input{Capitulos/metodologia_validacion.tex}
-
+\section{Estrategia de validación y métricas de desempeño}
+% \input{Capitulos/metodologia_validacion.tex}
 
 % ---------------------------------------------------------
-% CAPÍTULO 4: OBJETIVO ESPECÍFICO 1
+% CAPÍTULO 4: RESULTADOS Y DISCUSIÓN
 % ---------------------------------------------------------
-\chapter{Instrumentación y calibración del módulo de sensores}
+\chapter{Resultados y discusión: desempeño ambiental del sistema}
 
-\section{Configuración del sistema NDIR}
-%\input{Capitulos/oe1_configuracion.tex}
+\section{Desempeño del módulo de sensores para monitoreo de GEI}
+% \input{Capitulos/resultados_sensores.tex}
 
-\section{Protocolo de calibración frente al instrumento de referencia}
-%\input{Capitulos/oe1_calibracion.tex}
+\section{Estimación dinámica de emisiones durante la bioconversión}
+% \input{Capitulos/resultados_emisiones.tex}
 
-\section{Evaluación de precisión, desviación y error MAPE}
-%\input{Capitulos/oe1_mape.tex}
+\section{Mejora en la estimación mediante integración híbrida}
+% \input{Capitulos/resultados_integracion.tex}
 
-\section{Desempeño bajo condiciones de temperatura y humedad del cultivo}
-%\input{Capitulos/oe1_condiciones.tex}
+\section{Detección de eventos críticos y métricas de gestión ambiental}
+% \input{Capitulos/resultados_metricas_ambientales.tex}
 
-
-% ---------------------------------------------------------
-% CAPÍTULO 5: OBJETIVO ESPECÍFICO 2
-% ---------------------------------------------------------
-\chapter{Adaptación y parametrización del modelo matemático}
-
-\section{Formulación bioenergética del modelo de EDO}
-%\input{Capitulos/oe2_formulacion.tex}
-
-\section{Parametrización del modelo para \textit{Hermetia illucens}}
-%\input{Capitulos/oe2_parametrizacion.tex}
-
-\section{Estimación de la tasa de respiración de \ce{CO2}}
-%\input{Capitulos/oe2_estimacion_co2.tex}
-
-\section{Evaluación de capacidad predictiva en ventanas temporales}
-%\input{Capitulos/oe2_validacion.tex}
-
+\section{Implicaciones para la gestión de residuos agroindustriales}
+% \input{Capitulos/discusion_implicaciones.tex}
 
 % ---------------------------------------------------------
-% CAPÍTULO 6: OBJETIVO ESPECÍFICO 3
-% ---------------------------------------------------------
-\chapter{Integración híbrida con aprendizaje automático}
-
-\section{Diseño del algoritmo de estimación de estados}
-%\input{Capitulos/oe3_algoritmo.tex}
-
-\section{Inferencia de biomasa larval a partir de datos operativos}
-%\input{Capitulos/oe3_biomasa.tex}
-
-\section{Acoplamiento de la biomasa estimada al modelo mecanístico}
-%\input{Capitulos/oe3_acoplamiento.tex}
-
-\section{Mejora en la precisión de la estimación de \ce{CO2}}
-%\input{Capitulos/oe3_mejora_precision.tex}
-
-
-% ---------------------------------------------------------
-% CAPÍTULO 7: OBJETIVO ESPECÍFICO 4
-% ---------------------------------------------------------
-\chapter{Validación ambiental del sistema híbrido}
-
-\section{Detección de eventos de anaerobiosis mediante \ce{CH4}}
-%\input{Capitulos/oe4_anaerobiosis.tex}
-
-\section{Cuantificación del carbono emitido durante la bioconversión}
-%\input{Capitulos/oe4_carbono.tex}
-
-\section{Construcción de métricas dinámicas de desempeño ambiental}
-%\input{Capitulos/oe4_metricas.tex}
-
-\section{Contraste con estimaciones estáticas tradicionales}
-%\input{Capitulos/oe4_contraste.tex}
-
-
-% ---------------------------------------------------------
-% CAPÍTULO 8: DISCUSIÓN GENERAL
-% ---------------------------------------------------------
-\chapter{Discusión general}
-
-\section{Aporte de la instrumentación al monitoreo del bioproceso}
-%\input{Capitulos/discusion_oe1.tex}
-
-\section{Alcances y limitaciones del modelo mecanístico}
-%\input{Capitulos/discusion_oe2.tex}
-
-\section{Valor agregado de la integración híbrida}
-%\input{Capitulos/discusion_oe3.tex}
-
-\section{Utilidad del sistema para la gestión ambiental}
-%\input{Capitulos/discusion_oe4.tex}
-
-\section{Limitaciones globales del estudio}
-%\input{Capitulos/limitaciones_finales.tex}
-
-
-% ---------------------------------------------------------
-% CAPÍTULO 9: CONCLUSIONES Y RECOMENDACIONES
+% CAPÍTULO 5: CONCLUSIONES Y RECOMENDACIONES
 % ---------------------------------------------------------
 \chapter{Conclusiones y recomendaciones}
 
-\section{Conclusiones generales}
-%\input{Capitulos/conclusiones.tex}
+\section{Conclusiones por objetivo específico}
+% \input{Capitulos/conclusiones_oe.tex}
 
-\section{Recomendaciones y trabajo futuro}
-%\input{Capitulos/recomendaciones.tex}
+\section{Conclusiones generales y aporte al conocimiento}
+% \input{Capitulos/conclusiones_generales.tex}
+
+\section{Recomendaciones para investigación y aplicación}
+% \input{Capitulos/recomendaciones.tex}
+
+% =========================================================
+% ANEXOS
+% =========================================================
+\appendix
+\renewcommand{\chaptername}{Anexo}
+
+\chapter{Especificaciones técnicas del módulo de sensores}
+% \input{Anexos/anexo_a_sensores.tex}
+% Aquí van: diagramas de circuito, código de calibración, tablas completas de error.
+
+\chapter{Formulación matemática detallada del modelo}
+% \input{Anexos/anexo_b_modelo.tex}
+% Aquí van: deducción de EDO, parámetros completos, ecuaciones extendidas.
+
+\chapter{Algoritmos de aprendizaje automático}
+% \input{Anexos/anexo_c_algoritmos.tex}
+% Aquí van: arquitectura de la red, hiperparámetros, código fuente.
+
+\chapter{Datos experimentales completos}
+% \input{Anexos/anexo_d_datos.tex}
+% Aquí van: tablas extensas de mediciones, series temporales completas.
+
+\chapter{Comparación teórica: BSF vs.\ compostaje vs.\ vertido}
+% \input{Anexos/anexo_e_comparacion.tex}
+% Aquí va el análisis teórico de emisiones por método de tratamiento.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Bibliografia

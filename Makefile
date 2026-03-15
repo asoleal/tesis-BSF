@@ -2,12 +2,14 @@
 # Nombres de archivos principales
 TESIS_MAIN = tesis/tesis.tex
 PRES_MAIN  = presentacion/presentacion.tex
+
 # Comando base de latexmk
 LATEXMK = latexmk -pdfxe -interaction=nonstopmode -file-line-error -halt-on-error
+LATEXMK_FORCE = latexmk -g -pdfxe -interaction=nonstopmode -file-line-error -halt-on-error
 
 # --- Reglas Principales ---
 
-.PHONY: all tesis presentacion articulos clean articulo
+.PHONY: all tesis presentacion articulos clean articulo clean-tesis
 
 # Por defecto, si escribes solo 'make', compila todo
 all: tesis presentacion articulos
@@ -15,7 +17,7 @@ all: tesis presentacion articulos
 # Compilar la Tesis
 tesis: $(TESIS_MAIN)
 	@echo "==> Compilando Tesis..."
-	(cd tesis && $(LATEXMK) tesis.tex)
+	(cd tesis && $(LATEXMK_FORCE) tesis.tex)
 
 # Compilar la Presentación (Beamer)
 presentacion: $(PRES_MAIN)
@@ -43,13 +45,19 @@ articulo:
 	@FILE=$$(ls $(dir)/*.tex | head -n 1); \
 	FILENAME=$$(basename $$FILE .tex); \
 	echo "==> Compilando $$FILENAME.tex..."; \
-	(cd $(dir) && $(LATEXMK) $$FILENAME)
-        
+	(cd $(dir) && $(LATEXMK) $$FILENAME.tex)
+
+# Limpiar solo la tesis
+clean-tesis:
+	@echo "==> Limpiando auxiliares de la tesis..."
+	(cd tesis && latexmk -C tesis.tex || true)
+	@rm -f tesis/tesis.fdb_latexmk tesis/tesis.fls tesis/tesis.bcf tesis/tesis.run.xml tesis/tesis.bbl tesis/tesis.blg tesis/tesis.xdv
+
 # Limpiar archivos temporales de LaTeX
 clean:
 	@echo "==> Limpiando archivos auxiliares..."
 	latexmk -C tesis/tesis.tex || true
 	latexmk -C presentacion/presentacion.tex || true
-	find articulos -name "*.tex" -execdir latexmk -C \;
+	find articulos -name "*.tex" -execdir latexmk -C \; || true
 	find . -type d -name "_minted*" -exec rm -rf {} +
 	rm -f *.nav *.snm *.vrb
