@@ -1,0 +1,198 @@
+\documentclass[11pt]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{lmodern}
+
+\title{Preguntas de preparación para examen de candidatura}
+\author{John Jairo Leal Gómez}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Uso sugerido}
+Este documento reúne preguntas probables para preparar el examen de candidatura doctoral, organizadas por áreas de posible evaluación. La idea es usarlas como banco de preguntas para simulacros, respuestas cortas y respuestas ampliadas.
+
+\section{Área ambiental}
+
+\subsection*{Enfoque general}
+\begin{itemize}[leftmargin=*]
+    \item ¿Dónde está lo ambiental en la tesis y no solo lo técnico?
+    \item ¿Cómo conocer las emisiones mejora realmente la gestión ambiental?
+    \item ¿Por qué la medición de emisiones es relevante para sostenibilidad y no solo para monitoreo?
+    \item ¿Qué consecuencias trae no conocer las emisiones o conocerlas de forma fragmentada?
+    \item ¿Qué aporta esta tesis a la mitigación del cambio climático?
+    \item ¿Cómo se conecta el proyecto con la gestión sostenible de residuos?
+\end{itemize}
+
+\subsection*{Gestión ambiental y alcance}
+\begin{itemize}[leftmargin=*]
+    \item ¿Por qué la tesis no se formuló directamente como un Sistema de Gestión Ambiental?
+    \item ¿Qué relación tiene tu propuesta con un futuro SGA?
+    \item ¿Qué parte de la gestión ambiental habilita tu sistema?
+    \item ¿Cuál es el límite entre monitoreo ambiental y gestión ambiental en tu proyecto?
+    \item ¿Cómo se pasa del dato ambiental a la toma de decisiones?
+\end{itemize}
+
+\subsection*{MRV, trazabilidad y sostenibilidad}
+\begin{itemize}[leftmargin=*]
+    \item ¿Por qué el enfoque de medición, reporte y validación es importante en este contexto?
+    \item ¿Qué gana un sistema de bioconversión al tener trazabilidad de emisiones?
+    \item ¿Cómo evita tu propuesta decisiones ciegas o reportes débiles?
+    \item ¿Qué relación existe entre MRV y mercados de carbono?
+    \item ¿Cómo evita el proyecto riesgos de greenwashing?
+\end{itemize}
+
+\subsection*{Riesgos, ética y tecnología}
+\begin{itemize}[leftmargin=*]
+    \item ¿Qué riesgos trae incorporar IA e IoT en sistemas de gestión de residuos?
+    \item ¿Qué implicaciones éticas tiene el uso de datos en este proyecto?
+    \item ¿Cómo abordas la opacidad algorítmica?
+    \item ¿Qué significa soberanía de datos en el contexto del productor local?
+    \item ¿Qué limitaciones ambientales y sociales puede tener una implementación a escala real?
+\end{itemize}
+
+\subsection*{Dimensión social y económica}
+\begin{itemize}[leftmargin=*]
+    \item ¿Cómo dialoga esta tesis con la dimensión social de los estudios ambientales?
+    \item ¿Qué barreras económicas tiene escalar esta propuesta?
+    \item ¿Qué retos de adopción enfrentaría el sistema en escenarios reales?
+    \item ¿Qué oportunidades tendría para productores agroindustriales?
+    \item ¿Cómo se conecta el proyecto con economía circular?
+\end{itemize}
+
+\section{Área técnica y tecnológica}
+
+\subsection*{Arquitectura del sistema}
+\begin{itemize}[leftmargin=*]
+    \item ¿Por qué la arquitectura IoT propuesta es adecuada para este problema?
+    \item ¿Cómo se integran sensor, microcontrolador, comunicación, backend, base de datos y dashboard?
+    \item ¿Por qué escogiste esa arquitectura y no una solución más simple?
+    \item ¿Cuál es el cuello de botella más probable del sistema?
+    \item ¿Qué parte del sistema consideras más crítica para garantizar confiabilidad?
+\end{itemize}
+
+\subsection*{Sensores y adquisición de datos}
+\begin{itemize}[leftmargin=*]
+    \item ¿Por qué seleccionaste esos sensores para CO$_2$, CH$_4$ y variables ambientales?
+    \item ¿Cómo vas a calibrar los sensores?
+    \item ¿Contra qué referencia validarás las mediciones?
+    \item ¿Qué significa en la práctica un error relativo menor al 5\%?
+    \item ¿Cómo manejarás deriva, ruido, interferencia por humedad y pérdida de señal?
+    \item ¿Qué variable es más crítica para la confiabilidad del sistema y por qué?
+\end{itemize}
+
+\subsection*{Modelado y sistema híbrido}
+\begin{itemize}[leftmargin=*]
+    \item ¿Por qué necesitas un enfoque híbrido y no solo IA o solo modelado matemático?
+    \item ¿Qué entiendes exactamente por sistema híbrido en esta tesis?
+    \item ¿Qué papel cumplen sensores, modelos matemáticos e IA dentro del sistema?
+    \item ¿Qué parte del problema resolverá el modelo matemático y cuál la IA?
+    \item ¿Cómo justificarías el uso de PINN frente a otros modelos más clásicos?
+    \item ¿Cómo incorporarías la estocasticidad del proceso en el modelado?
+\end{itemize}
+
+\subsection*{Datos y validación}
+\begin{itemize}[leftmargin=*]
+    \item ¿Cómo construirás la base de datos de entrenamiento?
+    \item ¿Qué harás si el volumen de datos resulta insuficiente?
+    \item ¿Cómo separarás entrenamiento, validación y prueba?
+    \item ¿Por qué elegiste métricas como MSE y \(R^2\)?
+    \item ¿Cómo demostrarás que el modelo mejora la medición y no solo ajusta ruido?
+    \item ¿Cómo distinguirás anomalías del sensor frente a anomalías reales del proceso?
+\end{itemize}
+
+\subsection*{Dashboard y trazabilidad}
+\begin{itemize}[leftmargin=*]
+    \item ¿Cuál es el valor científico del dashboard y no solo su valor visual?
+    \item ¿Qué indicadores debe mostrar el dashboard para ser útil?
+    \item ¿Cómo asegurarás integridad temporal y consistencia de datos?
+    \item ¿Cómo versionarás calibraciones, cambios de sensor y cambios de modelo?
+    \item ¿Cómo se conecta el dashboard con el componente MRV?
+\end{itemize}
+
+\subsection*{Viabilidad y alcance técnico}
+\begin{itemize}[leftmargin=*]
+    \item ¿Cuál es el producto mínimo funcional que esperas tener al final del doctorado?
+    \item ¿Qué diferencia hay entre prototipo funcional, sistema validado y solución escalable?
+    \item ¿Qué parte del proyecto ya está madura y cuál sigue en desarrollo?
+    \item ¿Qué principal riesgo técnico podría comprometer resultados?
+    \item ¿Cómo defenderías el proyecto si al final solo logras una implementación parcial?
+\end{itemize}
+
+\section{Área de mosca soldado negra y bioconversión}
+
+\subsection*{Proceso biológico}
+\begin{itemize}[leftmargin=*]
+    \item ¿Cómo transforma \textit{Hermetia illucens} los residuos orgánicos?
+    \item ¿Qué etapas del proceso biológico son más relevantes para tu investigación?
+    \item ¿Por qué el metabolismo larval puede entenderse como fuente dinámica de gases?
+    \item ¿Qué diferencia hay entre degradación del sustrato, crecimiento larval y generación de frass?
+    \item ¿Qué hace de la BSF una alternativa biotecnológica atractiva para gestión de residuos?
+\end{itemize}
+
+\subsection*{Variables críticas del proceso}
+\begin{itemize}[leftmargin=*]
+    \item ¿Qué variables ambientales afectan más la bioconversión con BSF?
+    \item ¿Por qué temperatura, humedad, pH y composición del sustrato son críticas?
+    \item ¿Qué pasa si estas variables salen del rango adecuado?
+    \item ¿Por qué ciertas condiciones favorecen la actividad larvaria?
+    \item ¿Qué relación hay entre condiciones del entorno y calidad del proceso?
+\end{itemize}
+
+\subsection*{Emisiones y dinámica biológica}
+\begin{itemize}[leftmargin=*]
+    \item ¿En qué momentos del proceso esperas mayores emisiones de CO$_2$ o CH$_4$?
+    \item ¿Las emisiones provienen de la larva, del sustrato o de la interacción entre ambos?
+    \item ¿Cómo separarías el efecto biológico de la BSF del efecto propio del residuo?
+    \item ¿Por qué conocer la dinámica biológica mejora la interpretación de las emisiones?
+    \item ¿Qué variables biológicas mínimas debes entender para que tu modelo tenga sentido?
+\end{itemize}
+
+\subsection*{Sustrato, alimentación y rendimiento}
+\begin{itemize}[leftmargin=*]
+    \item ¿Todos los residuos orgánicos son igualmente aptos para BSF?
+    \item ¿Cómo influye la composición del sustrato en el crecimiento larval?
+    \item ¿Cómo afecta el sustrato la eficiencia de bioconversión y las emisiones?
+    \item ¿Qué riesgos hay si el sustrato tiene exceso de humedad, acidez o heterogeneidad?
+    \item ¿Cómo impacta la calidad del sustrato la calidad del frass y la biomasa?
+\end{itemize}
+
+\subsection*{Indicadores biológicos y límite del proyecto}
+\begin{itemize}[leftmargin=*]
+    \item ¿Qué indicadores biológicos o zootécnicos considerarías para decir que el proceso va bien?
+    \item ¿Cómo relacionas crecimiento larval, reducción de residuos y emisiones?
+    \item ¿Cuál sería una señal biológica temprana de que el sistema entra en estado crítico?
+    \item ¿Tu tesis estudia la cría de BSF o la medición del proceso con BSF?
+    \item ¿Qué aspectos zootécnicos quedan fuera del alcance de tu propuesta?
+\end{itemize}
+
+\section{Preguntas transversales de candidatura}
+
+\begin{itemize}[leftmargin=*]
+    \item ¿Cuál es exactamente el aporte doctoral de esta tesis?
+    \item ¿Qué brecha de conocimiento cierra tu propuesta?
+    \item ¿Cuál es la hipótesis central del trabajo?
+    \item ¿Qué resultado negativo sería igualmente valioso científicamente?
+    \item ¿Cuál es la principal originalidad metodológica?
+    \item ¿Qué hallazgo esperas que sea publicable?
+    \item ¿Qué componente de la tesis podría mantenerse aunque otro falle?
+    \item ¿Cómo defenderías el proyecto frente a un jurado que diga que es demasiado ambicioso?
+    \item ¿Cómo defenderías el proyecto frente a un jurado que diga que aún está poco delimitado?
+    \item ¿Qué decisiones ya están definidas y cuáles siguen abiertas?
+\end{itemize}
+
+\section*{Sugerencia de estudio}
+Preparar para cada pregunta una respuesta en tres niveles:
+\begin{itemize}[leftmargin=*]
+    \item respuesta corta de 30 segundos;
+    \item respuesta estándar de 1 a 2 minutos;
+    \item respuesta ampliada de 3 minutos con ejemplo.
+\end{itemize}
+
+\end{document}

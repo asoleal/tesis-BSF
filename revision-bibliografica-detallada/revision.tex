@@ -1,0 +1,226 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{tabularx}
+\usepackage{array}
+\geometry{margin=0.8in}
+
+\title{Análisis Técnico Avanzado: Evolución del Modelamiento Matemático, Cinética y Emisiones de Gases en la Bioconversión por \textit{Hermetia illucens}}
+\author{Revisión Exhaustiva de Literatura Técnica}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introducción}
+La bioconversión mediante larvas de la mosca soldado negra (BSFL) ha pasado de ser una curiosidad biológica a un proceso de ingeniería de precisión. La literatura reciente permite modelar no solo cuánto crece el insecto, sino cómo cada microgramo de sustrato se reparte entre biomasa estructural, reservas lipídicas y emisiones de gases ($CO_2$). Este documento presenta los modelos fundamentales y sus deducciones matemáticas, estableciendo el vínculo causal entre el metabolismo y el impacto ambiental.
+
+% ---------------------------------------------------------
+% PEREDNIA ET AL. (2017)
+% ---------------------------------------------------------
+\section{Balance de Carbono y Cuantificación de GEI (Perednia et al., 2017)}
+
+\subsection{Deducción del Modelo de Emisión}
+La metodología se basa en el principio de conservación de la masa en un sistema de volumen de control cerrado ($V_{reactor}$). La acumulación de un gas ($CO_2$ o $CH_4$) en el espacio de cabeza sigue una variación temporal que, para intervalos de tiempo cortos, se asume lineal.
+
+\textbf{Ecuación de Tasa de Emisión ($E$):}
+Dada una concentración medida $C(t)$, la masa total del gas $m_{gas}$ en el reactor es $C(t) \cdot V_{headspace}$. La tasa de producción neta es la derivada temporal:
+\begin{equation}
+    E_{gas} = \frac{dm_{gas}}{dt} = V_{headspace} \cdot \frac{\Delta C}{\Delta t}
+\end{equation}
+
+\textbf{Deducción del Balance de Carbono ($C$):}
+El carbono total introducido ($C_{total}$) debe encontrarse en el sustrato residual ($C_{frass}$), la biomasa de las larvas ($C_{larvae}$) o haber sido emitido a la atmósfera ($C_{gas}$):
+\begin{equation}
+    C_{total} = C_{larvae} + C_{frass} + C_{CO2} + C_{CH4}
+\end{equation}
+Perednia determinó que en el sistema BSFL, el término $C_{larvae}$ representa un \textbf{secuestro activo} (41\%), mientras que en el compostaje tradicional, al no haber cosecha de biomasa animal, el carbono se divide mayoritariamente entre $C_{frass}$ y una fracción mucho más alta de $C_{CO2}$ y $C_{CH4}$ (volatilización del 48.6\%).
+
+% ---------------------------------------------------------
+% ERMOLAEV ET AL. (2019)
+% ---------------------------------------------------------
+\section{Emisiones de GEI en Sistemas de Pequeña Escala (Ermolaev et al., 2019)}
+
+El estudio de Ermolaev et al. es uno de los pilares experimentales para la cuantificación directa de gases de efecto invernadero ($CO_2$, $CH_4$, $N_2O$) y amoníaco ($NH_3$) en reactores de BSFL, evaluando además el impacto de pre-tratamientos microbianos.
+
+\subsection{Metodología y Configuración Experimental}
+Para obtener datos de alta resolución, los autores implementaron un sistema de cámaras cerradas:
+\begin{enumerate}
+    \item \textbf{Reactores:} Se utilizaron cajas de polietileno de 4.5 L cargadas con residuo de alimentos de cafetería (24.9\% materia seca).
+    \item \textbf{Densidad Larvaria:} Se estabilizó una densidad de 2 larvas por $cm^2$ (aprox. 700 larvas por reactor), alimentadas con una carga de 1.1 kg de residuo fresco.
+    \item \textbf{Protocolo de Captura de Gases:} Se utilizó el método de \textbf{Cámara Estática No Estacionaria}. Cada reactor se selló por 60 minutos en los días 2, 7 y 11 del ciclo de 14 días. Las muestras de gas se extrajeron y analizaron mediante Cromatografía de Gases (GC).
+\end{enumerate}
+
+\subsection{Deducción Matemática de las Tasas de Emisión}
+La relevancia de este estudio radica en cómo convierten concentraciones puntuales ($PPM$) en una carga contaminante total ($CO_{2,eq}$).
+
+\textbf{1. Cálculo de la Tasa de Flujo ($F$):}
+La tasa de emisión para cada gas se dedujo a partir del cambio de concentración en el tiempo dentro de la cámara sellada:
+\begin{equation}
+    F = \frac{dC}{dt} \cdot \frac{V_{ch}}{A} \cdot \frac{M \cdot P}{R \cdot T}
+\end{equation}
+Donde $V_{ch}$ es el volumen de la cámara, $A$ el área superficial, $M$ la masa molar del gas, $P$ la presión y $R$ la constante de los gases. 
+
+\textbf{2. Integración Temporal de Emisiones Totales ($E_{total}$):}
+Para hallar la masa total emitida durante los 14 días, se utilizó la integración por la regla trapezoidal entre los puntos de muestreo ($t_i$):
+\begin{equation}
+    E_{total} = \sum_{i=1}^{n-1} \left( \frac{F_i + F_{i+1}}{2} \right) (t_{i+1} - t_i)
+\end{equation}
+
+\textbf{3. Potencial de Calentamiento Global (GWP):}
+La deducción del impacto ambiental final se realizó convirtiendo las masas de $CH_4$ y $N_2O$ a equivalentes de $CO_2$:
+\begin{equation}
+    GWP_{total} = m_{CO2} + (m_{CH4} \cdot 34) + (m_{N2O} \cdot 298)
+\end{equation}
+
+\subsection{Análisis de los Gases $CO_2$ y $CH_4$}
+Este estudio aporta una conclusión fundamental sobre la interacción entre la larva y el sustrato:
+
+\begin{itemize}
+    \item \textbf{Dinámica del $CH_4$ (Mitigación Activa):} Las emisiones de metano fueron extremadamente bajas (promedio de 0.02 g por kg de residuo). La deducción cualitativa de los autores es que \textbf{la actividad mecánica de las larvas} (su movimiento constante para alimentarse) actúa como un sistema de aireación natural que rompe los gradientes anaeróbicos en el sustrato, impidiendo la actividad de arqueas metanogénicas.
+    \item \textbf{Dinámica del $CO_2$:} Se emitieron aproximadamente 96 g de $CO_2$ por kg de residuo. El estudio confirma que el $CO_2$ es el gas dominante, pero que su generación es un indicador de la degradación aeróbica eficiente, con una pérdida de carbono total de solo el 14\% hacia la atmósfera, comparado con valores mucho más altos en compostaje convencional.
+    \item \textbf{Ausencia de $NH_3$:} A diferencia del compostaje de bacterias, el sistema BSFL no mostró emisiones detectables de amoníaco, sugiriendo que el nitrógeno se incorpora rápidamente a la biomasa larval en lugar de volatilizarse.
+\end{itemize}
+
+
+
+\subsection{Conclusiones del Estudio}
+Ermolaev et al. concluyen que la bioconversión con BSFL reduce las emisiones directas de GEI en un orden de magnitud respecto a los vertederos. La principal "tecnología" de mitigación no es química, sino el comportamiento físico de la larva, que mantiene el potencial de oxidación-reducción del sustrato en niveles que inhiben la producción de metano.
+
+% ---------------------------------------------------------
+% PADMANABHA ET AL. (2020)
+% ---------------------------------------------------------
+\section{Dinámica de Crecimiento Ontogenético (Padmanabha et al., 2020)}
+
+\subsection{Deducción basada en von Bertalanffy}
+El modelo postula que la tasa de cambio de la biomasa ($B$) es la diferencia neta entre los procesos de síntesis (anabolismo) y los de degradación/mantenimiento (catabolismo).
+
+\textbf{Ecuación Fundamental:}
+\begin{equation}
+    \frac{dB}{dt} = \eta \cdot I - \kappa \cdot B
+\end{equation}
+Donde $I$ es la tasa de ingestión y $\eta$ la eficiencia de asimilación. Padmanabha expande esto para incluir la dependencia ambiental:
+\begin{enumerate}
+    \item \textbf{Ingestión Regulada:} La ingestión no es constante; depende del tamaño de la larva y de factores abióticos. $I = r_{assim}(T, H) \cdot k_{inges} \cdot B$.
+    \item \textbf{Mantenimiento Metabólico:} El costo de mantener las células vivas escala linealmente con la masa. $M = r_{mat}(T) \cdot k_{maint} \cdot B$.
+\end{enumerate}
+
+\textbf{Modelo Final Acoplado:}
+\begin{equation}
+    \frac{dB_{dry}}{dt} = \underbrace{\left( \epsilon_{inges} \cdot r_{assim}(T, H) \cdot k_{inges} \cdot B_{dry} \right)}_{\text{Asimilación Neta}} - \underbrace{\left( r_{mat}(T) \cdot k_{maint} \cdot B_{dry} \right)}_{\text{Costo Metabólico}}
+\end{equation}
+Esta deducción permite predecir el "punto de equilibrio" o masa máxima teórica cuando $dB/dt = 0$, es decir, cuando la larva consume exactamente lo que necesita para no morir, deteniendo su crecimiento.
+
+
+
+% ---------------------------------------------------------
+% PRASETYA ET AL. (2021)
+% ---------------------------------------------------------
+\section{Cinética de Reactor por Lotes (Prasetya et al., 2021)}
+
+\subsection{Deducción de la Cinética Fraccionaria}
+Prasetya aplica principios de ingeniería química para describir la desaparición del sustrato ($m_s$). Se asume que la velocidad de reacción depende de la cantidad de material biodegradable disponible.
+
+\textbf{Consumo de Sustrato (Orden 0.5):}
+La elección del orden 0.5 sugiere que la tasa de consumo no es proporcional a toda la masa, sino que está limitada por la superficie de contacto o la accesibilidad enzimática del sustrato.
+\begin{equation}
+    -\frac{dm_s}{dt} = k_1 (x_s \cdot m_s)^{0.5}
+\end{equation}
+Integrando esta ecuación, se obtiene que el tiempo de agotamiento del sustrato no es infinito (como en primer orden), sino que predice una terminación clara del proceso.
+
+\textbf{Crecimiento Poblacional Acoplado:}
+El crecimiento de las larvas ($m_c$) se deduce como una función de la energía extraída del sustrato consumido, menos un término de "autolimitación" o pérdida por densidad:
+\begin{equation}
+    \frac{dm_c}{dt} = k_{obs} \cdot m_c \cdot (x_s \cdot m_s)^{0.5} - k_3 \cdot m_c^2
+\end{equation}
+El término $k_3 m_c^2$ representa la \textbf{mortalidad dependiente de la densidad} y el gasto energético por competencia intraespecífica. La constante $k_{obs}$ decae cuadráticamente con el tiempo ($t$) hacia el fin del ciclo (25 días), reflejando el cese de la alimentación antes de la pupación.
+
+% ---------------------------------------------------------
+% ERIKSEN (2022, 2024)
+% ---------------------------------------------------------
+\section{Presupuesto de Energía Dinámica (DEB) y Emisión de $CO_2$}
+
+\subsection{Deducción de la Relación Carbono-Gases (Eriksen, 2022, 2024)}
+El modelo DEB es la herramienta más precisa para entender los gases. Divide a la larva en Estructura ($V$) y Reservas ($E$). 
+
+\textbf{Balance de Flujos de Carbono:}
+La asimilación de carbono ($J_A$) se distribuye según la regla $\kappa$: una fracción va a mantenimiento estructural y crecimiento, y el resto ($1-\kappa$) a la maduración y almacenamiento de lípidos.
+\begin{equation}
+    J_A = \underbrace{J_G}_{\text{Crecimiento}} + \underbrace{J_L}_{\text{Lípidos}} + \underbrace{J_{CO2,total}}_{\text{Respiración}}
+\end{equation}
+
+\textbf{Deducción del $CO_2$ Metabólico:}
+El $CO_2$ es la manifestación gaseosa de la ineficiencia termodinámica (entropía). Eriksen deduce que:
+\begin{equation}
+    J_{CO2,total} = \alpha \cdot J_M + \beta \cdot J_G + \gamma \cdot J_L
+\end{equation}
+Donde:
+\begin{itemize}
+    \item $\alpha \cdot J_M$: $CO_2$ por mantenimiento basal (necesario para mantener gradientes iónicos).
+    \item $\beta \cdot J_G$: $CO_2$ por costo de síntesis de proteínas (estimado en un 15-20\% del carbono asimilado).
+    \item $\gamma \cdot J_L$: $CO_2$ por \textbf{lipogénesis}. Dado que los lípidos están más reducidos que los carbohidratos del sustrato, la larva debe liberar $CO_2$ para balancear el estado de oxidación interno.
+\end{itemize}
+
+Eriksen (2024) concluye que la \textbf{Eficiencia de Crecimiento Neto (NGE)} es de aproximadamente el 55\%. Por deducción directa, el \textbf{45\% del carbono asimilado se emite como $CO_2$}. El metano ($CH_4$), por el contrario, no es un subproducto del insecto (que es aeróbico), sino un fallo en la aireación del reactor que activa arqueas metanogénicas en el sustrato.
+
+
+
+% ---------------------------------------------------------
+% CUADRO COMPARATIVO SECUENCIAL (ACTUALIZADO)
+% ---------------------------------------------------------
+\section{Evolución del Modelamiento y su Relación con los Gases}
+
+La siguiente tabla resume la evolución del pensamiento científico en torno a la bioconversión por BSFL, integrando desde los balances de masa globales hasta la mecánica de mitigación de gases específicos.
+
+\begin{table}[h!]
+\centering
+\renewcommand{\arraystretch}{1.5}
+\begin{tabularx}{\textwidth}{@{} l >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X @{}}
+\toprule
+\textbf{Autor} & \textbf{Deducción Matemática Clave} & \textbf{Componente de Gases} & \textbf{Aplicación Industrial} \\ \midrule
+
+\textbf{Perednia (2017)} & 
+Estequiometría de balance de masa global ($C_{in} = C_{out}$). & 
+Cuantificación neta de $CO_2$ y $CH_4$ (reducción de GEI). & 
+Certificación de bonos de carbono y mitigación ambiental. \\
+
+\textbf{Ermolaev et al. (2019)} & 
+Integración temporal (regla trapezoidal) de flujos gaseosos y cálculo de GWP. & 
+Mitigación de $CH_4$ por aireación mecánica larval; ausencia de $NH_3$. & 
+Validación de BSFL como alternativa de baja emisión frente al vertedero. \\
+
+\textbf{Padmanabha (2020)} & 
+ODE de primer orden: Crecimiento = Ingestión - Mantenimiento. & 
+Respiración proporcional a la biomasa total. & 
+Control de temperatura y humedad para maximizar biomasa. \\
+
+\textbf{Prasetya (2021)} & 
+Cinética de orden 0.5 para degradación de sustrato sólido. & 
+Emisión vinculada a la tasa de consumo del sustrato. & 
+Dimensionamiento de reactores batch y tiempos de cosecha. \\
+
+\textbf{Eriksen (2022/24)} & 
+Termodinámica de compartimentos (Estructura vs. Lípidos). & 
+$CO_2$ como subproducto del costo de síntesis y lipogénesis. & 
+Diseño de dietas para optimizar perfil de grasa sin exceso de $CO_2$. \\ 
+
+\bottomrule
+\end{tabularx}
+\caption{Evolución cronológica y técnica del modelamiento de procesos y emisiones en \textit{Hermetia illucens}.}
+\end{table}
+
+\section{Conclusión}
+La integración de estos modelos revela que la bioconversión por BSFL es un sistema de "baja emisión" por tres razones fundamentales: 
+\begin{enumerate}
+    \item \textbf{Secuestro de Carbono:} Redirige el carbono asimilado hacia biomasa útil (proteínas y lípidos) en lugar de volatilizarlo completamente (Perednia, 2017).
+    \item \textbf{Mitigación Mecánica de Metano:} El comportamiento físico de la larva airea el sustrato, impidiendo las condiciones anaeróbicas que generan $CH_4$, el cual es 34 veces más potente que el $CO_2$ (Ermolaev et al., 2019).
+    \item \textbf{Eficiencia Metabólica:} La altísima velocidad de procesamiento (Prasetya, 2021) y la comprensión de los costos de síntesis de lípidos (Eriksen, 2024) permiten optimizar el tiempo de residencia del residuo, minimizando las emisiones de mantenimiento ($r_{CO2,m}$) y evitando la degradación microbiana competitiva.
+\end{enumerate}
+En conjunto, el modelamiento actual permite pasar de una gestión de residuos pasiva a una ingeniería de precisión que maximiza el valor nutricional mientras minimiza el impacto climático.
+
+\end{document}
