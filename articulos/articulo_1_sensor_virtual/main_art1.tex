@@ -1,0 +1,25 @@
+% !TEX program = xelatex
+\documentclass[11pt,a4paper]{article}
+
+% Cargar el preámbulo común (subiendo un nivel hacia recursos_comunes)
+\input{../recursos_comunes/preambulo.tex}
+
+% Configurar rutas de imágenes específicas para este artículo
+\graphicspath{{imagenes/}{../recursos_comunes/imagenes/}}
+
+% Cargar bibliografía (apuntando al enlace simbólico que creaste)
+\addbibresource{../recursos_comunes/bibliografia/referencias_comunes.bib}
+
+\title{\textbf{Estimación de la Producción de CO$_2$ y Biomasa}}
+\author{John Jairo Leal G. \and Luis Fernando Mejía R.}
+
+\begin{document}
+
+\maketitle
+
+% Insertar el contenido real del artículo
+\input{contenido_art1.tex}
+
+\printbibliography
+
+\end{document}

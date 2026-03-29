@@ -1,0 +1,17 @@
+\section{Introducción}
+
+La bioconversión de residuos orgánicos con \textit{Hermetia illucens} ha emergido como una alternativa de interés para la valorización de subproductos agroindustriales dentro de esquemas de economía circular. Sin embargo, la dinámica de emisiones de CO$_2$ y CH$_4$ durante el proceso sigue presentando alta incertidumbre, especialmente cuando se emplean aproximaciones estáticas o mediciones discontinuas. En este contexto, el modelado híbrido constituye una estrategia prometedora para integrar conocimiento mecanístico del sistema con herramientas de aprendizaje automático capaces de capturar relaciones no lineales y estados no observables.
+
+Este artículo desarrolla un enfoque centrado en la estimación dinámica de emisiones durante la fase larval activa, tomando como base un modelo bioenergético de crecimiento y respiración. La propuesta combina una representación mecanística del proceso con una red neuronal informada por la física (PINN), de manera que las predicciones respeten restricciones estructurales del sistema biológico y, al mismo tiempo, mejoren su capacidad de ajuste frente a datos experimentales. El objetivo es avanzar hacia una herramienta de modelado robusta, interpretable y útil para aplicaciones de monitoreo ambiental.
+
+\section{Planteamiento del modelo}
+
+El enfoque parte de un modelo de ecuaciones diferenciales ordinarias que describe la dinámica de biomasa larval y su relación con la producción de CO$_2$. Este componente mecanístico aporta interpretabilidad y coherencia biofísica, pero puede resultar insuficiente para representar la complejidad real del sistema, dada la heterogeneidad del sustrato, la variabilidad de la actividad microbiana y la formación de microambientes con distinta disponibilidad de oxígeno.
+
+Para superar esta limitación, se incorpora una arquitectura híbrida en la que una red neuronal aprende correcciones sobre la dinámica estimada, mientras una función de pérdida regulariza el entrenamiento con base en las ecuaciones del modelo. De esta manera, la PINN no actúa únicamente como un predictor estadístico, sino como un mecanismo de integración entre datos experimentales y conocimiento físico previo. Esta formulación permite mejorar la estimación temporal de la respiración del sistema sin perder consistencia con la estructura bioenergética de referencia.
+
+\section{Aporte del artículo}
+
+El principal aporte de este trabajo es mostrar que la integración entre modelado mecanístico y aprendizaje profundo permite representar con mayor fidelidad la dinámica de emisiones en sistemas de bioconversión con BSF. En particular, el artículo propone una base metodológica para usar variables inferidas, como la biomasa larval, como estado intermedio dentro de un esquema híbrido de predicción de CO$_2$.
+
+Desde una perspectiva aplicada, este desarrollo fortalece la construcción de sistemas de monitoreo inteligentes para procesos de valorización de residuos. Además, sienta las bases para la futura incorporación de métricas ambientales dinámicas y para la detección de condiciones operativas críticas asociadas a eventos de anaerobiosis o pérdida de eficiencia del sistema.

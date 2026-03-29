@@ -1,32 +1,3 @@
-% !TEX program = xelatex
-\documentclass[11pt,a4paper]{article}
-
-% Geometría y Fuentes
-\usepackage{geometry}
-\geometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
-\usepackage{fontspec}
-\usepackage{csquotes}
-\usepackage[spanish, es-nodecimaldot]{babel}
-
-% PARCHE para evitar error de hooks en TeX Live 2025
-\makeatletter
-\let\bbl@sh@active@arg\relax
-\makeatother
-
-% Bibliografía (Apuntando a la raíz del repo con rutas verificadas)
-\usepackage[backend=biber,style=authoryear]{biblatex}
-\addbibresource{../../archivos_bib/bibliografia_tesis_leal.bib}
-\addbibresource{../../recursos-comunes/bibliografia/Referencias.bib}
-
-\usepackage[hidelinks]{hyperref}
-
-\title{\textbf{Estimación de la Producción de CO$_2$ y Biomasa}}
-\author{John Jairo Leal G. \and Luis Fernando Mejía R.}
-
-\begin{document}
-
-\maketitle
-
 \begin{abstract}
 El monitoreo de la dinámica de crecimiento de la mosca soldado negra (\textit{Hermetia illucens}) es fundamental para la optimización de procesos de bioconversión a escala industrial. Sin embargo, el metabolismo larvario suele tratarse como una ``caja negra''. Este artículo presenta un enfoque computacional híbrido para estimar y predecir la producción de CO$_2$ y el crecimiento de la biomasa estructural. Se implementó una red neuronal multicapa (MLP) para estimar dinámicamente el parámetro de peso máximo ($B_{max}$), acoplada a métodos de integración numérica (Runge-Kutta de cuarto orden y Euler) para resolver el modelo metabólico hacia adelante.
 
@@ -37,11 +8,10 @@ El monitoreo de la dinámica de crecimiento de la mosca soldado negra (\textit{H
 
 Probando la compilación de solo este artículo, con makefile y yaml, probando push, ultima prueba, penultima
 
-
 En éste artículo se quiere comparar el modelo de la biomasa larvarl $B(t)$ 
-propuesto por \parencite{eriksenDynamicModellingFeed2022}, con el entrenamiento de una red neuronal. Con lo cual queremos probar la red para verificar el comportamiento
+propuesto por \parencite{eriksenDynamicModellingFeed2022}, con el entrenamiento de una red neuronal. Con lo cual queremos probar la red para verificar el comportamiento.
 
-La Mosca Soldado Negra (\textit{Hermetia illucens}) se ha posicionado como una alternativa tecnológica relevante para la valorización de residuos orgánicos dentro de esquemas de bioeconomía circular, debido a su capacidad de transformar sustratos heterogéneos en biomasa larvaria aprovechable y subproductos con valor agronómico. Camperio2025,Gold2020 \cite{goldEffectsRearingSystem2022} Esta conversión biológica, sin embargo, exhibe una alta variabilidad asociada a la calidad del sustrato, la humedad, la densidad larvaria y las condiciones ambientales, lo que dificulta garantizar rendimientos estables a escala piloto e industrial. \cite{eriksenDynamicModellingFeed2022} Camporio2025
+La Mosca Soldado Negra (\textit{Hermetia illucens}) se ha posicionado como una alternativa tecnológica relevante para la valorización de residuos orgánicos dentro de esquemas de bioeconomía circular, debido a su capacidad de transformar sustratos heterogéneos en biomasa larvaria aprovechable y subproductos con valor agronómico. \parencite{Camperio2025,Gold2020} \cite{goldEffectsRearingSystem2022} Esta conversión biológica, sin embargo, exhibe una alta variabilidad asociada a la calidad del sustrato, la humedad, la densidad larvaria y las condiciones ambientales, lo que dificulta garantizar rendimientos estables a escala piloto e industrial. \cite{eriksenDynamicModellingFeed2022} Camporio2025
 
 En términos operacionales, la variable de interés no es únicamente la biomasa total, sino su partición en fracciones funcionales, particularmente la biomasa estructural y las reservas (p.\,ej., lípidos), ya que dichas fracciones determinan tanto la calidad del producto como la eficiencia del proceso. \cite{eriksenDynamicModellingFeed2022} Por ello, los modelos dinámicos de crecimiento que representan compartimentos y flujos metabólicos (asimilación, mantenimiento, crecimiento y almacenamiento) resultan útiles para interpretar ensayos y comparar condiciones de cultivo, incluyendo la predicción explícita de la producción de CO$_2$ como salida del metabolismo. \cite{eriksenDynamicModellingFeed2022}
 
@@ -58,6 +28,7 @@ Durante el proceso de bioconversión, se monitoreó la tasa de respiración de l
 
 \textit{[TODO: Describir aquí el tipo de recipiente o biorreactor utilizado, el sensor de CO$_2$ empleado, la cantidad o peso inicial de las larvas y la composición de la dieta/sustrato. Especificar también la frecuencia de muestreo de los datos en horas distintas].} 
 \cite{aAIControlledSmart2024,eriksenDynamicModellingFeed2022}
+
 \subsection{Modelo Dinámico de Crecimiento y Producción de CO$_2$}
 Para describir el metabolismo de la larva, se adaptó un modelo dinámico basado en balances de carbono. La tasa de cambio de la biomasa estructural ($\frac{dB}{dt}$) se definió en función de una tasa de asimilación específica ($a$), una tasa de mantenimiento ($m = 0.08$), y el rendimiento de la biomasa ($Y_B = 0.44$).
 
@@ -87,6 +58,3 @@ Una vez estimado el comportamiento de $B_{max}(t)$ mediante la red neuronal, las
 
 \section{Conclusiones}
 \textit{[TODO: Pendiente de redacción basada en los resultados finales].}
-\printbibliography
-
-\end{document}

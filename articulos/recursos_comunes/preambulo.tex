@@ -1,0 +1,22 @@
+% Geometría y Fuentes comunes
+\usepackage{geometry}
+\geometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
+\usepackage{fontspec}
+\usepackage{csquotes}
+\usepackage[spanish, es-nodecimaldot]{babel}
+
+% PARCHE para evitar error de hooks en TeX Live 2025
+\makeatletter
+\let\bbl@sh@active@arg\relax
+\makeatother
+
+% Bibliografía base (la ruta del archivo .bib se define en cada main)
+\usepackage[backend=biber,style=authoryear]{biblatex}
+
+% Utilidades gráficas y enlaces
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+
+% Comandos personalizados para facilitar la escritura
+\newcommand{\co}{CO$_2$}
+\newcommand{\ch}{CH$_4$}

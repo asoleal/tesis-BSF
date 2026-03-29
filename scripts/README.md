@@ -24,6 +24,19 @@ Si la imagen es privada, primero inicia sesión en GHCR con un PAT de GitHub con
 echo TU_GITHUB_PAT | docker login ghcr.io -u asoleal --password-stdin
 ```
 
+## Reconstruir la imagen localmente (Respaldo)
+
+Si la imagen ya no está disponible en GitHub Container Registry o necesitas reconstruirla desde cero localmente, debes usar la red del host (`--network host`) durante la construcción. 
+
+Esto se debe a un problema del host con la creación de interfaces `veth` en la red `bridge` por defecto de Docker, lo que impide que el contenedor temporal tenga internet para descargar paquetes como TeX Live.
+
+Para reconstruirla con el mismo tag, ejecuta en la raíz del proyecto:
+
+```bash
+docker build --network host -t ghcr.io/asoleal/tesis-bsf-base:sha-7c75eab .
+
+
+
 Luego descarga la imagen:
 
 ```bash
