@@ -1,0 +1,463 @@
+\documentclass[12pt,a4paper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{lmodern}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+\geometry{margin=2.5cm}
+\setstretch{1.15}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!50!black,
+    urlcolor=blue!50!black,
+    citecolor=blue!50!black
+}
+
+\title{\textbf{Documento Base para el Diseño de un Gemelo Digital de Bioconversión}\\
+\vspace{0.3cm}
+\large Hermetia illucens: simulación por etapas a partir de biomasa larval y gases respiratorios}
+\author{Propuesta técnica}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\chapter{Propósito del documento}
+
+Este documento define la estructura general de un gemelo digital para simular el proceso de bioconversión con larvas de \textit{Hermetia illucens}. El sistema se concibe como un modelo dinámico por etapas que representa la evolución del lote a partir de variables de operación, señales gaseosas y cambios en la biomasa larval.
+
+El objetivo es construir una plataforma capaz de:
+\begin{itemize}[leftmargin=0.7cm]
+    \item Simular el comportamiento del sistema a lo largo del tiempo.
+    \item Representar la evolución de la biomasa larval.
+    \item Estimar la generación de CO$_2$ asociada tanto a las larvas como al sustrato/alimento.
+    \item Usar el oxígeno como indicador operativo de cambio de estadio.
+    \item Usar el CH$_4$ como indicador de zonas de anaerobiosis.
+    \item Mostrar salidas útiles para monitoreo, diagnóstico y toma de decisiones.
+\end{itemize}
+
+\chapter{Supuestos de modelado}
+
+Para una primera versión del gemelo digital se adoptan los siguientes supuestos:
+
+\section{Supuestos físicos y biológicos}
+
+\begin{enumerate}[leftmargin=0.8cm]
+    \item El proceso se modela como un sistema por lotes.
+    \item El alimento se supone constante dentro de cada etapa de simulación, aunque puede cambiar de una etapa a otra.
+    \item La temperatura, la humedad y la cantidad inicial de larvas son variables de entrada principales.
+    \item La biomasa larval cambia con el tiempo y constituye la variable de estado central del sistema.
+    \item La generación total de CO$_2$ se modela como la suma de dos contribuciones:
+    \begin{equation}
+        CO_{2,\text{total}}(t) = CO_{2,\text{larvas}}(t) + CO_{2,\text{sustrato}}(t)
+    \end{equation}
+    \item El oxígeno se usa como indicador de cambio de estadio o transición fisiológica.
+    \item El CH$_4$ se usa como indicador de aparición de microzonas anaerobias.
+    \item El gemelo digital debe representar no solo el estado final, sino toda la trayectoria temporal del lote.
+\end{enumerate}
+
+\section{Supuestos computacionales}
+
+\begin{enumerate}[leftmargin=0.8cm]
+    \item El modelo será modular, de forma que permita reemplazar o mejorar componentes sin rediseñar todo el sistema.
+    \item Habrá una separación entre:
+    \begin{itemize}[leftmargin=0.7cm]
+        \item capa de entrada de datos,
+        \item motor de simulación,
+        \item lógica por etapas,
+        \item cálculo de indicadores,
+        \item visualización.
+    \end{itemize}
+    \item El gemelo podrá trabajar tanto con datos reales como con datos sintéticos.
+\end{enumerate}
+
+\chapter{Estructura general del gemelo digital}
+
+\section{Visión general}
+
+El gemelo digital se construirá como una cadena de cinco bloques:
+
+\begin{enumerate}[leftmargin=0.8cm]
+    \item \textbf{Bloque de entradas.}
+    \item \textbf{Bloque de preprocesamiento.}
+    \item \textbf{Bloque de estimación de estado.}
+    \item \textbf{Bloque de simulación por etapas.}
+    \item \textbf{Bloque de salidas y visualización.}
+\end{enumerate}
+
+\section{Arquitectura funcional}
+
+\begin{center}
+\fbox{
+\parbox{0.92\textwidth}{
+\textbf{Entradas} $\rightarrow$ \textbf{Preprocesamiento} $\rightarrow$ \textbf{Estimación de biomasa y gases} $\rightarrow$ \textbf{Lógica por etapas} $\rightarrow$ \textbf{Indicadores} $\rightarrow$ \textbf{Dashboard / simulador}
+}
+}
+\end{center}
+
+\section{Descripción de cada bloque}
+
+\subsection{Bloque 1: Entradas}
+Recibe variables de operación, condiciones iniciales y señales temporales del proceso.
+
+\subsection{Bloque 2: Preprocesamiento}
+Realiza limpieza de datos, sincronización temporal, normalización y cálculo de variables derivadas.
+
+\subsection{Bloque 3: Estimación de estado}
+Calcula o infiere:
+\begin{itemize}[leftmargin=0.7cm]
+    \item biomasa larval estimada,
+    \item consumo de oxígeno,
+    \item producción de CO$_2$,
+    \item aparición de CH$_4$,
+    \item estado fisiológico probable del lote.
+\end{itemize}
+
+\subsection{Bloque 4: Simulación por etapas}
+Aplica reglas distintas según la fase del proceso. Cada etapa tiene entradas, restricciones, comportamiento esperado y salidas.
+
+\subsection{Bloque 5: Salidas}
+Entrega curvas, indicadores y alarmas para el usuario final.
+
+\chapter{Elementos clave del sistema}
+
+\section{Variable de estado principal}
+
+La variable principal del gemelo es la biomasa larval:
+\begin{equation}
+    B(t)
+\end{equation}
+
+Esta variable concentra el efecto acumulado de temperatura, humedad, tiempo, disponibilidad de alimento y densidad larval. A partir de ella se pueden construir las demás salidas del sistema.
+
+\section{Variables observables críticas}
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item \(T(t)\): temperatura.
+    \item \(H(t)\): humedad.
+    \item \(N_0\): cantidad inicial de larvas.
+    \item \(F\): alimento o sustrato disponible.
+    \item \(O_2(t)\): oxígeno.
+    \item \(CO_2(t)\): dióxido de carbono.
+    \item \(CH_4(t)\): metano.
+    \item \(t\): tiempo.
+\end{itemize}
+
+\section{Variables derivadas}
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item Tasa de crecimiento de biomasa:
+    \begin{equation}
+        \frac{dB}{dt}
+    \end{equation}
+    \item Tasa total de producción de CO$_2$:
+    \begin{equation}
+        \frac{dCO_2}{dt}
+    \end{equation}
+    \item Índice de transición de estadio basado en oxígeno:
+    \begin{equation}
+        I_{estadio}(t) = f(O_2(t), \frac{dO_2}{dt}, \frac{dCO_2}{dt})
+    \end{equation}
+    \item Índice de anaerobiosis:
+    \begin{equation}
+        I_{an}(t) = f(CH_4(t), O_2(t), H(t))
+    \end{equation}
+\end{itemize}
+
+\chapter{Entradas y salidas del gemelo digital}
+
+\section{Entradas principales}
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{4.6cm} >{\raggedright\arraybackslash}p{5.5cm}}
+\toprule
+\textbf{Entrada} & \textbf{Tipo} & \textbf{Descripción} \\
+\midrule
+Temperatura & Continua & Condición térmica del reactor o sistema larva-sustrato. \\
+Humedad & Continua & Humedad del medio de bioconversión. \\
+Cantidad de larvas & Escalar inicial & Número o masa inicial de larvas. \\
+Alimento / sustrato & Parámetro por etapa & Se asume constante en cada etapa de simulación. \\
+Tiempo & Serie temporal & Eje de evolución del proceso. \\
+Oxígeno & Serie temporal & Variable de seguimiento para cambios fisiológicos. \\
+CO$_2$ & Serie temporal & Señal respiratoria agregada del sistema. \\
+CH$_4$ & Serie temporal & Señal de posible anaerobiosis localizada. \\
+\bottomrule
+\end{longtable}
+
+\section{Salidas principales}
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{4.5cm} >{\raggedright\arraybackslash}p{8.8cm}}
+\toprule
+\textbf{Salida} & \textbf{Descripción} \\
+\midrule
+Biomasa larval estimada & Curva temporal de crecimiento de la biomasa. \\
+CO$_2$ de larvas & Contribución asociada al metabolismo larval. \\
+CO$_2$ del sustrato & Contribución asociada al alimento/microbiota. \\
+CO$_2$ total & Suma de contribuciones del sistema. \\
+Cambio de estadio & Detección de transición fisiológica usando O$_2$. \\
+Índice de anaerobiosis & Detección de riesgo de zonas con baja aireación. \\
+Estado de la etapa & Identificación de la etapa actual del lote. \\
+Alertas & Exceso de humedad, posible anaerobiosis, caída de actividad, transición de estadio. \\
+Indicadores de desempeño & Eficiencia de conversión, intensidad respiratoria, estabilidad del proceso. \\
+\bottomrule
+\end{longtable}
+
+\chapter{Definición por etapas}
+
+\section{Justificación del enfoque por etapas}
+
+El proceso no debe modelarse como un bloque único. Debe dividirse en etapas porque la relación entre biomasa, alimento, respiración, oxígeno y metano cambia conforme avanza el tiempo. Por tanto, cada etapa debe tener reglas de simulación propias.
+
+\section{Etapa 0: Inicialización}
+
+\subsection*{Objetivo}
+Definir el estado inicial del lote.
+
+\subsection*{Entradas}
+\begin{itemize}[leftmargin=0.7cm]
+    \item número inicial de larvas,
+    \item biomasa inicial,
+    \item temperatura inicial,
+    \item humedad inicial,
+    \item alimento inicial,
+    \item condiciones de frontera del sistema.
+\end{itemize}
+
+\subsection*{Salidas}
+\begin{itemize}[leftmargin=0.7cm]
+    \item vector de estado inicial,
+    \item parámetros iniciales del simulador,
+    \item etapa activa = 0.
+\end{itemize}
+
+\section{Etapa 1: Adaptación y arranque metabólico}
+
+\subsection*{Descripción}
+Corresponde al inicio del lote, cuando la biomasa aún es baja y el sistema se estabiliza. La señal respiratoria comienza a aumentar y el consumo de oxígeno empieza a reflejar activación metabólica.
+
+\subsection*{Entradas dominantes}
+\begin{itemize}[leftmargin=0.7cm]
+    \item biomasa inicial,
+    \item temperatura,
+    \item humedad,
+    \item alimento constante de la etapa.
+\end{itemize}
+
+\subsection*{Comportamiento esperado}
+\begin{itemize}[leftmargin=0.7cm]
+    \item aumento gradual de \(B(t)\),
+    \item incremento de \(CO_2\),
+    \item consumo moderado de \(O_2\),
+    \item \(CH_4\) idealmente cercano a cero.
+\end{itemize}
+
+\section{Etapa 2: Crecimiento activo}
+
+\subsection*{Descripción}
+Es la etapa de mayor transformación biológica. La biomasa aumenta con rapidez, el metabolismo se intensifica y la señal de CO$_2$ crece de forma marcada.
+
+\subsection*{Entradas dominantes}
+\begin{itemize}[leftmargin=0.7cm]
+    \item temperatura,
+    \item humedad,
+    \item densidad larval,
+    \item disponibilidad efectiva de alimento.
+\end{itemize}
+
+\subsection*{Comportamiento esperado}
+\begin{itemize}[leftmargin=0.7cm]
+    \item alta pendiente de crecimiento \(\frac{dB}{dt}\),
+    \item mayor generación de \(CO_2\),
+    \item consumo claro de \(O_2\),
+    \item riesgo de heterogeneidad interna si aumenta la densidad.
+\end{itemize}
+
+\section{Etapa 3: Transición de estadio}
+
+\subsection*{Descripción}
+Corresponde al punto en que el oxígeno pasa a ser un marcador de cambio fisiológico. El patrón respiratorio deja de crecer de forma simple y puede mostrar cambios de pendiente, oscilaciones o desacople con la biomasa.
+
+\subsection*{Regla operativa}
+La etapa se activa cuando se detecte al menos una de las siguientes señales:
+\begin{itemize}[leftmargin=0.7cm]
+    \item cambio sostenido en la pendiente de \(O_2(t)\),
+    \item cambio sostenido en la relación entre \(O_2\) y \(CO_2\),
+    \item desaceleración de \(\frac{dB}{dt}\),
+    \item patrón compatible con transición fisiológica.
+\end{itemize}
+
+\subsection*{Salidas}
+\begin{itemize}[leftmargin=0.7cm]
+    \item bandera de cambio de estadio,
+    \item nueva etapa activa,
+    \item ajuste de parámetros de crecimiento y respiración.
+\end{itemize}
+
+\section{Etapa 4: Riesgo de anaerobiosis}
+
+\subsection*{Descripción}
+Esta etapa no depende solo del tiempo, sino del estado del sistema. Se activa cuando el CH$_4$ aumenta y el sistema presenta indicios de deficiente aireación o microambientes anaerobios.
+
+\subsection*{Condición de disparo}
+\begin{equation}
+    I_{an}(t) > \tau_{an}
+\end{equation}
+donde \(\tau_{an}\) es un umbral definido experimentalmente.
+
+\subsection*{Interpretación}
+Cuando esta etapa aparece, el gemelo digital debe considerarla un evento crítico.
+
+\subsection*{Salidas}
+\begin{itemize}[leftmargin=0.7cm]
+    \item alerta de anaerobiosis,
+    \item incremento del riesgo ambiental,
+    \item posible reducción de la eficiencia biológica,
+    \item recomendación de intervención operativa.
+\end{itemize}
+
+\section{Etapa 5: Cierre del lote}
+
+\subsection*{Descripción}
+Representa la fase final de la corrida de simulación. El crecimiento tiende a desacelerarse y el sistema entrega resultados acumulados e indicadores del ciclo completo.
+
+\subsection*{Salidas finales}
+\begin{itemize}[leftmargin=0.7cm]
+    \item biomasa final,
+    \item CO$_2$ acumulado,
+    \item CH$_4$ acumulado,
+    \item número de eventos críticos,
+    \item tiempo de transición de estadio,
+    \item evaluación global del lote.
+\end{itemize}
+
+\chapter{Dos puntos fuertes del gemelo digital}
+
+\section{Punto fuerte 1: lectura biológica del proceso a partir de gases}
+
+El gemelo no se limita a medir emisiones. Usa las señales gaseosas para inferir estado biológico. En particular, el oxígeno se interpreta como un indicador de transición de estadio y el CO$_2$ como una señal del ritmo metabólico total del sistema.
+
+\section{Punto fuerte 2: vigilancia ambiental en tiempo real}
+
+El CH$_4$ permite detectar cuándo el sistema deja de comportarse como un medio predominantemente aeróbico y empieza a presentar zonas anaerobias. Esto convierte al gemelo digital en una herramienta no solo de simulación, sino también de alerta temprana.
+
+\chapter{Cómo se va a construir}
+
+\section{Fase 1: definición conceptual}
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item Definir variables de entrada, estado y salida.
+    \item Definir etapas y reglas de transición.
+    \item Establecer hipótesis y supuestos iniciales.
+\end{itemize}
+
+\section{Fase 2: diseño de datos}
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item Diseñar la estructura temporal de los datos.
+    \item Crear formatos para señales reales y sintéticas.
+    \item Estandarizar unidades, frecuencia de muestreo y etiquetas de etapa.
+\end{itemize}
+
+\section{Fase 3: motor de simulación}
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item Construir un modelo base de biomasa \(B(t)\).
+    \item Separar la contribución de CO$_2$ en larvas y sustrato.
+    \item Definir reglas para usar \(O_2\) como detector de transición.
+    \item Definir reglas para usar CH$_4$ como detector de anaerobiosis.
+\end{itemize}
+
+\section{Fase 4: lógica por etapas}
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item Implementar máquina de estados.
+    \item Asignar parámetros y restricciones a cada etapa.
+    \item Permitir transiciones automáticas basadas en umbrales o patrones.
+\end{itemize}
+
+\section{Fase 5: interfaz del gemelo}
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item Dashboard en tiempo real.
+    \item Visualización de curvas de biomasa, CO$_2$, O$_2$ y CH$_4$.
+    \item Panel de alertas y eventos.
+    \item Comparación entre simulación y datos observados.
+\end{itemize}
+
+\section{Fase 6: validación}
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item Verificar coherencia biológica.
+    \item Verificar coherencia temporal.
+    \item Comparar salida simulada vs. medición real.
+    \item Ajustar umbrales de transición de estadio y anaerobiosis.
+\end{itemize}
+
+\chapter{Esquema mínimo del motor matemático}
+
+\section{Núcleo dinámico}
+
+Una forma inicial y simple de escribir el gemelo es:
+
+\begin{equation}
+    \frac{dB}{dt} = f\big(B(t), T(t), H(t), F, N_0, etapa(t)\big)
+\end{equation}
+
+\begin{equation}
+    \frac{dCO_{2,\text{larvas}}}{dt} = g\big(B(t), T(t), H(t), etapa(t)\big)
+\end{equation}
+
+\begin{equation}
+    \frac{dCO_{2,\text{sustrato}}}{dt} = h\big(F, H(t), T(t), etapa(t)\big)
+\end{equation}
+
+\begin{equation}
+    \frac{dCH_4}{dt} = q\big(H(t), O_2(t), compactaci\'on(t), etapa(t)\big)
+\end{equation}
+
+\section{Lógica de transición}
+
+\begin{equation}
+    etapa(t+\Delta t)=
+    \begin{cases}
+    1, & \text{si el sistema está en arranque} \\
+    2, & \text{si hay crecimiento activo} \\
+    3, & \text{si } I_{estadio}(t) > \tau_{est} \\
+    4, & \text{si } I_{an}(t) > \tau_{an} \\
+    5, & \text{si se alcanza el cierre del lote}
+    \end{cases}
+\end{equation}
+
+\chapter{Indicadores finales del sistema}
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item Biomasa máxima alcanzada.
+    \item Tiempo al cambio de estadio.
+    \item CO$_2$ total producido.
+    \item CH$_4$ total producido.
+    \item Duración de eventos de anaerobiosis.
+    \item Estabilidad del lote.
+    \item Desempeño biológico por etapa.
+    \item Desempeño ambiental por etapa.
+\end{itemize}
+
+\chapter{Cierre}
+
+La idea central de este gemelo digital es representar el proceso como un sistema dinámico por etapas, donde la biomasa larval evoluciona con el tiempo bajo condiciones controladas de temperatura, humedad, densidad y alimento, y donde los gases cumplen una doble función: describen la actividad metabólica y alertan sobre desviaciones operativas.
+
+La siguiente etapa del trabajo consiste en convertir esta estructura conceptual en una especificación técnica implementable, definiendo ecuaciones, reglas de transición, umbrales, fuentes de datos y arquitectura de software.
+
+\end{document}

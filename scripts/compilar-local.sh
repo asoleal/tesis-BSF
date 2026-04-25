@@ -15,11 +15,12 @@ run_in_container() {
 }
 
 usage() {
-  cat <<'EOF'
+  cat <<'UsoEOF'
 Uso:
   scripts/compilar-local.sh shell
   scripts/compilar-local.sh tesis
   scripts/compilar-local.sh presentacion
+  scripts/compilar-local.sh candidatura
   scripts/compilar-local.sh articulo <ruta>
   scripts/compilar-local.sh <ruta-articulo>
   scripts/compilar-local.sh clean
@@ -28,10 +29,11 @@ Ejemplos:
   scripts/compilar-local.sh shell
   scripts/compilar-local.sh tesis
   scripts/compilar-local.sh presentacion
+  scripts/compilar-local.sh candidatura
   scripts/compilar-local.sh articulo articulos/01-pinn-biomasa
   scripts/compilar-local.sh articulos/01-pinn-biomasa
   scripts/compilar-local.sh clean
-EOF
+UsoEOF
 }
 
 cmd="${1:-}"
@@ -51,6 +53,9 @@ case "${cmd}" in
     ;;
   presentacion)
     run_in_container "make presentacion"
+    ;;
+  candidatura)
+    run_in_container "make candidatura"
     ;;
   articulo)
     ART_DIR="${2:-}"

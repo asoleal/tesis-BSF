@@ -61,3 +61,12 @@ clean:
 	find articulos -name "*.tex" -execdir latexmk -C \; || true
 	find . -type d -name "_minted*" -exec rm -rf {} +
 	rm -f *.nav *.snm *.vrb
+	latexmk -C presentacion/presentacion-candidatura.tex || true
+
+CANDIDATURA_MAIN = presentacion/presentacion-candidatura.tex
+
+.PHONY: all tesis presentacion candidatura articulos clean
+
+candidatura: $(CANDIDATURA_MAIN)
+	@echo "==> Compilando Presentación de Candidatura..."
+	(cd presentacion && $(LATEXMK) presentacion-candidatura.tex)
