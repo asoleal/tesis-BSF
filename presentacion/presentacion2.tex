@@ -1,0 +1,362 @@
+\documentclass[10pt,aspectratio=169]{beamer}
+
+\usetheme{Madrid}
+\usecolortheme{default}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb}
+\usepackage{ragged2e}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta}
+\usepackage{multirow}
+
+\definecolor{verdeoscuro}{RGB}{23,94,74}
+\definecolor{verdeclaro}{RGB}{92,160,132}
+\definecolor{gristexto}{RGB}{70,70,70}
+\definecolor{griscita}{RGB}{120,120,120}
+
+\setbeamercolor{title}{fg=verdeoscuro}
+\setbeamercolor{frametitle}{fg=verdeoscuro}
+\setbeamercolor{structure}{fg=verdeoscuro}
+\setbeamercolor{normal text}{fg=gristexto,bg=white}
+\setbeamercolor{block title}{bg=verdeoscuro!10,fg=verdeoscuro}
+\setbeamercolor{block body}{bg=gray!5,fg=black}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+
+\newcommand{\basecite}{\hfill{\color{griscita}\tiny [file:1]}}
+
+\title{Sistema híbrido para predicción de emisiones de CO\textsubscript{2} y CH\textsubscript{4}\\
+en la bioconversión de residuos con \textit{Hermetia illucens}}
+\subtitle{Propuesta de tesis doctoral en Estudios Ambientales}
+\author{John Jairo Leal Gómez}
+\institute{Doctorado en Estudios Ambientales\\
+Universidad Nacional de Colombia -- Sede Palmira}
+\date{Sustentación de proyecto}
+
+\begin{document}
+
+%------------------------------------------------
+\begin{frame}
+    \titlepage
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Ruta de la presentación}
+\tableofcontents
+\end{frame}
+
+%================================================
+\section{Punto de partida}
+
+\begin{frame}{Tesis de la defensa}
+\justifying
+\begin{block}{Idea central}
+Esta tesis no busca demostrar que la bioconversión con mosca soldado negra existe, sino establecer bajo qué condiciones su desempeño puede considerarse ambientalmente sostenible mediante métricas dinámicas, trazables y verificables. \basecite
+\end{block}
+
+\pause
+\begin{itemize}
+    \item El punto de partida es un problema ambiental, no un problema exclusivamente tecnológico. \basecite
+    \item El aporte principal es producir evidencia ambiental útil para comprender, comparar y gestionar el proceso. \basecite
+    \item El sistema híbrido se plantea como un gemelo digital orientado al monitoreo y a la interpretación del proceso. \basecite
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{¿Por qué este problema importa?}
+\justifying
+\begin{itemize}
+    \item El cambio climático y la gestión inadecuada de residuos orgánicos están directamente vinculados con la generación de gases de efecto invernadero, especialmente CO\textsubscript{2} y CH\textsubscript{4}. \basecite
+    \item En la propuesta se reconoce que la descomposición anaerobia de residuos orgánicos constituye una fuente crítica de CH\textsubscript{4}, un gas con alto potencial de calentamiento global. \basecite
+    \item Por eso, en Estudios Ambientales no basta con promover tecnologías de valorización; también es necesario verificar su desempeño real. \basecite
+\end{itemize}
+\end{frame}
+
+%================================================
+\section{Contexto ambiental}
+
+\begin{frame}{Contexto de los residuos agroindustriales}
+\justifying
+\begin{itemize}
+    \item En contextos agroindustriales del sur global, como el Valle del Cauca, los residuos orgánicos se generan de forma dispersa, estacional y con alta carga biodegradable. \basecite
+    \item Esta condición incrementa el riesgo de emisiones cuando el manejo es inadecuado o cuando el tratamiento no está bien controlado. \basecite
+    \item Además, la heterogeneidad del sustrato dificulta tanto la gestión operativa como la caracterización ambiental del proceso. \basecite
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{El problema no es solo productivo}
+\justifying
+\begin{columns}[T]
+\column{0.55\textwidth}
+\begin{itemize}
+    \item El problema no se reduce a “qué hacer con los residuos”, sino a cómo tratarlos sin trasladar o invisibilizar impactos ambientales. \basecite
+    \item En ese sentido, el residuo debe analizarse como flujo de carbono, fuente potencial de emisiones y también como oportunidad de valorización. \basecite
+\end{itemize}
+
+\column{0.40\textwidth}
+\begin{block}{Lectura ambiental}
+Gestión de residuos \(\neq\) simple disposición.\\[0.3em]
+Gestión de residuos \(=\) control de emisiones + trazabilidad + soporte a la sostenibilidad. \basecite
+\end{block}
+\end{columns}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Soluciones existentes y sus límites}
+\justifying
+\begin{itemize}
+    \item La literatura de la propuesta ubica entre las rutas convencionales a los rellenos sanitarios, la digestión anaerobia y el compostaje. \basecite
+    \item Los rellenos generan emisiones prolongadas de metano, la digestión anaerobia exige infraestructura compleja y el compostaje requiere tiempos largos de estabilización y puede asociarse a emisiones de N\textsubscript{2}O. \basecite
+    \item En contextos agroindustriales medios o rurales, estas alternativas pueden resultar limitadas técnica o económicamente. \basecite
+\end{itemize}
+\end{frame}
+
+%================================================
+\section{Bioconversión con BSF}
+
+\begin{frame}{La bioconversión con \textit{Hermetia illucens}}
+\justifying
+\begin{itemize}
+    \item La bioconversión con mosca soldado negra no es un proceso nuevo; ya se reconoce como una alternativa de economía circular para valorizar residuos orgánicos. \basecite
+    \item El proceso transforma residuos en biomasa larval rica en proteínas y lípidos, además de frass con valor agronómico. \basecite
+    \item También presenta ventajas operativas, como menor infraestructura requerida y ciclos relativamente cortos frente a métodos tradicionales. \basecite
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Esquema general del proceso de bioconversión}
+\centering
+\begin{tikzpicture}[node distance=1.6cm, every node/.style={font=\small}]
+\node[draw, rounded corners, fill=green!10, minimum width=2.8cm, minimum height=0.9cm] (r) {Residuos orgánicos};
+\node[draw, rounded corners, fill=green!10, right=of r, minimum width=2.8cm, minimum height=0.9cm] (pre) {Acondicionamiento};
+\node[draw, rounded corners, fill=green!10, right=of pre, minimum width=2.8cm, minimum height=0.9cm] (bio) {Bioconversión BSF};
+\node[draw, rounded corners, fill=green!10, right=of bio, minimum width=2.8cm, minimum height=0.9cm] (prod) {Biomasa + frass};
+
+\node[draw, rounded corners, fill=orange!12, below=1.1cm of bio, minimum width=3.2cm, minimum height=0.9cm] (emi) {Emisiones: CO\textsubscript{2} y CH\textsubscript{4}};
+
+\draw[->, thick] (r) -- (pre);
+\draw[->, thick] (pre) -- (bio);
+\draw[->, thick] (bio) -- (prod);
+\draw[->, thick] (bio) -- (emi);
+\end{tikzpicture}
+
+\vspace{0.5em}
+\justifying
+Este esquema es útil en la defensa porque permite mostrar que la tesis no se inventa el proceso, sino que se inserta en un sistema biológico ya existente cuyo comportamiento ambiental aún no está suficientemente caracterizado. \basecite
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{El punto crítico: sigue siendo una “caja negra”}
+\justifying
+\begin{itemize}
+    \item A pesar de su potencial, muchas implementaciones de la BSF siguen operando como una caja negra desde el punto de vista ambiental. \basecite
+    \item Se conocen insumos y productos, pero no se comprende con suficiente detalle la dinámica interna de los flujos gaseosos durante el proceso. \basecite
+    \item Esa falta de trazabilidad impide validar con solidez su sostenibilidad real frente a otras rutas de tratamiento. \basecite
+\end{itemize}
+\end{frame}
+
+%================================================
+\section{Brecha de conocimiento}
+
+\begin{frame}{Brecha científica y ambiental}
+\justifying
+\begin{itemize}
+    \item Existen estudios previos que han medido emisiones o variables del proceso de bioconversión con BSF, pero la evidencia sigue siendo fragmentada. \basecite
+    \item La propuesta señala disparidad de unidades funcionales, ausencia de protocolos estandarizados y predominio de mediciones puntuales o discontinuas. \basecite
+    \item En consecuencia, el comportamiento del proceso no está suficientemente estandarizado ni es fácilmente comparable entre estudios. \basecite
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Complejidad del proceso}
+\justifying
+\begin{itemize}
+    \item La dinámica del sistema depende de variables críticas como composición del sustrato, temperatura, humedad, oxigenación y densidad larval. \basecite
+    \item Estas variables cambian a lo largo del ciclo y pueden generar microambientes con rutas metabólicas distintas, incluidas condiciones transitoriamente anaerobias. \basecite
+    \item Por eso, los enfoques estáticos o basados en mediciones aisladas no son suficientes para comprender el proceso completo. \basecite
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Vacío de estandarización ambiental}
+\justifying
+\begin{itemize}
+    \item La propuesta plantea que aún no existen factores de emisión específicos para BSF incorporados en metodologías de referencia como las del IPCC o el GHG Protocol. \basecite
+    \item Esto implica que muchos balances ambientales se apoyan en supuestos, extrapolaciones o analogías con otros procesos. \basecite
+    \item En ese escenario, los beneficios climáticos atribuidos a la bioconversión todavía requieren corroboración empírica más robusta. \basecite
+\end{itemize}
+\end{frame}
+
+%================================================
+\section{Pregunta, objetivo e hipótesis}
+
+\begin{frame}{Pregunta de investigación}
+\justifying
+\begin{block}{Pregunta}
+¿En qué medida la integración de modelado matemático basado en ecuaciones diferenciales ordinarias, sensores IoT de bajo costo y algoritmos de aprendizaje automático permite desarrollar un sistema híbrido que estime con precisión las emisiones de CO\textsubscript{2} y CH\textsubscript{4}, fundamente la toma de decisiones operativas y genere métricas verificables del desempeño ambiental en la bioconversión con \textit{Hermetia illucens}? \basecite
+\end{block}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Objetivo general}
+\justifying
+\begin{block}{Objetivo}
+Desarrollar un sistema híbrido a escala de laboratorio, integrado por modelado mecanístico EDO, sensores IoT de bajo costo y algoritmos de aprendizaje automático, para la estimación de la tasa de producción de CO\textsubscript{2} y la detección de eventos de emisión de CH\textsubscript{4} en la bioconversión de residuos con \textit{Hermetia illucens}, con el fin de generar métricas de desempeño ambiental aplicables a la gestión de residuos agroindustriales. \basecite
+\end{block}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Hipótesis y tesis de trabajo}
+\justifying
+\begin{itemize}
+    \item La hipótesis general plantea que un sistema híbrido puede estimar CO\textsubscript{2} y CH\textsubscript{4} en tiempo real con error aceptable frente a mediciones de referencia. \basecite
+    \item Esa capacidad no solo mejora la medición, sino que permite identificar ineficiencias operativas y cuantificar el desempeño ambiental más allá de estimaciones estáticas. \basecite
+    \item En términos de defensa, la tesis sostiene que un buen manejo del proceso debe poder demostrarse con métricas y procedimientos verificables. \basecite
+\end{itemize}
+\end{frame}
+
+%================================================
+\section{Propuesta}
+
+\begin{frame}{¿Qué propongo realmente?}
+\justifying
+\begin{block}{Respuesta breve}
+Propongo un gemelo digital del proceso de bioconversión, entendido como un sistema híbrido capaz de observar, interpretar y estimar dinámicamente el comportamiento del sistema a partir de datos físicos y modelado biológico. \basecite
+\end{block}
+
+\pause
+\begin{itemize}
+    \item No se trata de reemplazar el proceso biológico, sino de hacerlo visible y auditable ambientalmente. \basecite
+    \item El foco principal del sistema recae en CO\textsubscript{2} como indicador dinámico de actividad biológica, mientras CH\textsubscript{4} funciona como variable de control para detectar fallos operativos asociados a anaerobiosis. \basecite
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Arquitectura conceptual del sistema híbrido}
+\centering
+\begin{tikzpicture}[node distance=1.4cm, every node/.style={font=\small}]
+\node[draw, rounded corners, fill=green!10, minimum width=2.8cm, minimum height=0.9cm] (sens) {Sensores IoT};
+\node[draw, rounded corners, fill=green!10, right=of sens, minimum width=3.2cm, minimum height=0.9cm] (edo) {Modelo mecanístico EDO/DEB};
+\node[draw, rounded corners, fill=green!10, right=of edo, minimum width=3.0cm, minimum height=0.9cm] (ml) {AAA / corrección};
+\node[draw, rounded corners, fill=green!10, right=of ml, minimum width=2.8cm, minimum height=0.9cm] (met) {Métricas y alertas};
+
+\draw[->, thick] (sens) -- (edo);
+\draw[->, thick] (edo) -- (ml);
+\draw[->, thick] (ml) -- (met);
+\end{tikzpicture}
+
+\vspace{0.6em}
+\justifying
+La lógica del sistema es integrar percepción física, estructura mecanística y adaptación basada en datos para convertir señales dispersas en evidencia ambiental interpretable. \basecite
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{¿Por qué un enfoque híbrido?}
+\justifying
+\begin{itemize}
+    \item Los sensores capturan la realidad física, pero por sí solos no explican el proceso. \basecite
+    \item Los modelos mecanísticos aportan coherencia biológica, pero pueden fallar ante variabilidad real no parametrizada. \basecite
+    \item El aprendizaje automático puede corregir residuales y adaptarse a la estocasticidad del sistema, especialmente cuando se integra bajo una lógica de caja gris. \basecite
+\end{itemize}
+\end{frame}
+
+%================================================
+\section{Diseño metodológico}
+
+\begin{frame}{Diseño metodológico general}
+\justifying
+\begin{itemize}
+    \item La investigación se plantea como aplicada, experimental, tecnocientífica e interdisciplinaria. \basecite
+    \item El componente experimental se desarrollará en Palmira, bajo condiciones controladas de laboratorio, para asegurar reproducibilidad en la calibración y validación del sistema. \basecite
+    \item Metodológicamente, el proyecto se organiza en cuatro fases secuenciales e integradas. \basecite
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Fases del proyecto}
+\small
+\begin{tabular}{p{0.17\textwidth} p{0.75\textwidth}}
+\toprule
+\textbf{Fase} & \textbf{Propósito} \\
+\midrule
+I & Diseñar e instrumentar el sistema IoT, asegurar la calidad del dato y calibrar sensores bajo condiciones de alta humedad. \basecite \\
+II & Formular y parametrizar un modelo mecanístico de línea base para la respiración y la producción esperada de CO\textsubscript{2}. \basecite \\
+III & Integrar la capa híbrida con estimación de estados y corrección adaptativa basada en aprendizaje automático. \basecite \\
+IV & Validar utilidad ambiental: detección de eventos de CH\textsubscript{4}, inventario dinámico de carbono y soporte a decisiones. \basecite \\
+\bottomrule
+\end{tabular}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Variables y lógica de observación}
+\justifying
+\begin{itemize}
+    \item Variables medidas: CO\textsubscript{2}, CH\textsubscript{4}, temperatura, humedad y variables operativas asociadas al proceso. \basecite
+    \item Variable central: CO\textsubscript{2}, por su señal más estable y su relación directa con la actividad metabólica del sistema. \basecite
+    \item Variable de control: CH\textsubscript{4}, para detectar condiciones transitoriamente anaerobias que comprometan eficiencia y sostenibilidad ambiental. \basecite
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Validación y métricas}
+\justifying
+\begin{itemize}
+    \item La propuesta considera validación instrumental frente a métodos de referencia y evaluación del error mediante métricas como MAPE, RMSE y correlación. \basecite
+    \item También incorpora sensibilidad para detección de eventos de anaerobiosis y cuantificación de discrepancias entre estimación teórica y emisión real acumulada. \basecite
+    \item El resultado esperado no es solo precisión predictiva, sino utilidad ambiental y operativa del sistema. \basecite
+\end{itemize}
+\end{frame}
+
+%================================================
+\section{Aportes y cierre}
+
+\begin{frame}{Aportes esperados al campo ambiental}
+\justifying
+\begin{itemize}
+    \item Generar métricas dinámicas de desempeño ambiental aplicables a la bioconversión de residuos agroindustriales. \basecite
+    \item Avanzar hacia factores de emisión más específicos y comparables para BSF. \basecite
+    \item Aportar trazabilidad y bases para esquemas de medición, reporte y verificación ambiental. \basecite
+    \item Traducir una promesa tecnológica en evidencia ambiental utilizable para toma de decisiones. \basecite
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Riesgos, límites y postura crítica}
+\justifying
+\begin{itemize}
+    \item La propuesta reconoce límites técnicos y socioambientales, como deriva de sensores, sesgo algorítmico, huella material del hardware y barreras de implementación rural. \basecite
+    \item Por ello, el sistema no se presenta como sustituto del juicio técnico, sino como herramienta de soporte y transparencia. \basecite
+    \item Esta postura evita el tecnosolucionismo y mantiene la tesis anclada en una perspectiva crítica propia de los Estudios Ambientales. \basecite
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Cierre}
+\justifying
+\begin{block}{Mensaje final}
+La tesis parte de una problemática ambiental concreta: las emisiones asociadas al tratamiento de residuos orgánicos. \basecite
+\end{block}
+
+\begin{itemize}
+    \item Reconoce que la bioconversión con BSF ya existe y posee potencial. \basecite
+    \item Demuestra que la evidencia disponible aún es fragmentada y no permite estandarizar completamente el comportamiento ambiental del proceso. \basecite
+    \item Propone un sistema híbrido tipo gemelo digital para construir métricas, procedimientos y criterios que permitan verificar cuándo y cómo la bioconversión puede considerarse ambientalmente sostenible. \basecite
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\centering
+{\Huge Gracias}
+\end{frame}
+
+\end{document}

@@ -9,6 +9,7 @@
 \documentclass[aspectratio=169, 11pt]{beamer}
 
 % --- Fuentes (XeLaTeX) ---
+\usepackage{tcolorbox}
 \usepackage{fontspec}
 \setmainfont{TeX Gyre Termes}
 \setsansfont{TeX Gyre Heros}
@@ -52,13 +53,14 @@
 \setbeamertemplate{footline}[frame number]
 
 \begin{document}
-
 % =============================================================================
 % 1. PORTADA
 % =============================================================================
 \begin{frame}[plain]
     \titlepage
 \end{frame}
+\tableofcontents
+
 % =============================================================================
 % 2. SLIDE 2 CONTEXTO
 % =============================================================================
@@ -66,17 +68,22 @@
 % ============================================
 % DIAPOSITIVA 2a: GEI - Comparativa histórica
 % ============================================
-\begin{frame}{Contexto I: GEI en Escalada — 50 Años de Crecimiento Acelerado}
+% =============================================================================
+% CONTEXTO I: GEI EN ESCALADA — NARRATIVA PROBLEMÁTICA
+% =============================================================================
+\section{Introducción}
+\begin{frame}{Contexto: GEI en Escalada --- 50 A\~nos de Crecimiento Acelerado}
 
-\begin{block}{Comparativa: 1974 $\rightarrow$ 2024 (50 años)}
+% --- BLOQUE SUPERIOR: La escalada cuantificada ---
+\begin{block}{Comparativa: 1974 $\rightarrow$ 2024 (50 a\~nos)}
 \centering
 \begin{tabular}{lccc}
 \toprule
 \textbf{Gas} & \textbf{1974} & \textbf{2024} & \textbf{Crecimiento} \\
 \midrule
-CO$_2$  & $\sim$330 ppm  & 423.9 ppm & \textcolor{red}{\textbf{+28\%}} \\
-CH$_4$  & $\sim$1510 ppb & 1942 ppb  & \textcolor{red}{\textbf{+29\%}} \\
-N$_2$O  & $\sim$298 ppb  & 338 ppb   & \textcolor{red}{\textbf{+13\%}} \\
+CO$_2$  & $\sim$330 ppm  & 423.9 ppm & +28\% \\
+\textbf{CH$_4$}  & $\sim$1510 ppb & 1942 ppb  & \textbf{+29\%} \\
+N$_2$O  & $\sim$298 ppb  & 338 ppb   & +13\% \\
 \bottomrule
 \end{tabular}
 
@@ -84,228 +91,385 @@ N$_2$O  & $\sim$298 ppb  & 338 ppb   & \textcolor{red}{\textbf{+13\%}} \\
 \footnotesize Fuente: NOAA Global Monitoring Laboratory / WMO
 \end{block}
 
+\vspace{0.1cm}
+
+% --- DOS BLOQUES INFERIORES EN COLUMNAS: Causa $\rightarrow$ Consecuencia ---
+\begin{columns}[T]
+
+\begin{column}{0.48\textwidth}
+\begin{block}{Origen del problema}
+\footnotesize
+\begin{itemize}
+    \item Residuos org\'anicos en \textbf{descomposici\'on anaer\'obica}
+    \item $\sim$15--20\% de emisiones antropog\'enicas de CH$_4$
+    \item En el Sur Global: \textbf{vertederos sin control}
+\end{itemize}
+\end{block}
+\end{column}
+
+\begin{column}{0.48\textwidth}
 \begin{alertblock}{Impacto de la falta de control}
+\footnotesize
 \begin{itemize}
-    \item CH$_4$ es \textbf{28$\times$ más potente} que CO$_2$ (IPCC AR5)
-    \item Ha crecido \textbf{+29\% en 50 años} (1500 $\rightarrow$ 1942 ppb)
-    \item Residuos orgánicos: \textbf{$\sim$15--20\%} de emisiones antropogénicas de CH$_4$
-    \item En el Sur Global, la \textbf{trazabilidad es nula}
+    \item CH$_4$: 84$\times$ en 20 a\~nos / 28$\times$ en 100 a\~nos (IPCC AR5)
+    \item Creci\'o +29\% en 50 a\~nos con \textbf{trazabilidad nula}
+    \item Sin medici\'on $\rightarrow$ sin mitigaci\'on
 \end{itemize}
 \end{alertblock}
+\end{column}
 
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% =============================================================================
-% FRAME 6: PROBLEMA GRÁFICO (CAJA NEGRA)
-% =============================================================================
-\begin{frame}{Gestión de Residuos Orgánicos en el Sur Global}
-    %\centering
-    \begin{tikzpicture}[scale=0.7, transform shape,
-        caja/.style={rectangle, rounded corners, draw, align=center, font=\small, inner sep=4pt},
-        flecha/.style={->, >=stealth, thick},
-        etiqueta/.style={font=\tiny, align=center}]
-        
-        \node[font=\bfseries\large] at (8, 9.8) {Estado actual: procesos sin trazabilidad ambiental};
-        
-        \node[caja, fill=green!15, draw=green!50!black, minimum width=2.6cm, minimum height=1.2cm, align=center] (restitulo) at (1.8, 7.4) {Residuos Orgánicos\\Agroindustriales};
-        \node[caja, fill=green!8, draw=green!50!black, minimum width=2.6cm, minimum height=1.4cm, align=center] (resitems) at (1.8, 5.9) {};
-        \node[font=\tiny, anchor=west] at (0.6, 6.3) {\textbullet\ Café};
-        \node[font=\tiny, anchor=west] at (0.6, 6.0) {\textbullet\ Caña};
-        \node[font=\tiny, anchor=west] at (2.1, 6.3) {\textbullet\ Frutas};
-        \node[font=\tiny, anchor=west] at (2.1, 6.0) {\textbullet\ Maíz};
-        \node[etiqueta, below=0.15cm of resitems] {Dispersos $\cdot$ Estacionales\\Alta carga biodegradable};
-        
-        \node[caja, fill=red!10, draw=red!70, minimum width=2.4cm, minimum height=0.9cm] (rel) at (6, 8.2) {Rellenos Sanitarios};
-        \draw[flecha, color=red!80, dashed] (rel.north) -- ++(0, 0.5) node[above, font=\tiny, text=red!90!black] {CH$_4$ fugitivo};
-        \node[etiqueta, text=blue!50, below=0.1cm of rel] {Décadas sin control};
-        
-        \node[caja, fill=blue!10, draw=blue!70, minimum width=2.4cm, minimum height=0.9cm] (dig) at (6, 6.5) {Digestión Anaerobia};
-        \node[etiqueta, text=blue!50, below=0.1cm of dig] {Infraestructura costosa};
-        \node[font=\tiny, text=blue!70, below=0.35cm of dig] {$\bullet$ Escala industrial};
-        
-        \node[caja, fill=orange!10, draw=orange!70, minimum width=2.4cm, minimum height=0.9cm] (com) at (6, 4.8) {Compostaje};
-        \draw[flecha, color=orange!80, dashed] (com.east) -- ++(0.5, 0) node[right, font=\tiny, text=orange!90!black] {N$_2$O};
-        \node[etiqueta, text=blue!50, below=0.1cm of com] {Tiempos largos};
-        
-        \draw[flecha, color=blue!50] (restitulo.east) -- ++(0.8, 0) |- (rel.west);
-        \draw[flecha, color=blue!50] (resitems.east) -- (dig.west);
-        \draw[flecha, color=blue!50] (resitems.east) -- ++(0.8, 0) |- (com.west);
-        
-        \node[rectangle, draw=blue!40, dashed, fill=white, rounded corners, minimum width=3.8cm, minimum height=4.8cm, line width=1.8pt] (caja) at (10.5, 6.5) {};
-        \node[font=\bfseries, text=blue!60, above=0.15cm of caja.north] {CAJA NEGRA};
-        \node[font=\footnotesize, text=blue!50, below=0.1cm of caja.south] {Sin trazabilidad ambiental};
-        \node[font=\fontsize{40}{48}\selectfont, text=blue!30] at (10.5, 7.0) {?};
-        \node[font=\footnotesize, text=blue!50, align=center] at (10.5, 5.6) {¿Cuánto CO$_2$\\y CH$_4$ se\\emitió realmente?};
-        
-        \draw[flecha, color=blue!50] (rel.east) -- ++(0.5, 0) |- (caja.north west);
-        \draw[flecha, color=blue!50] (dig.east) -- (caja.west);
-        \draw[flecha, color=blue!50] (com.east) -- ++(0.5, 0) |- (caja.south west);
-        
-        \node[caja, fill=blue!5, draw=blue!40, minimum width=2.2cm, minimum height=0.8cm] (prod) at (14.5, 8) {Producto};
-        \node[etiqueta, text=blue!50, below=0.05cm of prod] {No verificado};
-        \draw[flecha, color=blue!50] (caja.north east) -- ++(0.3, 0) |- (prod.west);
-        
-        \node[ellipse, draw=red!70, fill=red!5, dashed, minimum width=2.4cm, minimum height=1.1cm, align=center] (fuga) at (14.5, 5.5) {};
-        \node[font=\small\bfseries, text=red!80!black, align=center] at (14.5, 5.5) {Emisiones\\fugitivas};
-        \node[etiqueta, text=red!70!black, below=0.1cm of fuga] {No reportadas};
-        \draw[flecha, color=blue!50, dashed] (caja.south east) -- ++(0.3, 0) |- (fuga.west);
-        
-        \draw[color=blue!30, line width=2pt, rounded corners=2pt] (1.5, 2.8) -- (14.5, 2.8);
-        \foreach \x/\label in {3/Cosecha café, 6/Zafra caña, 9/Cosecha frutas, 12/Poscosecha maíz} {
-            \fill[blue!40] (\x, 2.8) circle (3.5pt);
-            \node[etiqueta, text=blue!50] at (\x, 2.2) {\label};
-        }
-        \fill[blue!20] (14, 2.8) circle (2.5pt);
-        \node[font=\tiny, text=blue!80] at (14, 2.2) {...};
-        \node[font=\footnotesize, text=blue!80, align=center] at (8, 1.5) {Ciclo estacional repetitivo --- sin cierre de balance de carbono entre temporadas};
-        
-        \node[rectangle, fill=yellow!15, draw=yellow!70!orange, rounded corners, minimum width=13cm, minimum height=0.9cm, align=center, font=\small\bfseries, text=blue!60!black] at (8, 0.2) {El problema no es la ausencia de tratamiento, sino la asimetría epistémica: quienes gestionan residuos en el \\Sur Global no disponen de los instrumentos de evidencia que los estándares \\internacionales exigen, pero sí les exigen cumplir con esos estándares.};
-    \end{tikzpicture}
-\end{frame}
-
-% =============================================================================
-% FRAME 7: ALTERNATIVA BSF (FUSIONADA)
-% =============================================================================
-% =============================================================================
-% DIAPOSITIVA 7a: ¿QUÉ ES LA BIOCONVERSIÓN BSF?
-% =============================================================================
-\begin{frame}{La Alternativa: ¿Qué es la Bioconversión BSF?}
-
-\begin{block}{Definición}
-Proceso biológico donde larvas en estadios voraces (L3--L5) transforman residuos orgánicos en biomasa rica en proteínas y fertilizante orgánico (frass), mediante metabolismo exotérmico en simbiosis con microbiota.
-\end{block}
-
-\begin{block}{Ventajas frente a rutas convencionales}
-\begin{columns}[T]
-\column{0.48\textwidth}
-\begin{itemize}
-    \item \textbf{Tiempo}: 2--3 semanas
-    \item \textbf{Infraestructura}: baja, adaptable
-    \item \textbf{Sin lixiviados}: no contamina suelos
-\end{itemize}
-\column{0.48\textwidth}
-\begin{itemize}
-    \item \textbf{Productos}: biomasa (40--45\% proteína)
-    \item \textbf{Frass}: fertilizante estabilizado
-    \item \textbf{Escala}: funciona en pequeña escala rural
-\end{itemize}
 \end{columns}
-\end{block}
+
+\vspace{0.3cm}
+\centering
+\textit{\footnotesize La bioconversi\'on con \BSF{} requiere sistemas de predicci\'on de emisiones en tiempo real.}
 
 \end{frame}
-
 % =============================================================================
-% DIAPOSITIVA 7b: EL RETO EN EL SUR GLOBAL
+% TECNOLOGIAS DE GESTION DE RESIDUOS ORGANICOS
 % =============================================================================
-\begin{frame}{La Alternativa: El Reto en el Sur Global}
+\begin{frame}{Tecnolog\'ias de Gesti\'on de Residuos Org\'anicos}
 
-\begin{alertblock}{Riesgo ambiental persistente}
-Aunque predominantemente \textbf{aeróbico} (emisión principal: CO$_2$ por respiración), la heterogeneidad del sustrato puede generar \textbf{microambientes anaeróbicos} productores de CH$_4$.
-\end{alertblock}
+\footnotesize
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Tecnolog\'ia} & \textbf{Tiempo} & \textbf{CH$_4$} & \textbf{Productos} & \textbf{Monitoreo} \\
+\midrule
+Vertedero & A\~nos & Alto & Ninguno & Nulo \\
+Compostaje & Meses & Medio & Fertilizante & Manual/espor\'adico \\
+Biodigesti\'on & Semanas & Alto (capturable) & Biog\'as + digestato & Parcial \\
+\textbf{Bioconversi\'on BSF} & \textbf{D\'ias} & \textbf{Bajo} & \textbf{Biomasa + frass} & \textbf{Nulo} \\
+\bottomrule
+\end{tabular}
 
-\begin{block}{¿Por qué BSF para esta tesis?}
-\begin{enumerate}
-    \item \textbf{Baja infraestructura}: No requiere digestores o rellenos controlados
-    \item \textbf{Residuos dispersos y estacionales}: Se adapta a la realidad agroindustrial del Valle del Cauca
-    \item \textbf{Producto de valor}: Economía circular rentable para el productor
-\end{enumerate}
-\end{block}
-
-\begin{alertblock}{El problema sigue vigente}
-Sin monitoreo continuo de emisiones, la bioconversión BSF sigue siendo una \textbf{caja negra biológica}. No se sabe cuánto CO$_2$ se respira, ni cuándo aparece CH$_4$ por anaerobiosis.
-\end{alertblock}
-
-\end{frame}
-
-% =============================================================================
-% FRAME 8: METABOLISMO (FUSIONADO - REEMPLAZA LOS DOS ANTERIORES)
-% =============================================================================
-\begin{frame}{El Metabolismo: Flujos de Carbono Internos}
+\vspace{0.3cm}
 
 \begin{columns}[T]
-\column{0.45\textwidth}
-\vspace{0.3cm}
-El carbono ingerido se distribuye en tres destinos:
-\begin{enumerate}
-    \item \textbf{Respiración}: hasta 1/3 del C $\rightarrow$ CO$_2$
-    \item \textbf{Biomasa}: proteínas, lípidos, quitina
-    \item \textbf{Frass}: excretas + sustrato residual
-\end{enumerate}
 
-\begin{alertblock}{¿Por qué es modelable?}
-El CO$_2$ medido es proxy de \textbf{actividad biológica total}. Desviaciones del modelo DEB indican \textbf{fallos operativos} (anaerobiosis).
+\begin{column}{0.48\textwidth}
+\begin{block}{Ventajas de BSF}
+\footnotesize
+\begin{itemize}
+    \item Proceso \textbf{aer\'obico} = m\'inimo CH$_4$
+    \item \textbf{R\'apido}: d\'ias vs. meses/a\~nos
+    \item Genera \textbf{biomasa proteica} (no solo fertilizante)
+    \item Apto para \textbf{peque\~na escala} y tr\'opico
+\end{itemize}
+\end{block}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\begin{alertblock}{El vac\'io cr\'itico}
+\footnotesize
+\begin{itemize}
+    \item BSF es la \textbf{\'unica} sin monitoreo en tiempo real
+    \item No se predicen emisiones ni biomasa durante el proceso
+    \item En el tr\'opico: alta variabilidad, \textbf{ning\'un sensor integrado}
+\end{itemize}
 \end{alertblock}
-\column{0.55\textwidth}
-\vspace{1.5cm}
+\end{column}
 
-\centering
-\begin{tikzpicture}[scale=0.75, transform shape,
-    box/.style={rectangle, draw=black, thick, rounded corners, fill=white, align=center, font=\footnotesize\bfseries, minimum height=0.9cm},
-    gas/.style={rectangle, draw=black, dashed, thick, fill=gray!5, minimum width=3.5cm, minimum height=0.7cm},
-    arrow/.style={->, ultra thick, >=stealth, color=black}
-]
-    \draw[fill=gray!10, draw=none, rounded corners=15pt] (-3.2, -1.3) rectangle (3.2, 1.3);
-    \node[gray!40, font=\tiny, anchor=south] at (0,-1.3) {Larva};
-
-    \node[box, text width=1.8cm] (A) at (0, 0) {Asimilados\\$A$};
-    \node[box, text width=1.8cm] (B) at (-2.8, 0) {Estructura\\$B$};
-    \node[box, text width=1.8cm] (L) at (2.8, 0) {Lípidos\\$L$};
-    \node[gas] (CO2) at (0, 2.2) {\Large CO$_2$};
-
-    \draw[arrow] (0, -1.3) -- node[fill=white, inner sep=1pt, font=\tiny] {$r_A$} (A);
-    \draw[arrow] (A) -- node[below, font=\tiny] {$r_B$} (B);
-    \draw[arrow] ([yshift=2mm]A.east) -- node[above, font=\tiny] {$r_L$} ([yshift=2mm]L.west);
-    \draw[arrow] ([yshift=-2mm]L.west) -- ([yshift=-2mm]A.east);
-    \draw[arrow] (A.north) -- node[fill=white, inner sep=1pt, font=\tiny] {$r_{CO2,m}$} (CO2.south);
-    \draw[arrow] (-1.4, 0.2) -- (-1.4, 1.9) node[midway, fill=white, inner sep=1pt, font=\tiny] {$r_{CO2,B}$};
-    \draw[arrow] (1.4, 0.2) -- (1.4, 1.9) node[midway, fill=white, inner sep=1pt, font=\tiny] {$r_{CO2,L}$};
-\end{tikzpicture}
+\end{columns}
 
 \vspace{0.2cm}
-\footnotesize Fuente: Adaptado de Eriksen (2022), marco DEB simplificado.
-\end{columns}
+\centering
+\textit{\footnotesize ?`C\'omo optimizar una tecnolog\'ia que transforma residuos en prote\'inas o l\'ipidos si no se miden sus variables operativas?}
 
 \end{frame}
-
-\begin{frame}{Marco Teórico: Tecnología, Sociedad y Ambiente}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% =============================================================================
+% MARCO TEORICO: TECNOLOGIA, SOCIEDAD Y AMBIENTE
+% =============================================================================
+\begin{frame}{Tecnolog\'ia, Sociedad y Ambiente}
 
 \begin{block}{Tres tradiciones que se cruzan}
+\footnotesize
 \begin{enumerate}
-    \item \textbf{Gobernanza ambiental}: los mercados de carbono y el MRV exigen trazabilidad, pero la infraestructura de medición está concentrada en el Norte Global
-    \item \textbf{Estudios de Ciencia, Tecnología y Sociedad (CTS)}: la tecnología no es neutral; los algoritmos reflejan los contextos donde se entrenan
-    \item \textbf{Economía política de los residuos}: la valorización de residuos agroindustriales depende de quién controla la información sobre su huella ambiental
+    \item \textbf{Gobernanza ambiental}: los mercados de carbono y el MRV exigen trazabilidad, pero la infraestructura de medici\'on est\'a concentrada en el Norte Global
+    \item \textbf{Estudios de Ciencia, Tecnolog\'ia y Sociedad (CTS)}: la tecnolog\'ia no es neutral; los algoritmos reflejan los contextos donde se entrenan
+    \item \textbf{Econom\'ia pol\'itica de los residuos}: la valorizaci\'on de residuos agroindustriales depende de qui\'en controla la informaci\'on sobre su huella ambiental
 \end{enumerate}
 \end{block}
 
-\begin{alertblock}{Hipótesis epistémica}
-La ausencia de trazabilidad ambiental en el Sur Global no es un \textit{lagro tecnológico} que se resuelve importando sensores. Es una \textit{configuración de poder} que se resuelve diseñando tecnología contextualizada, de bajo costo y bajo control local.
+\vspace{0.2cm}
+
+\begin{alertblock}{Postura del investigador}
+\footnotesize
+La ausencia de trazabilidad ambiental en el Sur Global no es un \textit{rezago tecnol\'ogico} que se resuelve importando sensores. Es una \textit{configuraci\'on de poder} que configura qu\'e cuenta como evidencia v\'alida. Dise\~nar tecnolog\'ia contextualizada, de bajo costo y bajo control local, no es una concesi\'on t\'ecnica: es un acto de \textbf{soberan\'ia epist\'emica}.
 \end{alertblock}
 
 \end{frame}
 
-\begin{frame}{¿Quién Produce el Conocimiento Ambiental?}
-
-\begin{block}{El extractivismo de datos}
-En el Sur Global, la información ambiental suele ser capturada por plataformas externas (satelital, corporativa, académica del Norte) sin retorno de valor local.
-\end{block}
+% =============================================================================
+% POR QUE HERMETIA ILLUCENS
+% =============================================================================
+\begin{frame}{?`Por qu\'e \BSF{} como Agente de Bioconversi\'on?}
 
 \begin{columns}[T]
-\column{0.48\textwidth}
-\begin{alertblock}{¿Qué hace diferente esta propuesta?}
+
+\begin{column}{0.48\textwidth}
+\begin{block}{Capacidades biol\'ogicas excepcionales}
+\footnotesize
 \begin{itemize}
-    \item \textbf{Edge computing}: el procesamiento crítico ocurre en el nodo local, no en la nube
-    \item \textbf{Soberanía de datos}: el productor conserva la información y decide quién la accede
-    \item \textbf{Código abierto}: los algoritmos son auditable por pares locales
+    \item \textbf{Omn\'ivora extrema}: consume residuos vegetales, animales, fecales, agroindustriales
+    \item \textbf{Alta Eficiencia}: reduce masa de residuos 40--70\% en 10--14 d\'ias
+    \item \textbf{Crecimiento exponencial}: larva multiplica su peso \textbf{1.000$\times$} en dos semanas
+    \item \textbf{Resiliente tropical}: tolera 15--40$^\circ$C, ideal para el tr\'opico sin climatizaci\'on costosa
+\end{itemize}
+\end{block}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\begin{block}{Valorizaci\'on total del residuo}
+\footnotesize
+\begin{itemize}
+    \item \textbf{Biomasa larval}: 40--45\% prote\'ina, 30--35\% grasa $\rightarrow$ sustituto de harina de pescado/soya
+    \item \textbf{Frass}: excretas ricas en N-P-K $\rightarrow$ fertilizante org\'anico de alta calidad
+    \item \textbf{Cero residuo}: todo el sustrato org\'anico se transforma en producto
+    \item \textbf{Seguridad alimentaria}: adultos no pican, no transmiten enfermedades, no son plagas
+\end{itemize}
+\end{block}
+\end{column}
+
+\end{columns}
+
+\vspace{0.3cm}
+\centering
+\textit{\footnotesize Ning\'un otro organismo combina velocidad, eficiencia, prote\'ina y adaptabilidad tropical en un solo sistema.}
+
+\end{frame}
+\begin{frame}%{El Ciclo de Vida de \BSF}
+\centering
+\includegraphics[scale = 0.3]{ciclo-bsf.png}
+\end{frame}
+\begin{frame}
+\centering
+\includegraphics[scale = 0.4]{bioconversion.jpg}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% =============================================================================
+% PROCESO DE BIOCONVERSIÓN CON HERMETIA ILLUCENS
+% =========================================================================
+\begin{frame}{Bioconversi\'on: De Residuo a Recurso}
+
+\begin{block}{Descripci\'on del proceso}
+\footnotesize
+\begin{enumerate}
+    \item \textbf{Entrada:} Residuos org\'anicos (vegetales, frutas, desechos de cocina) y subproductos agroindustriales (pulpa de caf\'e, bagazo de ca\~na) se introducen en el reactor de bioconversi\'on.
+    
+    \item \textbf{Proceso:} Larvas de \BSF{} consumen los residuos en condiciones controladas:
+    \begin{itemize}
+        \item Temperatura: 25--30$^\circ$C
+        \item Humedad: 60--70\%
+        \item Aireaci\'on continua (proceso \textbf{aer\'obico})
+        \item Duraci\'on: 13--18 d\'ias
+    \end{itemize}
+    
+    \item \textbf{Salidas:}
+    \begin{itemize}
+        \item \textbf{Biomasa larval:} prote\'ina animal para alimento de peces y aves
+        \item \textbf{Frass:} fertilizante org\'anico rico en nutrientes
+    \end{itemize}
+    
+    \item \textbf{Emisiones:} CO$_2$ y CH$_4$ generados durante el metabolismo larval --- \textcolor{red}{\textbf{variables a predecir y mitigar}}.
+\end{enumerate}
+\end{block}
+
+\vspace{0.3cm}
+\centering
+\textit{\footnotesize Proceso aer\'obico: m\'inima producci\'on de CH$_4$ vs. \textbf{digesti\'on anaer\'obica} en vertederos.}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% =============================================================================
+% EL PROBLEMA: OPERAR A CIEGAS
+% =============================================================================
+\begin{frame}{El Problema: Desconocer el proceso}
+
+\begin{alertblock}{Sin predicci\'on en tiempo real...}
+\footnotesize
+\begin{itemize}
+    \item \textbf{Anoxia local} $\rightarrow$ CH$_4$ se dispara (metanog\'enesis anaer\'obica)
+    \item \textbf{Biomasa larval desconocida} $\rightarrow$ no se sabe el momento \'optimo de cosecha
+    \item \textbf{Prepupa no detectable} $\rightarrow$ larvas migran sin aviso, p\'erdida de biomasa
+    \item \textbf{Variables ambientales opacas} $\rightarrow$ temperatura, humedad, aireaci\'on solo medidas al final
+    \item \textbf{Alimento vs. respiraci\'on} $\rightarrow$ efecto de la dieta en CO$_2$ y riesgo de anoxia desconocido
+    \item \textbf{Sin datos} $\rightarrow$ sin certificaci\'on de carbono, sin escalabilidad industrial
 \end{itemize}
 \end{alertblock}
 
-\column{0.48\textwidth}
-\begin{block}{Implicación ambiental}
-La trazabilidad no sirve si solo beneficia a quienes compran créditos de carbono. Debe servir primero a quienes gestionan los residuos.
+\vspace{0.2cm}
+
+\begin{block}{La pregunta central}
+\centering
+\textit{?`C\'omo predecir CO$_2$ y CH$_4$ \textbf{antes} de que el proceso se desv\'ie?}
 \end{block}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% =============================================================================
+% IMPLICACIONES DEL VACIO DE MONITOREO
+% =============================================================================
+% =============================================================================
+% EL BLOQUEO COMO CONFIGURACION DE PODER
+% =============================================================================
+\begin{frame}{El Bloqueo como Configuraci\'on de Poder}
+
+\begin{columns}[T]
+
+\begin{column}{0.48\textwidth}
+\begin{alertblock}{El c\'irculo vicioso}
+\footnotesize
+\begin{itemize}
+    \item Sin predicci\'on $\rightarrow$ sin MRV $\rightarrow$ sin bonos de carbono
+    \item Sin bonos, BSF \textbf{no compite} con el vertedero (m\'as barato, m\'as contaminante)
+    \item Sin certificaci\'on, no hay inversi\'on ni pol\'itica p\'ublica: BSF queda en \textbf{piloto acad\'emico}
+    \item Resultado: residuos siguen a vertederos $\rightarrow$ CH$_4$ sigue subiendo
+\end{itemize}
+\end{alertblock}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\begin{block}{La ra\'iz epist\'emica}
+\footnotesize
+\begin{itemize}
+    \item La trazabilidad ambiental del Sur Global es capturada por plataformas del Norte (satelital, corporativa, acad\'emica) sin retorno de valor local
+    \item Importar sensores est\'andar sin adaptaci\'on reproduce la dependencia: la evidencia local solo existe si es validada en otro lugar
+    \item \textbf{Esta propuesta}: edge computing local, soberan\'ia de datos y c\'odigo abierto
+    \item La trazabilidad debe servir primero a quienes gestionan los residuos, no solo a quienes compran cr\'editos de carbono
+\end{itemize}
+\end{block}
+\end{column}
+
+\end{columns}
+
+\vspace{0.3cm}
+
+\centering
+\textit{\footnotesize La ausencia de monitoreo no es un \textbf{laguna tecnol\'ogica}: es una \textbf{configuraci\'on de poder} que se resuelve dise\~nando tecnolog\'ia contextualizada, de bajo costo y bajo control local.}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% =============================================================================
+% MODELO DEB: FLUJOS DE CARBONO EN H. ILLUCENS
+% =============================================================================
+\begin{frame}{Metabolismo Larval: Flujos de Carbono}
+
+\centering
+\includegraphics[width=0.85\textwidth]{modelo-deb.png}
+
+\vspace{0.3cm}
+\footnotesize Fuente: Adaptado de Eriksen (2022). Marco DEB simplificado para \textit{H. illucens}.
+
+\end{frame}
+
+% =============================================================================
+% EXPLICACION DEL MODELO DEB
+% =============================================================================
+\begin{frame}{?`Por qu\'e el CO$_2$ es Medible y Modelable?}
+
+\begin{columns}[T]
+
+\begin{column}{0.48\textwidth}
+\begin{block}{Los tres compartimentos}
+\footnotesize
+\begin{itemize}
+    \item \textbf{Asimilados (A):} nutrientes reci\'en absorbidos del sustrato. Punto de entrada del carbono.
+    \item \textbf{Biomasa estructural (B):} tejidos, m\'usculos, quitina. Lo que se cosecha como prote\'ina.
+    \item \textbf{L\'ipidos de almacenamiento (L):} reserva energ\'etica. Determina supervivencia y calidad de biomasa.
+\end{itemize}
+\end{block}
+
+\begin{block}{Flujos internos}
+\footnotesize
+\begin{itemize}
+    \item $r_A$: ingesta/asimilaci\'on desde el sustrato
+    \item $r_B$: crecimiento estructural (A $\rightarrow$ B)
+    \item $r_L$: almacenamiento lip\'idico (A $\rightarrow$ L)
+    \item Mantenimiento: reciclaje de B hacia A para sostener el metabolismo
+\end{itemize}
+\end{block}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\begin{alertblock}{Las tres v\'ias de CO$_2$}
+\footnotesize
+\begin{itemize}
+    \item $r_{CO_2,B}$: mantenimiento de la biomasa estructural
+    \item $r_{CO_2,m}$: mantenimiento metab\'olico general (el flujo central)
+    \item $r_{CO_2,L}$: metabolismo de los l\'ipidos de reserva
+\end{itemize}
+\vspace{0.2cm}
+$\Rightarrow$ El CO$_2$ liberado es aproximadamente \textbf{1/3 del carbono ingerido}. Eso lo hace un \textbf{proxy cuantitativo} de la actividad biol\'ogica total.
+\end{alertblock}
+
+\begin{exampleblock}{La clave operativa}
+\footnotesize
+Si el CO$_2$ medido se desv\'ia del modelo DEB te\'orico, el sistema est\'a fallando:
+\begin{itemize}
+    \item CO$_2$ \textbf{menor} $\rightarrow$ estr\'es larval, baja ingesta
+    \item CO$_2$ \textbf{mayor} con CH$_4$ presente $\rightarrow$ \textbf{anaerobiosis local}
+\end{itemize}
+\end{exampleblock}
+\end{column}
+
 \end{columns}
 
 \end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% % =============================================================================
+% % FRAME 8: METABOLISMO (FUSIONADO - REEMPLAZA LOS DOS ANTERIORES)
+% % =============================================================================
+% \begin{frame}{El Metabolismo: Flujos de Carbono Internos}
+
+% \begin{columns}[T]
+% \column{0.45\textwidth}
+% \vspace{0.3cm}
+% El carbono ingerido se distribuye en tres destinos:
+% \begin{enumerate}
+%     \item \textbf{Respiración}: hasta 1/3 del C $\rightarrow$ CO$_2$
+%     \item \textbf{Biomasa}: proteínas, lípidos, quitina
+%     \item \textbf{Frass}: excretas + sustrato residual
+% \end{enumerate}
+
+% \begin{alertblock}{¿Por qué es modelable?}
+% El CO$_2$ medido es proxy de \textbf{actividad biológica total}. Desviaciones del modelo DEB indican \textbf{fallos operativos} (anaerobiosis).
+% \end{alertblock}
+% \column{0.55\textwidth}
+% \vspace{1.5cm}
+
+% \centering
+% \begin{tikzpicture}[scale=0.75, transform shape,
+%     box/.style={rectangle, draw=black, thick, rounded corners, fill=white, align=center, font=\footnotesize\bfseries, minimum height=0.9cm},
+%     gas/.style={rectangle, draw=black, dashed, thick, fill=gray!5, minimum width=3.5cm, minimum height=0.7cm},
+%     arrow/.style={->, ultra thick, >=stealth, color=black}
+% ]
+%     \draw[fill=gray!10, draw=none, rounded corners=15pt] (-3.2, -1.3) rectangle (3.2, 1.3);
+%     \node[gray!40, font=\tiny, anchor=south] at (0,-1.3) {Larva};
+
+%     \node[box, text width=1.8cm] (A) at (0, 0) {Asimilados\\$A$};
+%     \node[box, text width=1.8cm] (B) at (-2.8, 0) {Estructura\\$B$};
+%     \node[box, text width=1.8cm] (L) at (2.8, 0) {Lípidos\\$L$};
+%     \node[gas] (CO2) at (0, 2.2) {\Large CO$_2$};
+
+%     \draw[arrow] (0, -1.3) -- node[fill=white, inner sep=1pt, font=\tiny] {$r_A$} (A);
+%     \draw[arrow] (A) -- node[below, font=\tiny] {$r_B$} (B);
+%     \draw[arrow] ([yshift=2mm]A.east) -- node[above, font=\tiny] {$r_L$} ([yshift=2mm]L.west);
+%     \draw[arrow] ([yshift=-2mm]L.west) -- ([yshift=-2mm]A.east);
+%     \draw[arrow] (A.north) -- node[fill=white, inner sep=1pt, font=\tiny] {$r_{CO2,m}$} (CO2.south);
+%     \draw[arrow] (-1.4, 0.2) -- (-1.4, 1.9) node[midway, fill=white, inner sep=1pt, font=\tiny] {$r_{CO2,B}$};
+%     \draw[arrow] (1.4, 0.2) -- (1.4, 1.9) node[midway, fill=white, inner sep=1pt, font=\tiny] {$r_{CO2,L}$};
+% \end{tikzpicture}
+
+% \vspace{0.2cm}
+% \footnotesize Fuente: Adaptado de Eriksen (2022), marco DEB simplificado.
+% \end{columns}
+
+% \end{frame}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % =============================================================================
 % SLIDE 2: DE LA CAJA NEGRA A LA MEDICION VERIFICABLE
@@ -735,5 +899,39 @@ necesitan dejar de ser parte de la \textbf{contabilidad invisible}.
 
     \includegraphics[width=1.8cm]{../tesis/00Figuras/00f00EscudoUN2016.jpg}
 \end{frame}
+% =============================================================================
+% DIAPOSITIVA DE REFERENCIAS
+% =============================================================================
+\begin{frame}{Referencias}
 
+\footnotesize
+
+\begin{thebibliography}{9}
+
+\bibitem{wmo2025}
+WMO (2025).
+\textit{WMO Greenhouse Gas Bulletin No. 21: The State of Greenhouse Gases in the Atmosphere Using Global Observations up to December 2024}.
+World Meteorological Organization.
+\url{https://wmo.int/resources/publication-series/greenhouse-gas-bulletin/wmo-greenhouse-gas-bulletin-no-21}
+
+\bibitem{noaa2024co2}
+Lan, X., Thoning, K. W., \& Dlugokencky, E. J. (2024).
+Trends in globally-averaged CO$_2$ determined from NOAA Global Monitoring Laboratory measurements (Version 2024-04).
+NOAA Global Monitoring Laboratory.
+\url{https://doi.org/10.15138/9NOH-ZH07}
+
+\bibitem{noaa2024ch4}
+Lan, X., Thoning, K. W., \& Dlugokencky, E. J. (2024).
+Trends in globally-averaged CH$_4$, N$_2$O, and SF$_6$ determined from NOAA Global Monitoring Laboratory measurements (Version 2024-04).
+NOAA Global Monitoring Laboratory.
+\url{https://doi.org/10.15138/P8XG-AA10}
+
+\bibitem{ipccar5}
+IPCC (2014).
+\textit{Climate Change 2014: Synthesis Report. Contribution of Working Groups I, II and III to the Fifth Assessment Report of the Intergovernmental Panel on Climate Change}.
+IPCC, Geneva, Switzerland.
+
+\end{thebibliography}
+
+\end{frame}
 \end{document}
