@@ -1,0 +1,199 @@
+\documentclass[aspectratio=169, 11pt]{beamer}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Termes}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{Latin Modern Mono}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{amsmath, amssymb, amsfonts, booktabs, graphicx}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, shadows}
+\usetheme{Madrid}
+\usecolortheme{beaver}
+\definecolor{unalRojo}{RGB}{148, 36, 36}
+\definecolor{verdeOK}{RGB}{34, 139, 34}
+\definecolor{naranjaAlerta}{RGB}{230, 126, 34}
+\definecolor{rojoAlerta}{RGB}{192, 57, 43}
+\definecolor{azulReactor}{RGB}{41, 128, 185}
+\definecolor{verdeEntrada}{RGB}{39, 174, 96}
+\setbeamercolor{structure}{fg=unalRojo}
+\setbeamercolor{block title}{bg=unalRojo!15, fg=unalRojo}
+\setbeamercolor{block body}{bg=unalRojo!5}
+\setbeamercolor{alerted text}{fg=rojoAlerta}
+\newcommand{\BSF}{\textit{Hermetia illucens}}
+\newcommand{\NDIR}{\text{NDIR}}
+\newcommand{\MRV}{\text{MRV}}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+
+\begin{document}
+
+% ---------------------------------------------------------------------------
+% Slide 1: La pregunta
+% ---------------------------------------------------------------------------
+\begin{frame}{Impacto clim\'{a}tico y sistemas h\'{i}bridos}
+    \begin{center}
+        \begin{tikzpicture}
+            \node[rectangle, rounded corners=5pt, draw=unalRojo, fill=unalRojo!5, 
+                  text width=14cm, align=justify, inner sep=12pt, font=\small] at (0,0) {
+                \textbf{Discuta la importancia de la cuantificaci\'{o}n precisa de CO$_2$ y CH$_4$ en la gesti\'{o}n de residuos org\'{a}nicos. ?`C\'{o}mo el desarrollo de sistemas h\'{i}bridos de monitoreo puede contribuir a estrategias de mitigaci\'{o}n y adaptaci\'{o}n, y a la incorporaci\'{o}n en pol\'{i}ticas y mercados de carbono?}
+            };
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 2: Contexto global
+% ---------------------------------------------------------------------------
+\begin{frame}{Contexto global: residuos como fuente de metano}
+    \begin{center}
+        \begin{tikzpicture}[scale=0.9, transform shape,
+            dato/.style={rectangle, rounded corners=6pt, draw=rojoAlerta, fill=rojoAlerta!10, minimum width=4.2cm, minimum height=1.4cm, align=center, font=\small}]
+
+            \node[dato] (uno) at (-4.5,0) {\textbf{18\%}\\del calentamiento\\del sector residuos};
+            \node[dato] (dos) at (0,0) {\textbf{27,2$\times$}\\PGW CH$_4$ vs CO$_2$\\horizonte 100 a\~{n}os};
+            \node[dato] (tre) at (4.5,0) {\textbf{80$\times$}\\PGW CH$_4$ vs CO$_2$\\horizonte 20 a\~{n}os};
+        \end{tikzpicture}
+    \end{center}
+
+    \vfill
+    \begin{block}{Prioridad de mitigaci\'{o}n}
+        \centering
+        El metano es el objetivo prioritario de corto plazo (IPCC AR6).
+    \end{block}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 3: Contexto Colombia
+% ---------------------------------------------------------------------------
+\begin{frame}{Contexto Colombia: brecha regulatoria}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Datos nacionales}
+                \begin{itemize}
+                    \item IDEAM: residuos y agricultura con peso creciente en GEI.
+                    \item NDC: econom\'{i}a circular como eje estructural.
+                    \item Meta: reducci\'{o}n 51\% emisiones proyectadas al 2030.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Brecha cr\'{i}tica}
+                \begin{itemize}
+                    \item Sin factores de emisi\'{o}n espec\'{i}ficos para \BSF{} en IPCC ni IDEAM.
+                    \item Bioconversi\'{o}n no integrada en inventarios nacionales.
+                    \item Riesgo de greenwashing involuntario.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 4: De caja negra a medici\'{o}n verificable
+% ---------------------------------------------------------------------------
+\begin{frame}{De caja negra a medici\'{o}n verificable}
+    \begin{center}
+        \begin{tikzpicture}[scale=0.85, transform shape,
+            caja/.style={rectangle, rounded corners=6pt, minimum width=3.6cm, minimum height=1.3cm, align=center, font=\small},
+            flecha/.style={-{Stealth}, line width=2pt}]
+
+            \node[caja, draw=gray, fill=gray!15] (est) at (-5,0) {Factores est\'{a}ticos\\Promedios anuales\\Sin trazabilidad};
+            \node[caja, draw=naranjaAlerta, fill=naranjaAlerta!12] (pun) at (0,0) {Mediciones puntuales\\Campa\~{n}as discontinuas\\Caja negra metab\'{o}lica};
+            \node[caja, draw=verdeOK, fill=verdeOK!12] (din) at (5,0) {Sistema h\'{i}brido\\Trayectoria minuto a minuto\\Trazable y auditable};
+
+            \draw[flecha, naranjaAlerta] (est) -- (pun);
+            \draw[flecha, verdeOK] (pun) -- (din);
+        \end{tikzpicture}
+    \end{center}
+
+    \vfill
+    \begin{itemize}
+        \item Promedios fijos invalidan esquemas \MRV{}: no son auditables ni discriminan tecnolog\'{i}as sustentables de alternativas que emiten m\'{a}s.
+        \item La din\'{a}mica de emisiones cambia en minutos: humedad, densidad, oxigenaci\'{o}n.
+    \end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 5: Mitigaci\'{o}n y mercados de carbono
+% ---------------------------------------------------------------------------
+\begin{frame}{Mitigaci\'{o}n y mercados de carbono}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{L\'{i}nea base y reducciones}
+                \begin{itemize}
+                    \item Escenario de referencia: vertedero anaerobio o compostaje mal manejado.
+                    \item Sistema h\'{i}brido registra trayectoria completa con resoluci\'{o}n de minutos.
+                    \item C\'{a}lculo de cr\'{e}ditos anclado a conservaci\'{o}n de masa.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Est\'{a}ndares internacionales}
+                \begin{itemize}
+                    \item Verified Carbon Standard (VCS).
+                    \item Gold Standard.
+                    \item Art\'{i}culo 6 del Acuerdo de Par\'{i}s.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+
+    \vfill
+    \begin{alertblock}{Condici\'{o}n indispensable}
+        \centering
+        Sin cuantificaci\'{o}n continua anclada a f\'{i}sica, cualquier cr\'{e}dito de carbono permanece fundado en supuestos no verificados.
+    \end{alertblock}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 6: Adaptaci\'{o}n al cambio clim\'{a}tico
+% ---------------------------------------------------------------------------
+\begin{frame}{Adaptaci\'{o}n: del reporte pasivo a la alerta temprana}
+    \begin{center}
+        \begin{tikzpicture}[scale=0.85, transform shape,
+            etapa/.style={rectangle, rounded corners=6pt, draw=azulReactor, fill=azulReactor!10, minimum width=3.4cm, minimum height=1.2cm, align=center, font=\small},
+            flecha/.style={-{Stealth}, line width=2pt, azulReactor}]
+
+            \node[etapa] (ext) at (-5,0) {Evento extremo\\Ola de calor / lluvia};
+            \node[etapa] (mon) at (0,0) {Monitoreo continuo\\CO$_2$ + CH$_4$ + IA};
+            \node[etapa] (res) at (5,0) {Respuesta operativa\\Aireaci\'{o}n / humedad};
+
+            \draw[flecha] (ext) -- (mon);
+            \draw[flecha] (mon) -- (res);
+        \end{tikzpicture}
+    \end{center}
+
+    \vfill
+    \begin{itemize}
+        \item Eventos extremos alteran condiciones de operaci\'{o}n: anaerobiosis, mortalidad larval, emisiones imprevistas.
+        \item El sistema h\'{i}brido funciona como alerta temprana que ajusta aireaci\'{o}n, humedad o densidad en tiempo real.
+        \item Infraestructura adaptable que mantiene su funci\'{o}n bajo estr\'{e}s clim\'{a}tico.
+    \end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 7: Cierre
+% ---------------------------------------------------------------------------
+\begin{frame}{De alternativa de tratamiento a activo clim\'{a}tico}
+    \begin{center}
+        \begin{tikzpicture}[scale=0.85, transform shape,
+            etapa/.style={rectangle, rounded corners=6pt, minimum width=3.6cm, minimum height=1.3cm, align=center, font=\small},
+            flecha/.style={-{Stealth}, line width=2pt}]
+
+            \node[etapa, draw=gray, fill=gray!12] (tra) at (-5,0) {Tratamiento\\de residuos};
+            \node[etapa, draw=naranjaAlerta, fill=naranjaAlerta!12] (ver) at (0,0) {Evidencia\\verificable};
+            \node[etapa, draw=verdeOK, fill=verdeOK!12] (act) at (5,0) {Activo\\clim\'{a}tico};
+
+            \draw[flecha, naranjaAlerta] (tra) -- (ver);
+            \draw[flecha, verdeOK] (ver) -- (act);
+        \end{tikzpicture}
+    \end{center}
+
+    \vfill
+    \begin{block}{Transformaci\'{o}n multicapa}
+        \centering
+        Calidad del dato $\rightarrow$ Respeto a las leyes de la f\'{i}sica $\rightarrow$ Utilidad operativa
+    \end{block}
+\end{frame}
+
+\end{document}

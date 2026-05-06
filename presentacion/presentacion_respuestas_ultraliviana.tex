@@ -1,0 +1,1052 @@
+% =============================================================================
+% PRESENTACIÓN RESPUESTAS EXAMEN - VERSIÓN ULTRA-LIVIANA
+% =============================================================================
+
+\documentclass[aspectratio=169, 11pt]{beamer}
+
+\usepackage{tcolorbox}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Termes}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{Latin Modern Mono}
+
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, shadows, shapes.symbols}
+
+\usetheme{Madrid}
+\usecolortheme{beaver}
+\definecolor{unalRojo}{RGB}{148, 36, 36}
+\definecolor{verdeOK}{RGB}{34, 139, 34}
+\definecolor{naranjaAlerta}{RGB}{230, 126, 34}
+\definecolor{rojoAlerta}{RGB}{192, 57, 43}
+\setbeamercolor{structure}{fg=unalRojo}
+\setbeamercolor{block title}{bg=unalRojo!15, fg=unalRojo}
+\setbeamercolor{block body}{bg=unalRojo!5}
+\setbeamercolor{alerted text}{fg=rojoAlerta}
+
+\title[Respuestas Examen]{Respuestas al Examen de Candidatura a Doctorado}
+\subtitle{Sistema Híbrido para Predicción de Emisiones CO$_2$ y CH$_4$ en Bioconversión con \BSF}
+\author{John Jairo Leal Gómez}
+\institute[UNAL]{Doctorado en Estudios Ambientales\\Universidad Nacional de Colombia -- Sede Palmira}
+\date{Abril 2026}
+\titlegraphic{\includegraphics[width=1.5cm]{../tesis/00Figuras/00f00EscudoUN2016.jpg}}
+
+\newcommand{\BSF}{\textit{Hermetia illucens}}
+\newcommand{\MAPE}{\text{MAPE}}
+\newcommand{\DEB}{\text{DEB}}
+\newcommand{\NDIR}{\text{NDIR}}
+\newcommand{\MRV}{\text{MRV}}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+
+\begin{document}
+
+\begin{frame}[plain]
+\titlepage
+\end{frame}
+
+\begin{frame}{Índice}
+\small
+\begin{enumerate}
+    \item Mecanismos bioquímicos y físicos de CH$_4$ y N$_2$O
+    \item Arquitectura híbrida y \MRV{} dinámico
+    \item Límites del modelo de Eriksen y selección de CO$_2$ y CH$_4$
+    \item Calibración de sensores \NDIR{} de bajo costo
+    \item Modelo mecanicista EDO para estimación de CO$_2$
+    \item Cuantificación precisa en el contexto del cambio climático
+    \item Esquema completo del proceso de bioconversión
+    \item Modelo mecanístico vs. híbrido: alcances y limitaciones
+    \item Riesgos de sistemas inteligentes en bioconversión
+\end{enumerate}
+\end{frame}
+
+% =============================================================================
+% PREGUNTA 1
+% =============================================================================
+\begin{frame}{Pregunta 1: El sistema como metabolismo acoplado}
+\begin{block}{Condiciones óptimas}
+\footnotesize
+27--30\,°C, HR 60--70\%, aireación suficiente $\rightarrow$ proceso predominantemente aerobio.
+\end{block}
+\begin{exampleblock}{CO$_2$ como señal fisiológica}
+\footnotesize
+No es solo emisión: refleja costos de mantenimiento, síntesis de biomasa y acumulación de lípidos.
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 1: CH$_4$ --- ¿De dónde sale?}
+\begin{alertblock}{No es metabolismo larval}
+\footnotesize
+Es producto de microambientes anóxicos en el sustrato, generados por arqueas metanogénicas estrictas.
+\end{alertblock}
+\begin{block}{Causas de anoxia}
+\footnotesize
+\begin{itemize}
+    \item Humedad $>80$\% (saturación de poros)
+    \item Compactación por alta densidad larval
+    \item Sustrato fino que bloquea difusión de O$_2$
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Pregunta 1: CH$_4$ --- Dos rutas bioquímicas}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{block}{Ruta acetoclástica}
+\centering
+\footnotesize
+acetato $\rightarrow$ CH$_4$ + CO$_2$
+\end{block}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{block}{Ruta hidrogenotrófica}
+\centering
+\footnotesize
+CO$_2$ = aceptor de electrones
+\end{block}
+\end{column}
+\end{columns}
+\vspace{0.3cm}
+\centering
+\footnotesize Ambas operan en microambientes donde el O$_2$ no llega.
+\end{frame}
+
+\begin{frame}{Pregunta 1: N$_2$O --- Nitrificación}
+\begin{block}{Primer paso: oxidación aerobia}
+\footnotesize
+Bacterias \textit{Nitrosomonas} spp. transforman NH$_4^+$ en NO$_2^-$ y NO$_3^-$.
+\end{block}
+\begin{exampleblock}{Requisito}
+\footnotesize
+Oxígeno disponible en el sustrato.
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 1: N$_2$O --- Denitrificación y escape}
+\begin{alertblock}{Segundo paso: reducción anaerobia}
+\footnotesize
+Bacterias facultativas reducen NO$_3^-$ pasando por NO $\rightarrow$ \textbf{N$_2$O} $\rightarrow$ N$_2$.
+\end{alertblock}
+\begin{alertblock}{¿Por qué se escapa N$_2$O?}
+\footnotesize
+Denitrificación incompleta por:
+\begin{itemize}
+    \item Limitación de sustrato carbonado
+    \item Variaciones bruscas de oxigenación
+    \item Exceso de nitrógeno mineralizable
+\end{itemize}
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Pregunta 1: Papel físico de las larvas}
+\begin{block}{Bioturbación positiva}
+\footnotesize
+Fragmentan residuo, modifican estructura porosa, reducen tiempo en zonas anóxicas. Incorporan N a su biomasa, disminuyendo N libre para N$_2$O.
+\end{block}
+\begin{alertblock}{Límite de la bioturbación}
+\footnotesize
+Densidad excesiva $\rightarrow$ compactación $\rightarrow$ microambientes anóxicos $\rightarrow$ CH$_4$ y N$_2$O.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Pregunta 1: BSF vs. Compostaje Tradicional}
+\begin{exampleblock}{Ventaja potencial}
+\footnotesize
+BSF bien manejada: \textbf{60--80\% menos CH$_4$} que compostaje mal aireado.
+\end{exampleblock}
+\begin{alertblock}{Riesgo de greenwashing involuntario}
+\footnotesize
+Bajo exceso de humedad, alta densidad o sustrato lignocelulósico de baja degradabilidad, BSF puede igualar o superar emisiones del compostaje.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Pregunta 1: Variable crítica --- Humedad}
+\centering
+\begin{tikzpicture}
+\node[rectangle, rounded corners, draw=unalRojo, thick, fill=unalRojo!10, text width=8cm, align=center, inner sep=10pt] {
+\Large \textbf{Humedad $>80$\%}\\[0.2cm]
+\normalsize
+Satura poros $\rightarrow$ O$_2$ solo por difusión lenta $\rightarrow$ anaerobiosis en horas
+};
+\end{tikzpicture}
+\end{frame}
+
+% =============================================================================
+% PREGUNTA 2
+% =============================================================================
+\begin{frame}{Pregunta 2: El problema de los factores estáticos}
+\begin{alertblock}{Supuesto falso}
+\footnotesize
+Los factores estáticos asumen que el proceso siempre se comporta igual.
+\end{alertblock}
+\begin{block}{Realidad de \BSF}
+\footnotesize
+Emisiones cambian cada hora según humedad, densidad larval, temperatura y oxígeno.
+\end{block}
+\begin{exampleblock}{Consecuencia}
+\footnotesize
+Promedios fijos del IPCC o compostaje generan errores grandes, subestiman picos de metano y distorsionan balances de carbono.
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 2: Capa 1 --- Sensórica IoT}
+\begin{block}{Sensores \NDIR}
+\footnotesize
+CO$_2$ y CH$_4$ medidos minuto a minuto.
+\end{block}
+\begin{exampleblock}{Serie temporal continua}
+\footnotesize
+Muestra trayectoria completa: cuándo subió, cuándo bajó, picos inesperados.
+\end{exampleblock}
+\begin{block}{Evidencia metrológica}
+\footnotesize
+Calibración contra equipos de referencia + condiciones ambientales simultáneas.
+\end{block}
+\end{frame}
+
+\begin{frame}{Pregunta 2: Capa 2 --- Modelo Físico (Eriksen)}
+\begin{block}{Traducción química $\rightarrow$ biológica}
+\footnotesize
+Señal de CO$_2$ interpretada como proceso fisiológico con conservación de masa y energía.
+\end{block}
+\begin{exampleblock}{Función de validación}
+\footnotesize
+Filtro interno que descarta lecturas absurdas y da contexto físico a la medición.
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 2: Capa 3 --- Inteligencia Artificial}
+\begin{block}{Sensor virtual de biomasa}
+\footnotesize
+Red feedforward estima peso larval sin muestreos destructivos.
+\end{block}
+\begin{exampleblock}{PINN}
+\footnotesize
+Toma ecuación de Eriksen como regla base, aprende de datos reales para ajustar desviaciones (agregaciones, cambios de sustrato).
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 2: Cuantificación Dinámica}
+\begin{block}{Factor de emisión por lote}
+\footnotesize
+Calcula CO$_2$ por gramo de biomasa en cada etapa del ciclo.
+\end{block}
+\begin{exampleblock}{Ajuste automático}
+\footnotesize
+El coeficiente cambia según T, HR y fase de crecimiento del momento.
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 2: Trazabilidad Completa}
+\begin{block}{Cada dato lleva}
+\footnotesize
+\begin{itemize}
+    \item Timestamp
+    \item ID del sensor
+    \item Nota de calibración
+    \item Parámetros operativos del reactor
+\end{itemize}
+\end{block}
+\begin{exampleblock}{Auditoría}
+\footnotesize
+Reconstrucción paso a paso. Requisito de VCS, Gold Standard y Art. 6 del Acuerdo de París.
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 2: Detección de Eventos Críticos}
+\centering
+\begin{tikzpicture}
+\node[rectangle, rounded corners, draw=rojoAlerta, thick, fill=rojoAlerta!10, text width=9cm, align=center, inner sep=10pt] {
+\Large \textbf{Alerta de anaerobiosis}\\[0.2cm]
+\normalsize
+CH$_4$ medido $-$ CH$_4$ predicho (aerobio) $>$ umbral\\[0.1cm]
+$\Downarrow$\\[0.1cm]
+Intervenir: aireación, humedad, densidad
+};
+\end{tikzpicture}
+\end{frame}
+
+% =============================================================================
+% PREGUNTA 3
+% =============================================================================
+\begin{frame}{Pregunta 3: Límite Estructural de Eriksen}
+\begin{alertblock}{Supuesto de homogeneidad}
+\footnotesize
+Modelo asume larvas uniformes y condiciones macroscópicas estables.
+\end{alertblock}
+\begin{block}{Realidad}
+\footnotesize
+Agregaciones dinámicas $\rightarrow$ fluidos activos $\rightarrow$ gradientes 3D de T y O$_2$.
+\end{block}
+\end{frame}
+
+\begin{frame}{Pregunta 3: Desviaciones Sistemáticas}
+\begin{block}{Atribución errónea}
+\footnotesize
+El modelo deterministico atribuye desviaciones a ``error paramétrico''.
+\end{block}
+\begin{alertblock}{Causa real}
+\footnotesize
+Son \textbf{limitación arquitectónica estructural}: parámetros concentrados no capturan heterogeneidad espacial.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Pregunta 3: Corrección --- Sensor Virtual}
+\begin{exampleblock}{Red feedforward}
+\footnotesize
+Estima $B(t)$ desde variables observables:
+\begin{itemize}
+    \item Densidad inicial
+    \item Temperatura
+    \item Humedad
+\end{itemize}
+\end{exampleblock}
+\begin{block}{Ventaja}
+\footnotesize
+Resuelve problema inverso sin muestreos destructivos.
+\end{block}
+\end{frame}
+
+\begin{frame}{Pregunta 3: Corrección --- PINN}
+\begin{block}{Physics-Informed Neural Network}
+\footnotesize
+Resuelve EDO de Eriksen con parámetros de red como incógnitas.
+\end{block}
+\begin{exampleblock}{Restricción dura}
+\footnotesize
+Pérdida = error de ajuste a sensores + residual de la EDO. Garantiza conservación de masa.
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 3: ¿Por qué CO$_2$?}
+\begin{block}{Gas primario}
+\footnotesize
+Respiración aerobia directamente vinculada a dinámica de $B(t)$.
+\end{block}
+\begin{exampleblock}{Condición necesaria}
+\footnotesize
+Medición continua para validar estado metabólico y calibrar modelo híbrido.
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 3: ¿Por qué CH$_4$?}
+\begin{alertblock}{Señal de fallo operativo}
+\footnotesize
+No es metabolismo larval. Indica activación de arqueas en microambientes anóxicos.
+\end{alertblock}
+\begin{block}{Relevancia climática}
+\footnotesize
+GWP 27,2$\times$ CO$_2$ (AR6) = mayor impacto en balances de corto plazo.
+\end{block}
+\end{frame}
+
+\begin{frame}{Pregunta 3: ¿Por qué no N$_2$O?}
+\begin{block}{Decisión metodológica explícita}
+\footnotesize
+No es omisión. Requiere:
+\begin{itemize}
+    \item Sensores electroquímicos específicos
+    \item Diseños experimentales diferenciados
+    \item Cadena de calibración independiente
+\end{itemize}
+\end{block}
+\begin{alertblock}{Fuera del alcance}
+\footnotesize
+Esta fase no valida el ciclo del nitrógeno.
+\end{alertblock}
+\end{frame}
+
+% =============================================================================
+% PREGUNTA 4
+% =============================================================================
+\begin{frame}{Pregunta 4: Sensores \NDIR{} --- Contexto}
+\begin{block}{Principio}
+\footnotesize
+Absorción de luz infrarroja en longitudes de onda específicas.
+\end{block}
+\begin{exampleblock}{Ventajas}
+\footnotesize
+Bajo costo, tamaño reducido, medición en tiempo real, redes distribuidas.
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 4: Fuente de Error 1 --- Drift}
+\begin{alertblock}{Deriva en el tiempo}
+\footnotesize
+\begin{itemize}
+    \item Envejecimiento de componentes ópticos
+    \item Fluctuaciones térmicas
+    \item Acumulación de polvo orgánico
+\end{itemize}
+\end{alertblock}
+\begin{block}{Consecuencia}
+\footnotesize
+Error sistemático que se acumula en mediciones prolongadas.
+\end{block}
+\end{frame}
+
+\begin{frame}{Pregunta 4: Fuente de Error 2 --- Interferencias}
+\begin{alertblock}{Señales falsas}
+\footnotesize
+\begin{itemize}
+    \item Humedad relativa elevada
+    \item NH$_3$ del sustrato
+    \item Compuestos orgánicos volátiles
+\end{itemize}
+\end{alertblock}
+\begin{block}{Efecto}
+\footnotesize
+Absorbancia alterada $\rightarrow$ lecturas falsamente altas o bajas.
+\end{block}
+\end{frame}
+
+\begin{frame}{Pregunta 4: Fuente de Error 3 --- No linealidad}
+\begin{block}{Fuera del rango nominal}
+\footnotesize
+Respuesta no lineal en concentraciones extremas.
+\end{block}
+\begin{alertblock}{Limitación temporal}
+\footnotesize
+Capacidad insuficiente para seguir picos rápidos de CO$_2$ o CH$_4$.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Pregunta 4: Estrategia de Calibración}
+\begin{exampleblock}{Protocolo}
+\footnotesize
+\begin{enumerate}
+    \item Gases certificados de concentración conocida
+    \item Calibración multivariable (T, HR, P)
+    \item Curvas en múltiples niveles de concentración
+    \item Evaluación de tiempo de respuesta
+\end{enumerate}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 4: Métricas de Desempeño}
+\centering
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+Métrica & Propósito \\
+\midrule
+\MAPE & Exactitud vs. referencia \\
+Sesgo medio & Dirección del error \\
+RMSE & Magnitud global \\
+Deriva temporal & Estabilidad prolongada \\
+\bottomrule
+\end{tabular}
+\end{frame}
+
+\begin{frame}{Pregunta 4: Diseño Experimental}
+\begin{block}{Montaje}
+\footnotesize
+Sensor de bajo costo + instrumento de referencia en paralelo, mismo punto de muestreo.
+\end{block}
+\begin{exampleblock}{Pruebas}
+\footnotesize
+\begin{itemize}
+    \item Gases: 400, 1000, 3000 ppm CO$_2$
+    \item HR: 40\%, 60\%, 80\%
+    \item Deriva: 48--72 h sin recalibrar
+\end{itemize}
+\end{exampleblock}
+\end{frame}
+
+% =============================================================================
+% PREGUNTA 5
+% =============================================================================
+\begin{frame}{Pregunta 5: Conservación de Masa}
+\begin{block}{Partición del carbono ingerido}
+\footnotesize
+\begin{itemize}
+    \item Biomasa estructural
+    \item Reservas lipídicas
+    \item Productos de excreción y respiración
+\end{itemize}
+\end{block}
+\begin{exampleblock}{Sistema dinámico}
+\footnotesize
+Larva = compartimentos donde $\frac{dB}{dt}$ depende de asimilación neta y costos respiratorios.
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 5: Ecuación de CO$_2$}
+\centering
+\Large
+$R_{\text{CO}_2}(t) = \underbrace{Y_{\text{CO}_2} \cdot \frac{dB}{dt}}_{\text{crecimiento}} + \underbrace{m \cdot B(t)}_{\text{mantenimiento}}$
+\end{frame}
+
+\begin{frame}{Pregunta 5: Cinética --- Crecimiento Exponencial}
+\begin{block}{Días 0--10}
+\footnotesize
+\begin{itemize}
+    \item Biomasa aumenta sostenidamente
+    \item Curva de CO$_2$ acelerada
+    \item Intensidad de asimilación máxima
+\end{itemize}
+\end{block}
+\begin{exampleblock}{Punto de inflexión}
+\footnotesize
+Ingestión satura por autocompetencia o agotamiento de fracción biodegradable.
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 5: Cinética --- Crecimiento Decreciente}
+\begin{alertblock}{Días 10--15}
+\footnotesize
+\begin{itemize}
+    \item Nutrientes declinan
+    \item Competencia intraespecífica
+    \item Tasa CO$_2$ alcanza máximo y decrece
+\end{itemize}
+\end{alertblock}
+\begin{block}{Transición}
+\footnotesize
+Anticipa el cambio fisiológico hacia prepupación.
+\end{block}
+\end{frame}
+
+\begin{frame}{Pregunta 5: Dependencias Ambientales}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{block}{Forzantes}
+\footnotesize
+\begin{itemize}
+    \item Temperatura (Arrhenius, Q$_{10}$)
+    \item Humedad (O$_2$ y actividad)
+    \item Composición (C/N, fibra)
+\end{itemize}
+\end{block}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{block}{Iniciales}
+\footnotesize
+Biomasa inicial inferida del peso individual por conteo.
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Pregunta 5: Desafío 1 --- Parametrización}
+\begin{alertblock}{Especificidad fisiológica}
+\footnotesize
+Eficiencia de asimilación, costo de mantenimiento y coeficiente respiratorio dependen de genética, edad e historial térmico.
+\end{alertblock}
+\begin{block}{Variabilidad del sustrato}
+\footnotesize
+Residuos agroindustriales heterogéneos alteran cinética de ingestión y digestión.
+\end{block}
+\end{frame}
+
+\begin{frame}{Pregunta 5: Desafío 2 --- Microbiota Oculta}
+\begin{alertblock}{Compartimento desconocido}
+\footnotesize
+Fracción indeterminada del CO$_2$ emitido proviene de la respiración de la microbiota del sustrato, no del insecto.
+\end{alertblock}
+\begin{block}{Implicación}
+\footnotesize
+Discriminar fuentes requiere diseños experimentales con tratamientos específicos.
+\end{block}
+\end{frame}
+
+\begin{frame}{Pregunta 5: Desafío 3 --- Validación}
+\begin{alertblock}{Muestreo destructivo}
+\footnotesize
+Interrumpe el reactor y altera la dinámica de competencia y aireación.
+\end{alertblock}
+\begin{block}{Conversión concentración $\rightarrow$ tasa}
+\footnotesize
+Requiere flujo de arrastre, presión y temperatura del gas con precisión.
+\end{block}
+\end{frame}
+
+\begin{frame}{Pregunta 5: Desafío 4 --- Heterogeneidad Espacial}
+\begin{alertblock}{Agregaciones larvales}
+\footnotesize
+Se comportan como fluidos activos, generando gradientes tridimensionales de T y O$_2$.
+\end{alertblock}
+\begin{block}{Limitación del modelo}
+\footnotesize
+EDO de orden cero no captura heterogeneidad espacial. El residual sistemático es arquitectónico, no paramétrico.
+\end{block}
+\end{frame}
+
+% =============================================================================
+% PREGUNTA 6
+% =============================================================================
+\begin{frame}{Pregunta 6: Contexto Global}
+\begin{block}{Sector residuos}
+\footnotesize
+Gestión inadecuada de orgánicos $\sim$18\% de emisiones antropogénicas de CH$_4$.
+\end{block}
+\begin{alertblock}{Potencial de calentamiento}
+\footnotesize
+CH$_4$: 27,2$\times$ CO$_2$ (100 años), 80$\times$ (20 años) --- IPCC AR6.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Pregunta 6: Contexto Colombia}
+\begin{block}{NDC actualizada}
+\footnotesize
+Economía circular como eje estructural para reducir 51\% de emisiones proyectadas al 2030.
+\end{block}
+\begin{exampleblock}{IDEAM}
+\footnotesize
+Residuos y agricultura mantienen peso creciente en el perfil nacional de GEI.
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 6: Barrera Estructural}
+\begin{alertblock}{Imprecisión}
+\footnotesize
+Factores estáticos y mediciones puntuales impiden discriminar tecnología sustentable de alternativa contaminante.
+\end{alertblock}
+\begin{block}{Caja negra}
+\footnotesize
+Se conocen insumos y productos, pero se ignora la trayectoria metabólica intermedia.
+\end{block}
+\end{frame}
+
+\begin{frame}{Pregunta 6: Mitigación}
+\begin{exampleblock}{Factores dinámicos}
+\footnotesize
+Sistemas híbridos registran trayectoria completa de CO$_2$ y CH$_4$ con resolución de minutos.
+\end{exampleblock}
+\begin{block}{Línea base rigurosa}
+\footnotesize
+Comparación contra vertedero anaerobio o compostaje mal manejado. Requisito para demostrar adicionalidad en mercados de carbono.
+\end{block}
+\end{frame}
+
+\begin{frame}{Pregunta 6: Adaptación}
+\begin{exampleblock}{Eventos extremos}
+\footnotesize
+Olas de calor y precipitaciones anómalas alteran condiciones de operación.
+\end{exampleblock}
+\begin{block}{Alerta temprana}
+\footnotesize
+Monitoreo continuo permite ajustar aireación, humedad o densidad larval en tiempo real, manteniendo la función bajo estrés climático.
+\end{block}
+\end{frame}
+
+\begin{frame}{Pregunta 6: Brecha Regulatoria}
+\begin{alertblock}{Vacío en Colombia}
+\footnotesize
+Ausencia de factores de emisión específicos para \BSF{} en IPCC e IDEAM impide integrar la tecnología en inventarios nacionales.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Pregunta 6: Estándares Internacionales}
+\begin{exampleblock}{Requisitos satisfechos}
+\footnotesize
+\begin{itemize}
+    \item Verified Carbon Standard (VCS)
+    \item Gold Standard
+    \item Artículo 6 del Acuerdo de París
+\end{itemize}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 6: Activos Climáticos}
+\begin{block}{Validación multicapa}
+\footnotesize
+Calidad del dato + leyes de la física + utilidad operativa.
+\end{block}
+\begin{exampleblock}{Resultado}
+\footnotesize
+Bioconversión como \textbf{activo climático sólido, transparente y comercializable}.
+\end{exampleblock}
+\end{frame}
+
+% =============================================================================
+% PREGUNTA 7
+% =============================================================================
+\begin{frame}{Pregunta 7: Entradas}
+\begin{block}{Residuos orgánicos}
+\footnotesize
+Cereales, pulpa de frutas, bagazo de caña, subproductos de poscosecha.
+\end{block}
+\begin{exampleblock}{Acondicionamiento}
+\footnotesize
+HR ajustada a 60--70\%, optimizando relación C/N.
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 7: Biomasa Inicial y Reactor}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{block}{Semilla}
+\footnotesize
+Huevos o larvas neonatos (1°--3° instar). Prototipo: 700--800 huevos / 250 g sustrato.
+\end{block}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{block}{Reactor}
+\footnotesize
+T: 27--30\,°C. Ventilación continua para aerobiosis.
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Pregunta 7: Fase Larval --- Enzimas}
+\begin{block}{Complejo enzimático}
+\footnotesize
+Proteasas, lipasas, celulasas descomponen polímeros complejos.
+\end{block}
+\begin{exampleblock}{Microbiota simbiótica}
+\footnotesize
+\textit{Enterococcus}, \textit{Bacillus}, \textit{Acetobacter} potencian fermentación y mineralización.
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 7: Fase Larval --- Consumo Máximo}
+\begin{alertblock}{4° al 5° instar}
+\footnotesize
+\begin{itemize}
+    \item Biomasa individual: 180--250 mg
+    \item Reducción de masa orgánica: 40--70\%
+    \item Reducción de patógenos (\textit{Salmonella}, \textit{E. coli})
+\end{itemize}
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Pregunta 7: Pre-pupa}
+\begin{block}{Días 21--27}
+\footnotesize
+Larva oscurece, cesa alimentación, migra a zonas secas.
+\end{block}
+\begin{exampleblock}{Separación no invasiva}
+\footnotesize
+Rampas de auto-recolección o tamices inclinados.
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 7: Reproducción}
+\begin{block}{Ciclo completo}
+\footnotesize
+\begin{itemize}
+    \item Pupación: 10--14 días
+    \item Adultos: 5--8 días (no se alimentan)
+    \item Requieren iluminación UV-A
+\end{itemize}
+\end{block}
+\begin{exampleblock}{Fecundidad}
+\footnotesize
+Cada hembra: \textbf{200--900 huevos}.
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 7: Salida 1 --- Biomasa}
+\begin{block}{Composición (base seca)}
+\footnotesize
+\begin{itemize}
+    \item 40--45\% proteína
+    \item 30--35\% grasa
+    \item Perfil aminoacídico comparable a harina de pescado
+\end{itemize}
+\end{block}
+\begin{exampleblock}{Usos}
+\footnotesize
+Peces, aves, cerdos, mascotas.
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 7: Salida 2 --- Frass}
+\begin{block}{Composición}
+\footnotesize
+Excretas larvarias + restos de sustrato + quitina de mudas.
+\end{block}
+\begin{exampleblock}{Valor}
+\footnotesize
+Fertilizante orgánico estabilizado (N--P--K + microbiota benéfica).
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 7: Salida 3 --- Coproductos}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{block}{Aceite láurico}
+\footnotesize
+Biodiesel, cosmética, nutrición animal.
+\end{block}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{exampleblock}{Quitina/quitosano}
+\footnotesize
+Biomédico, agrícola, bioplásticos.
+\end{exampleblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% =============================================================================
+% PREGUNTA 8
+% =============================================================================
+\begin{frame}{Pregunta 8: Naturaleza del Mecanicista}
+\begin{block}{Base}
+\footnotesize
+Leyes de conservación de masa y energía.
+\end{block}
+\begin{exampleblock}{Formulación}
+\footnotesize
+EDO para $B(t)$: asimilación neta menos costos respiratorios.
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 8: Ecuación del Mecanicista}
+\centering
+\Large
+$R_{\text{CO}_2} = Y_{\text{CO}_2} \cdot \frac{dB}{dt} + m \cdot B(t)$
+\vspace{0.3cm}
+
+\footnotesize
+Crecimiento + Mantenimiento
+\end{frame}
+
+\begin{frame}{Pregunta 8: Alcances del Mecanicista}
+\begin{exampleblock}{Fortalezas}
+\footnotesize
+\begin{itemize}
+    \item Interpretabilidad biológica directa
+    \item Pocos datos de entrada una vez calibrado
+    \item Línea base físicamente consistente
+    \item Comunicación clara con auditores
+\end{itemize}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 8: Limitación 1 --- Homogeneidad}
+\begin{alertblock}{Supuesto}
+\footnotesize
+Medio perfectamente mezclado, parámetros uniformes.
+\end{alertblock}
+\begin{block}{Realidad}
+\footnotesize
+Agregaciones larvales generan gradientes locales de T, HR y O$_2$.
+\end{block}
+\end{frame}
+
+\begin{frame}{Pregunta 8: Limitación 2 --- Aerobiosis Exclusiva}
+\begin{alertblock}{Ceguera estructural}
+\footnotesize
+No representa rutas fermentativas paralelas (metanogénesis).
+\end{alertblock}
+\begin{block}{Consecuencia}
+\footnotesize
+Ante microambientes anóxicos, sigue prediciendo solo CO$_2$ de respiración aerobia.
+\end{block}
+\end{frame}
+
+\begin{frame}{Pregunta 8: Limitación 3 --- Rigidez}
+\begin{block}{Parámetros no universales}
+\footnotesize
+Calibrados en dieta estándar de laboratorio.
+\end{block}
+\begin{alertblock}{Transferibilidad}
+\footnotesize
+Cambio a residuo agroindustrial heterogéneo requiere recalibración completa.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Pregunta 8: Híbrido --- Sensor Virtual}
+\begin{exampleblock}{Función}
+\footnotesize
+Red neuronal densa estima $B(t)$ desde observables (densidad inicial, T, HR).
+\end{exampleblock}
+\begin{block}{Beneficio}
+\footnotesize
+Sin muestreos destructivos que interrumpan el reactor.
+\end{block}
+\end{frame}
+
+\begin{frame}{Pregunta 8: Híbrido --- PINN}
+\begin{block}{Mecanismo}
+\footnotesize
+Resuelve EDO con pesos de red como incógnitas.
+\end{block}
+\begin{exampleblock}{Restricción}
+\footnotesize
+Espacio de soluciones acotado a trayectorias físicamente admisibles.
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 8: Híbrido --- Ventajas}
+\begin{exampleblock}{Precisión}
+\footnotesize
+Mayor ajuste en condiciones reales de campo.
+\end{exampleblock}
+\begin{exampleblock}{Adaptabilidad}
+\footnotesize
+No requiere recalibración completa ante cambios de sustrato.
+\end{exampleblock}
+\begin{exampleblock}{Detección}
+\footnotesize
+Alerta de anaerobiosis por residual CH$_4$ medido vs. predicho.
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 8: Híbrido --- Limitaciones}
+\begin{alertblock}{Dependencia de datos}
+\footnotesize
+Errores instrumentales o deriva no corregida se propagan a predicciones.
+\end{alertblock}
+\begin{block}{Costo computacional}
+\footnotesize
+Mayor que la solución numérica de una EDO simple.
+\end{block}
+\begin{alertblock}{Interpretabilidad}
+\footnotesize
+Pesos de la red no tienen traducción biológica inmediata.
+\end{alertblock}
+\end{frame}
+
+% =============================================================================
+% PREGUNTA 9
+% =============================================================================
+\begin{frame}{Pregunta 9: Ruralidad}
+\begin{alertblock}{Conectividad}
+\footnotesize
+Veredas y municipios pequeños con internet intermitente o inexistente.
+\end{alertblock}
+\begin{block}{Capacidad local}
+\footnotesize
+Falta de técnicos para reparar sensores o reconfigurar redes neuronales.
+\end{block}
+\end{frame}
+
+\begin{frame}{Pregunta 9: Dependencia del Sistema}
+\begin{alertblock}{Sistema opaco}
+\footnotesize
+Sin soporte técnico local, el operador depende de asistencia urbana demorada.
+\end{alertblock}
+\begin{exampleblock}{Alternativa}
+\footnotesize
+Redes LoRa/LoRaWAN o SIM M2M para mantener canal de comunicación.
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 9: Electricidad}
+\begin{alertblock}{Cortes frecuentes}
+\footnotesize
+Horas o días sin suministro en zonas rurales colombianas.
+\end{alertblock}
+\begin{block}{Consecuencia}
+\footnotesize
+Sensores dejan de medir, ventiladores se apagan.
+\end{block}
+\begin{alertblock}{Riesgo biológico}
+\footnotesize
+Pocas horas sin ventilación $\rightarrow$ anaerobiosis $\rightarrow$ mortalidad masiva.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Pregunta 9: Mitigación Energética}
+\begin{exampleblock}{Solución}
+\footnotesize
+Paneles solares fotovoltaicos + baterías de respaldo.
+\end{exampleblock}
+\begin{block}{Resultado}
+\footnotesize
+Continuidad de monitoreo y ventilación durante cortes prolongados.
+\end{block}
+\end{frame}
+
+\begin{frame}{Pregunta 9: Ciberseguridad}
+\begin{alertblock}{Amenaza}
+\footnotesize
+IoT con IP expuesta es vulnerable a intrusión.
+\end{alertblock}
+\begin{block}{Medidas}
+\footnotesize
+\begin{itemize}
+    \item Cifrado TLS 1.2+
+    \item Autenticación X.509
+    \item Segmentación VLAN / firewall
+    \item Firmware firmado criptográficamente
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Pregunta 9: Integridad MRV}
+\begin{alertblock}{Cadena de custodia}
+\footnotesize
+Condición necesaria para validez de créditos de carbono (VCS, Gold Standard).
+\end{alertblock}
+\begin{block}{Consecuencia de manipulación}
+\footnotesize
+Violación de certificación con responsabilidades legales directas.
+\end{block}
+\end{frame}
+
+\begin{frame}{Pregunta 9: Calidad de Datos}
+\begin{alertblock}{Deriva y suciedad}
+\footnotesize
+Polvo orgánico y humedad saturan sensores de bajo costo.
+\end{alertblock}
+\begin{block}{Efecto en IA}
+\footnotesize
+Red neuronal entrenada con datos falsos aprende patrones falsos.
+\end{block}
+\begin{alertblock}{Riesgo operativo}
+\footnotesize
+Operador confía en predicciones erradas y deja de inspeccionar visualmente.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Pregunta 9: Diseño Robusto}
+\begin{exampleblock}{Estrategia propuesta}
+\footnotesize
+\begin{itemize}
+    \item ESP32 de bajo costo
+    \item Interfaces I2C/UART estándar
+    \item Software libre (Python, TensorFlow)
+    \item Almacenamiento local ante fallos
+    \item Calibración periódica vs. referencia
+\end{itemize}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Pregunta 9: Principio Final}
+\centering
+\begin{tikzpicture}
+\node[rectangle, rounded corners, draw=unalRojo, thick, fill=unalRojo!10, text width=10cm, align=center, inner sep=12pt] {
+\Large \textbf{La tecnología apoya al operador}\\
+\normalsize
+No lo reemplaza.\\
+Sin gestión de riesgos desde el diseño,\\
+el monitoreo se convierte en problema adicional.
+};
+\end{tikzpicture}
+\end{frame}
+
+% =============================================================================
+% CIERRE
+% =============================================================================
+\begin{frame}{Cierre}
+\begin{center}
+\begin{tikzpicture}
+\node[rectangle, rounded corners=5pt, draw=unalRojo, line width=1.5pt, fill=unalRojo!5, text width=0.85\textwidth, align=center, inner sep=12pt] {
+\Large\textbf{Conclusión integradora}\\[0.3cm]
+\normalsize
+La bioconversión con \BSF{} no es una tecnología\\
+de bajas emisiones por diseño.\\[0.2cm]
+Es una tecnología cuyo desempeño ambiental\\
+depende de la calidad de las decisiones operativas.\\[0.3cm]
+\footnotesize
+\textit{``La ausencia de monitoreo no es un rezago tecnológico:\\
+es una configuración de poder que se resuelve\\
+diseñando tecnología contextualizada,\\
+de bajo costo y bajo control local.''}
+};
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+\end{document}

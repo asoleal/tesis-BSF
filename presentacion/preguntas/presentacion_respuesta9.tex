@@ -1,0 +1,235 @@
+\documentclass[aspectratio=169, 11pt]{beamer}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Termes}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{Latin Modern Mono}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{amsmath, amssymb, amsfonts, booktabs, graphicx}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, shadows}
+\usetheme{Madrid}
+\usecolortheme{beaver}
+\definecolor{unalRojo}{RGB}{148, 36, 36}
+\definecolor{verdeOK}{RGB}{34, 139, 34}
+\definecolor{naranjaAlerta}{RGB}{230, 126, 34}
+\definecolor{rojoAlerta}{RGB}{192, 57, 43}
+\definecolor{azulReactor}{RGB}{41, 128, 185}
+\definecolor{verdeEntrada}{RGB}{39, 174, 96}
+\setbeamercolor{structure}{fg=unalRojo}
+\setbeamercolor{block title}{bg=unalRojo!15, fg=unalRojo}
+\setbeamercolor{block body}{bg=unalRojo!5}
+\setbeamercolor{alerted text}{fg=rojoAlerta}
+\newcommand{\BSF}{\textit{Hermetia illucens}}
+\newcommand{\NDIR}{\text{NDIR}}
+\newcommand{\MRV}{\text{MRV}}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+
+\begin{document}
+
+% ---------------------------------------------------------------------------
+% Slide 1: La pregunta
+% ---------------------------------------------------------------------------
+\begin{frame}{Limitaciones y riesgos de sistemas inteligentes}
+    \begin{center}
+        \begin{tikzpicture}
+            \node[rectangle, rounded corners=5pt, draw=unalRojo, fill=unalRojo!5, 
+                  text width=14cm, align=justify, inner sep=12pt, font=\small] at (0,0) {
+                \textbf{Desarrolle un an\'{a}lisis cr\'{i}tico de las limitaciones y riesgos asociados al uso de sistemas inteligentes en tecnolog\'{i}as de bioconversi\'{o}n de residuos. Incluya escenarios: ruralidad colombiana, falta de suministro el\'{e}ctrico y ciberseguridad.}
+            };
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 2: De medici\'{o}n pasiva a infraestructura cr\'{i}tica
+% ---------------------------------------------------------------------------
+\begin{frame}{De medici\'{o}n pasiva a infraestructura de control activa}
+    \begin{center}
+        \begin{tikzpicture}[scale=0.85, transform shape,
+            etapa/.style={rectangle, rounded corners=6pt, minimum width=3.2cm, minimum height=1.3cm, align=center, font=\small},
+            flecha/.style={-{Stealth}, line width=2pt}]
+
+            \node[etapa, draw=gray, fill=gray!12] (pas) at (-5.5,0) {Medici\'{o}n pasiva\\Sensor aislado};
+            \node[etapa, draw=naranjaAlerta, fill=naranjaAlerta!12] (act) at (0,0) {Control activo\\Sensores + red + IA};
+            \node[etapa, draw=rojoAlerta, fill=rojoAlerta!12] (con) at (5.5,0) {Consecuencia\\Fallo = ceguera operativa};
+
+            \draw[flecha, naranjaAlerta] (pas.east) -- (act.west);
+            \draw[flecha, rojoAlerta] (act.east) -- (con.west);
+        \end{tikzpicture}
+    \end{center}
+
+    \vfill
+    \begin{itemize}
+        \item El proceso biol\'{o}gico contin\'{u}a independientemente del estado del sistema de monitoreo.
+        \item Anaerobiosis, mortalidad larval y picos de metano pueden desarrollarse sin detecci\'{o}n.
+        \item Precisamente en escenarios de mayor estr\'{e}s operativo, el monitoreo es m\'{a}s necesario.
+    \end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 3: Ruralidad colombiana
+% ---------------------------------------------------------------------------
+\begin{frame}{Ruralidad colombiana: conectividad y capacidad local}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Infraestructura real}
+                \begin{itemize}
+                    \item Internet intermitente o inexistente en veredas.
+                    \item Sin t\'{e}cnicos locales para calibrar o reparar sensores.
+                    \item Soporte t\'{e}cnico urbano demorado e ineficiente.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Consecuencia operativa}
+                \begin{itemize}
+                    \item Monitoreo remoto se interrumpe.
+                    \item Sistema inteligente se convierte en \textit{sistema opaco}.
+                    \item Dependencia de nube inaccesible deja al operador sin informaci\'{o}n.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 4: Suministro el\'{e}ctrico
+% ---------------------------------------------------------------------------
+\begin{frame}{Suministro el\'{e}ctrico: continuidad como requisito de supervivencia}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Demanda energ\'{e}tica}
+                \begin{itemize}
+                    \item Sensores \NDIR{}: 24 h.
+                    \item Microcontroladores y ventilaci\'{o}n forzada.
+                    \item Cortes de luz de horas o d\'{i}as en campo colombiano.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Efecto en cascada}
+                \begin{itemize}
+                    \item Sensores dejan de medir, datos se pierden.
+                    \item Ventiladores se apagan.
+                    \item En reactor denso: pocas horas = anaerobiosis + mortalidad masiva.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+
+    \vfill
+    \begin{block}{Mitigaci\'{o}n}
+        \centering
+        Paneles solares fotovoltaicos + bater\'{i}as de respaldo = contingencia, no lujo.
+    \end{block}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 5: Ciberseguridad
+% ---------------------------------------------------------------------------
+\begin{frame}{Ciberseguridad: integridad de la cadena de custodia}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Amenazas}
+                \begin{itemize}
+                    \item Dispositivos IoT con IP expuesta.
+                    \item Manipulaci\'{o}n de registros de emisiones.
+                    \item Acceso interno no controlado.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Capas de protecci\'{o}n}
+                \begin{itemize}
+                    \item TLS 1.2+ (cifrado en tr\'{a}nsito).
+                    \item Certificados X.509 (autenticaci\'{o}n de dispositivos).
+                    \item VLANs y firewalls (segmentaci\'{o}n de red).
+                    \item Firmware firmado criptogr\'{a}ficamente.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+
+    \vfill
+    \begin{alertblock}{Impacto en MRV}
+        \centering
+        VCS y Gold Standard exigen integridad de la cadena de custodia. Manipulaci\'{o}n exitosa = violaci\'{o}n de certificaci\'{o}n con consecuencias legales.
+    \end{alertblock}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 6: Calidad de datos y costo
+% ---------------------------------------------------------------------------
+\begin{frame}{Calidad de datos y barrera de entrada econ\'{o}mica}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Riesgo metrol\'{o}gico}
+                \begin{itemize}
+                    \item Sensores con deriva, polvo, humedad.
+                    \item Red neuronal aprende patrones falsos con apariencia de certeza.
+                    \item Operador deja de hacer inspecciones visuales.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Riesgo econ\'{o}mico}
+                \begin{itemize}
+                    \item Inversi\'{o}n inicial + licencias + capacitaci\'{o}n.
+                    \item En proyectos comunitarios: m\'{a}s caro que el beneficio.
+                    \item Sistema inteligente como \textbf{barrera de entrada}, no inclusi\'{o}n.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 7: Dise\~{n}o robusto
+% ---------------------------------------------------------------------------
+\begin{frame}{Dise\~{n}o robusto: mitigaciones pr\'{a}cticas}
+    \begin{center}
+\begin{tikzpicture}[
+    scale=0.82, transform shape,
+    sol/.style={
+        rectangle,
+        rounded corners=5pt,
+        draw=verdeOK,
+        fill=verdeOK!10,
+        minimum width=2.8cm,
+        minimum height=1.2cm,
+        align=center,
+        font=\small,
+        inner xsep=8pt,
+        inner ysep=6pt
+    },
+    flecha/.style={
+        -{Stealth[scale=1.2]},
+        line width=1.5pt,
+        verdeOK,
+        shorten >=6pt,
+        shorten <=6pt
+    },
+    node distance=1.4cm
+]
+
+\node[sol] (sol) {Paneles solares\\+ bater\'{i}as};
+\node[sol, right=of sol] (lor) {LoRa / LoRaWAN\\bajo consumo};
+\node[sol, right=of lor] (loc) {Modo local\\almacenamiento offline};
+\node[sol, right=of loc] (cal) {Calibraci\'{o}n\\peri\'{o}dica};
+
+\draw[flecha] (sol) -- (lor);
+\draw[flecha] (lor) -- (loc);
+\draw[flecha] (loc) -- (cal);
+
+\end{tikzpicture}
+    \end{center}
+
+    \vfill
+    \begin{block}{Principio rector}
+        \centering
+        La tecnolog\'{i}a debe servir como apoyo al criterio del operador, no como reemplazo.
+    \end{block}
+\end{frame}
+
+\end{document}

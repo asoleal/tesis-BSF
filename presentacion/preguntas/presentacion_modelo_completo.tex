@@ -1,0 +1,248 @@
+\documentclass[aspectratio=169, 11pt]{beamer}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Termes}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{Latin Modern Mono}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{amsmath, amssymb, amsfonts, booktabs, graphicx}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, shadows}
+\usetheme{Madrid}
+\usecolortheme{beaver}
+\definecolor{unalRojo}{RGB}{148, 36, 36}
+\definecolor{verdeOK}{RGB}{34, 139, 34}
+\definecolor{naranjaAlerta}{RGB}{230, 126, 34}
+\definecolor{rojoAlerta}{RGB}{192, 57, 43}
+\definecolor{azulReactor}{RGB}{41, 128, 185}
+\definecolor{verdeEntrada}{RGB}{39, 174, 96}
+\setbeamercolor{structure}{fg=unalRojo}
+\setbeamercolor{block title}{bg=unalRojo!15, fg=unalRojo}
+\setbeamercolor{block body}{bg=unalRojo!5}
+\setbeamercolor{alerted text}{fg=rojoAlerta}
+\newcommand{\BSF}{\textit{Hermetia illucens}}
+\newcommand{\MAPE}{\text{MAPE}}
+\newcommand{\DEB}{\text{DEB}}
+\newcommand{\NDIR}{\text{NDIR}}
+\newcommand{\MRV}{\text{MRV}}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+
+\begin{document}
+
+% ---------------------------------------------------------------------------
+% Slide 1: Preguntas consolidadas
+% ---------------------------------------------------------------------------
+\begin{frame}{Modelo, alcances y potenciaci\'{o}n h\'{i}brida}
+    \begin{center}
+        \begin{tikzpicture}
+            \node[rectangle, rounded corners=5pt, draw=unalRojo, fill=unalRojo!5, 
+                  text width=14cm, align=justify, inner sep=10pt, font=\small] at (0,0) {
+                \textbf{P5.} Describa c\'{o}mo un modelo mecanicista basado en EDO, fundamentado en la bioenerg\'{e}tica de \BSF, puede estimar la tasa de producci\'{o}n de CO$_2$. \textbf{P8.} ?`Cu\'{a}l es la naturaleza y caracter\'{i}sticas de un modelo mecanicista y c\'{o}mo se compara con un modelo h\'{i}brido? \textbf{P3.} ?`De qu\'{e} manera la propuesta corrige o potencia el modelo de Eriksen (2022) mediante el enfoque h\'{i}brido, y por qu\'{e} CO$_2$ y CH$_4$?
+            };
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 2: Por qu\'{e} Eriksen 2022
+% ---------------------------------------------------------------------------
+\begin{frame}{?`Por qu\'{e} el modelo de Eriksen (2022)?}
+    \begin{columns}[T]
+        \begin{column}{0.55\textwidth}
+            \begin{itemize}
+                \item Primera integraci\'{o}n de \textbf{cin\'{e}tica logística} con \textbf{principios DEB} (Differential Energy Budget) para \BSF.
+                \item Compartimenta la larva en:\\[4pt]
+                \textbf{B}: biomasa estructural\\
+                \textbf{L}: l\'{i}pidos de almacenamiento\\
+                \textbf{A}: pool de asimilados (steady-state).
+                \item Predice simult\'{a}neamente crecimiento, acumulaci\'{o}n de l\'{i}pidos y \textbf{producci\'{o}n de CO$_2$}.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{tikzpicture}[scale=0.75, transform shape,
+                box/.style={rectangle, rounded corners=4pt, draw=unalRojo, fill=unalRojo!8, minimum width=1.6cm, minimum height=0.9cm, align=center, font=\footnotesize}]
+                \node[box] (a) at (0,0) {Asimilados A};
+                \node[box] (b) at (-1.8,-1.8) {Estructural B};
+                \node[box] (l) at (1.8,-1.8) {L\'{i}pidos L};
+                \node[box, fill=rojoAlerta!10, draw=rojoAlerta] (co2) at (0,-3.2) {CO$_2$};
+
+                \draw[-{Stealth}, thick] (a) -- node[left, font=\tiny] {s\'{i}ntesis} (b);
+                \draw[-{Stealth}, thick] (a) -- node[right, font=\tiny] {almacenamiento} (l);
+                \draw[-{Stealth}, thick] (a) -- node[right, font=\tiny] {mantenimiento} (co2);
+                \draw[-{Stealth}, thick] (b) -- node[left, font=\tiny] {costo} (co2);
+                \draw[-{Stealth}, thick] (l) -- node[right, font=\tiny] {costo} (co2);
+                \draw[-{Stealth}, thick, dashed] (l) to[out=120, in=60] node[above, font=\tiny] {reciclaje} (a);
+            \end{tikzpicture}
+        \end{column}
+    \end{columns}
+
+    \vfill
+    \begin{block}{Ecuaci\'{o}n de CO$_2$ (Eriksen)}
+        \centering
+        $r_{\text{CO}_2} = \underbrace{m \cdot B}_{\text{mantenimiento}} + \underbrace{\frac{1-Y_B}{Y_B} \cdot r_B}_{\text{s\'{i}ntesis } B} + \underbrace{\frac{1-Y_L}{Y_L} \cdot r_L}_{\text{s\'{i}ntesis } L}$
+    \end{block}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 3: Supuestos del modelo
+% ---------------------------------------------------------------------------
+\begin{frame}{Supuestos del modelo mecanicista}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Supuestos biof\'{i}sicos}
+                \begin{itemize}
+                    \item \textbf{Una sola larva}: individuo promedio, no poblaci\'{o}n.
+                    \item \textbf{6 instares}: transiciones modeladas por peso umbral ($\delta_I = 5$).
+                    \item Asimilados en \textbf{steady-state}: pool A peque\~{n}o y constante.
+                    \item \textbf{Homogeneidad espacial}: par\'{a}metros concentrados, sin gradientes 3D.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Supuestos cin\'{e}ticos}
+                \begin{itemize}
+                    \item Asimilaci\'{o}n limitada por log\'{i}stica de peso (instar 6).
+                    \item Crecimiento estructural con segunda log\'{i}stica ($\beta$) que genera surplus de l\'{i}pidos.
+                    \item Mantenimiento proporcional a \textbf{B}, no a L.
+                    \item Reciclaje de l\'{i}pidos cuando A $<$ mantenimiento.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 4: De una larva al reactor
+% ---------------------------------------------------------------------------
+\begin{frame}{De una larva al reactor: ?`por qu\'{e} es \'{u}til?}
+    \begin{columns}[T]
+        \begin{column}{0.55\textwidth}
+            \begin{alertblock}{El modelo es individual, pero...}
+                \begin{itemize}
+                    \item La fisiolog\'{i}a individual escala linealmente con la densidad larval en condiciones no limitantes.
+                    \item Proporciona una \textbf{l\'{i}nea base termodin\'{a}micamente consistente} contra la cual comparar.
+                    \item Permite calcular coeficientes de rendimiento estequiom\'{e}tricos ($Y_{\text{CO}_2}$) v\'{a}lidos por gramo de biomasa.
+                    \item Es la \textbf{restricci\'{o}n f\'{i}sica} que todo h\'{i}brido debe respetar.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{center}
+                \begin{tikzpicture}[scale=0.8, transform shape,
+                    box/.style={rectangle, rounded corners=4pt, draw=azulReactor, fill=azulReactor!12, minimum width=2.4cm, minimum height=1cm, align=center, font=\small}]
+                    \node[box] (ind) at (0,1.5) {Larva individual\\Eriksen 2022};
+                    \node[box] (esc) at (0,0) {Escalamiento\\$\times$ densidad};
+                    \node[box] (rea) at (0,-1.5) {Reactor real\\+ correcci\'{o}n h\'{i}brida};
+
+                    \draw[-{Stealth}, thick, azulReactor] (ind) -- (esc);
+                    \draw[-{Stealth}, thick, azulReactor] (esc) -- (rea);
+                \end{tikzpicture}
+            \end{center}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 5: Limitaciones estructurales
+% ---------------------------------------------------------------------------
+\begin{frame}{Limitaciones estructurales del mecanicista}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Ceguera ante la heterogeneidad}
+                \begin{itemize}
+                    \item Agregaciones larvarias = fluidos activos (gradientes T, O$_2$).
+                    \item Atribuye desviaciones a ``error param\'{e}trico'' cuando son arquitect\'{o}nicas.
+                    \item No predice CH$_4$: carece de compartimento para anaerobiosis.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Rigidez y validaci\'{o}n}
+                \begin{itemize}
+                    \item Par\'{a}metros ($\alpha$, $\beta$, $a_{\text{max}}$) espec\'{i}ficos por sustrato.
+                    \item Validaci\'{o}n destructiva: muestrear biomasa altera el reactor.
+                    \item Ruido correlacionado (condensaci\'{o}n, obstrucci\'{o}n) se confunde con variabilidad biol\'{o}gica.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+
+    \vfill
+    \begin{center}
+        \textbf{El valor no es la predicci\'{o}n puntual, sino la l\'{i}nea base f\'{i}sicamente consistente.}
+    \end{center}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 6: Potenciaci\'{o}n h\'{i}brida
+% ---------------------------------------------------------------------------
+\begin{frame}{Potenciaci\'{o}n h\'{i}brida: dos frentes complementarios}
+    \begin{center}
+        \begin{tikzpicture}[scale=0.82, transform shape,
+            box/.style={rectangle, rounded corners=5pt, draw=unalRojo, fill=unalRojo!5, minimum width=3.2cm, minimum height=1.3cm, align=center, font=\small},
+            arrow/.style={-{Stealth}, line width=2pt, unalRojo}]
+
+            \node[box] (sen) at (-4.5,0) {\textbf{Sensor virtual}\\Red densa (FFN)};
+            \node[box] (pinn) at (0,0) {\textbf{PINN}\\Eriksen + datos};
+            \node[box] (out) at (4.5,0) {\textbf{Predicci\'{o}n}\\F\'{i}sicamente consistente};
+
+            \draw[arrow] (sen) -- node[above, font=\footnotesize] {$B(t)$ estimada} (pinn);
+            \draw[arrow] (pinn) -- (out);
+        \end{tikzpicture}
+    \end{center}
+
+    \vfill
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Sensor virtual}
+                \begin{itemize}
+                    \item Entradas: densidad inicial, T, humedad.
+                    \item Salida: $B(t)$ sin muestreo destructivo.
+                    \item Actualiza $dB/dt$ en cada paso de tiempo.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{PINN}
+                \begin{itemize}
+                    \item P\'{e}rdida dual: error de datos + residual EDO.
+                    \item Conservaci\'{o}n de masa como \textbf{restricci\'{o}n dura}.
+                    \item Captura no linealidades (agregaciones, anaerobiosis).
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 7: Justificaci\'{o}n CO2/CH4 y cierre
+% ---------------------------------------------------------------------------
+\begin{frame}{Justificaci\'{o}n del alcance: CO$_2$ y CH$_4$}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{CO$_2$: se\~{n}al fisiol\'{o}gica}
+                \begin{itemize}
+                    \item Gas primario de la respiraci\'{o}n aerobia.
+                    \item Directamente vinculado a $B(t)$ por el coeficiente $Y_{\text{CO}_2}$ de Eriksen.
+                    \item Condici\'{o}n necesaria para validar el estado metab\'{o}lico y calibrar el h\'{i}brido.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{CH$_4$: se\~{n}al de fallo}
+                \begin{itemize}
+                    \item No es metabolismo larval: es metanog\'{e}nesis microbiana en microambientes an\'{o}xicos.
+                    \item Indicador operativo de anaerobiosis (exceso humedad, falla aireaci\'{o}n).
+                    \item PGW 27,2$\times$ CO$_2$ (IPCC AR6): prioridad clim\'{a}tica.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+
+    \vfill
+    \begin{center}
+        \textbf{N$_2$O queda fuera del alcance cuantitativo:} requiere sensores electroqu\'{i}micos espec\'{i}ficos y cadenas de calibraci\'{o}n independientes, fuera del dominio de validaci\'{o}n de esta fase.
+    \end{center}
+\end{frame}
+
+\end{document}

@@ -1,0 +1,251 @@
+\documentclass[aspectratio=169, 11pt]{beamer}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Termes}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{Latin Modern Mono}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{amsmath, amssymb, amsfonts, booktabs, graphicx}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, shadows}
+\usetheme{Madrid}
+\usecolortheme{beaver}
+\definecolor{unalRojo}{RGB}{148, 36, 36}
+\definecolor{verdeOK}{RGB}{34, 139, 34}
+\definecolor{naranjaAlerta}{RGB}{230, 126, 34}
+\definecolor{rojoAlerta}{RGB}{192, 57, 43}
+\definecolor{azulReactor}{RGB}{41, 128, 185}
+\definecolor{verdeEntrada}{RGB}{39, 174, 96}
+\setbeamercolor{structure}{fg=unalRojo}
+\setbeamercolor{block title}{bg=unalRojo!15, fg=unalRojo}
+\setbeamercolor{block body}{bg=unalRojo!5}
+\setbeamercolor{alerted text}{fg=rojoAlerta}
+\newcommand{\BSF}{\textit{Hermetia illucens}}
+\newcommand{\MAPE}{\text{MAPE}}
+\newcommand{\DEB}{\text{DEB}}
+\newcommand{\NDIR}{\text{NDIR}}
+\newcommand{\MRV}{\text{MRV}}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+
+\begin{document}
+
+% ---------------------------------------------------------------------------
+% Slide 1: La pregunta
+% ---------------------------------------------------------------------------
+\begin{frame}{Mecanismos bioquímicos del proceso de bioconversión}
+    \begin{center}
+        \begin{tikzpicture}
+            \node[rectangle, rounded corners=5pt, draw=unalRojo, fill=unalRojo!5, 
+                  text width=14cm, align=justify, inner sep=12pt, font=\small] at (0,0) {
+                \textbf{Explique detalladamente los mecanismos bioqu\'{i}micos y f\'{i}sicos que dan lugar a la generaci\'{o}n de metano (CH$_4$) y \'{o}xido nitroso (N$_2$O) durante la bioconversi\'{o}n de residuos con \BSF. Analice c\'{o}mo variables operacionales cr\'{i}ticas influyen en la mitigaci\'{o}n o exacerbaci\'{o}n de estas emisiones en comparaci\'{o}n con compostaje tradicional.}
+            };
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 2: Panorama general de gases
+% ---------------------------------------------------------------------------
+\begin{frame}{Panorama general: CO$_2$ como se\~{n}al, CH$_4$/N$_2$O como fallos}
+    \begin{center}
+        \begin{tikzpicture}[scale=0.85, transform shape,
+            gas/.style={rectangle, rounded corners=6pt, minimum width=3.8cm, minimum height=1.6cm, align=center, font=\small},
+            flecha/.style={-{Stealth}, line width=2pt}]
+
+            \node[gas, draw=azulReactor, fill=azulReactor!12] (co2) at (-5,0) {
+                \textbf{CO$_2$}\\Se\~{n}al fisiol\'{o}gica\\Respiraci\'{o}n aerobia
+            };
+
+            \node[gas, draw=rojoAlerta, fill=rojoAlerta!12] (ch4) at (0,1.2) {
+                \textbf{CH$_4$}\\Metanog\'{e}nesis\\Microambientes an\'{o}xicos
+            };
+
+            \node[gas, draw=naranjaAlerta, fill=naranjaAlerta!12] (n2o) at (0,-1.2) {
+                \textbf{N$_2$O}\\Nitrificaci\'{o}n / Denitrificaci\'{o}n\\Ciclo del nitr\'{o}geno
+            };
+
+            \node[rectangle, rounded corners=8pt, draw=gray, fill=gray!8, minimum width=3.2cm, minimum height=1.2cm, align=center, font=\small] (op) at (5,0) {
+                Variables operativas\\Humedad, densidad, aireaci\'{o}n
+            };
+
+            \draw[flecha, azulReactor] (op) -- (co2);
+            \draw[flecha, rojoAlerta] (op) -- (ch4);
+            \draw[flecha, naranjaAlerta] (op) -- (n2o);
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 3: Bioqu\'{i}mica del CH4
+% ---------------------------------------------------------------------------
+\begin{frame}{Bioqu\'{i}mica del CH$_4$: rutas metanog\'{e}nicas}
+    \begin{center}
+        \begin{tikzpicture}[scale=0.82, transform shape,
+            ruta/.style={rectangle, rounded corners=5pt, draw=rojoAlerta, fill=rojoAlerta!8, minimum width=4.2cm, minimum height=1.3cm, align=center, font=\small},
+            micro/.style={rectangle, rounded corners=4pt, draw=gray, fill=gray!10, minimum width=3cm, minimum height=0.9cm, align=center, font=\footnotesize}]
+
+            \node[micro] (arq) at (0,2) {Arqueas metanog\'{e}nicas estrictas};
+
+            \node[ruta] (acet) at (-4,0) {
+                \textbf{Ruta acetocl\'{a}stica}\\Acetato $\rightarrow$ CH$_4$ + CO$_2$
+            };
+
+            \node[ruta] (hidro) at (4,0) {
+                \textbf{Ruta hidrogenotr\'{o}fica}\\CO$_2$ + 4H$_2$ $\rightarrow$ CH$_4$ + 2H$_2$O
+            };
+
+            \node[rectangle, rounded corners=4pt, draw=naranjaAlerta, fill=naranjaAlerta!10, minimum width=10cm, minimum height=0.9cm, align=center, font=\small] (cond) at (0,-2) {
+                Condiciones de formaci\'{o}n: humedad $>$ 80\% | alta densidad larval | sustrato fino compactado
+            };
+
+            \draw[-{Stealth}, thick, rojoAlerta] (arq) -- (acet);
+            \draw[-{Stealth}, thick, rojoAlerta] (arq) -- (hidro);
+            \draw[-{Stealth}, thick, dashed, naranjaAlerta] (cond) -- (acet);
+            \draw[-{Stealth}, thick, dashed, naranjaAlerta] (cond) -- (hidro);
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 4: Bioqu\'{i}mica del N2O
+% ---------------------------------------------------------------------------
+\begin{frame}{Bioqu\'{i}mica del N$_2$O: ciclo del nitr\'{o}geno}
+    \begin{center}
+        \begin{tikzpicture}[scale=0.8, transform shape,
+            proc/.style={rectangle, rounded corners=5pt, draw=naranjaAlerta, fill=naranjaAlerta!8, minimum width=3.4cm, minimum height=1.2cm, align=center, font=\small},
+            flecha/.style={-{Stealth}, line width=1.5pt}]
+
+            \node[proc] (nit) at (-4.5,0) {
+                Nitrificaci\'{o}n aerobia\\\textit{Nitrosomonas}\\NH$_4^+$ $\rightarrow$ NO$_2^-$ $\rightarrow$ NO$_3^-$
+            };
+
+            \node[proc] (den) at (4.5,0) {
+                Denitrificaci\'{o}n anaerobia\\NO$_3^-$ $\rightarrow$ NO$_2^-$ $\rightarrow$ \textbf{N$_2$O} $\rightarrow$ N$_2$
+            };
+
+            \node[rectangle, rounded corners=4pt, draw=rojoAlerta, fill=rojoAlerta!8, minimum width=3.2cm, minimum height=1cm, align=center, font=\small] (esc) at (0,0) {
+                N$_2$O escapa cuando\\la denitrificaci\'{o}n es\\\textbf{incompleta}
+            };
+
+            \draw[flecha, naranjaAlerta] (nit) -- (esc);
+            \draw[flecha, naranjaAlerta] (esc) -- (den);
+
+            \node[text width=12cm, align=center, font=\footnotesize] at (0,-2.2) {
+                Fuente adicional: microbiota intestinal de larvas bajo estr\'{e}s oxidativo. Los balances de masa convencionales no discriminan esta contribuci\'{o}n.
+            };
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 5: F\'{i}sica de la formaci\'{o}n
+% ---------------------------------------------------------------------------
+\begin{frame}{F\'{i}sica de la formaci\'{o}n: porosidad, difusi\'{o}n y bioturbaci\'{o}n}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Factores f\'{i}sicos}
+                \begin{itemize}
+                    \item Porosidad efectiva del sustrato.
+                    \item Velocidad de difusi\'{o}n de O$_2$.
+                    \item Saturaci\'{o}n de poros por humedad $>$ 80\%.
+                    \item Compactaci\'{o}n por alta densidad larval.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Rol de la bioturbaci\'{o}n}
+                \begin{itemize}
+                    \item Fragmentaci\'{o}n del residuo.
+                    \item Mejora de estructura porosa.
+                    \item Reducci\'{o}n de tiempo en zonas an\'{o}xicas.
+                    \item Incorporaci\'{o}n de N a biomasa larval.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+
+    \vfill
+    \begin{alertblock}{L\'{i}mite de la auto-aireaci\'{o}n}
+        \centering
+        Cuando la densidad supera la capacidad de aireaci\'{o}n del sistema, las larvas compactan las capas inferiores generando exactamente el microambiente an\'{o}xico donde se activan metanog\'{e}nicos y denitrificantes.
+    \end{alertblock}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 6: Variables operacionales cr\'{i}ticas
+% ---------------------------------------------------------------------------
+\begin{frame}{Variables operacionales cr\'{i}ticas}
+    \begin{center}
+        \begin{tikzpicture}[scale=0.85, transform shape,
+            var/.style={rectangle, rounded corners=5pt, draw=unalRojo, fill=unalRojo!8, minimum width=3.2cm, minimum height=1.4cm, align=center, font=\small},
+            efecto/.style={rectangle, rounded corners=4pt, minimum width=2.8cm, minimum height=0.8cm, align=center, font=\footnotesize}]
+
+            \node[var] (hum) at (-4.5,1.5) {\textbf{Humedad}\\60--70\% = seguro};
+            \node[var] (den) at (0,1.5) {\textbf{Densidad larval}\\Demanda O$_2$ total};
+            \node[var] (aire) at (4.5,1.5) {\textbf{Aireaci\'{o}n}\\Ventilaci\'{o}n forzada};
+
+            \node[efecto, draw=verdeOK, fill=verdeOK!10] (ok) at (-2.5,-1) {R\'{e}gimen aerobio\\Emisi\'{o}n CO$_2$ dominante};
+            \node[efecto, draw=rojoAlerta, fill=rojoAlerta!10] (bad) at (2.5,-1) {R\'{e}gimen anaerobio\\CH$_4$ + N$_2$O masivos};
+
+            \draw[-{Stealth}, thick, unalRojo] (hum) -- (ok);
+            \draw[-{Stealth}, thick, unalRojo] (den) -- (ok);
+            \draw[-{Stealth}, thick, unalRojo] (aire) -- (ok);
+
+            \draw[-{Stealth}, thick, dashed, rojoAlerta] (hum) -- (bad);
+            \draw[-{Stealth}, thick, dashed, rojoAlerta] (den) -- (bad);
+            \draw[-{Stealth}, thick, dashed, rojoAlerta] (aire) -- (bad);
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 7: BSF vs. Compostaje
+% ---------------------------------------------------------------------------
+\begin{frame}{\BSF{} vs. Compostaje tradicional}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Ventaja potencial}
+                \begin{itemize}
+                    \item Reducci\'{o}n 60--80\% CH$_4$ vs. compostaje mal aireado.
+                    \item Menores p\'{e}rdidas de N como N$_2$O (N incorporado a biomasa).
+                    \item Bioturbaci\'{o}n din\'{a}mica vs. pila est\'{a}tica.
+                    \item Escala temporal m\'{a}s corta.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Riesgo de greenwashing}
+                \begin{itemize}
+                    \item Bajo exceso de humedad o alta densidad: BSF puede igualar o superar emisiones del compostaje.
+                    \item Ventaja \textbf{no es inherente} al dise\~{n}o: depende de decisiones operativas.
+                    \item Sin monitoreo din\'{a}mico, el operador no detecta el cambio de r\'{e}gimen.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 8: Cierre - justificaci\'{o}n del monitoreo
+% ---------------------------------------------------------------------------
+\begin{frame}{De la mitigaci\'{o}n pasiva al control operativo}
+    \begin{center}
+        \begin{tikzpicture}[scale=0.9, transform shape,
+            etapa/.style={rectangle, rounded corners=6pt, draw=azulReactor, fill=azulReactor!10, minimum width=3.4cm, minimum height=1.2cm, align=center, font=\small},
+            flecha/.style={-{Stealth}, line width=2pt}]
+
+            \node[etapa] (med) at (-4.5,0) {Medici\'{o}n continua\\CO$_2$ + CH$_4$ + T + HR};
+            \node[etapa] (det) at (0,0) {Detecci\'{o}n temprana\\Evento anaerobio};
+            \node[etapa] (act) at (4.5,0) {Acci\'{o}n operativa\\Aireaci\'{o}n / humedad};
+
+            \draw[flecha, azulReactor] (med) -- (det);
+            \draw[flecha, azulReactor] (det) -- (act);
+
+            \node[text width=13cm, align=center, font=\footnotesize] at (0,-2) {
+                La bioconversi\'{o}n no es de bajas emisiones por dise\~{n}o: es una tecnolog\'{i}a cuyo desempe\~{n}o ambiental depende de la calidad de las decisiones operativas que se tomen en cada etapa del ciclo.
+            };
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+\end{document}

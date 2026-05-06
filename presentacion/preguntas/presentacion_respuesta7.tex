@@ -1,0 +1,91 @@
+\documentclass[aspectratio=169, 11pt]{beamer}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Termes}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{Latin Modern Mono}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{amsmath, amssymb, amsfonts, booktabs, graphicx}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, shadows}
+\usetheme{Madrid}
+\usecolortheme{beaver}
+\definecolor{unalRojo}{RGB}{148, 36, 36}
+\definecolor{verdeOK}{RGB}{34, 139, 34}
+\definecolor{naranjaAlerta}{RGB}{230, 126, 34}
+\definecolor{rojoAlerta}{RGB}{192, 57, 43}
+\definecolor{azulReactor}{RGB}{41, 128, 185}
+\definecolor{verdeEntrada}{RGB}{39, 174, 96}
+\setbeamercolor{structure}{fg=unalRojo}
+\setbeamercolor{block title}{bg=unalRojo!15, fg=unalRojo}
+\setbeamercolor{block body}{bg=unalRojo!5}
+\setbeamercolor{alerted text}{fg=rojoAlerta}
+\newcommand{\BSF}{\textit{Hermetia illucens}}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+
+\begin{document}
+
+% ---------------------------------------------------------------------------
+% Slide 1: La pregunta
+% ---------------------------------------------------------------------------
+\begin{frame}{Pregunta 7 del Examen de Candidatura}
+    \begin{center}
+        \begin{tikzpicture}
+            \node[rectangle, rounded corners=5pt, draw=unalRojo, fill=unalRojo!5, 
+                  text width=13cm, align=justify, inner sep=12pt, font=\normalsize] at (0,0) {
+                \textbf{En un esquema describa claramente el proceso de bioconversi\'{o}n de residuos con \BSF, especificando entradas, transformaciones, salidas y cualquier otra informaci\'{o}n que permita ilustrar de manera completa el proceso.}
+            };
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 2: Explicaci\'{o}n corta
+% ---------------------------------------------------------------------------
+\begin{frame}{El proceso en cuatro etapas}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{1. Acondicionamiento}
+                \begin{itemize}
+                    \item Residuos org\'{a}nicos a 60--70\% humedad.
+                    \item Relaci\'{o}n C:N optimizada.
+                    \item 700--800 huevos por reactor (prototipo).
+                \end{itemize}
+            \end{block}
+            \begin{block}{2. Crecimiento larvario}
+                \begin{itemize}
+                    \item Proteasas, lipasas, celulasas.
+                    \item Microbiota: \textit{Enterococcus}, \textit{Bacillus}.
+                    \item Biomasa: 180--250 mg/individuo.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{3. Separaci\'{o}n}
+                \begin{itemize}
+                    \item Prepupas migran por rampas.
+                    \item Auto-recolecci\'{o}n sin intervenci\'{o}n invasiva.
+                    \item Frass como fertilizante estabilizado.
+                \end{itemize}
+            \end{block}
+            \begin{block}{4. Cierre del ciclo}
+                \begin{itemize}
+                    \item Pupaci\'{o}n: 10--14 d\'{i}as.
+                    \item Adultos: iluminaci\'{o}n UV-A, 5--8 d\'{i}as.
+                    \item 200--900 huevos/hembra para reinicio.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 3: El esquema (imagen)
+% ---------------------------------------------------------------------------
+\begin{frame}{Esquema del sistema integrado}
+    \begin{center}
+        \includegraphics[width=0.85\textwidth]{bioconversion.jpg}
+    \end{center}
+\end{frame}
+
+\end{document}

@@ -1,0 +1,85 @@
+\documentclass[aspectratio=169, 11pt]{beamer}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Termes}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{Latin Modern Mono}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{amsmath, amssymb, amsfonts, booktabs, graphicx}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, shadows}
+\usetheme{Madrid}
+\usecolortheme{beaver}
+\definecolor{unalRojo}{RGB}{148, 36, 36}
+\definecolor{verdeOK}{RGB}{34, 139, 34}
+\definecolor{naranjaAlerta}{RGB}{230, 126, 34}
+\definecolor{rojoAlerta}{RGB}{192, 57, 43}
+\setbeamercolor{structure}{fg=unalRojo}
+\setbeamercolor{block title}{bg=unalRojo!15, fg=unalRojo}
+\setbeamercolor{block body}{bg=unalRojo!5}
+\setbeamercolor{alerted text}{fg=rojoAlerta}
+\newcommand{\BSF}{\textit{Hermetia illucens}}
+\newcommand{\MAPE}{\text{MAPE}}
+\newcommand{\DEB}{\text{DEB}}
+\newcommand{\NDIR}{\text{NDIR}}
+\newcommand{\MRV}{\text{MRV}}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+
+\begin{document}
+
+% ---------------------------------------------------------------------------
+% Slide 1: Conservaci\'{o}n de masa
+% ---------------------------------------------------------------------------
+\begin{frame}{Conservaci\'{o}n de masa en el metabolismo larval}
+    \begin{center}
+        \begin{tikzpicture}[scale=0.85, transform shape,
+            box/.style={rectangle, draw=unalRojo, fill=unalRojo!10, rounded corners, minimum width=2.4cm, minimum height=1cm, align=center, font=\small}]
+            \node[box] (ing) at (0,0) {Ingesta};
+            \node[box] (asi) at (3.5,0) {Asimilaci\'{o}n neta};
+            \node[box] (bio) at (7,1.2) {Biomasa $B(t)$};
+            \node[box] (res) at (7,-1.2) {Reservas};
+            \node[box] (rsp) at (10.5,1.2) {Respiraci\'{o}n CO$_2$};
+            \node[box] (exc) at (10.5,-1.2) {Excreci\'{o}n};
+
+            \draw[-{Stealth}, thick, unalRojo] (ing) -- (asi);
+            \draw[-{Stealth}, thick, unalRojo] (asi) -- (bio);
+            \draw[-{Stealth}, thick, unalRojo] (asi) -- (res);
+            \draw[-{Stealth}, thick, unalRojo] (bio) -- (rsp);
+            \draw[-{Stealth}, thick, unalRojo] (res) -- (rsp);
+            \draw[-{Stealth}, thick, unalRojo] (asi) -- (exc);
+        \end{tikzpicture}
+    \end{center}
+
+    \vfill
+    \begin{block}{Ecuaci\'{o}n diferencial ordinaria (Eriksen 2022)}
+        \centering
+        $\displaystyle \frac{dB}{dt} = \underbrace{\text{Asimilaci\'{o}n}}_{\text{ingesta } \times \text{ eficiencia}} - \underbrace{\text{Mantenimiento}}_{m \cdot B(t)} - \underbrace{\text{S\'{i}ntesis}}_{Y_{\text{CO}_2}^{-1} \cdot \frac{dB}{dt}}$
+    \end{block}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+% Slide 2: Cin\'{e}tica acoplada al ciclo
+% ---------------------------------------------------------------------------
+\begin{frame}{Cin\'{e}tica acoplada al ciclo de bioconversi\'{o}n}
+    \begin{columns}[T]
+        \begin{column}{0.5\textwidth}
+            \begin{itemize}
+                \item Fase exponencial (d\'{i}as 0--10): $B(t)$ crece y la tasa de CO$_2$ se acelera.
+                \item Punto de inflexi\'{o}n: la ingesta se satura por autocompetencia.
+                \item Fase decreciente: la biomasa anticipa la prepupaci\'{o}n.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.45\textwidth}
+            \begin{tikzpicture}[scale=0.75, transform shape]
+                \draw[-{Stealth}] (0,0) -- (6,0) node[right, font=\small] {Tiempo};
+                \draw[-{Stealth}] (0,0) -- (0,4.2) node[above, font=\small] {Tasa CO$_2$};
+                \draw[very thick, unalRojo] plot[smooth, tension=0.8] coordinates {(0.3,0.4) (1.2,1.2) (2.5,3) (3.8,3.3) (4.6,2.2) (5.5,0.8)};
+                \node[font=\footnotesize, naranjaAlerta] at (1.5,-0.5) {Exponencial};
+                \node[font=\footnotesize, naranjaAlerta] at (3.8,-0.5) {M\'{a}ximo};
+                \node[font=\footnotesize, naranjaAlerta] at (5.2,-0.5) {Decreciente};
+            \end{tikzpicture}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\end{document}

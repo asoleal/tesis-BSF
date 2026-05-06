@@ -72,10 +72,52 @@
 % CONTEXTO I: GEI EN ESCALADA — NARRATIVA PROBLEMÁTICA
 % =============================================================================
 \section{Introducción}
-\begin{frame}{Contexto: GEI en Escalada --- 50 A\~nos de Crecimiento Acelerado}
+%======================================================================
+% BLOQUE: EL PROBLEMA DE LOS RESIDUOS Y EL VACÍO DE TRAZABILIDAD
+%======================================================================
 
-% --- BLOQUE SUPERIOR: La escalada cuantificada ---
-\begin{block}{Comparativa: 1974 $\rightarrow$ 2024 (50 a\~nos)}
+%----------------------------------------------------------------------
+% Diapositiva 1: El gran problema
+%----------------------------------------------------------------------
+\begin{frame}{Los residuos org\'{a}nicos como fuente de gases de efecto invernadero}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{block}{Problema global}
+\footnotesize
+La fracci\'{o}n org\'{a}nica de los residuos s\'{o}lidos constituye una de las fuentes m\'{a}s significativas de emisiones antropog\'{e}nicas de metano a escala mundial. En condiciones de descomposici\'{o}n anaerobia ---vertederos mal manejados, compostaje deficiente--- se generan:
+
+\vspace{0.1cm}
+\begin{itemize}
+    \item \textbf{CO$_2$} (respiraci\'{o}n aerobia)
+    \item \textbf{CH$_4$} (metanog\'{e}nesis anaerobia)
+    \item \textbf{N$_2$O} (nitrificaci\'{o}n--denitrificaci\'{o}n incompleta)
+    \item NH$_3$, compuestos org\'{a}nicos vol\'{a}tiles (olor)
+\end{itemize}
+
+\vspace{0.1cm}
+
+\end{block}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{exampleblock}{Contexto Colombia}
+\footnotesize
+El pa\'{i}s ratific\'{o} la meta de reducir \textbf{51\%} de sus emisiones proyectadas al 2030. Los residuos agroindustriales mantienen peso creciente en el perfil nacional de GEI seg\'{u}n el IDEAM.
+
+\vspace{0.2cm}
+\textbf{Vac\'{i}o estructural:} a\'{u}n faltan sistemas de medici\'{o}n continua que permitan saber cu\'{a}nto se emite realmente durante el tratamiento biol\'{o}gico de estos residuos.
+\end{exampleblock}
+%\vspace{0.2cm}
+\begin{alertblock}{Problema central}
+\footnotesize
+\textit{No se puede mitigar bien lo que no se mide en tiempo real.}
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Contexto: GEI en Escalada --- 50 A\~{n}os de Crecimiento Acelerado}
+
+\begin{block}{La escalada cuantificada (1974 $\rightarrow$ 2024)}
 \centering
 \begin{tabular}{lccc}
 \toprule
@@ -91,112 +133,126 @@ N$_2$O  & $\sim$298 ppb  & 338 ppb   & +13\% \\
 \footnotesize Fuente: NOAA Global Monitoring Laboratory / WMO
 \end{block}
 
-\vspace{0.1cm}
+\vspace{0.2cm}
 
-% --- DOS BLOQUES INFERIORES EN COLUMNAS: Causa $\rightarrow$ Consecuencia ---
-\begin{columns}[T]
-
-\begin{column}{0.48\textwidth}
-\begin{block}{Origen del problema}
+\begin{alertblock}{Origen y vac\'{i}o}
 \footnotesize
-\begin{itemize}
-    \item Residuos org\'anicos en \textbf{descomposici\'on anaer\'obica}
-    \item $\sim$15--20\% de emisiones antropog\'enicas de CH$_4$
-    \item En el Sur Global: \textbf{vertederos sin control}
-\end{itemize}
-\end{block}
-\end{column}
-
-\begin{column}{0.48\textwidth}
-\begin{alertblock}{Impacto de la falta de control}
-\footnotesize
-\begin{itemize}
-    \item CH$_4$: 84$\times$ en 20 a\~nos / 28$\times$ en 100 a\~nos (IPCC AR5)
-    \item Creci\'o +29\% en 50 a\~nos con \textbf{trazabilidad nula}
-    \item Sin medici\'on $\rightarrow$ sin mitigaci\'on
-\end{itemize}
+La descomposici\'{o}n anaer\'{o}bica de residuos org\'{a}nicos en vertederos sin control ---especialmente en el Sur Global--- genera $\sim$15--20\% de las emisiones antropog\'{e}nicas de CH$_4$, cuyo potencial de calentamiento es de \textbf{80$\times$ en 20 a\~{n}os} y \textbf{27 a 30$\times$ en 100 a\~{n}os} (IPCC AR6). A pesar de que CH$_4$ creci\'{o} un 29\% en cinco d\'{e}cadas, su trazabilidad en los procesos de tratamiento biol\'{o}gico sigue siendo \textbf{nula}.
 \end{alertblock}
-\end{column}
 
-\end{columns}
-
-\vspace{0.3cm}
+%\vspace{0.1cm}
 \centering
-\textit{\footnotesize La bioconversi\'on con \BSF{} requiere sistemas de predicci\'on de emisiones en tiempo real.}
+\textit{\footnotesize La escalada demuestra la urgencia, pero las tecnolog\'{i}as de tratamiento a\'{u}n operan sin predicci\'{o}n de emisiones en tiempo real.}
 
 \end{frame}
+
 % =============================================================================
 % TECNOLOGIAS DE GESTION DE RESIDUOS ORGANICOS
 % =============================================================================
-\begin{frame}{Tecnolog\'ias de Gesti\'on de Residuos Org\'anicos}
+\begin{frame}{Tecnologías de gestión de residuos orgánicos}
 
 \footnotesize
 \begin{tabular}{lcccc}
 \toprule
-\textbf{Tecnolog\'ia} & \textbf{Tiempo} & \textbf{CH$_4$} & \textbf{Productos} & \textbf{Monitoreo} \\
+\textbf{Tecnología} & \textbf{Tiempo} & \textbf{Riesgo CH$_4$} & \textbf{Productos} & \textbf{Monitoreo} \\
 \midrule
-Vertedero & A\~nos & Alto & Ninguno & Nulo \\
-Compostaje & Meses & Medio & Fertilizante & Manual/espor\'adico \\
-Biodigesti\'on & Semanas & Alto (capturable) & Biog\'as + digestato & Parcial \\
-\textbf{Bioconversi\'on BSF} & \textbf{D\'ias} & \textbf{Bajo} & \textbf{Biomasa + frass} & \textbf{Nulo} \\
+Vertedero        & Años     & Alto              & Ninguno                  & Bajo o nulo \\
+Compostaje       & Meses    & Medio             & Compost                  & Manual / puntual \\
+Biodigestión     & Semanas  & Alto (controlable) & Biogás + digestato      & Parcial \\
+\textbf{Bioconversión BSF} & \textbf{Días} & \textbf{Bajo, pero variable} & \textbf{Biomasa + frass} & \textbf{Muy limitado} \\
 \bottomrule
 \end{tabular}
 
-\vspace{0.3cm}
+\vspace{0.25cm}
 
 \begin{columns}[T]
-
 \begin{column}{0.48\textwidth}
-\begin{block}{Ventajas de BSF}
+\begin{block}{¿Por qué interesa BSF?}
 \footnotesize
 \begin{itemize}
-    \item Proceso \textbf{aer\'obico} = m\'inimo CH$_4$
-    \item \textbf{R\'apido}: d\'ias vs. meses/a\~nos
-    \item Genera \textbf{biomasa proteica} (no solo fertilizante)
-    \item Apto para \textbf{peque\~na escala} y tr\'opico
+    \item Proceso rápido de valorización de residuos
+    \item Genera biomasa y frass con valor agregado
+    \item Puede operar a escalas descentralizadas
+    \item Potencialmente menor riesgo de CH$_4$ que rutas anaerobias mal controladas
 \end{itemize}
 \end{block}
 \end{column}
 
 \begin{column}{0.48\textwidth}
-\begin{alertblock}{El vac\'io cr\'itico}
+\begin{alertblock}{Brecha de conocimiento}
 \footnotesize
 \begin{itemize}
-    \item BSF es la \textbf{\'unica} sin monitoreo en tiempo real
-    \item No se predicen emisiones ni biomasa durante el proceso
-    \item En el tr\'opico: alta variabilidad, \textbf{ning\'un sensor integrado}
+    \item El desempeño ambiental depende de humedad, aireación y sustrato
+    \item Las emisiones no se miden de forma continua
+    \item No se detectan en tiempo real eventos críticos de anaerobiosis
 \end{itemize}
 \end{alertblock}
 \end{column}
-
 \end{columns}
 
-\vspace{0.2cm}
+\vspace{0.15cm}
 \centering
-\textit{\footnotesize ?`C\'omo optimizar una tecnolog\'ia que transforma residuos en prote\'inas o l\'ipidos si no se miden sus variables operativas?}
-
+\textit{\footnotesize BSF es prometedora, pero su ventaja climática debe validarse con monitoreo continuo de emisiones.}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % =============================================================================
 % MARCO TEORICO: TECNOLOGIA, SOCIEDAD Y AMBIENTE
 % =============================================================================
-\begin{frame}{Tecnolog\'ia, Sociedad y Ambiente}
+\section{Marco teórico}
+\begin{frame}{Tecnología, Sociedad y Ambiente}
 
-\begin{block}{Tres tradiciones que se cruzan}
+\begin{block}{Tres dimensiones que convergen}
 \footnotesize
 \begin{enumerate}
-    \item \textbf{Gobernanza ambiental}: los mercados de carbono y el MRV exigen trazabilidad, pero la infraestructura de medici\'on est\'a concentrada en el Norte Global
-    \item \textbf{Estudios de Ciencia, Tecnolog\'ia y Sociedad (CTS)}: la tecnolog\'ia no es neutral; los algoritmos reflejan los contextos donde se entrenan
-    \item \textbf{Econom\'ia pol\'itica de los residuos}: la valorizaci\'on de residuos agroindustriales depende de qui\'en controla la informaci\'on sobre su huella ambiental
+    \item \textbf{Gestión ambiental}: mitigar emisiones exige medirlas con trazabilidad y continuidad
+    \item \textbf{Ciencia y tecnología contextualizada}: los modelos y sensores deben responder a residuos, clima y operación reales del Valle del Cauca
+    \item \textbf{Desarrollo local}: generar datos, código y herramientas propias fortalece la autonomía técnica para decidir sobre los residuos
 \end{enumerate}
 \end{block}
 
 \vspace{0.2cm}
 
-\begin{alertblock}{Postura del investigador}
+\begin{alertblock}{Postura de la investigación}
 \footnotesize
-La ausencia de trazabilidad ambiental en el Sur Global no es un \textit{rezago tecnol\'ogico} que se resuelve importando sensores. Es una \textit{configuraci\'on de poder} que configura qu\'e cuenta como evidencia v\'alida. Dise\~nar tecnolog\'ia contextualizada, de bajo costo y bajo control local, no es una concesi\'on t\'ecnica: es un acto de \textbf{soberan\'ia epist\'emica}.
+La ausencia de monitoreo continuo no se resuelve solo importando tecnología. Se requiere diseñar infraestructura científica de bajo costo, adaptable y bajo control local, capaz de convertir datos en decisiones para productores, investigadores y gestores del territorio.
 \end{alertblock}
+
+\end{frame}
+\begin{frame}{BSF: de alternativa prometedora a solución verificable}
+
+\begin{columns}[T]
+
+\begin{column}{0.48\textwidth}
+\begin{alertblock}{El círculo del problema}
+\footnotesize
+\begin{itemize}
+    \item Sin medición continua, no hay trazabilidad ambiental robusta
+    \item Sin trazabilidad, es difícil comparar BSF con tecnologías convencionales
+    \item Sin evidencia confiable, la adopción queda limitada a pilotos o ensayos aislados
+    \item Resultado: se frena la transición hacia tratamientos más eficientes y valorización local de residuos
+\end{itemize}
+\end{alertblock}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\begin{block}{La respuesta propuesta}
+\footnotesize
+\begin{itemize}
+    \item Sensores de bajo costo adaptados a condiciones reales
+    \item Procesamiento local de datos (\textit{edge computing})
+    \item Código abierto y trazabilidad reproducible
+    \item Información útil primero para productores, operadores e investigadores del territorio
+    \item Generación de métricas de medición ambientales
+\end{itemize}
+\end{block}
+\end{column}
+
+\end{columns}
+
+\vspace{0.3cm}
+
+\centering
+\textit{\footnotesize El reto no es solo medir mejor, sino construir capacidad técnica local para interpretar y gestionar ambientalmente los residuos.}
 
 \end{frame}
 
@@ -235,12 +291,16 @@ La ausencia de trazabilidad ambiental en el Sur Global no es un \textit{rezago t
 
 \vspace{0.3cm}
 \centering
-\textit{\footnotesize Ning\'un otro organismo combina velocidad, eficiencia, prote\'ina y adaptabilidad tropical en un solo sistema.}
+\textit{\footnotesize BSF integra, en un mismo sistema, valorización de residuos, producción de biomasa y procesamiento rápido.}
 
 \end{frame}
 \begin{frame}%{El Ciclo de Vida de \BSF}
 \centering
 \includegraphics[scale = 0.3]{ciclo-bsf.png}
+\end{frame}
+\begin{frame}{}%Etapa larval}
+\centering
+\includegraphics[scale=0.25]{larvas4.png}
 \end{frame}
 \begin{frame}
 \centering
@@ -250,6 +310,7 @@ La ausencia de trazabilidad ambiental en el Sur Global no es un \textit{rezago t
 % =============================================================================
 % PROCESO DE BIOCONVERSIÓN CON HERMETIA ILLUCENS
 % =========================================================================
+\section{Proceso de Bioconversión}
 \begin{frame}{Bioconversi\'on: De Residuo a Recurso}
 
 \begin{block}{Descripci\'on del proceso}
@@ -284,25 +345,25 @@ La ausencia de trazabilidad ambiental en el Sur Global no es un \textit{rezago t
 % =============================================================================
 % EL PROBLEMA: OPERAR A CIEGAS
 % =============================================================================
-\begin{frame}{El Problema: Desconocer el proceso}
+\begin{frame}{El problema: un proceso que opera como caja negra}
 
-\begin{alertblock}{Sin predicci\'on en tiempo real...}
+\begin{alertblock}{Sin predicción en tiempo real...}
 \footnotesize
 \begin{itemize}
-    \item \textbf{Anoxia local} $\rightarrow$ CH$_4$ se dispara (metanog\'enesis anaer\'obica)
-    \item \textbf{Biomasa larval desconocida} $\rightarrow$ no se sabe el momento \'optimo de cosecha
-    \item \textbf{Prepupa no detectable} $\rightarrow$ larvas migran sin aviso, p\'erdida de biomasa
-    \item \textbf{Variables ambientales opacas} $\rightarrow$ temperatura, humedad, aireaci\'on solo medidas al final
-    \item \textbf{Alimento vs. respiraci\'on} $\rightarrow$ efecto de la dieta en CO$_2$ y riesgo de anoxia desconocido
-    \item \textbf{Sin datos} $\rightarrow$ sin certificaci\'on de carbono, sin escalabilidad industrial
+    \item \textbf{Anoxia local} $\rightarrow$ CH$_4$ aumenta sin detección oportuna
+    \item \textbf{Biomasa larval desconocida} $\rightarrow$ no se identifica con precisión el momento óptimo de cosecha
+    \item \textbf{Prepupa no detectable} $\rightarrow$ se pierde biomasa por migración no anticipada
+    \item \textbf{Variables ambientales opacas} $\rightarrow$ temperatura, humedad y aireación no se interpretan dinámicamente
+    \item \textbf{Dieta y respiración desacopladas} $\rightarrow$ no se entiende su efecto sobre CO$_2$ y riesgo de anaerobiosis
+    \item \textbf{Sin trazabilidad robusta} $\rightarrow$ se limita la validación ambiental y la escalabilidad del sistema
 \end{itemize}
 \end{alertblock}
 
-\vspace{0.2cm}
+\vspace{0.25cm}
 
-\begin{block}{La pregunta central}
+\begin{block}{Idea clave}
 \centering
-\textit{?`C\'omo predecir CO$_2$ y CH$_4$ \textbf{antes} de que el proceso se desv\'ie?}
+\textit{Sin monitoreo continuo, la bioconversión con BSF sigue operando como una caja negra.}
 \end{block}
 
 \end{frame}
@@ -314,275 +375,71 @@ La ausencia de trazabilidad ambiental en el Sur Global no es un \textit{rezago t
 % =============================================================================
 % EL BLOQUEO COMO CONFIGURACION DE PODER
 % =============================================================================
-\begin{frame}{El Bloqueo como Configuraci\'on de Poder}
 
-\begin{columns}[T]
-
-\begin{column}{0.48\textwidth}
-\begin{alertblock}{El c\'irculo vicioso}
-\footnotesize
-\begin{itemize}
-    \item Sin predicci\'on $\rightarrow$ sin MRV $\rightarrow$ sin bonos de carbono
-    \item Sin bonos, BSF \textbf{no compite} con el vertedero (m\'as barato, m\'as contaminante)
-    \item Sin certificaci\'on, no hay inversi\'on ni pol\'itica p\'ublica: BSF queda en \textbf{piloto acad\'emico}
-    \item Resultado: residuos siguen a vertederos $\rightarrow$ CH$_4$ sigue subiendo
-\end{itemize}
-\end{alertblock}
-\end{column}
-
-\begin{column}{0.48\textwidth}
-\begin{block}{La ra\'iz epist\'emica}
-\footnotesize
-\begin{itemize}
-    \item La trazabilidad ambiental del Sur Global es capturada por plataformas del Norte (satelital, corporativa, acad\'emica) sin retorno de valor local
-    \item Importar sensores est\'andar sin adaptaci\'on reproduce la dependencia: la evidencia local solo existe si es validada en otro lugar
-    \item \textbf{Esta propuesta}: edge computing local, soberan\'ia de datos y c\'odigo abierto
-    \item La trazabilidad debe servir primero a quienes gestionan los residuos, no solo a quienes compran cr\'editos de carbono
-\end{itemize}
-\end{block}
-\end{column}
-
-\end{columns}
-
-\vspace{0.3cm}
-
-\centering
-\textit{\footnotesize La ausencia de monitoreo no es un \textbf{laguna tecnol\'ogica}: es una \textbf{configuraci\'on de poder} que se resuelve dise\~nando tecnolog\'ia contextualizada, de bajo costo y bajo control local.}
-
-\end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % =============================================================================
 % MODELO DEB: FLUJOS DE CARBONO EN H. ILLUCENS
 % =============================================================================
+\section{Flujos de carbono}
 \begin{frame}{Metabolismo Larval: Flujos de Carbono}
 
 \centering
 \includegraphics[width=0.85\textwidth]{modelo-deb.png}
-
-\vspace{0.3cm}
-\footnotesize Fuente: Adaptado de Eriksen (2022). Marco DEB simplificado para \textit{H. illucens}.
 
 \end{frame}
 
 % =============================================================================
 % EXPLICACION DEL MODELO DEB
 % =============================================================================
+% =============================================================================
+% POR QUE EL CO2 ES MEDIBLE: VERSION LIMPIA
+% =============================================================================
+% =============================================================================
+% POR QUE EL CO2 ES MEDIBLE Y MODELABLE
+% =============================================================================
 \begin{frame}{?`Por qu\'e el CO$_2$ es Medible y Modelable?}
 
 \begin{columns}[T]
 
 \begin{column}{0.48\textwidth}
-\begin{block}{Los tres compartimentos}
+\begin{block}{El metabolismo larval}
 \footnotesize
+El carbono asimilado se distribuye en tres reservorios:
 \begin{itemize}
-    \item \textbf{Asimilados (A):} nutrientes reci\'en absorbidos del sustrato. Punto de entrada del carbono.
-    \item \textbf{Biomasa estructural (B):} tejidos, m\'usculos, quitina. Lo que se cosecha como prote\'ina.
-    \item \textbf{L\'ipidos de almacenamiento (L):} reserva energ\'etica. Determina supervivencia y calidad de biomasa.
-\end{itemize}
-\end{block}
-
-\begin{block}{Flujos internos}
-\footnotesize
-\begin{itemize}
-    \item $r_A$: ingesta/asimilaci\'on desde el sustrato
-    \item $r_B$: crecimiento estructural (A $\rightarrow$ B)
-    \item $r_L$: almacenamiento lip\'idico (A $\rightarrow$ L)
-    \item Mantenimiento: reciclaje de B hacia A para sostener el metabolismo
+    \item \textbf{A (Asimilados):} nutrientes absorbidos del sustrato
+    \item \textbf{B (Estructural):} tejidos, m\'usculos, quitina --- lo que se cosecha
+    \item \textbf{L (L\'ipidos):} reserva energ\'etica --- calidad de la biomasa
 \end{itemize}
 \end{block}
 \end{column}
 
 \begin{column}{0.48\textwidth}
-\begin{alertblock}{Las tres v\'ias de CO$_2$}
+\begin{alertblock}{La se\~nal CO$_2$}
 \footnotesize
-\begin{itemize}
-    \item $r_{CO_2,B}$: mantenimiento de la biomasa estructural
-    \item $r_{CO_2,m}$: mantenimiento metab\'olico general (el flujo central)
-    \item $r_{CO_2,L}$: metabolismo de los l\'ipidos de reserva
-\end{itemize}
-\vspace{0.2cm}
-$\Rightarrow$ El CO$_2$ liberado es aproximadamente \textbf{1/3 del carbono ingerido}. Eso lo hace un \textbf{proxy cuantitativo} de la actividad biol\'ogica total.
-\end{alertblock}
+Seg\'un el modelo DEB parametrizado para \BSF{} (Eriksen, 2022), entre \textbf{55--60\% del carbono asimilado} se libera como CO$_2$ por respiraci\'on y costos de s\'intesis. Eso lo convierte en un \textbf{proxy cuantitativo} de la actividad biol\'ogica total.
 
-\begin{exampleblock}{La clave operativa}
-\footnotesize
-Si el CO$_2$ medido se desv\'ia del modelo DEB te\'orico, el sistema est\'a fallando:
+\vspace{0.2cm}
+Si el CO$_2$ medido se desv\'ia del modelo DEB:
 \begin{itemize}
-    \item CO$_2$ \textbf{menor} $\rightarrow$ estr\'es larval, baja ingesta
-    \item CO$_2$ \textbf{mayor} con CH$_4$ presente $\rightarrow$ \textbf{anaerobiosis local}
+    \item \textbf{Menor} $\rightarrow$ estr\'es larval, baja ingesta
+    \item \textbf{Mayor} + CH$_4$ $\rightarrow$ \textbf{anaerobiosis local}
 \end{itemize}
-\end{exampleblock}
+\end{alertblock}
 \end{column}
 
 \end{columns}
 
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% % =============================================================================
-% % FRAME 8: METABOLISMO (FUSIONADO - REEMPLAZA LOS DOS ANTERIORES)
-% % =============================================================================
-% \begin{frame}{El Metabolismo: Flujos de Carbono Internos}
-
-% \begin{columns}[T]
-% \column{0.45\textwidth}
-% \vspace{0.3cm}
-% El carbono ingerido se distribuye en tres destinos:
-% \begin{enumerate}
-%     \item \textbf{Respiración}: hasta 1/3 del C $\rightarrow$ CO$_2$
-%     \item \textbf{Biomasa}: proteínas, lípidos, quitina
-%     \item \textbf{Frass}: excretas + sustrato residual
-% \end{enumerate}
-
-% \begin{alertblock}{¿Por qué es modelable?}
-% El CO$_2$ medido es proxy de \textbf{actividad biológica total}. Desviaciones del modelo DEB indican \textbf{fallos operativos} (anaerobiosis).
-% \end{alertblock}
-% \column{0.55\textwidth}
-% \vspace{1.5cm}
-
-% \centering
-% \begin{tikzpicture}[scale=0.75, transform shape,
-%     box/.style={rectangle, draw=black, thick, rounded corners, fill=white, align=center, font=\footnotesize\bfseries, minimum height=0.9cm},
-%     gas/.style={rectangle, draw=black, dashed, thick, fill=gray!5, minimum width=3.5cm, minimum height=0.7cm},
-%     arrow/.style={->, ultra thick, >=stealth, color=black}
-% ]
-%     \draw[fill=gray!10, draw=none, rounded corners=15pt] (-3.2, -1.3) rectangle (3.2, 1.3);
-%     \node[gray!40, font=\tiny, anchor=south] at (0,-1.3) {Larva};
-
-%     \node[box, text width=1.8cm] (A) at (0, 0) {Asimilados\\$A$};
-%     \node[box, text width=1.8cm] (B) at (-2.8, 0) {Estructura\\$B$};
-%     \node[box, text width=1.8cm] (L) at (2.8, 0) {Lípidos\\$L$};
-%     \node[gas] (CO2) at (0, 2.2) {\Large CO$_2$};
-
-%     \draw[arrow] (0, -1.3) -- node[fill=white, inner sep=1pt, font=\tiny] {$r_A$} (A);
-%     \draw[arrow] (A) -- node[below, font=\tiny] {$r_B$} (B);
-%     \draw[arrow] ([yshift=2mm]A.east) -- node[above, font=\tiny] {$r_L$} ([yshift=2mm]L.west);
-%     \draw[arrow] ([yshift=-2mm]L.west) -- ([yshift=-2mm]A.east);
-%     \draw[arrow] (A.north) -- node[fill=white, inner sep=1pt, font=\tiny] {$r_{CO2,m}$} (CO2.south);
-%     \draw[arrow] (-1.4, 0.2) -- (-1.4, 1.9) node[midway, fill=white, inner sep=1pt, font=\tiny] {$r_{CO2,B}$};
-%     \draw[arrow] (1.4, 0.2) -- (1.4, 1.9) node[midway, fill=white, inner sep=1pt, font=\tiny] {$r_{CO2,L}$};
-% \end{tikzpicture}
-
-% \vspace{0.2cm}
-% \footnotesize Fuente: Adaptado de Eriksen (2022), marco DEB simplificado.
-% \end{columns}
-
-% \end{frame}
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % =============================================================================
 % SLIDE 2: DE LA CAJA NEGRA A LA MEDICION VERIFICABLE
 % =============================================================================
-\begin{frame}{Propuesta: Trazabilidad Ambiental en Tiempo Real}
+\section{Propuesta}
+\begin{frame}{De la caja negra a la medición verificable}
 
 \centering
-\begin{tikzpicture}[scale=0.85, transform shape,
-    caja/.style={rectangle, rounded corners, draw, align=center, font=\small, inner sep=5pt},
-    flecha/.style={->, >=stealth, very thick},
-    etiqueta/.style={font=\tiny, align=center, text=black}]
-
-    % === ENTRADA ===
-    \node[caja, fill=green!15, draw=green!60, minimum width=2.8cm, minimum height=1.5cm] 
-        (res) at (0, 4) {Residuos\\Orgánicos};
-    \node[etiqueta] at (0, 3.5) {Café, caña, frutas, maíz};
-
-    % === PROCESO CENTRAL ===
-    \node[caja, fill=blue!10, draw=blue!70, line width=1.5pt, minimum width=4cm, minimum height=2.2cm] 
-        (bsf) at (5, 4) {};
-    \node[font=\bfseries, text=blue!70] at (5, 4.8) {Bioconversión BSF};
-    \node[font=\footnotesize, text=blue!50, align=center] at (5, 4.0) {Monitoreada por\\Sistema Híbrido};
-    \node[font=\tiny, text=cyan!70, align=center] at (5, 3.4) {IoT $\cdot$ EDO $\cdot$ IA};
-
-    % === SALIDAS ===
-    \node[caja, fill=green!10, draw=green!60, minimum width=2.2cm, minimum height=1cm] 
-        (bio) at (10, 5.2) {Biomasa\\Proteína};
-    \node[caja, fill=green!10, draw=green!60, minimum width=2.2cm, minimum height=1cm] 
-        (frass) at (10, 4) {Frass\\Fertilizante};
-    \node[caja, fill=blue!10, draw=blue!60, minimum width=2.2cm, minimum height=1cm] 
-        (co2) at (10, 2.8) {Inventario\\CO$_2$ + CH$_4$};
-
-    % === DIAGNÓSTICO ===
-    \node[ellipse, draw=orange!70, fill=orange!5, dashed, minimum width=3.2cm, minimum height=1cm] 
-        (diag) at (5, 1.2) {};
-    \node[font=\small\bfseries, text=orange!80!black] at (5, 1.2) 
-        {$Y_{sensor} - Y_{modelo}$};
-    \node[etiqueta, text=orange!60] at (5, 0.5) {Residuo operativo};
-
-    \node[caja, fill=red!10, draw=red!70, minimum width=2cm, minimum height=0.8cm] 
-        (alerta) at (9.5, 1.2) {Alerta CH$_4$};
-    \node[etiqueta, text=red!60] at (9.5, 0.5) {Anaerobiosis};
-
-    % === FLECHAS ===
-    \draw[flecha, color=green!50] (res.east) -- (bsf.west);
-    \draw[flecha, color=blue!50] (bsf.east) -- (bio.west);
-    \draw[flecha, color=blue!50] (bsf.east) -- (frass.west);
-    \draw[flecha, color=blue!50] (bsf.east) -- (co2.west);
-    \draw[flecha, color=orange!60, dashed] (bsf.south) -- (diag.north);
-    \draw[flecha, color=red!60, dashed] (diag.east) -- (alerta.west);
-
-    % === NOTA INFERIOR CORTA ===
-    \node[font=\bfseries\footnotesize, text=blue!70!black] at (5, -0.8) 
-        {De la caja negra a la evidencia verificable};
-
-\end{tikzpicture}
-
-\end{frame}
-
-% =============================================================================
-% SLIDE A: PROCESO ACTUAL (SIN MONITOREO)
-% =============================================================================
-% =============================================================================
-% SECCIÓN: PREGUNTA, OBJETIVOS E HIPÓTESIS
-% =============================================================================
-\section{Pregunta, Objetivos e Hipótesis}
-
-\begin{frame}{CO$_2$ y CH$_4$: Dos Gases, Dos Mensajes}
-
-\begin{columns}[T]
-\column{0.48\textwidth}
-\begin{block}{\centering CO$_2$: Indicador de Actividad Biológica}
-\centering
-\vspace{0.2cm}
-\Large
-\textcolor{blue!70!black}{$\sim$1/3 del C ingerido}
-\normalsize
-
-\vspace{0.2cm}
-Se libera como CO$_2$ por respiración aeróbica de larvas y microbiota.
-
-\vspace{0.2cm}
-\footnotesize
-\textit{Es el \textbf{proxy cuantitativo} del metabolismo en curso.}
-\end{block}
-
-\column{0.48\textwidth}
-\begin{alertblock}{\centering CH$_4$: Indicador de Falla Operativa}
-\centering
-\vspace{0.2cm}
-\Large
-\textcolor{red!70!black}{Microambientes anaeróbicos}
-\normalsize
-
-\vspace{0.2cm}
-Generados por exceso de humedad, compactación o sobrepoblación.
-
-\vspace{0.2cm}
-\footnotesize
-\textit{Un pico de CH$_4$ = \textbf{intervención inmediata} requerida.}
-\end{alertblock}
-\end{columns}
-
-\vspace{0.4cm}
-
-\begin{exampleblock}{Por qué medir ambos}
-\centering
-CO$_2$ predice la \textbf{tendencia metabólica} del sistema.\\
-CH$_4$ detecta cuándo esa tendencia se \textbf{desvía hacia la anaerobiosis}.\\
-\vspace{0.1cm}
-\footnotesize
-Monitorear CH$_4$ no es un lujo ambiental: es una herramienta de \textbf{control de procesos}.
-\end{exampleblock}
+\includegraphics[width=0.85\textwidth]{propuesta.jpg}
 
 \end{frame}
 
@@ -590,315 +447,289 @@ Monitorear CH$_4$ no es un lujo ambiental: es una herramienta de \textbf{control
 % DIAPOSITIVA 9: PREGUNTA CENTRAL
 % =============================================================================
 \begin{frame}{Pregunta de Investigación}
-
-\begin{columns}[T]
-\column{0.32\textwidth}
-\begin{block}{\centering Modelo EDO (DEB)}
-\centering
-\footnotesize
-Bioenergética larval\\
-Tasa respiratoria teórica
-\end{block}
-
-\column{0.32\textwidth}
-\begin{block}{\centering Sensores IoT}
-\centering
-\footnotesize
-NDIR de bajo costo\\
-CO$_2$, CH$_4$, T, HR
-\end{block}
-
-\column{0.32\textwidth}
-\begin{block}{\centering Aprendizaje Automático}
-\centering
-\footnotesize
-Red Neuronal\\
-Estimación de biomasa $\hat{W}$
-\end{block}
-\end{columns}
-
-\vspace{0.4cm}
-
 \begin{alertblock}{Pregunta central}
 \centering
 \large
-¿En qué medida la integración de estos tres componentes permite desarrollar un sistema híbrido que estime con precisión las emisiones de CO$_2$ y CH$_4$, constituya una herramienta de monitoreo dinámico, y genere métricas verificables del desempeño ambiental en la bioconversión de residuos agroindustriales con \textit{Hermetia illucens}?
+¿Cómo la integración de un modelo matemático basado en ecuaciones diferenciales ordinarias, sensores IoT de bajo costo y algoritmos de aprendizaje automático permite desarrollar un sistema híbrido que no solo estime con precisión las emisiones de CO$_2$ y CH$_4$, sino que constituya una herramienta de monitoreo dinámico para fundamentar la toma de decisiones operativas y generar métricas verificables del desempeño ambiental en la bioconversión de residuos agroindustriales con \textit{Hermetia illucens}?
 \end{alertblock}
-
 \end{frame}
 
 % =============================================================================
 % DIAPOSITIVA 10: JUSTIFICACIÓN DE LA PREGUNTA
 % =============================================================================
-\begin{frame}{¿Por qué esta Pregunta es Necesaria?}
+\begin{frame}{Objetivo general}
+\begin{block}{Propósito central de la investigación}
+\small
+Desarrollar un sistema híbrido a escala de laboratorio, integrado por modelado mecanístico basado en EDO, sensores IoT de bajo costo y algoritmos de aprendizaje automático, para estimar la tasa de producción de CO$_2$ y detectar eventos de emisión de CH$_4$ durante la bioconversión de residuos con \textit{Hermetia illucens}, con el fin de generar métricas de desempeño ambiental aplicables a la gestión de residuos agroindustriales.
+\end{block}
 
-\begin{block}{Tres vacíos que se refuerzan mutuamente}
+\end{frame}
+% =============================================================================
+% OBJETIVOS ESPECIFICOS
+% =============================================================================
+\begin{frame}{Objetivos espec\'ificos}
+
+\begin{block}{}
+\footnotesize
 \begin{enumerate}
-    \item \textbf{Vacío científico}: no hay modelado matemático de flujos gaseosos en tiempo real para BSF
-    \item \textbf{Vacío metodológico}: no hay estándares MRV dinámicos; BSF está fuera de los mercados de carbono
-    \item \textbf{Vacío operativo}: el productor no puede correlacionar una decisión (densidad, sustrato, aireación) con su huella de carbono
+    \item \textbf{Instrumentaci\'on:} Diseñar un m\'odulo de sensores NDIR de bajo costo para la medici\'on de CO$_2$ y CH$_4$, determinando su precisi\'on y desviaci\'on (MAPE) frente a un instrumento de referencia bajo condiciones de temperatura y humedad propias del cultivo larval.
+
+    \item \textbf{Modelado matem\'atico:} Parametrizar un modelo de EDO basado en la bioenerg\'etica de \textit{Hermetia illucens} para estimar la tasa de respiraci\'on de CO$_2$, evaluando su capacidad predictiva en ventanas temporales durante un ciclo de bioconversi\'on de 15 d\'ias.
+
+    \item \textbf{Integraci\'on h\'ibrida:} Formular un algoritmo de estimaci\'on de estados, basado en redes neuronales, que infiera la biomasa larval a partir de datos operativos e incorpore esta variable como entrada din\'amica al modelo mecan\'istico para mejorar la precisi\'on de la estimaci\'on de CO$_2$.
+
+    \item \textbf{M\'etricas ambientales:} Validar la utilidad del sistema para la gesti\'on ambiental mediante la detecci\'on de eventos de anaerobiosis asociados a CH$_4$ y la cuantificaci\'on del carbono emitido, contrastando estos indicadores din\'amicos con estimaciones est\'aticas tradicionales.
 \end{enumerate}
 \end{block}
 
-\vspace{0.2cm}
+\end{frame}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% =============================================================================
+% HIPOTESIS DE TRABAJO
+% =============================================================================
+\begin{frame}{Hip\'otesis de Trabajo}
 
-\begin{alertblock}{Hipótesis epistémica}
-La ausencia de trazabilidad ambiental en el Sur Global no es un \textit{lagro tecnológico} que se resuelve importando sensores. Es una \textit{configuración de poder} que se resuelve diseñando tecnología contextualizada, de bajo costo y bajo control local.
-\end{alertblock}
-
-\end{frame}
-\begin{frame}{Objetivo General}
-
-Desarrollar un sistema híbrido a escala de laboratorio que:
-
-\begin{enumerate}
-    \item \textbf{Integre tres capas}: modelado mecanicístico (EDO/DEB), sensores IoT de bajo costo (NDIR), y algoritmos de aprendizaje automático
-    \item \textbf{Estime} la tasa de producción de CO$_2$ y detecte eventos de emisión de CH$_4$
-    \item \textbf{Genere métricas} de desempeño ambiental aplicables a la gestión de residuos agroindustriales
-\end{enumerate}
-
-\vspace{0.2cm}
-\centering
-\footnotesize Condiciones: 30$\pm$2°C, HR 60--70\%, ciclos de 15 días.
-
-\end{frame}
-
-\begin{frame}{Hipótesis de Trabajo}
-
-\centering
+\begin{block}{Hip\'otesis general}
 \footnotesize
-\begin{tabular}{@{}p{0.8cm}p{5cm}p{2.8cm}p{3.5cm}@{}}
+Un sistema h\'ibrido (EDO/DEB + sensores IoT NDIR + aprendizaje autom\'atico) permite estimar emisiones de CO$_2$ y CH$_4$ en tiempo real con \textbf{MAPE $<$ 10\%}, generando indicadores din\'amicos de eficiencia metab\'olica y desempe\~no ambiental.
+\end{block}
+
+\vspace{0.2cm}
+\centering
+\scriptsize
+\begin{tabular}{cp{5.2cm}cc}
 \toprule
-\textbf{Hip.} & \textbf{Descripción} & \textbf{Criterio} & \textbf{Validación} \\
+\textbf{Hip.} & \textbf{Descripci\'on} & \textbf{Criterio} & \textbf{Validaci\'on} \\
 \midrule
-H1 & Precisión instrumental NDIR & MAPE $\leq$ 15\%, $R > 0.85$ & vs. Cromatografía de gases \\
-H2 & Capacidad predictiva EDO/DEB & $R^2 > 0.70$ & Ventanas 30 min / 2 días \\
-H3 & Refinamiento por IA & Reducción $\geq$ 30\%, MAPE $<$ 10\% & Validación cruzada \\
-H4 & Valor operativo (detección CH$_4$) & Recall $>$ 80\% & Eventos inducidos de anaerobiosis \\
+H1 & Precisi\'on instrumental NDIR de bajo costo & MAPE $\leq$ 10\% & Cromatograf\'ia de gases \\
+H2 & Capacidad predictiva del modelo EDO/DEB & MAPE $\leq$ 15\% & Ventanas 30 min / 2 d\'ias \\
+H3 & Refinamiento por aprendizaje autom\'atico & Reducci\'on $\geq$ 30\% & Validaci\'on cruzada \\
+H4 & Valor operativo: detecci\'on de CH$_4$ (anaerobiosis) & Recall $>$ 80\% & Escenarios operativos \\
 \bottomrule
 \end{tabular}
 
 \vspace{0.2cm}
-\normalsize
-H1--H3: laboratorio controlado. H4: escenarios operativos.
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\centering
+\tiny
+\textit{H1--H3: laboratorio (30$\pm$2$^\circ$C, HR 60--70\%)}
+\end{column}
+\begin{column}{0.48\textwidth}
+\centering
+\tiny
+\textit{H4: escenarios operativos}
+\end{column}
+\end{columns}
 
 \end{frame}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % =============================================================================
 % SECCIÓN: METODOLOGÍA
 % =============================================================================
 \section{Metodología}
-
-\begin{frame}{Alcance y Delimitación}
-
-\begin{itemize}
-    \item \textbf{Escala}: laboratorio (mesocosmos controlados, 30$\pm$2°C, HR 60--70\%)
-    \item \textbf{Variables}: CO$_2$ y CH$_4$ (NDIR); N$_2$O queda para integración futura por costos
-    \item \textbf{Rol}: herramienta descriptiva de soporte a la decisión, no sustituto del juicio técnico
-    \item \textbf{Éxito}: precisión estadística + utilidad ambiental (detección de anomalías, datos comparables)
-\end{itemize}
-
-\vspace{0.2cm}
-\centering
-\footnotesize \textit{El sistema es una aproximación preliminar honesta: modelo DEB aporta tendencia, sensores capturan realidad, IA corrige la brecha.}
-
-\end{frame}
-\begin{frame}{Metodología: Cuatro Fases Secuenciales}
-
-\centering
-\begin{tikzpicture}[scale=0.85, transform shape,
-    fase/.style={rectangle, rounded corners, draw, minimum width=2.6cm, minimum height=1.6cm, align=center, font=\small\bfseries},
-    flecha/.style={->, thick, >=stealth}]
-
-    \node[fase, fill=green!15, draw=green!60] (f1) at (0,0) {Fase I\\Instrumentación\\IoT};
-    \node[fase, fill=blue!15, draw=blue!60] (f2) at (3.3,0) {Fase II\\Modelo\\DEB/EDO};
-    \node[fase, fill=orange!15, draw=orange!60] (f3) at (6.6,0) {Fase III\\Integración\\Híbrida IA};
-    \node[fase, fill=red!15, draw=red!60] (f4) at (9.9,0) {Fase IV\\Validación\\Ambiental};
-
-    \draw[flecha, color=black!50] (f1) -- (f2);
-    \draw[flecha, color=black!50] (f2) -- (f3);
-    \draw[flecha, color=black!50] (f3) -- (f4);
-    \draw[flecha, dashed, bend left=35, color=gray!50] (f4.north) to node[above, font=\tiny] {Re-entrenamiento} (f3.north);
-\end{tikzpicture}
-
-\vspace{0.3cm}
+% =============================================================================
+% METODOLOGIA: 4 FASES
+% =============================================================================
+\begin{frame}{Metodolog\'ia: Cuatro Fases Secuenciales}
 
 \footnotesize
-\begin{tabular}{@{}p{2.4cm}p{9.8cm}@{}}
+\begin{tabular}{@{}p{2.2cm}p{9.5cm}@{}}
 \toprule
-\textbf{Fase I} & ESP32 + NDIR. Calibración, compensación cruzada, telemetría MQTT. \textit{Prioridad: robustez en condiciones de humedad extrema, no precisión de laboratorio.} \\
+\textbf{Fase} & \textbf{Descripci\'on y entregable} \\
 \midrule
-\textbf{Fase II} & EDO/DEB parametrizado. Curva teórica de respiración como línea base. \textit{Prioridad: interpretabilidad para productores, no opacidad algorítmica.} \\
-\midrule
-\textbf{Fase III} & RNA infiere biomasa; integración dinámica al DEB; corrección residual. \textit{Prioridad: generalización a múltiples sustratos locales, no overfitting a condiciones controladas.} \\
-\midrule
-\textbf{Fase IV} & Detección de anaerobiosis, cuantificación de carbono, contraste con estimaciones estáticas. \textit{Prioridad: generar datos comparables con compostaje y digestión para decisiones públicas informadas.} \\
+\textbf{I. IoT} & ESP32 + NDIR. Calibraci\'on, compensaci\'on cruzada de humedad, telemetr\'ia MQTT. \textit{Prioridad: robustez en condiciones de humedad extrema.} \\
+\addlinespace
+\textbf{II. DEB} & EDO parametrizado. Curva te\'orica de respiraci\'on como l\'inea base. \textit{Prioridad: interpretabilidad para productores.} \\
+\addlinespace
+\textbf{III. IA} & RNA infiere biomasa; integraci\'on din\'amica al DEB; correcci\'on residual. \textit{Prioridad: generalizaci\'on a m\'ultiples sustratos locales.} \\
+\addlinespace
+\textbf{IV. Ambiental} & Detecci\'on de anaerobiosis, cuantificaci\'on de carbono, contraste con estimaciones est\'aticas. \textit{Prioridad: datos comparables para decisiones p\'ublicas.} \\
 \bottomrule
 \end{tabular}
 
-\end{frame}
-\begin{frame}{Matriz de Coherencia: Hipótesis, Fases y Entregables}
-
+\vspace{0.3cm}
 \centering
+\textit{\footnotesize Dise\~no experimental: mesocosmos controlados, 30$\pm$2$^\circ$C, HR 60--70\%, ciclos de 15 d\'ias.}
+
+\end{frame}
+
+% =============================================================================
+% MATRIZ DE COHERENCIA
+% =============================================================================
+\begin{frame}{Matriz de Coherencia: Hip\'otesis, Fases y Entregables}
+
 \footnotesize
-\begin{tabular}{@{}llll@{}}
+\begin{tabular}{@{}clcc@{}}
 \toprule
 \textbf{Hip.} & \textbf{Fase} & \textbf{Entregable clave} & \textbf{Criterio} \\
 \midrule
-H1 & I (Instrumentación) & Módulo sensor validado & MAPE $\leq$ 15\%, $R > 0.85$ \\
-H2 & II (Modelo DEB) & Ecuaciones parametrizadas & $R^2 > 0.70$ \\
-H3 & III (Integración) & Algoritmo híbrido funcional & Reducción $\geq$ 30\%, MAPE $<$ 10\% \\
-H4 & IV (Validación) & Sistema de alertas operativo & Recall $>$ 80\% \\
+H1 & I (Instrumentaci\'on) & M\'odulo sensor validado & MAPE $\leq$ 10\%, $R > 0{,}85$ \\
+H2 & II (Modelo DEB) & Ecuaciones parametrizadas & MAPE $\leq$ 15\%, $R^2 \geq 0{,}70$ \\
+H3 & III (Integraci\'on) & Algoritmo h\'ibrido funcional & Reducci\'on $\geq$ 30\%, MAPE $<$ 10\% \\
+H4 & IV (Validaci\'on) & Sistema de alertas operativo & Recall $>$ 80\% \\
 \bottomrule
 \end{tabular}
 
-\end{frame}
-
-\begin{frame}{Postura Crítica: La Tecnología como Instrumento}
-
-El sistema es, por diseño, una herramienta descriptiva de soporte. Reconocemos tres límites:
-
-\begin{itemize}
-    \item \textbf{Huella material}: sensores IoT generan e-waste y consumo energético
-    \item \textbf{Sesgo contextual}: los algoritmos reflejan los datos con los que se entrenan
-    \item \textbf{Lo no medido}: resiliencia del microbioma, bienestar larval --- sigue siendo real
-\end{itemize}
-
-\vspace{0.2cm}
+\vspace{0.3cm}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
 \centering
-\footnotesize \textit{El sensor y el operador deben leerse mutuamente.}
+\footnotesize
+\textit{H1--H3: laboratorio controlado}
+\end{column}
+\begin{column}{0.48\textwidth}
+\centering
+\footnotesize
+\textit{H4: escenarios operativos}
+\end{column}
+\end{columns}
+
 \end{frame}
-\begin{frame}{Estado Actual del Proyecto}
+
+% =============================================================================
+% ALCANCE Y DELIMITACION
+% =============================================================================
+\begin{frame}{Alcance y Delimitaci\'on}
 
 \begin{columns}[T]
-\column{0.32\textwidth}
-\begin{block}{\centering Teórico}
-\begin{itemize}
-    \item Revisión bibliográfica sistematizada
-    \item Marco DEB adaptado a BSF
-\end{itemize}
-\end{block}
 
-\column{0.32\textwidth}
-\begin{block}{\centering Experimental}
+\begin{column}{0.48\textwidth}
+\begin{block}{Dentro del alcance}
+\footnotesize
 \begin{itemize}
-    \item Mesocosmos operativo (Sede Palmira)
-    \item Primeros ciclos con CO$_2$ continuo
-    \item Calibración NDIR en curso
+    \item Escala: laboratorio (mesocosmos, no piloto industrial)
+    \item Variables: CO$_2$ y CH$_4$ (NDIR); N$_2$O queda para integraci\'on futura
+    \item Rol: herramienta descriptiva de soporte a la decisi\'on, no sustituto del juicio t\'ecnico
+    \item \'{E}xito: precisi\'on estad\'istica + utilidad ambiental
 \end{itemize}
 \end{block}
+\end{column}
 
-\column{0.32\textwidth}
-\begin{block}{\centering Computacional}
+\begin{column}{0.48\textwidth}
+\begin{alertblock}{L\'imites expl\'icitos}
+\footnotesize
 \begin{itemize}
-    \item Backend funcional (Node.js, PostgreSQL, MQTT)
-    \item RNA inicial para estimación de biomasa
+    \item Sensores IoT generan \textbf{e-waste} y consumo energ\'etico
+    \item Algoritmos reflejan los datos con los que se entrenan (sesgo contextual)
+    \item \textbf{Lo no medido:} resiliencia del microbioma, bienestar larval
+    \item El sensor y el operador deben leerse mutuamente
 \end{itemize}
-\end{block}
+\end{alertblock}
+\end{column}
+
 \end{columns}
 
 \vspace{0.3cm}
 \centering
-\footnotesize \textit{Componentes individuales validados. Desafío actual: integración conjunta y validación cruzada.}
+\textit{\footnotesize El sistema es una aproximaci\'on preliminar honesta: modelo DEB aporta tendencia, sensores capturan realidad, IA corrige la brecha.}
 
 \end{frame}
 
-\begin{frame}{Cronograma: 42 Meses (2023 -- 2027)}
+% =============================================================================
+% ESTADO ACTUAL (CORREGIDA: sin columnas p{} problemáticas)
+% =============================================================================
+\section{Estado actual del Proyecto}
+\begin{frame}{Estado Actual del Proyecto}
+
+\footnotesize
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Dimensi\'on} & \textbf{Logros} & \textbf{Estado} \\
+\midrule
+Te\'orico & Revisi\'on bibliogr\'afica sistematizada. Marco DEB adaptado a BSF. & Completado \\
+\addlinespace
+Experimental & Mesocosmos operativo (Sede Palmira). Primeros ciclos con CO$_2$ continuo. & En progreso \\
+\addlinespace
+Computacional & Backend funcional (Node.js, PostgreSQL, MQTT). RNA inicial. & En progreso \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.4cm}
+\centering
+\textit{\footnotesize Componentes individuales validados. Desaf\'io actual: integraci\'on conjunta.}
+
+\end{frame}
+% =============================================================================
+% CRONOGRAMA
+% =============================================================================
+\begin{frame}{Cronograma: 42 Meses (2023--2027)}
 
 \centering
-\footnotesize
-\begin{tikzpicture}[scale=0.72, transform shape,
-    fase1/.style={fill=green!30, draw=green!60, rounded corners=2pt, minimum height=0.5cm, inner sep=2pt},
-    fase2/.style={fill=blue!20, draw=blue!50, rounded corners=2pt, minimum height=0.5cm, inner sep=2pt},
-    fase3/.style={fill=orange!30, draw=orange!60, rounded corners=2pt, minimum height=0.5cm, inner sep=2pt},
-    fase4/.style={fill=red!20, draw=red!50, rounded corners=2pt, minimum height=0.5cm, inner sep=2pt},
-    trans/.style={fill=gray!15, draw=gray!40, rounded corners=2pt, minimum height=0.5cm, inner sep=2pt}]
-
-    % Eje de tiempo
-    \foreach \x/\label in {0/2023-II, 1.5/2024-I, 3/2024-II, 4.5/2025-I, 6/2025-II, 7.5/2026-I, 9/2026-II, 10.5/2027-I} {
-        \node[font=\tiny, below] at (\x, -0.3) {\label};
-        \draw[gray!30] (\x, 0) -- (\x, 5.5);
-    }
-
-    % Actividades
-    \node[anchor=east, font=\tiny] at (-0.2, 5) {Revisión bibliográfica};
-    \node[anchor=east, font=\tiny] at (-0.2, 4.5) {Ingeniería Software};
-    \node[anchor=east, font=\tiny] at (-0.2, 4) {Ingeniería Hardware};
-    \node[anchor=east, font=\tiny] at (-0.2, 3.5) {Diseño Sensores IoT};
-    \node[anchor=east, font=\tiny] at (-0.2, 3) {Validación Experimental};
-    \node[anchor=east, font=\tiny] at (-0.2, 2.5) {Desarrollo IA};
-    \node[anchor=east, font=\tiny] at (-0.2, 2) {Implementación MRV};
-    \node[anchor=east, font=\tiny] at (-0.2, 1.5) {Publicaciones};
-    \node[anchor=east, font=\tiny] at (-0.2, 1) {Escritura tesis};
-
-    % Barras
-    \node[trans, minimum width=10.8cm] at (5.4, 5) {};
-    \node[fase2, minimum width=3cm] at (2.25, 4.5) {};
-    \node[fase2, minimum width=4.5cm] at (3.75, 4) {};
-    \node[fase1, minimum width=1.5cm] at (3.75, 3.5) {};
-    \node[fase3, minimum width=3cm] at (6.75, 3) {};
-    \node[fase3, minimum width=4.5cm] at (6, 2.5) {};
-    \node[fase4, minimum width=1.5cm] at (9.75, 2) {};
-    \node[fase4, minimum width=3cm] at (9, 1.5) {};
-    \node[trans, minimum width=10.8cm] at (5.4, 1) {};
-
-    % Leyenda
-    \node[fase1, minimum width=0.4cm] at (8, 0.3) {}; \node[font=\tiny, right] at (8.3, 0.3) {Fase I};
-    \node[fase2, minimum width=0.4cm] at (9, 0.3) {}; \node[font=\tiny, right] at (9.3, 0.3) {Fase II};
-    \node[fase3, minimum width=0.4cm] at (10, 0.3) {}; \node[font=\tiny, right] at (10.3, 0.3) {Fase III};
-    \node[fase4, minimum width=0.4cm] at (11, 0.3) {}; \node[font=\tiny, right] at (11.3, 0.3) {Fase IV};
-
-\end{tikzpicture}
+\includegraphics[width=0.95\textwidth]{cronograma.png}
 
 \vspace{0.3cm}
-\footnotesize
-\textbf{Hitos clave:} Fase I (2024) $\rightarrow$ Fase II (2024--2025) $\rightarrow$ Fase III (2025--2026) $\rightarrow$ Fase IV (2026--2027)
+\textit{\footnotesize Hitos: Fase I (2024) $\rightarrow$ Fase II (2024--2025) $\rightarrow$ Fase III (2025--2026) $\rightarrow$ Fase IV (2026--2027-I)}
 
 \end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % =============================================================================
 % CIERRE
 % =============================================================================
+\section{Cierre}
 \begin{frame}{Cierre}
 
-\begin{block}{}
 \centering
-\large
-Esta investigación no propone una tecnología perfecta.\\
-Propone un \textbf{paso necesario}:\\
-transformar la bioconversión con BSF\\
-de una caja negra biológica\\
-en un proceso con \textbf{trazabilidad ambiental verificable}.
-\end{block}
+\Large
+\textit{Esta investigaci\'on no propone una tecnolog\'ia perfecta.}
 
 \vspace{0.4cm}
 
-\begin{exampleblock}{}
+\large
+Propone un paso necesario:
+
+\vspace{0.3cm}
+
+\textit{transformar la bioconversi\'on con \BSF{} de una caja negra biol\'ogica}
+
+\vspace{0.1cm}
+
+\textit{en un proceso con \textbf{trazabilidad ambiental}.}
+
+\vspace{0.5cm}
+
+\normalsize
+Si los residuos org\'anicos del Sur Global van a ser parte de la soluci\'on clim\'atica,
+
+necesitan dejar de ser parte de la contabilidad incierta.
+
+\end{frame}
+% =============================================================================
+% GRACIAS (CORREGIDA)
+% =============================================================================
+\begin{frame}[plain]
+
 \centering
-Si los residuos orgánicos del Sur Global van a ser parte de la solución climática,\\
-necesitan dejar de ser parte de la \textbf{contabilidad invisible}.
-\end{exampleblock}
+\vspace{2cm}
+
+{\Huge \textbf{Gracias}}
+
+\vspace{1.5cm}
+
+{\large John Jairo Leal G\'omez}
+
+\vspace{0.3cm}
+
+\texttt{jlealgom@unal.edu.co}
+
+\vspace{0.3cm}
+
+Doctorado en Estudios Ambientales
+
+Universidad Nacional de Colombia -- Sede Palmira
+
+\vspace{1cm}
+
+\footnotesize
+\textit{``La ausencia de monitoreo no es un rezago tecnol\'ogico:}
+
+\textit{es una configuraci\'on de poder que se resuelve dise\~nando}
+
+\textit{tecnolog\'ia contextualizada, de bajo costo y bajo control local.''}
 
 \end{frame}
-\section{Cierre}
 
-\begin{frame}{}
-    \centering
-    \vspace{2cm}
-    {\Huge \textbf{Gracias}}
-    \vspace{1cm}
-
-    {\large John Jairo Leal Gómez}
-    \vspace{0.3cm}
-
-    \texttt{jjlealg@unal.edu.co}
-    \vspace{0.2cm}
-
-    \footnotesize Doctorado en Estudios Ambientales\\
-    Universidad Nacional de Colombia -- Sede Palmira
-    \vspace{0.5cm}
-
-    \includegraphics[width=1.8cm]{../tesis/00Figuras/00f00EscudoUN2016.jpg}
-\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % =============================================================================
 % DIAPOSITIVA DE REFERENCIAS
 % =============================================================================

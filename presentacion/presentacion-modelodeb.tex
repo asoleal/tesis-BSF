@@ -1,0 +1,485 @@
+\documentclass[aspectratio=169, 11pt]{beamer}
+
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Termes}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{Latin Modern Mono}
+
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, shadows}
+
+\usetheme{Madrid}
+\usecolortheme{beaver}
+\definecolor{unalRojo}{RGB}{148, 36, 36}
+\definecolor{verdeOK}{RGB}{34, 139, 34}
+\definecolor{naranjaAlerta}{RGB}{230, 126, 34}
+\definecolor{rojoAlerta}{RGB}{192, 57, 43}
+\setbeamercolor{structure}{fg=unalRojo}
+\setbeamercolor{block title}{bg=unalRojo!15, fg=unalRojo}
+\setbeamercolor{block body}{bg=unalRojo!5}
+\setbeamercolor{alerted text}{fg=rojoAlerta}
+
+\title[Respuestas Examen]{Del Examen de Candidatura a la Profundización Técnica}
+\subtitle{Bloque 2: Modelado Matemático y Arquitectura Híbrida}
+\author{John Jairo Leal Gómez}
+\institute[UNAL]{Doctorado en Estudios Ambientales\\Universidad Nacional de Colombia -- Sede Palmira}
+\date{Abril 2026}
+\titlegraphic{\includegraphics[width=1.5cm]{../tesis/00Figuras/00f00EscudoUN2016.jpg}}
+
+\newcommand{\BSF}{\textit{Hermetia illucens}}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+
+\begin{document}
+
+%======================================================================
+% PORTADA
+%======================================================================
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+%======================================================================
+% AGENDA
+%======================================================================
+\begin{frame}{De la f\'{i}sica a la predicci\'{o}n}
+\begin{columns}[T]
+\begin{column}{0.32\textwidth}
+\begin{block}{L\'{i}nea base f\'{i}sica}
+\begin{itemize}
+    \item Conservaci\'{o}n de masa y energ\'{i}a
+    \item Bioenerg\'{e}tica del metabolismo larval
+    \item Interpretabilidad biol\'{o}gica directa
+\end{itemize}
+\end{block}
+\end{column}
+\begin{column}{0.32\textwidth}
+\begin{exampleblock}{Correcci\'{o}n adaptativa}
+\begin{itemize}
+    \item Sensor virtual de biomasa
+    \item Redes informadas por la f\'{i}sica (PINN)
+    \item Aprendizaje anclado a leyes de conservaci\'{o}n
+\end{itemize}
+\end{exampleblock}
+\end{column}
+\begin{column}{0.32\textwidth}
+\begin{block}{Predicci\'{o}n verificable}
+\begin{itemize}
+    \item Emisiones de CO$_2$ y CH$_4$ en tiempo real
+    \item Trazabilidad para est\'{a}ndares de carbono
+    \item Gesti\'{o}n operativa del reactor
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+\vfill
+\begin{center}
+\textcolor{unalRojo}{\textbf{Hilo conductor:}} pasar de una descripci\'{o}n f\'{i}sica est\'{a}tica a un estimador din\'{a}mico que respeta las leyes de conservaci\'{o}n.
+\end{center}
+\end{frame}
+%======================================================================
+% P5 - FUNDAMENTOS ERIKSEN
+%======================================================================
+%======================================================================
+% DIAPOSITIVA 1: Principio
+%======================================================================
+\begin{frame}{Conservaci\'{o}n de masa en el metabolismo larval}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{block}{Principio fundacional}
+El carbono ingerido no desaparece: se redistribuye entre biomasa, reservas y respiraci\'{o}n. Este balance permite traducir la biolog\'{i}a del insecto en ecuaciones cuantificables.
+\end{block}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{exampleblock}{Tres destinos del carbono}
+\begin{itemize}
+    \item \textbf{Biomasa estructural} ($B$): tejidos, m\'{u}sculos, quitina
+    \item \textbf{Reservas lip\'{i}dicas} ($L$): energ\'{i}a de almacenamiento
+    \item \textbf{Respiraci\'{o}n} (CO$_2$): costos metab\'{o}licos
+\end{itemize}
+\end{exampleblock}
+\end{column}
+\end{columns}
+\vfill
+\begin{center}
+\textcolor{unalRojo}{\textbf{Idea clave:}} lo que el insecto respira es una medida directa de su actividad biol\'{o}gica total.
+\end{center}
+\end{frame}
+
+%======================================================================
+% DIAPOSITIVA 2: La ecuaci\'{o}n
+%======================================================================
+\begin{frame}{De la biolog\'{i}a a la medici\'{o}n}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{block}{Balance din\'{a}mico}
+La tasa de cambio de la biomasa depende de lo asimilado menos lo gastado en mantenerse vivo y crecer:
+\begin{equation*}
+\frac{dB}{dt} = \text{asimilaci\'{o}n neta} - \text{costos respiratorios}
+\end{equation*}
+\end{block}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{exampleblock}{La se\~{n}al CO$_2$}
+La respiraci\'{o}n se descompone en dos partes medibles:
+\begin{equation*}
+r_{\text{CO}_2} = \underbrace{Y_{\text{CO}_2}\frac{dB}{dt}}_{\text{crecimiento}} + \underbrace{m \cdot B(t)}_{\text{mantenimiento}}
+\end{equation*}
+\vspace{0.1cm}
+\begin{itemize}
+    \item Un t\'{e}rmino ligado a la velocidad de crecimiento
+    \item Un t\'{e}rmino ligado a la biomasa viva en cada instante
+\end{itemize}
+\end{exampleblock}
+\end{column}
+\end{columns}
+\vfill
+\begin{alertblock}{Lectura operativa}
+El CO$_2$ medido en el reactor no es solo una emisi\'{o}n: es una se\~{n}al cuantitativa del estado metab\'{o}lico del sistema.
+\end{alertblock}
+\end{frame}
+
+%======================================================================
+% DIAPOSITIVA 3: Cin\'{e}tica
+%======================================================================
+\begin{frame}{La curva de emisiones sigue al ciclo de vida}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{exampleblock}{Crecimiento exponencial}
+La biomasa aumenta sostenidamente y la tasa de CO$_2$ se acelera, reflejando m\'{a}xima asimilaci\'{o}n del sustrato.
+\end{exampleblock}
+\vspace{0.2cm}
+\begin{block}{Saturaci\'{o}n}
+La ingesta alcanza un l\'{i}mite por autocompetencia o agotamiento de la fracci\'{o}n m\'{a}s biodegradable.
+\end{block}
+\vspace{0.2cm}
+\begin{exampleblock}{Fase decreciente}
+La competencia y el declive de nutrientes hacen que la emisi\'{o}n alcance un m\'{a}ximo y descienda, anticipando la prepupaci\'{o}n.
+\end{exampleblock}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{block}{Modulado por el entorno}
+La velocidad de todo este ciclo depende de:
+\begin{itemize}
+    \item Temperatura (escala metab\'{o}lica)
+    \item Humedad del sustrato
+    \item Composici\'{o}n proximal (C/N, fibra)
+\end{itemize}
+\end{block}
+\vspace{0.2cm}
+\begin{alertblock}{Idea central}
+El modelo predice una \textbf{trayectoria din\'{a}mica}, no un n\'{u}mero fijo. La curva de CO$_2$ cambia seg\'{u}n el estado fisiol\'{o}gico del insecto y las condiciones del reactor.
+\end{alertblock}
+\end{column}
+\end{columns}
+\vfill
+{\footnotesize Eriksen, N.T. (2022). \textit{Dynamic modelling of feed assimilation, growth, lipid accumulation, and CO$_2$ production in black soldier fly larvae}. PLoS ONE 17(10): e0276605.}
+\end{frame}
+%======================================================================
+% P5 - DESAFIOS PARAMETRIZACION
+%======================================================================
+\begin{frame}{Desafíos en la Parametrización}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{alertblock}{1. Especificidad fisiológica}
+Los parámetros bioenergéticos (eficiencia de asimilación, costo de mantenimiento, $Y_{\text{CO}_2}$) dependen de:
+\begin{itemize}
+    \item Genética de la cohorte
+    \item Edad fisiológica e historial térmico
+    \item Rangos amplios en bibliografía $\rightarrow$ difícil extrapolación
+\end{itemize}
+\end{alertblock}
+\vspace{0.2cm}
+\begin{block}{2. Variabilidad del sustrato real}
+Residuos agroindustriales heterogéneos alteran la cinética de ingestión/digestión frente a dietas estándar de laboratorio.
+\end{block}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{alertblock}{3. Interacción larva--microbiota}
+Compartimento metabólico \textit{oculto} en la formulación: una fracción indeterminada del CO$_2$ proviene de la respiración microbiana del sustrato, no del insecto.
+\end{alertblock}
+\vspace{0.2cm}
+\begin{block}{4. Dependencia térmica no lineal}
+La temperatura no solo escala tasas metabólicas, sino que modifica:
+\begin{itemize}
+    \item Conducta de agregación de larvas
+    \item Estructura porosa del medio
+\end{itemize}
+$\rightarrow$ Requiere funciones de forzamiento empíricas de validez restringida.
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+%======================================================================
+% P5 - DESAFIOS VALIDACION
+%======================================================================
+\begin{frame}{Desafíos en la Validación Experimental}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{1. Dilema del valor de referencia de biomasa}
+\begin{itemize}
+    \item Muestreos destructivos interrumpen el reactor
+    \item Alteran dinámica de competencia y patrones de aireación
+    \item Observaciones puntuales provienen de sistemas truncados
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{2. Conversión concentraci\'{o}n $\to$ tasa}
+\begin{itemize}
+    \item NDIR mide concentración en fase gaseosa
+    \item Conversión a tasa de producción exige: flujo de arrastre, $P_{\text{atm}}$, $T_{\text{gas}}$
+    \item Condensación de vapor u obstrucción $\rightarrow$ ruido correlacionado
+\end{itemize}
+\end{column}
+\begin{column}{0.48\textwidth}
+\textbf{3. Asunción de aerobiosis exclusiva}
+\begin{itemize}
+    \item Microambientes anóxicos generan CH$_4$ por metanogénesis
+    \item Validar solo con CO$_2$ total $\rightarrow$ sobreestimación de eficiencia aerobia
+    \item \textbf{Ceguera estructural} frente a eventos críticos
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{4. Heterogeneidad espacial}
+\begin{itemize}
+    \item Agregaciones larvales como \textit{fluidos activos}
+    \item Gradientes tridimensionales de $T$ y O$_2$
+    \item EDO de parámetros concentrados no captura esta arquitectura
+\end{itemize}
+\end{column}
+\end{columns}
+\vfill
+\begin{center}
+\textcolor{rojoAlerta}{\textbf{Consecuencia:}} el residual sistemático entre predicci\'{o}n y observaci\'{o}n refleja una \textit{limitaci\'{o}n arquitect\'{o}nica}, no meramente un error paramétrico.
+\end{center}
+\end{frame}
+
+%======================================================================
+% P8 - ALCANCES MECANICISTICO
+%======================================================================
+\begin{frame}{Alcances del Modelo Mecanicístico}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{block}{Interpretabilidad directa}
+Cada variable de salida tiene justificación biológica derivada de principios termodinámicos:
+\begin{itemize}
+    \item $Y_{\text{CO}_2}$: rendimiento estequiométrico
+    \item $m$: costo de mantenimiento
+    \item $\mu_B$: tasa específica de crecimiento
+\end{itemize}
+$\rightarrow$ Facilita comunicación con auditores externos y esquemas de MRV.
+\end{block}
+\vspace{0.2cm}
+\begin{exampleblock}{Eficiencia datos--predicción}
+Una vez parametrizado, requiere pocos datos de entrada para generar predicciones.
+\end{exampleblock}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{block}{Función epistemológica}
+Sirve como \textbf{línea de base físicamente consistente} para:
+\begin{itemize}
+    \item Identificar desviaciones sistemáticas
+    \item Cuantificar el error estructural del modelo puro
+    \item Justificar la transición hacia arquitecturas híbridas
+\end{itemize}
+\end{block}
+\vspace{0.2cm}
+\begin{alertblock}{Validez restringida}
+Rigor dentro del rango de calibración y bajo supuesto de \textbf{homogeneidad espacial y temporal}.
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+%======================================================================
+% P8 - LIMITACIONES MECANICISTICO
+%======================================================================
+\begin{frame}{Limitaciones Estructurales del Mecanicístico}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{1. Homogeneidad larval inexistente}
+\begin{itemize}
+    \item Agregaciones dinámicas $\to$ gradientes 3D de $T$ y O$_2$
+    \item Formulación de parámetros concentrados atribuye desviaciones a error paramétrico
+\end{itemize}
+
+\vspace{0.2cm}
+\textbf{2. Sin compartimentos fermentativos}
+\begin{itemize}
+    \item Predice únicamente CO$_2$ de respiración aerobia
+    \item Ante microambientes anóxicos: \textbf{no predice CH$_4$}
+    \item Limitación operativa crítica para gestión del reactor
+\end{itemize}
+\end{column}
+\begin{column}{0.48\textwidth}
+\textbf{3. Rigidez paramétrica}
+\begin{itemize}
+    \item Cambio de dieta estándar $\to$ residuo agroindustrial requiere recalibración completa
+    \item Indigestibilidad fibrosa y fermentación microbiana previa omitidas
+\end{itemize}
+
+\vspace{0.2cm}
+\textbf{4. Validación destructiva}
+\begin{itemize}
+    \item Muestreos para $B(t)$ interrumpen el reactor
+    \item El sistema observado ya no es idéntico al modelado
+    \item Incertidumbre epistemológica inherente
+\end{itemize}
+\end{column}
+\end{columns}
+\vfill
+\begin{center}
+\textcolor{naranjaAlerta}{\textbf{En síntesis:}} el modelo mecanicístico es termodinámicamente sólido pero \textit{intencionalmente incompleto} para sistemas reales de bioconversión.
+\end{center}
+\end{frame}
+
+%======================================================================
+% P8/P3 - ARQUITECTURA HIBRIDA
+%======================================================================
+\begin{frame}{La Arquitectura Híbrida}
+\begin{alertblock}{Principio de diseño}
+Conservar el esqueleto físico de Eriksen y complementarlo con aprendizaje automático que corrija sus limitaciones estructurales.
+\end{alertblock}
+\vspace{0.2cm}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{block}{Frente 1: Sensor virtual de biomasa}
+Red neuronal densa \textit{feedforward} entrenada por aprendizaje supervisado:
+\begin{itemize}
+    \item \textbf{Entradas:} densidad inicial, temperatura, humedad
+    \item \textbf{Salida:} estimación continua de $B(t)$
+    \item Resuelve el problema inverso no lineal sin muestreos destructivos
+    \item Actualiza el término $dB/dt$ de la EDO en cada paso de tiempo
+\end{itemize}
+\end{block}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{block}{Frente 2: PINN}
+Red Neuronal Informada por la Física:
+\begin{itemize}
+    \item Resuelve la EDO de Eriksen con parámetros de la red como incógnitas
+    \item \textbf{Función de pérdida dual:}
+        \begin{equation*}
+        \mathcal{L} = \underbrace{\mathcal{L}_{\text{datos}}}_{\text{error sensores}} + \underbrace{\mathcal{L}_{\text{f\'{i}sica}}}_{\text{residual EDO}}
+        \end{equation*}
+    \item Restricción \textbf{dura} de conservación de masa
+    \item No asume desviaciones gaussianas (vs. filtro de Kalman)
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+%======================================================================
+% P3 - PINN DETALLE
+%======================================================================
+\begin{frame}{Corrección mediante PINN}
+\begin{columns}[T]
+\begin{column}{0.52\textwidth}
+\begin{block}{Espacio de soluciones físicamente admisibles}
+La PINN minimiza simultáneamente:
+\begin{enumerate}
+    \item Error de ajuste a las mediciones de sensores NDIR
+    \item Residual de la ecuación diferencial de Eriksen
+\end{enumerate}
+$\rightarrow$ Las predicciones obedecen la estructura de conservación de masa como \textbf{restricción dura}, no como regularización opcional.
+\end{block}
+
+\vspace{0.2cm}
+\textbf{Desviaciones no lineales modelables:}
+\begin{itemize}
+    \item Agregaciones larvales (fluidos activos)
+    \item Microambientes anaerobios transitorios
+    \item Variabilidad del sustrato agroindustrial
+\end{itemize}
+\end{column}
+\begin{column}{0.44\textwidth}
+\begin{exampleblock}{Detección de anaerobiosis}
+Comparación en tiempo real:
+\begin{equation*}
+\lvert \text{CH}_4^{\text{sensor}} - \text{CH}_4^{\text{predicci\'{o}n}} \rvert > \text{umbral}
+\end{equation*}
+$\rightarrow$ Alerta operativa antes de que el evento sea irreversible.
+\end{exampleblock}
+
+\vspace{0.2cm}
+\begin{alertblock}{La IA no inventa resultados}
+Corrige el modelo \textit{dentro} del espacio de soluciones físicamente admisibles, ganando flexibilidad sin violar las leyes de conservación.
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+%======================================================================
+% P3 - JUSTIFICACION CO2 CH4
+%======================================================================
+\begin{frame}{Justificación del Alcance en CO$_2$ y CH$_4$}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{exampleblock}{¿Por qué CO$_2$?}
+\begin{itemize}
+    \item Gas primario de la respiración aerobia
+    \item Directamente vinculado a $B(t)$ mediante el modelo de Eriksen
+    \item Medición continua: condición necesaria para validar estado metabólico y calibrar el híbrido
+\end{itemize}
+\end{exampleblock}
+\vspace{0.2cm}
+\begin{exampleblock}{¿Por qué CH$_4$?}
+\begin{itemize}
+    \item \textbf{No} es metabolismo larval: es señal de fallo operativo
+    \item Indica activación de arqueas metanogénicas en microambientes anóxicos
+    \item PGC = 27,2 veces CO$_2$ (100 años, IPCC AR6)
+    \item Variable de mayor relevancia climática en balances de corto plazo
+\end{itemize}
+\end{exampleblock}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{alertblock}{¿Por qué excluir N$_2$O?}
+\textbf{Decisión metodológica explícita, no omisión:}
+\begin{itemize}
+    \item Requiere sensores electroquímicos específicos
+    \item Diseños experimentales con tratamientos diferenciados
+    \item Cadena de calibración independiente, fuera del dominio de validación de esta fase
+\end{itemize}
+\end{alertblock}
+\vspace{0.2cm}
+\begin{block}{Vacío regulatorio crítico}
+Ausencia de factores de emisión específicos para \BSF{} en IPCC e IDEAM $\rightarrow$ la tesis aporta base empírica para CO$_2$ y CH$_4$ en inventarios nacionales.
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+%======================================================================
+% CIERRE - TABLA COMPARATIVA
+%======================================================================
+\begin{frame}{Cierre: Mecanicístico vs. Híbrido}
+\begin{center}
+\begin{tabular}{@{}p{4.2cm}p{5.2cm}p{5.2cm}@{}}
+\toprule
+\textbf{Dimensión} & \textbf{Modelo Mecanicístico} & \textbf{Modelo Híbrido} \\
+\midrule
+\textbf{Base teórica} & Leyes de conservación de masa y energía & Conservación + aprendizaje automático \\
+\textbf{Datos de entrada} & Pocos, una vez parametrizado & Continuos, en tiempo real \\
+\textbf{Homogeneidad} & Asume medio perfectamente mezclado & Captura no linealidades espaciales vía datos \\
+\textbf{Eventos anaerobios} & Ceguera estructural (solo CO$_2$) & Detección por comparación CH$_4$ medido vs. predicho \\
+\textbf{Adaptación a sustrato} & Recalibración completa requerida & Adaptación sin recalibración total \\
+\textbf{Interpretabilidad} & Alta (parámetros biológicos) & Parcial (pesos de red no traducibles directamente) \\
+\textbf{Costo computacional} & Bajo (solución numérica EDO) & Mayor (entrenamiento PINN) \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vfill
+\begin{center}
+\textcolor{unalRojo}{\textbf{Conclusión del bloque}}\\[0.2cm]
+El modelo mecanicístico es la \textit{restricción de consistencia}; la arquitectura híbrida es la \textit{capa adaptativa}.\\Juntas generan factores de emisión dinámicos verificables para MRV.
+\end{center}
+\end{frame}
+
+\end{document}

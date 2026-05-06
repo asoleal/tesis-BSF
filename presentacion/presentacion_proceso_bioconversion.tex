@@ -1,0 +1,446 @@
+
+\documentclass[aspectratio=169, 11pt]{beamer}
+
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Termes}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{Latin Modern Mono}
+
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, shadows}
+
+\usetheme{Madrid}
+\usecolortheme{beaver}
+\definecolor{unalRojo}{RGB}{148, 36, 36}
+\definecolor{verdeOK}{RGB}{34, 139, 34}
+\definecolor{naranjaAlerta}{RGB}{230, 126, 34}
+\definecolor{rojoAlerta}{RGB}{192, 57, 43}
+\setbeamercolor{structure}{fg=unalRojo}
+\setbeamercolor{block title}{bg=unalRojo!15, fg=unalRojo}
+\setbeamercolor{block body}{bg=unalRojo!5}
+\setbeamercolor{alerted text}{fg=rojoAlerta}
+
+\title[Respuestas Examen]{Del Examen de Candidatura a la Profundización Técnica}
+\subtitle{Bloque 1: Biología del Proceso y Emisiones}
+\author{John Jairo Leal Gómez}
+\institute[UNAL]{Doctorado en Estudios Ambientales\\Universidad Nacional de Colombia -- Sede Palmira}
+\date{Abril 2026}
+\titlegraphic{\includegraphics[width=1.5cm]{../tesis/00Figuras/00f00EscudoUN2016.jpg}}
+
+\newcommand{\BSF}{\textit{Hermetia illucens}}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+
+\begin{document}
+
+%======================================================================
+% PORTADA
+%======================================================================
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+%======================================================================
+% AGENDA
+%======================================================================
+\begin{frame}{Agenda: Biología del Proceso y Emisiones}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{block}{El Sistema}
+\begin{itemize}
+    \item Entradas: residuos, biomasa inicial, condiciones
+    \item Transformaciones: digestión enzimática y microbiota
+    \item Salidas: larvas, frass, adultos reproductivos
+    \item Esquema integrado del bioconversor
+\end{itemize}
+\end{block}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{block}{Emisiones}
+\begin{itemize}
+    \item \textbf{CO$_2$}: señal fisiológica del metabolismo aerobio
+    \item \textbf{CH$_4$}: metanogénesis en microambientes anóxicos
+    \item \textbf{N$_2$O}: nitrificación--denitrificación incompleta
+    \item Comparación crítica vs. compostaje tradicional
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+\vfill
+\begin{center}
+\textcolor{unalRojo}{\textbf{Objetivo:}} integrar la dimensión bioprocesal con la dimensión ambiental.
+\end{center}
+\end{frame}
+
+%======================================================================
+% ENTRADAS
+%======================================================================
+\begin{frame}{Entradas y Acondicionamiento del Sistema}
+\begin{columns}[T]
+\begin{column}{0.55\textwidth}
+\textbf{Residuos orgánicos:}
+\begin{itemize}
+    \item Restos agroindustriales
+    \item Bagazo de caña, subproductos de poscosecha
+    \item Ajuste de humedad: \textbf{60--70\,\%}
+    \item Optimización de la relación C/N
+\end{itemize}
+\vspace{0.3cm}
+\textbf{Biomasa inicial:}
+\begin{itemize}
+    \item Huevos o larvas neonatas (1$^\circ$--3$^\circ$ instar)
+    \item Densidad industrial: 5\,000--10\,000 ind/m$^2$
+    \item Prototipo de laboratorio: $\sim$700--800 huevos por reactor
+\end{itemize}
+\end{column}
+\begin{column}{0.42\textwidth}
+\begin{exampleblock}{Condiciones controladas}
+\begin{itemize}
+    \item \textbf{Temperatura:} 27--30$^\circ$C
+    \item \textbf{Aireación:} continua y suficiente
+    \item \textbf{pH:} según naturaleza del sustrato
+    \item \textbf{Prevención:} microambientes anóxicos
+\end{itemize}
+\end{exampleblock}
+\vspace{0.2cm}
+\begin{alertblock}{Alerta operativa}
+La saturación de poros por exceso de humedad es el principal detonante de anaerobiosis.
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+%======================================================================
+% TRANSFORMACIONES
+%======================================================================
+\begin{frame}{Transformaciones: Crecimiento Larvario y Digestión}
+\begin{block}{Fase activa (días 0--14 aprox.)}
+Las larvas secretan un complejo enzimático:
+\begin{center}
+\textbf{Proteasas} \quad $\bullet$ \quad \textbf{Lipasas} \quad $\bullet$ \quad \textbf{Celulasas}
+\end{center}
+\end{block}
+\vspace{0.2cm}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Rol de la microbiota simbiótica:}
+\begin{itemize}
+    \item \textit{Enterococcus}, \textit{Bacillus}, \textit{Acetobacter}
+    \item Fermentación y mineralización de la materia orgánica
+    \item Potenciación de la digestión (no es solo mecánica)
+\end{itemize}
+\end{column}
+\begin{column}{0.48\textwidth}
+\textbf{Efectos sobre el sustrato:}
+\begin{itemize}
+    \item Reducción de masa orgánica: \textbf{40--70\,\%}
+    \item Reducción de patógenos (\textit{Salmonella}, \textit{E. coli})
+    \item Estabilización olfativa
+    \item Del 4$^\circ$ al 5$^\circ$ instar: máximo consumo
+\end{itemize}
+\end{column}
+\end{columns}
+\vfill
+\begin{center}
+\textcolor{verdeOK}{\textbf{Peso individual en óptimas:}} 180--250 mg por larva
+\end{center}
+\end{frame}
+
+%======================================================================
+% SALIDAS
+%======================================================================
+\begin{frame}{Salidas del Sistema y Cierre del Ciclo}
+\begin{columns}[T]
+\begin{column}{0.32\textwidth}
+\begin{block}{Biomasa animal}
+\begin{itemize}
+    \item 45\,\% proteína (base seca)
+    \item 35\,\% grasa (ácido láurico)
+    \item Perfil aminoacídico comparable a harina de pescado
+    \item Uso: acuicultura, aves, cerdos, mascotas
+\end{itemize}
+\end{block}
+\end{column}
+\begin{column}{0.32\textwidth}
+\begin{block}{Frass}
+Excretos + restos de sustrato + quitina de mudas
+\begin{itemize}
+    \item Fertilizante orgánico estabilizado
+    \item Menor carga biológica
+    \item N-P-K variable
+    \item Enmienda de suelos / sustrato hortícola
+\end{itemize}
+\end{block}
+\end{column}
+\begin{column}{0.32\textwidth}
+\begin{block}{Adultos reproductivos}
+\begin{itemize}
+    \item No funcionales digestivamente (solo líquidos)
+    \item Vida: 5--8 días
+    \item Iluminación UV-A para cópula
+    \item 200--900 huevos/hembra
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+\vfill
+\begin{exampleblock}{Valorización adicional}
+Aceite para biodiesel/cosmética \quad $\bullet$ \quad Quitina y quitosano (biomédico, bioplásticos)
+\end{exampleblock}
+\end{frame}
+
+%======================================================================
+% CO2
+%======================================================================
+\begin{frame}{CO$_2$: Señal Fisiológica del Metabolismo Aerobio}
+\begin{columns}[T]
+\begin{column}{0.55\textwidth}
+En condiciones óptimas, el proceso es \textbf{predominantemente aerobio}.
+%\vspace{0.3cm}
+\begin{block}{El CO$_2$ no es solo una emisión}
+Es una \textit{señal fisiológica} de la intensidad metabólica:
+\begin{itemize}
+    \item Costos de mantenimiento
+    \item Síntesis de biomasa estructural
+    \item Acumulación de reservas lipídicas
+\end{itemize}
+\end{block}
+\vspace{0.2cm}
+\textbf{Flujo estable y creciente (primeros 10 días):}
+\begin{itemize}
+    \item Indica sistema metabólicamente activo
+    \item Refleja asimilación neta del sustrato
+    \item Base para el modelo bioenergético de Eriksen
+\end{itemize}
+\end{column}
+\begin{column}{0.42\textwidth}
+\begin{exampleblock}{Rango operativo seguro}
+\begin{itemize}
+    \item \textbf{Humedad:} 60--70\,\%
+    \item \textbf{Temperatura:} 27--30$^\circ$C
+    \item \textbf{Aireación:} suficiente
+\end{itemize}
+\end{exampleblock}
+\vspace{0.2cm}
+\begin{alertblock}{Lectura operativa}
+Un flujo creciente de CO$_2$ valida que el reactor está en régimen aerobio deseado.
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+%======================================================================
+% CH4
+%======================================================================
+\begin{frame}{CH$_4$: Metanogénesis en Microambientes Anóxicos}
+\begin{alertblock}{Concepto clave}
+El metano \textbf{NO} es producto directo del metabolismo larval. Es señal de \textbf{fallo operativo}: activación de arqueas metanogénicas en zonas anaerobias.
+\end{alertblock}
+\vspace{0.2cm}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Rutas metabólicas:}
+\begin{enumerate}
+    \item \textbf{Acetoclástica:} acetato $\rightarrow$ CH$_4$ + CO$_2$
+    \item \textbf{Hidrogenotrófica:} CO$_2$ como aceptor de electrones
+\end{enumerate}
+\vspace{0.2cm}
+\textbf{Factores de formación:}
+\begin{itemize}
+    \item Exceso de humedad ($>$80\,\%)
+    \item Compactación por alta densidad larval
+    \item Sustrato muy fino (difusión lenta de O$_2$)
+\end{itemize}
+\end{column}
+\begin{column}{0.48\textwidth}
+\textbf{Rol de la bioturbación larvar:}
+\begin{itemize}
+    \item Fragmenta el residuo
+    \item Modifica la estructura porosa
+    \item Reduce tiempo en condiciones anóxicas
+    \item \textcolor{rojoAlerta}{\textbf{Límite:}} densidad excesiva $\rightarrow$ compactación $\rightarrow$ anaerobiosis
+\end{itemize}
+\vspace{0.2cm}
+\begin{exampleblock}{Potencial de calentamiento}
+\textbf{PGC (100 años):} 27,2 veces el CO$_2$ (IPCC AR6)
+\end{exampleblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+%======================================================================
+% N2O
+%======================================================================
+\begin{frame}{N$_2$O: Ciclo del Nitrógeno y Denitrificación Incompleta}
+\begin{block}{Potencial de calentamiento}
+273 veces el CO$_2$ en horizonte de 100 años (IPCC AR6)
+\end{block}
+\vspace{0.2cm}
+\begin{center}
+\begin{tikzpicture}[
+    box/.style={rectangle, rounded corners, draw=unalRojo, fill=unalRojo!10, minimum width=2.2cm, minimum height=0.9cm, align=center, font=\small},
+    arrow/.style={-{Stealth[length=2mm]}, thick, unalRojo}
+]
+    \node[box] (amm) at (0,0) {NH$_4^+$};
+    \node[box] (nit) at (3.5,0) {NO$_2^-$ / NO$_3^-$};
+    \node[box] (n2o) at (7,0) {N$_2$O};
+    \node[box] (n2) at (7,-1.5) {N$_2$};
+    
+    \draw[arrow] (amm) -- node[above, font=\footnotesize] {Nitrificación} (nit);
+    \draw[arrow] (nit) -- node[above, font=\footnotesize] {Denitrificación} (n2o);
+    \draw[arrow] (n2o) -- node[right, font=\footnotesize] {Reducción} (n2);
+\end{tikzpicture}
+\end{center}
+\vspace{0.3cm}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Condiciones de escape de N$_2$O:}
+\begin{itemize}
+    \item Limitación de sustrato (C orgánico)
+    \item Variaciones bruscas de oxigenación
+    \item Exceso de nitrógeno disponible
+\end{itemize}
+\end{column}
+\begin{column}{0.48\textwidth}
+\textbf{Fuentes adicionales:}
+\begin{itemize}
+    \item Microbiota intestinal de larvas bajo estrés oxidativo
+    \item No solo del sustrato externo
+    \item Los balances de masa convencionales no discriminan esta fuente
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+%======================================================================
+% COMPARACION
+%======================================================================
+\begin{frame}{Bioconversión vs. Compostaje Tradicional}
+\begin{block}{Diferencia fundamental}
+Escala temporal y arquitectura dinámica del material
+\end{block}
+\vspace{0.2cm}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Compostaje tradicional:}
+\begin{itemize}
+    \item Pila estática o volteo periódico
+    \item Núcleos anaerobios persistentes
+    \item Mayor extensión espacial y duración
+    \item Emisiones de CH$_4$ inherentemente más altas
+\end{itemize}
+\end{column}
+\begin{column}{0.48\textwidth}
+\textbf{Bioconversión con \BSF:}
+\begin{itemize}
+    \item Bioturbación continua (remoción orgánica)
+    \item Microambientes anóxicos transitorios y menores
+    \item Reducción del \textbf{60--80\,\%} de CH$_4$ vs. compostaje mal aireado
+    \item Menor pérdida de N como N$_2$O (incorporación a biomasa)
+\end{itemize}
+\end{column}
+\end{columns}
+\vfill
+\begin{alertblock}{Advertencia crítica}
+La ventaja \textbf{NO} es inherente a la tecnología. Bajo malas condiciones (humedad $>$80\,\%, alta densidad, sustrato lignocelulósico recalcitrante), la bioconversión puede igualar o superar el perfil de emisiones del compostaje $\rightarrow$ \textbf{greenwashing involuntario}.
+\end{alertblock}
+\end{frame}
+
+%======================================================================
+% ESQUEMA INTEGRADO
+%======================================================================
+\begin{frame}{Esquema Integrado del Proceso de Bioconversión}
+\begin{center}
+\begin{tikzpicture}[
+    font=\small,
+    input/.style={rectangle, draw=verdeOK, fill=verdeOK!15, rounded corners, minimum width=2.5cm, minimum height=0.9cm, align=center},
+    process/.style={rectangle, draw=unalRojo, fill=unalRojo!10, rounded corners, minimum width=3cm, minimum height=1.2cm, align=center},
+    output/.style={rectangle, draw=naranjaAlerta, fill=naranjaAlerta!15, rounded corners, minimum width=2.5cm, minimum height=0.9cm, align=center},
+    gas/.style={ellipse, draw=rojoAlerta, fill=rojoAlerta!10, minimum width=1.8cm, minimum height=0.8cm, align=center},
+    arrow/.style={-{Stealth[length=2.5mm]}, thick, black!70},
+    mylabel/.style={font=\footnotesize\bfseries, text=unalRojo}
+]
+    % Entradas
+    \node[input] (res) at (-4.5, 2) {Residuos\\orgánicos};
+    \node[input] (bio) at (-4.5, 0) {Biomasa inicial\\(huevos/larvas)};
+    \node[input] (cond) at (-4.5, -2) {Condiciones\\T, HR, aireación};
+    
+    % Proceso central
+    \node[process] (conv) at (0, 0) {\textbf{Bioconversión}\\\BSF\\(días 0--27)};
+    
+    % Salidas
+    \node[output] (lar) at (4.5, 2.5) {Larvas /\\Prepupas};
+    \node[output] (frass) at (4.5, 0) {Frass\\(fertilizante)};
+    \node[output] (adult) at (4.5, -2.5) {Adultos\\(ciclo reproductivo)};
+    
+    % Gases
+    \node[gas] (co2) at (0, 2.8) {CO$_2$};
+    \node[gas] (ch4) at (1.8, 2.2) {CH$_4$};
+    \node[gas] (n2o) at (-1.8, 2.2) {N$_2$O};
+    
+    % Flechas entradas
+    \draw[arrow] (res) -- (conv);
+    \draw[arrow] (bio) -- (conv);
+    \draw[arrow] (cond) -- (conv);
+    
+    % Flechas salidas
+    \draw[arrow] (conv) -- (lar);
+    \draw[arrow] (conv) -- (frass);
+    \draw[arrow] (conv) -- (adult);
+    
+    % Flechas gases
+    \draw[arrow, dashed, draw=rojoAlerta] (conv) -- (co2);
+    \draw[arrow, dashed, draw=rojoAlerta] (conv) -- (ch4);
+    \draw[arrow, dashed, draw=rojoAlerta] (conv) -- (n2o);
+    
+    % Monitoreo
+    \node[rectangle, draw=black!50, fill=black!5, rounded corners, align=center, font=\footnotesize] (mon) at (0,-2.2) {Monitoreo continuo:\\CO$_2$ + CH$_4$ + variables operativas};
+    \draw[arrow, <->] (conv) -- (mon);
+    
+    % Labels
+    \node[mylabel] at (-4.5, 2.9) {ENTRADAS};
+    \node[mylabel] at (4.5, 3.2) {SALIDAS};
+    \node[mylabel] at (0, 3.6) {EMISIONES};
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+%======================================================================
+% CIERRE
+%======================================================================
+\begin{frame}{Cierre: La Variable Humedad como Determinante}
+\begin{columns}[T]
+\begin{column}{0.58\textwidth}
+\begin{block}{Rango seguro: 60--70\,\%}
+Mantiene la actividad metabólica en régimen aerobio donde las larvas operan con máxima eficiencia.
+\end{block}
+\vspace{0.2cm}
+\begin{alertblock}{Riesgo por encima del 80\,\%}
+Saturación de poros $\rightarrow$ difusión lenta de O$_2$ $\rightarrow$ anaerobiosis en horas $\rightarrow$ CH$_4$ + N$_2$O masivos.
+\end{alertblock}
+\vspace{0.2cm}
+\begin{block}{Riesgo por debajo del 40\,\%}
+Suspensión de actividad microbiana y larval: cero emisiones, pero también \textbf{cero bioconversión}.
+\end{block}
+\end{column}
+\begin{column}{0.38\textwidth}
+\textbf{Variables de segundo orden:}
+\begin{itemize}
+    \item Densidad larval
+    \item Aireación forzada
+    \item Composición proximal del sustrato (C/N, fibra)
+\end{itemize}
+\vfill
+\begin{center}
+\textcolor{unalRojo}{\textbf{Conclusión}}
+\end{center}
+\end{column}
+\end{columns}
+\end{frame}
+
+\end{document}
