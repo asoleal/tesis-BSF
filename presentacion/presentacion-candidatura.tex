@@ -907,20 +907,19 @@ Sistema validado capaz de detectar anaerobiosis incipiente, explicitar la discre
 \begin{alertblock}{Tensión socioecológica}
 \scriptsize
 \begin{itemize}
-    \item Entorno agresivo (HR $>80\%$, amoniaco, volátiles) acorta vida útil de sensores
-    \item Riesgo de \textit{e-waste} y huella de extracción de minerales
-    \item Mitigación: arquitectura modular (reemplazar solo sensor, preservar ESP32) y microcontroladores de bajo consumo \parencite{dharCarbonImpactArtificial2020}
+    \item El entorno agresivo (HR $>80\%$, amoniaco, volátiles) \textbf{degrada} sensores y acelera \textit{e-waste}
+    \item Mitigación: diseño modular (sensor reemplazable, ESP32 reutilizable) y microcontroladores de bajo consumo \parencite{dharCarbonImpactArtificial2020}
 \end{itemize}
 \end{alertblock}
 
 \vspace{0.12cm}
 
-\begin{block}{Limitaciones estructurales del modelo}
+\begin{block}{Fronteras del modelo}
 \scriptsize
 \begin{itemize}
-    \item Especificidad del sustrato: generalización acotada a matrices representadas en el entrenamiento
-    \item Resolución 0D temporal: no resuelve gradientes internos de temperatura y oxígeno
-    \item Régimen batch: transferencia a sistemas continuos requeriría ajustes
+    \item \textbf{Especificidad:} generalización limitada a sustratos del entrenamiento
+    \item \textbf{Resolución 0D:} ignora gradientes internos de temperatura y oxígeno
+    \item \textbf{Régimen:} validado en batch; sistemas continuos requerirían recalibración
 \end{itemize}
 \end{block}
 
@@ -931,9 +930,9 @@ Sistema validado capaz de detectar anaerobiosis incipiente, explicitar la discre
 \begin{alertblock}{Riesgos epistémicos}
 \scriptsize
 \begin{itemize}
-    \item Sobreajuste a condiciones controladas del prototipo
-    \item Pérdida de robustez ante variabilidad real de sustratos y microclimas
-    \item Predicciones no realistas si la IA opera sin restricciones físicas
+    \item \textbf{Sobreajuste:} el prototipo puede ajustarse excesivamente al laboratorio
+    \item \textbf{Fragilidad:} pérdida de robustez ante sustratos y microclimas reales
+    \item \textbf{Opacidad:} IA sin anclaje físico genera predicciones biológicamente inviables
 \end{itemize}
 \end{alertblock}
 
@@ -942,9 +941,9 @@ Sistema validado capaz de detectar anaerobiosis incipiente, explicitar la discre
 \begin{block}{Estrategia: IA explicable (XAI)}
 \scriptsize
 \begin{itemize}
-    \item Integración con DEB impone restricciones biológicas en la función de pérdida
-    \item Evita tasas de crecimiento negativas o emisiones superiores al carbono disponible
-    \item Define \textbf{dónde} el modelo es confiable y \textbf{dónde} requiere recalibración
+    \item El DEB ancla la IA: impone restricciones biológicas en la función de pérdida
+    \item Penaliza predicciones imposibles (ej.\ crecimiento negativo, CO$_2$ $>$ carbono ingerido)
+    \item Delimita el \textbf{dominio de validez} y la necesidad de recalibración
 \end{itemize}
 \end{block}
 
@@ -959,11 +958,11 @@ Sistema validado capaz de detectar anaerobiosis incipiente, explicitar la discre
 
 \begin{column}{0.48\textwidth}
 
-\begin{alertblock}{Retos de escalamiento rural}
+\begin{alertblock}{Brecha digital rural}
 \scriptsize
 \begin{itemize}
-    \item Conectividad inestable o nula (\textit{zonas grises}) excluye arquitecturas centralizadas en nube
-    \item Dependencia de soporte técnico especializado como barrera de adopción
+    \item \textbf{Zonas grises:} conectividad nula excluye arquitecturas centralizadas en nube
+    \item \textbf{Barrera:} dependencia de soporte técnico especializado limita la adopción
 \end{itemize}
 \end{alertblock}
 
@@ -972,9 +971,9 @@ Sistema validado capaz de detectar anaerobiosis incipiente, explicitar la discre
 \begin{block}{Oportunidad: edge computing}
 \scriptsize
 \begin{itemize}
-    \item Algoritmos críticos ejecutados directamente en el nodo ESP32
+    \item Procesamiento crítico directamente en el nodo ESP32
     \item Operación autónoma y sincronización asíncrona de datos
-    \item Costo marginal para pequeños y medianos productores agroindustriales
+    \item Costo marginal para pequeños productores agroindustriales
 \end{itemize}
 \end{block}
 
@@ -985,9 +984,9 @@ Sistema validado capaz de detectar anaerobiosis incipiente, explicitar la discre
 \begin{block}{Bioseguridad}
 \scriptsize
 \begin{itemize}
-    \item Detección temprana de anomalías ambientales (fugas, cambios térmicos súbitos)
-    \item Alertas para intervención manual inmediata
-    \item Apoyo al cumplimiento de normativas fitosanitarias (ICA/UE)
+    \item Alertas ante fugas o cambios térmicos súbitos
+    \item Intervención manual inmediata
+    \item Cumplimiento fitosanitario (ICA/UE)
 \end{itemize}
 \end{block}
 
@@ -996,9 +995,9 @@ Sistema validado capaz de detectar anaerobiosis incipiente, explicitar la discre
 \begin{alertblock}{Integridad MRV}
 \scriptsize
 \begin{itemize}
-    \item Trazabilidad digital y \textit{timestamping} de registros de emisiones
+    \item \textit{Timestamping} digital de registros de emisiones
     \item Datos auditables bajo estándares IPCC y Verra
-    \item Mitiga \textit{greenwashing} digital y sienta bases para certificación de créditos de carbono
+    \item Contrasta \textit{greenwashing} y habilita certificación de créditos de carbono
 \end{itemize}
 \end{alertblock}
 
@@ -1007,8 +1006,18 @@ Sistema validado capaz de detectar anaerobiosis incipiente, explicitar la discre
 \end{columns}
 \end{frame}
 % =============================================================================
-% ESTADO ACTUAL (CORREGIDA: sin columnas p{} problemáticas)
+% CRONOGRAMA
 % =============================================================================
+\begin{frame}{Cronograma: 42 Meses (2023--2027)}
+\vspace{-0.5cm}
+\centering
+\includegraphics[width=0.85\textwidth]{cronograma.png}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% =============================================================================
+% ESTADO ACTUAL
+% =============================================================================
+
 \section{Estado actual del Proyecto}
 \begin{frame}{Estado Actual del Proyecto}
 
@@ -1030,46 +1039,69 @@ Computacional & Backend funcional (Node.js, PostgreSQL, MQTT). RNA inicial. & En
 \textit{\footnotesize Componentes individuales validados. Desaf\'io actual: integraci\'on conjunta.}
 
 \end{frame}
-% =============================================================================
-% CRONOGRAMA
-% =============================================================================
-\begin{frame}{Cronograma: 42 Meses (2023--2027)}
-\vspace{-0.5cm}
-\centering
-\includegraphics[width=0.85\textwidth]{cronograma.png}
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % =============================================================================
 % CIERRE
 % =============================================================================
 \section{Cierre}
-\begin{frame}{Cierre}
+\begin{frame}{Cierre: Transformaciones del Proyecto}
+\framesubtitle{De la caja negra biológica al proceso verificable}
 
+\begin{columns}[T,onlytextwidth]
+
+\begin{column}{0.31\textwidth}
+
+\begin{block}{\scriptsize 1. Transformación técnica}
+\tiny
+\begin{itemize}
+    \item De bioconversión como \textit{caja negra} a sistema híbrido predictivo
+    \item Convergencia: sensores IoT + bioenergética DEB + inteligencia artificial explicable
+    \item Visibilización del metabolismo larval en tiempo real
+\end{itemize}
+\end{block}
+
+\end{column}
+
+\begin{column}{0.31\textwidth}
+
+\begin{block}{\scriptsize 2. Transformación ambiental}
+\tiny
+\begin{itemize}
+    \item De factores de emisión estáticos e intransferibles a \textbf{Inventario Dinámico de Carbono}
+    \item Trazabilidad digital para estándares IPCC/Verra
+    \item Mitigación del \textit{greenwashing} en economías circulares con insectos
+\end{itemize}
+\end{block}
+
+\end{column}
+
+\begin{column}{0.31\textwidth}
+
+\begin{block}{\scriptsize 3. Transformación operativa}
+\tiny
+\begin{itemize}
+    \item De gestión empírica a decisiones basadas en datos
+    \item Alertas tempranas de anaerobiosis (semáforo verde/ámbar/rojo)
+    \item Edge computing para productores agroindustriales del Sur Global sin dependencia de la nube
+\end{itemize}
+\end{block}
+
+\end{column}
+
+\end{columns}
+
+\vspace{0.30cm}
+
+\begin{alertblock}{}
 \centering
-\Large
-\textit{Esta investigaci\'on no propone una tecnolog\'ia perfecta.}
+\footnotesize
+\textit{La sostenibilidad de la bioconversión no se declara: se mide, se contrasta y se gestiona en tiempo real.}
+\end{alertblock}
 
-\vspace{0.4cm}
-
-\large
-Propone un paso necesario:
-
-\vspace{0.3cm}
-
-\textit{transformar la bioconversi\'on con \BSF{} de una caja negra biol\'ogica}
-
-\vspace{0.1cm}
-
-\textit{en un proceso con \textbf{trazabilidad ambiental}.}
-
-\vspace{0.5cm}
-
-\normalsize
-Si los residuos org\'anicos del Sur Global van a ser parte de la soluci\'on clim\'atica,
-
-necesitan dejar de ser parte de la contabilidad incierta.
 
 \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % =============================================================================
 % GRACIAS
 % =============================================================================
