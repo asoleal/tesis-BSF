@@ -12,7 +12,10 @@ RUN apt-get update && \
       locales \
       fonts-texgyre \
       fonts-lmodern && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    echo '<fontconfig><dir>/usr/share/texmf-dist/fonts/opentype</dir><dir>/usr/share/texmf-dist/fonts/truetype</dir></fontconfig>' \
+      > /etc/fonts/conf.d/09-texlive-fonts.conf && \
+    fc-cache -fv
 
 RUN sed -i '/es_CO.UTF-8/s/^# //g' /etc/locale.gen && \
     locale-gen

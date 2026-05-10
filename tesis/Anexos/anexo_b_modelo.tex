@@ -1,0 +1,141 @@
+% ============================================================
+% S1.1 — Ecuaciones del modelo DEB dinámico de Eriksen (2022)
+% Extraídas de: Eriksen NT (2022) PLoS ONE 17(10):e0276605
+% ============================================================
+
+\subsection{Compartimentalización del modelo DEB}
+La biomasa larval se divide en tres compartimentos expresados en equivalentes de carbono:
+\begin{itemize}
+    \item $A$ --- pool de asimilados (mg C);
+    \item $B$ --- biomasa estructural (mg C);
+    \item $L$ --- l\'{i}pidos de almacenamiento (mg C).
+\end{itemize}
+El contenido total de l\'{i}pidos medible experimentalmente es
+\begin{equation}
+    L_{\text{tot}} = L + \delta_{L,B}\,B,
+\end{equation}
+donde $\delta_{L,B}=0{,}10$ es la fracci\'{o}n de l\'{i}pidos intr\'{i}nsecos a la biomasa estructural.
+
+\subsection{Balances de masa}
+Bajo la hip\'{o}tesis de estado estacionario para el pool de asimilados ($\mathrm{d}A/\mathrm{d}t=0$):
+\begin{align}
+    0 &= r_A - \bigl(r_B + r_L + r_{\mathrm{CO_2},m} + r_{\mathrm{CO_2},B} + r_{\mathrm{CO_2},L}\bigr), \\
+    \frac{\mathrm{d}B}{\mathrm{d}t} &= r_B, \\
+    \frac{\mathrm{d}L_{\text{tot}}}{\mathrm{d}t} &= r_L + \delta_{L,B}\,r_B.
+\end{align}
+
+\subsection{Tasas metab\'{o}licas}
+\subsubsection{Tasa de asimilaci\'{o}n}
+La asimilaci\'{o}n es el proceso limitante global:
+\begin{equation}
+    r_A = a\,B,
+\end{equation}
+donde la tasa espec\'{i}fica $a$ depende del \'{i}nstar $I$:
+\begin{equation}
+    a =
+    \begin{cases}
+        a_{\max}, & I < 6, \\[4pt]
+        a_{\max}\Bigl[1 - \bigl(\frac{B}{B_{\max}}\bigr)^{\alpha}\Bigr], & I = 6, \\[4pt]
+        0, & I > 6.
+    \end{cases}
+\end{equation}
+
+\subsubsection{Mantenimiento}
+\begin{equation}
+    r_{\mathrm{CO_2},m} = m\,B.
+\end{equation}
+
+\subsubsection{Crecimiento estructural}
+La tasa espec\'{i}fica de crecimiento estructural se reduce log\'{i}sticamente respecto a su potencial:
+\begin{equation}
+    \mu_B = \frac{a - m}{1 + Y_B}\;\Bigl[1 - \Bigl(\frac{B}{B_{\max}}\Bigr)^{\beta}\Bigr],
+    \qquad
+    r_B = \mu_B\,B \quad (I \le 6).
+\end{equation}
+El costo de s\'{i}ntesis de biomasa estructural genera CO$_2$:
+\begin{equation}
+    r_{\mathrm{CO_2},B} = Y_B\,r_B.
+\end{equation}
+
+\subsubsection{Acumulaci\'{o}n / reciclaje de l\'{i}pidos}
+El excedente de asimilados (o d\'{e}ficit) determina el flujo hacia/desde el almacenamiento lip\'{i}dico:
+\begin{equation}
+    r_L =
+    \begin{cases}
+        \dfrac{r_A - (r_B + r_{\mathrm{CO_2},m} + r_{\mathrm{CO_2},B})}{1 + Y_L}, & r_L \ge 0 \;\text{(acumulaci\'{o}n)}, \\[10pt]
+        r_A - (r_B + r_{\mathrm{CO_2},m} + r_{\mathrm{CO_2},B}), & r_L < 0 \;\text{(reciclaje)}.
+    \end{cases}
+\end{equation}
+El costo energ\'{e}tico de s\'{i}ntesis lip\'{i}dica:
+\begin{equation}
+    r_{\mathrm{CO_2},L} =
+    \begin{cases}
+        Y_L\,r_L, & r_L \ge 0, \\[4pt]
+        0, & r_L < 0.
+    \end{cases}
+\end{equation}
+
+\subsubsection{Emisi\'{o}n total de CO$_2$}
+\begin{equation}
+    r_{\mathrm{CO_2}} = r_{\mathrm{CO_2},m} + r_{\mathrm{CO_2},B} + r_{\mathrm{CO_2},L}.
+\end{equation}
+
+\subsection{Determinaci\'{o}n del \'{i}nstar}
+\begin{equation}
+    I =
+    \begin{cases}
+        1\text{--}5, & B < \dfrac{1}{\delta_I}\,B_{\max,0}, \\[8pt]
+        6, & \dfrac{1}{\delta_I}\,B_{\max,0} \le B < B_{\max,0}, \\[8pt]
+        7\;\text{(prepupa)}, & B \ge B_{\max,0},
+    \end{cases}
+\end{equation}
+con $\delta_I = 5$.
+
+\subsection{Biomasa m\'{a}xima din\'{a}mica}
+Para capturar la variabilidad del peso final:
+\begin{equation}
+    B_{\max}(t) =
+    \begin{cases}
+        B_{\max,0}, & t < t_{p,\min}, \\[4pt]
+        B_{\max,0} - \rho\,(t - t_{p,\min}), & t \ge t_{p,\min},
+    \end{cases}
+\end{equation}
+donde $t_{p,\min}=13$ d\'{i}as y $\rho = 1$ mg C d\'{i}a$^{-1}$.
+
+\subsection{Conversiones a peso seco e h\'{u}medo}
+Peso seco total:
+\begin{equation}
+    X_{\text{DW}} = \frac{(1-\delta_{L,B})\,B}{\delta_{C,B}\,\delta_O} + \frac{L_{\text{tot}}}{\delta_{C,L}}.
+\end{equation}
+Peso h\'{u}medo total:
+\begin{equation}
+    X_{\text{WW}} = \frac{(1-\delta_{L,B})\,B}{\delta_{C,B}\,\delta_O\,\delta_{\text{DW},B}} + L_{\text{DW}},
+    \qquad L_{\text{DW}} = \frac{L_{\text{tot}}}{\delta_{C,L}}.
+\end{equation}
+Fracci\'{o}n lip\'{i}dica:
+\begin{equation}
+    \delta_{\text{lipid}} = \frac{L_{\text{DW}}}{X_{\text{DW}}} \times 100\,\si{\percent}
+\end{equation}
+
+\subsection{Par\'{a}metros base (sustrato pollo, condiciones \'{o}ptimas)}
+\begin{center}
+\begin{tabular}{lcl}
+\toprule
+Par\'{a}metro & Valor & Fuente \\
+\midrule
+$a_{\max}$ & $1{,}4$ d\'{i}a$^{-1}$ & Ajuste Fig.~3A Eriksen \\
+$m$ & $0{,}08$ d\'{i}a$^{-1}$ & Laganaro et al.~(2021) \\
+$Y_B$ & $0{,}44$ & Laganaro et al.~(2021) \\
+$Y_L$ & $0{,}42$ & Kok~(2021) \\
+$\alpha$ & $0{,}92$ & Ajuste Fig.~3A \\
+$\beta$ & $2{,}02$ & Ajuste Fig.~3A \\
+$B_{\max,0}$ & $65$ mg C & Ajuste Fig.~3A \\
+$\delta_{C,B}$ & $0{,}49$ & Roels~(1980) \\
+$\delta_{C,L}$ & $0{,}79$ & trilaurina \\
+$\delta_{L,B}$ & $0{,}10$ & Fig.~2C Eriksen \\
+$\delta_O$ & $0{,}90$ & Mediana literatura \\
+$\delta_{\text{DW},B}$ & $0{,}25$ & Fig.~2D Eriksen \\
+$\delta_I$ & $5$ & Jucker et al.~(2017); Macavei et al.~(2020) \\
+\bottomrule
+\end{tabular}
+\end{center}
