@@ -1,0 +1,179 @@
+% =============================================================================
+% SECCIÓN 2: MATERIALES Y MÉTODOS
+% Capítulo 2: Instrumentación IoT y Caracterización Metrológica
+% =============================================================================
+
+
+% -----------------------------------------------------------------------------
+% 2.1. DISEÑO EXPERIMENTAL Y SUSTRATOS
+% -----------------------------------------------------------------------------
+\subsection{Diseño experimental y caracterización de sustratos}
+\label{subsec:cap2_diseno_sustratos}
+
+El diseño experimental se estructuró como un ensayo de laboratorio
+controlado con arreglo de bloques completos al azar, evaluando dos
+tipos de sustratos agroindustriales del Valle del Cauca, Colombia:
+la dieta D1 (alta carga proteica, base pollo) y la dieta D4 (alta
+carga fibrosa, base vegetal). Cada tratamiento se replicó en tres
+corridas independientes (réplicas biológicas), con un total de seis
+ciclos experimentales de bioconversión de 15 días cada uno.
+
+Las larvas neonatas de \textit{H. illucens} (estadio L1, 3--5 días
+post-eclosión) se distribuyeron en repositorios internos de
+polipropileno alimenticio (20 $\times$ 15 $\times$ 10 cm) con una
+densidad de siembra de 0.5 g larva$\cdot$cm$^{-2}$, siguiendo los
+rangos óptimos reportados para maximizar la tasa de asimilación
+\autocite{nayakHermetiaIllucensDiptera2024}. El sustrato se
+acondicionó a una humedad inicial del 65--70\,\% (base húmeda) y se
+mantuvo en cámara de crecimiento a $30 \pm 2$\,°C y HR del 60--70\,\%,
+condiciones que favorecen el desarrollo metabólico máximo según
+\autocite{salamEffectDifferentEnvironmental2022}.
+
+La caracterización proximal de los sustratos incluyó: contenido de
+humedad (deshidratación a 105\,°C hasta peso constante), cenizas
+(incineración a 550\,°C), proteína bruta (método Kjeldahl, factor
+6.25), lípidos totales (extracción Soxhlet con hexano), fibra bruta
+(digestión ácido-base secuencial) y carbono/nitrógeno total (analizador
+elemental CHNS-O). El pH se midió en suspensión 1:5 (sustrato:agua
+destilada) con electrodo de vidrio calibrado.
+
+% -----------------------------------------------------------------------------
+% 2.2. ARQUITECTURA DEL NODO IoT
+% -----------------------------------------------------------------------------
+\subsection{Arquitectura del sistema de adquisición}
+\label{subsec:cap2_arquitectura_iot}
+
+El sistema de monitoreo implementó una arquitectura de tres capas:
+percepción, procesamiento edge y telemetría, adaptada de los esquemas
+modulares propuestos por \autocite{vanIntegrationInternetofThingsSustainable2022}
+y \autocite{duobieneDevelopmentWirelessSensor2022}.
+
+\textbf{Capa de percepción.} El nodo sensor se construyó sobre un
+microcontrolador ESP32-WROOM-32 (Espressif Systems), seleccionado por
+su capacidad de procesamiento dual-core (240\,MHz), conectividad WiFi
+integrada y bajo consumo energético en modo deep-sleep (10\,$\mu$A).
+El bus de sensores incluyó:
+
+\begin{itemize}
+    \item \textbf{CO$_2$ y CH$_4$:} Sensores NDIR de bajo costo
+    (modelos SCD41 para CO$_2$, Sensirion; y un sensor NDIR dual
+    calibrado de fábrica para CH$_4$ en rango 0--5000\,ppm). Ambos
+    operan con resolución de 1\,ppm, precisión de $\pm(30 + 3\%)$\,ppm
+    y deriva máxima anual de $\pm10$\,ppm para CO$_2$.
+    
+    \item \textbf{Variables ambientales:} Sensor SHT3x (Sensirion)
+    para temperatura ($-40$ a 125\,°C, $\pm0.3$\,°C) y humedad
+    relativa (0--100\,\%, $\pm2$\,\%).
+    
+    \item \textbf{Condicionamiento:} Cápsula de PTFE hidrofóbica
+    (membrana ePTFE, poro 0.2\,$\mu$m) sobre la óptica NDIR para
+    prevenir condensación directa sin inducir retardo de difusión
+    significativo ($\tau_{63} < 30$\,s).
+\end{itemize}
+
+\textbf{Capa de procesamiento edge.} El ESP32 ejecutó un firmware
+desarrollado en C++ (framework Arduino) con las siguientes rutinas:
+(i) lectura multiplexada de sensores cada 30\,s; (ii) filtro digital
+de media móvil exponencial (EMA, $\alpha = 0.3$) para atenuación de
+ruido de alta frecuencia; (iii) almacenamiento temporal en buffer
+circular de memoria Flash (4\,MB) ante fallos de conectividad; e
+(iv) transmisión asincrónica vía MQTT (protocolo ligero) hacia un
+broker EMQX desplegado en instancia local.
+
+\textbf{Capa de contención experimental.} Para desacoplar la unidad
+biológica de la unidad de medición, se empleó un sistema de doble
+contención: el repositorio de cría (unidad biológica) se insertó en
+una cámara de medición hermética de acrílico transparente (volumen
+interno 5.2\,L) equipada con los sensores NDIR en el espacio de
+cabeza. El protocolo de medición siguió un ciclo de
+\textit{Cierre--Ventilación--Reclosure}:
+(1) inserción del repositorio y cierre hermético, registrando
+concentraciones hasta saturación o estabilización;
+(2) apertura de la cámara y extracción del repositorio para
+re-oxigenación pasiva del sustrato (10\,min); y
+(3) reintroducción y segundo cierre hermético para evaluar la
+histeresis metabólica.
+
+% -----------------------------------------------------------------------------
+% 2.3. CALIBRACIÓN Y COMPENSACIÓN CRUZADA
+% -----------------------------------------------------------------------------
+\subsection{Protocolo de calibración y compensación cruzada}
+\label{subsec:cap2_calibracion}
+
+\textbf{Calibración estática.} Previo al despliegue experimental, los
+sensores NDIR se sometieron a calibración de dos puntos con gases
+patrón certificados (CO$_2$: 0\,ppm aire sintético cero; 5000\,ppm
+mezcla N$_2$/CO$_2$, incertidumbre $\pm2$\,\%, trazable a NIST).
+La calibración se ejecutó dentro de la cámara de medición a
+25\,°C y 50\,\% HR para replicar las condiciones de referencia del
+fabricante.
+
+\textbf{Compensación cruzada por temperatura y humedad.} Dado que
+las lecturas NDIR exhiben deriva térmica y sensibilidad a la
+humedad relativa \autocite{biagiDevelopmentMachineLearningbased2024},
+se implementó un modelo de corrección multivariado en el firmware
+del nodo:
+
+\begin{equation}
+    C_{\text{corr}} = C_{\text{raw}} \cdot \frac{T_{\text{cal}}}{T_{\text{amb}}} \cdot \frac{P_{\text{amb}}}{P_{\text{cal}}} \cdot \left[ 1 + \beta \cdot (\text{RH}_{\text{amb}} - \text{RH}_{\text{cal}}) \right] + \gamma \cdot (T_{\text{amb}} - T_{\text{cal}})
+    \label{eq:compensacion_ndir}
+\end{equation}
+
+donde $C_{\text{raw}}$ es la concentración bruta (ppm),
+$T_{\text{cal}} = 298.15$\,K, $P_{\text{cal}} = 101.325$\,kPa,
+$\text{RH}_{\text{cal}} = 50$\,\%, $\beta = 2.1 \times 10^{-4}$
+(\%RH)$^{-1}$ (coeficiente de sensibilidad a la humedad estimado
+empíricamente para el rango 60--90\,\% HR), y $\gamma = -0.45$\,ppm\,K$^{-1}$
+(coeficiente térmico de deriva).
+
+\textbf{Validación dinámica.} Durante las corridas experimentales,
+se tomaron muestras de aire del espacio de cabeza (10\,mL) mediante
+jeringa hermética en tres instantes por ciclo (t = 0, 7 y 14 días),
+analizadas por cromatografía de gases (GC-TCD, Agilent 7890B)
+como método de referencia. Los pares $(C_{\text{sensor}},
+C_{\text{GC}})$ se usaron para ajuste recursivo de los coeficientes
+$\beta$ y $\gamma$ mediante regresión lineal multivariada.
+
+% -----------------------------------------------------------------------------
+% 2.4. MÉTRICAS DE VALIDACIÓN
+% -----------------------------------------------------------------------------
+\subsection{Métricas de desempeño metrológico}
+\label{subsec:cap2_metricas}
+
+El desempeño del sistema se evaluó mediante cuatro indicadores
+cuantitativos, alineados con la hipótesis H1:
+
+\begin{enumerate}
+    \item \textbf{Coeficiente de correlación de Pearson} ($R$):
+    linealidad entre la señal del sensor y el método de referencia.
+    Umbral de aceptación: $R > 0.85$.
+    
+    \item \textbf{Error Porcentual Absoluto Medio} (MAPE):
+    \begin{equation}
+\text{MAPE} = \frac{100}{N} \sum_{i=1}^{N} \left| \frac{C_{\text{sensor},i} - C_{\text{ref},i}}{C_{\text{ref},i}} \right| \quad (\%)
+        \label{eq:mape}
+    \end{equation}
+    Umbral de aceptación: MAPE $\leq 15$\,\%.
+    
+    \item \textbf{Raíz del Error Cuadrático Medio} (RMSE):
+    \begin{equation}
+        \text{RMSE} = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (C_{\text{sensor},i} - C_{\text{ref},i})^2}
+        \label{eq:rmse}
+    \end{equation}
+    
+    \item \textbf{Incertidumbre expandida} ($U$, $k=2$):
+    calculada conforme a la propagación de errores tipo A (repetibilidad)
+    y tipo B (resolución del sensor, deriva del patrón, coeficientes de
+    compensación), combinada como:
+    \begin{equation}
+        u_c = \sqrt{u_A^2 + u_B^2}
+        \label{eq:incertidumbre_combinada}
+    \end{equation}
+    y reportada como $U = 2 \cdot u_c$ para un nivel de confianza del
+    95\,\%.
+\end{enumerate}
+
+Adicionalmente, se reportó la \textbf{tasa de pérdida de paquetes}
+de datos (packet loss) durante la telemetría MQTT y la
+\textbf{continuidad operativa} del nodo (horas de registro efectivo
+vs. horas programadas) como indicadores de robustez del sistema IoT.

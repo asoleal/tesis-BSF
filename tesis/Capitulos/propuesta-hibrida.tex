@@ -1,0 +1,242 @@
+\section{Modelo mecanicista de dinámica de compartimentos}
+
+\subsection{Variables de estado y parámetros ambientales}
+
+Se define el vector de estados macroscópicos
+\begin{equation}
+\mathbf{u}(t) = \begin{bmatrix} S(t) \\ B(t) \\ C(t) \\ M(t) \end{bmatrix} \in \mathbb{R}^4_{\geq 0},
+\end{equation}
+donde:
+\begin{itemize}
+    \item $S(t)$: masa remanente de sustrato orgánico (g).
+    \item $B(t)$: biomasa estructural larval (g). \textbf{Nota:} en la calibración del bloque mecanicista, $B(t)$ se mide solo en instantes de cosecha destructiva; entre cosechas se infiere mediante el estimador de la Sección~\ref{sec:estimador}.
+    \item $C(t)$: masa acumulada de $\mathrm{CO}_2$ emitida (g), inferida del sensor Winsent~410 y el flujo de aire del reactor.
+    \item $M(t)$: masa acumulada de $\mathrm{CH}_4$ emitida (g), inferida con idéntico protocolo.
+\end{itemize}
+
+Las variables de control ambiental, medidas por sensores SHT30 y oxímetro, son:
+\begin{equation}
+\mathbf{E}(t) = \bigl( T(t),\, H(t),\, [\mathrm{O}_2](t) \bigr).
+\end{equation}
+
+\subsection{Hipótesis estructurales}
+
+\paragraph{Hipótesis 1: Acoplamiento sustrato--larva.}
+La tasa de ingestión es de tipo saturación funcional (respuesta de Holling~II) con modulación térmica:
+\begin{equation}
+\label{eq:ingestion}
+v_{\text{ing}}(S,B,T) = \frac{a\,S\,B}{1 + a\,\tau_h\,S} \, g(T),
+\end{equation}
+donde $a$ es la tarea de búsqueda (g$^{-1}$~d$^{-1}$), $\tau_h$ el tiempo de manipulación (d~g$^{-1}$) y $g(T)$ la función de tolerancia térmica para la ingestión.
+
+\paragraph{Hipótesis 2: Asimilación tipo DEB.}
+Una fracción $\kappa \in (0,1)$ de la materia ingerida se asimila a biomasa estructural; la fracción complementaria $(1-\kappa)$ se destina a respiración y mantenimiento metabólico.
+
+\paragraph{Hipótesis 3: Emisiones gaseosas.}
+Se distinguen dos vías de emisión:
+\begin{enumerate}
+    \item \textit{Respiración larval:} proporcional a la asimilación no estructural, con factor $\rho$ (g~$\mathrm{CO}_2$ por g de flujo respiratorio).
+    \item \textit{Degradación directa del sustrato:} flujo $\beta_0\,S$ hacia $\mathrm{CO}_2$ y $\gamma_0\,S\,\phi(H)$ hacia $\mathrm{CH}_4$, donde $\phi(H)$ es una función de inhibición por humedad (ej. logística decreciente).
+\end{enumerate}
+
+\subsection{Campo vectorial del modelo DEB}
+
+Bajo las hipótesis anteriores, el sistema de ecuaciones diferenciales ordinarias es:
+\begin{equation}
+\label{eq:sistema_deb}
+\frac{d\mathbf{u}}{dt} = \mathbf{f}\bigl(\mathbf{u},\, \mathbf{E}(t);\, \boldsymbol{\theta}\bigr),
+\end{equation}
+con componentes:
+\begin{align}
+\frac{dS}{dt} &= -\,v_{\text{ing}}(S,B,T) - \beta_0\,S - \gamma_0\,S\,\phi(H), \label{eq:dS} \\[6pt]
+\frac{dB}{dt} &= \kappa\,v_{\text{ing}}(S,B,T) - m\,B\,h(T), \label{eq:dB} \\[6pt]
+\frac{dC}{dt} &= (1-\kappa)\,\rho\,v_{\text{ing}}(S,B,T) + \beta_0\,S, \label{eq:dC} \\[6pt]
+\frac{dM}{dt} &= \gamma_0\,S\,\phi(H). \label{eq:dM}
+\end{align}
+
+El vector de parámetros a estimar es:
+\begin{equation}
+\boldsymbol{\theta} = \bigl( a,\, \tau_h,\, \kappa,\, m,\, \rho,\, \beta_0,\, \gamma_0,\, T_A,\, T_H,\, T_{\text{opt}} \bigr) \in \mathbb{R}^{10},
+\end{equation}
+donde $T_A$, $T_H$ y $T_{\text{opt}}$ son los parámetros de la curva térmica de la ingestión (Sharpe--Schoolfield o Arrhenius modificada).
+
+\subsection{Funciones de tolerancia térmica}
+
+\subsubsection{Ingestión: forma logística asimétrica}
+
+Para la tasa de ingestión se adopta la forma logística asimétrica de la literatura de insectos:
+\begin{equation}
+\label{eq:thermal_g}
+g(T) = \frac{(T - T_A)^n}{(T_{\text{opt}} - T_A)^n + (T - T_A)^n} \cdot \exp\!\left( -\frac{T - T_{\text{opt}}}{T_H} \right) \cdot \mathbf{1}_{\{T > T_A\}},
+\end{equation}
+donde $n=2$ (cuadrático) o $n$ libre si se justifica mecánicamente, y $\mathbf{1}_{\{\cdot\}}$ denota la función indicatriz.
+
+\subsubsection{Mantenimiento: relación de Arrhenius}
+
+En la teoría DEB estricta, la tasa de mantenimiento metabólico suele modelarse con una dependencia exponencial tipo Arrhenius respecto a la temperatura inversa, sin el término de decaimiento asimétrico propio de la ingestión (el mantenimiento sigue escalando con la temperatura hasta la desnaturalización proteica). Se propone:
+\begin{equation}
+\label{eq:thermal_h}
+h(T) = \exp\!\left( -\frac{T_A^{\text{Arr}}}{T} \right),
+\end{equation}
+donde $T_A^{\text{Arr}}$ es la temperatura de Arrhenius (K) y $T$ se expresa en Kelvin. \textbf{Nota:} la forma exacta de $h(T)$ debe validarse con la formulación específica de Eriksen (2022); si el autor utiliza una curva logística también para el mantenimiento, se adopta esa forma para mantener coherencia bibliográfica.
+
+% ================================================================
+\section{Problema inverso: estimación de parámetros}
+% ================================================================
+
+\subsection{Formulación como optimización con restricciones}
+
+Sean $\{\mathbf{u}^{\text{obs}}(t_k)\}_{k=1}^{N}$ las observaciones en los instantes de muestreo. Se define el conjunto de índices observables $\mathcal{O} = \{S, C, M\}$ (la biomasa $B$ se mide solo esporádicamente; véase Sección~\ref{sec:estimador}).
+
+El problema inverso consiste en hallar:
+\begin{equation}
+\label{eq:opt}
+\boldsymbol{\theta}^{*} = \arg\min_{\boldsymbol{\theta} \in \Theta} \; \mathcal{L}(\boldsymbol{\theta}) + \mathcal{R}(\boldsymbol{\theta}),
+\end{equation}
+donde:
+\begin{align}
+\mathcal{L}(\boldsymbol{\theta}) &= \sum_{k=1}^{N} \sum_{i \in \mathcal{O}} \frac{1}{\sigma_i^2} \Bigl( \hat{u}_i(t_k;\boldsymbol{\theta}) - u_i^{\text{obs}}(t_k) \Bigr)^2, \\[4pt]
+\mathcal{R}(\boldsymbol{\theta}) &= \lambda_1 \|\boldsymbol{\theta}\|_2^2 + \lambda_2 \sum_{k} \max\bigl(0, B_0 - \hat{B}(t_k)\bigr)^2.
+\end{align}
+
+Aquí $\hat{\mathbf{u}}(t_k;\boldsymbol{\theta})$ se obtiene integrando (\ref{eq:sistema_deb}) con un método numérico (RK4 o BDF si el sistema es stiff). El término $\mathcal{R}$ impone una cota inferior suave $B(t) \geq B_0 > 0$, donde $B_0$ es la biomasa mínima del neonato al eclosionar, y regularización Tikhonov para evitar sobreajuste.
+
+\subsection{Restricciones de caja}
+
+El dominio factible $\Theta$ se define por:
+\begin{equation}
+\begin{aligned}
+0 < a &\leq a_{\max}, &\quad 0 < \tau_h &\leq 1, &\quad 0 < \kappa &<< 1, \\
+0 < m &\leq m_{\max}, &\quad 0 < \rho &\leq 2, &\quad \beta_0, \gamma_0 &\geq 0, \\
+15 &\leq T_A < T_{\text{opt}} < T_H \leq 45, &\quad B_0 &> 0. & &
+\end{aligned}
+\end{equation}
+
+\subsection{Algoritmo de resolución}
+
+Dada la baja dimensionalidad de $\boldsymbol{\theta}$ ($\dim = 10$) y la presencia de restricciones de caja, se recomienda el método de \textbf{L-BFGS-B} (Limited-memory Broyden--Fletcher--Goldfarb--Shanno con Bounds). El gradiente $\nabla_{\boldsymbol{\theta}} \mathcal{L}$ se calcula mediante diferenciación automática (autodiff) a través del integrador numérico (adjoint sensitivity method o simplemente backpropagation through time si se usa un solver diferenciable en PyTorch/Julia).
+
+\begin{verbatim}
+Procedimiento:
+1. Inicializar theta_0 con valores de la literatura (Eriksen 2022).
+2. Para cada iteracion j:
+   a. Integrar ODE desde u_0 con parametros theta_j -> trayectoria u_hat.
+   b. Evaluar L(theta_j) comparando u_hat con datos observables.
+   c. Calcular gradiente nabla_theta L por autodiff.
+   d. Actualizar theta_{j+1} = P_Theta( theta_j - alpha * H_j * nabla_theta L )
+      donde P_Theta es la proyeccion sobre las cotas y H_j la aproximacion
+      de la inversa del Hessiano en L-BFGS-B.
+3. Criterio de parada: ||nabla_theta L|| < epsilon o max_iter alcanzado.
+\end{verbatim}
+
+% ================================================================
+\section{Estimador no destructivo de biomasa larval}
+% ================================================================
+\label{sec:estimador}
+
+\subsection{Motivación}
+
+La biomasa estructural $B(t)$ no puede medirse diariamente sin sacrificar larvas. Se propone un estimador externo al modelo mecanicista, basado en una red neuronal de propagación hacia adelante (MLP), que aprende el mapeo:
+\begin{equation}
+\label{eq:mapa_mlp}
+\hat{B}_{\text{NN}}(t) = f_{\boldsymbol{\phi}}\bigl( C(t),\, M(t),\, S(t),\, \bar{T},\, \bar{H},\, \mathrm{CDD}(t) \bigr),
+\end{equation}
+donde $\bar{T}$ y $\bar{H}$ son promedios móviles de temperatura y humedad en la ventana $[t-\Delta, t]$, $\mathrm{CDD}(t)$ son los grados-día acumulados (véase (\ref{eq:cdd})), y $\boldsymbol{\phi}$ son los pesos de la red.
+
+\paragraph{Definición (Grados-Día Acumulados, CDD).}
+Se define el tiempo fisiológico acumulado como:
+\begin{equation}
+\label{eq:cdd}
+\mathrm{CDD}(t) = \int_0^t \max\bigl(0,\, T(\tau) - T_{\text{base}}\bigr) \, d\tau,
+\end{equation}
+donde $T_{\text{base}}$ es la temperatura umbral de desarrollo de \textit{Hermetia illucens} (ej. $13$~°C según literatura). El uso de CDD en lugar del tiempo cronológico $t$ evita la extrapolación catastrófica del MLP fuera del rango de entrenamiento.
+
+\subsection{Arquitectura minimalista}
+
+\paragraph{Definición (MLP-Biomasa).}
+Sea $\mathbf{x} = (C, M, S, \bar{T}, \bar{H}, \mathrm{CDD}) \in \mathbb{R}^6$. El estimador es una red fully-connected de tres capas:
+\begin{align}
+\mathbf{h}_1 &= \sigma( \mathbf{W}_1 \mathbf{x} + \mathbf{b}_1 ), & \mathbf{W}_1 \in \mathbb{R}^{16 \times 6}, \\
+\mathbf{h}_2 &= \sigma( \mathbf{W}_2 \mathbf{h}_1 + \mathbf{b}_2 ), & \mathbf{W}_2 \in \mathbb{R}^{8 \times 16}, \\
+\hat{B} &= \max\bigl(0,\; \mathbf{w}_3^{\top} \mathbf{h}_2 + b_3 \bigr), & \mathbf{w}_3 \in \mathbb{R}^8,
+\end{align}
+donde $\sigma(\cdot) = \mathrm{ReLU}(\cdot)$ y la salida final usa una activación ``softplus'' o corte en cero para garantizar biomasa no negativa.
+
+\subsection{Entrenamiento supervisado}
+
+El conjunto de entrenamiento se construye exclusivamente de los días de cosecha destructiva:
+\begin{equation}
+\mathcal{D} = \bigl\{ \bigl(\mathbf{x}^{(k)}, B^{(k)}_{\text{real}}\bigr) \bigr\}_{k=1}^{K},
+\end{equation}
+donde $K$ es el número de cosechas. La función de pérdida es el error cuadrático medio:
+\begin{equation}
+\mathcal{L}_{\text{NN}}(\boldsymbol{\phi}) = \frac{1}{K} \sum_{k=1}^{K} \bigl( \hat{B}_{\text{NN}}^{(k)} - B^{(k)}_{\text{real}} \bigr)^2 + \mu \|\boldsymbol{\phi}\|_2^2.
+\end{equation}
+
+Se entrena con el optimizador Adam (tasa de aprendizaje $10^{-3}$, decaimiento por lotes) durante un máximo de 500 épocas, con parada temprana (early stopping) basada en validación cruzada leave-one-out si $K \geq 10$.
+
+\subsection{Uso operativo e integración con el DEB}
+
+En la fase de predicción (entre cosechas):
+\begin{enumerate}
+    \item Leer sensores: obtener $C(t)$, $M(t)$, $S(t)$, $T(t)$, $H(t)$.
+    \item Calcular promedios móviles $\bar{T}$, $\bar{H}$ y acumular $\mathrm{CDD}(t)$.
+    \item Evaluar MLP: $\hat{B}_{\text{NN}}(t) = f_{\boldsymbol{\phi}^{*}}(\mathbf{x})$.
+    \item Alimentar el modelo DEB: usar $\hat{B}_{\text{NN}}(t)$ como dato pseudo-observable en la función de pérdida del problema inverso, con incertidumbre $\sigma_B$ ampliada para reflejar que proviene de un estimador, no de medición directa.
+\end{enumerate}
+
+\begin{equation}
+\sigma_B^{\text{efectivo}} = \sqrt{ \sigma_{\text{med}}^2 + \sigma_{\text{NN}}^2 },
+\end{equation}
+donde $\sigma_{\text{NN}}$ se estima del error de validación del MLP.
+
+% ================================================================
+\section{Esquema de flujo de trabajo computacional}
+% ================================================================
+
+\begin{enumerate}
+    \item \textbf{Fase A -- Calibración DEB:}
+    \begin{itemize}
+        \item Usar datos de crecimiento de Eriksen (2022) para obtener $\boldsymbol{\theta}_0$.
+        \item Fijar $\boldsymbol{\theta}_0$ como punto inicial del optimizador L-BFGS-B.
+    \end{itemize}
+    
+    \item \textbf{Fase B -- Ajuste local con sensores propios:}
+    \begin{itemize}
+        \item Datos: series temporales de $(S_k, C_k, M_k, T_k, H_k)$ cada 6--12~h.
+        \item Dejar libres los parámetros térmicos $(T_A, T_H, T_{\text{opt}}, T_A^{\text{Arr}})$ y los coeficientes de emisión $(\beta_0, \gamma_0)$.
+        \item Congelar $a$, $\tau_h$, $\kappa$, $m$, $\rho$ si la literatura es consistente; de lo contrario, dejarlos libres con cotas estrechas.
+        \item Resolver (\ref{eq:opt}) con L-BFGS-B.
+    \end{itemize}
+    
+    \item \textbf{Fase C -- Entrenamiento del estimador MLP:}
+    \begin{itemize}
+        \item Construir $\mathcal{D}$ de las cosechas destructivas.
+        \item Calcular $\mathrm{CDD}$ para cada muestra.
+        \item Entrenar MLP con Adam.
+        \item Validar con leave-one-out.
+    \end{itemize}
+    
+    \item \textbf{Fase D -- Predicción operativa:}
+    \begin{itemize}
+        \item Integrar ODE con $\boldsymbol{\theta}^{*}$ para pronosticar $S(t)$, $C(t)$, $M(t)$.
+        \item Usar MLP entrenado para estimar $B(t)$ sin cosechar.
+        \item Comparar predicciones con sensores en tiempo real; si la discrepancia excede un umbral, reactivar Fase B.
+    \end{itemize}
+\end{enumerate}
+
+% ================================================================
+\section{Notas de implementación}
+% ================================================================
+
+\begin{itemize}
+    \item \textbf{Solver ODE:} Para intervalos de muestreo de 6--12~h, RK4 explícito con $h=0.1$~d es suficiente. Si aparece rigidez (escalas de tiempo muy separadas entre metabolismo y degradación microbiana), migrar a BDF implícito (\texttt{scipy.integrate.solve\_ivp} con \texttt{method='BDF'} o \texttt{Radau}).
+    
+    \item \textbf{Autodiff:} En Python, usar \texttt{torchdiffeq} (PyTorch) o \texttt{JAX} (\texttt{diffrax}) para diferenciación automática a través del solver. En Julia, \texttt{DifferentialEquations.jl} + \texttt{Zygote} o \texttt{ForwardDiff}.
+    
+    \item \textbf{Escalado:} Normalizar todas las variables de entrada del MLP (media 0, varianza 1) antes del entrenamiento para estabilidad numérica.
+    
+    \item \textbf{Reproducibilidad:} Fijar semillas aleatorias y registrar versiones de paquetes. El código debe versionarse en Git.
+    
+    \item \textbf{Tiempo fisiológico:} El cálculo de CDD debe hacerse con la temperatura en °C y $T_{\text{base}}$ validado experimentalmente para la población local de \textit{Hermetia illucens}. Si no se dispone de $T_{\text{base}}$ propio, usar el valor reportado en literatura ($\sim 13$~°C) como aproximación inicial.
+\end{itemize}

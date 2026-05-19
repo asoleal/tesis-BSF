@@ -1,0 +1,145 @@
+% =============================================================================
+% CAPÍTULO 2: INSTRUMENTACIÓN IoT Y CARACTERIZACIÓN METROLÓGICA
+% Artículo 1 publicable: Sensors, Measurement, o IEEE Sensors Journal
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% RESUMEN DEL CAPÍTULO (formato artículo)
+% -----------------------------------------------------------------------------
+\begin{center}
+\small
+\textbf{Resumen del capítulo.}
+Se diseña, calibra y valida un nodo de sensores NDIR de bajo costo para
+la cuantificación continua de \ce{CO2} y \ce{CH4} en sistemas de
+bioconversión con \textit{Hermetia illucens} bajo condiciones de alta
+humedad relativa ($>80$\,\%). Se reportan curvas de deriva instrumental,
+protocolos de compensación cruzada por temperatura y humedad, y la
+validación metrológica contra un patrón certificado de laboratorio.
+El dataset experimental resultante constituye la base de datos de entrada
+para los modelos predictivos desarrollados en los capítulos posteriores.
+\textbf{Palabras clave:} sensores NDIR, Internet de las Cosas,
+calibración metrológica, bioconversión, emisiones de gases de efecto
+invernadero, \textit{Hermetia illucens}, residuos agroindustriales tropicales.
+\end{center}
+
+% -----------------------------------------------------------------------------
+% 1. INTRODUCCIÓN
+% -----------------------------------------------------------------------------
+\section{Introducción}
+\label{sec:cap2_intro}
+
+La bioconversión de residuos orgánicos mediante larvas de mosca soldado
+negra (\textit{Hermetia illucens}, BSF) se ha consolidado como una
+tecnología de economía circular con potencial significativo para mitigar
+las emisiones de gases de efecto invernadero (GEI) asociadas a la gestión
+de residuos agroindustriales
+\autocite{bermudezComprehensiveUtilizationBlack2023,
+surendraBioconversionOrganicWastes2016}.
+Sin embargo, la mayoría de los estudios que caracterizan el perfil de
+emisiones de estos sistemas se basan en métodos estáticos o puntuales
+---cámaras de respiración cerradas, cromatografía de gases con muestreo
+discontinuo--- que no capturan la dinámica temporal real del metabolismo
+larval.
+Estos métodos, por su naturaleza discreta, tampoco permiten detectar
+eventos transitorios de anaerobiosis, cuya ocurrencia es intermitente y
+dependiente de la microestructura del sustrato
+\autocite{rossiEstimatingDynamicsGreenhouse2024,
+fuhrmannComprehensiveIndustryrelevantBlack2025}.
+
+En contextos agroindustriales del trópico ---como el Valle del Cauca,
+Colombia--- donde los residuos de frutas tropicales, bagazo de caña y
+pulpa de café presentan alta carga biodegradable y humedad inherente, la
+formación de microzonas anaeróbicas es particularmente probable,
+amplificando la necesidad de sistemas de monitoreo dinámico y de bajo
+costo adaptados a estas condiciones.
+
+La evidencia experimental reciente demuestra que las emisiones de
+\ce{CO2} en sistemas BSF siguen una cinética no lineal acoplada al
+crecimiento larval, con picos metabólicos localizados entre los días
+7--9 del ciclo de bioconversión
+\autocite{rossiEstimatingDynamicsGreenhouse2024}.
+Las emisiones de \ce{CH4} ---aunque globalmente bajas en relación con
+otros sistemas de tratamiento de residuos--- aparecen como eventos
+umbrales vinculados al agotamiento del oxígeno en microzonas del
+sustrato, con una distribución temporal marcadamente estocástica
+\autocite{bekkerImpactSubstrateMoisture2021}.
+Esta naturaleza dinámica e intermitente de las emisiones impone un
+requisito crítico de diseño: la necesidad de sistemas de monitoreo
+continuo en tiempo real que trasciendan la estimación empírica estática.
+
+Los sensores de infrarrojo no dispersivo (NDIR) representan una
+tecnología madura para la detección selectiva de \ce{CO2} y \ce{CH4},
+ampliamente adoptada en aplicaciones de calidad de aire interior,
+agricultura de precisión y monitoreo ambiental industrial
+\autocite{biagiDevelopmentMachineLearningbased2024, rajRealTimeEstimation2023}.
+No obstante, su implementación directa en biorreactores de BSF enfrenta
+desafíos metrológicos severos: la exposición prolongada a humedad
+relativa superior al $80$\,\% y la presencia simultánea de amoníaco y
+compuestos orgánicos volátiles inducen deriva instrumental progresiva y
+pérdida de sensibilidad espectral.
+Adicionalmente, la condensación en la óptica del sensor produce
+envejecimiento acelerado del componente fotónico, un mecanismo de falla
+que los fabricantes raramente documentan para entornos de alta humedad
+relativa \autocite{herrinCollateralDataQuality2021,
+chenEffectMoistureContent2019}.
+
+La literatura reciente ha explorado la calibración de sensores de bajo
+costo mediante técnicas de aprendizaje automático
+\autocite{biagiDevelopmentMachineLearningbased2024}, así como la
+integración de nodos IoT para el monitoreo de variables ambientales en
+sistemas de cría de insectos
+\autocite{vanIntegrationInternetofThingsSustainable2022,
+duobieneDevelopmentWirelessSensor2022}.
+Sin embargo, estos trabajos no reportan protocolos de compensación
+cruzada validados frente a patrones certificados ni cuantifican la
+incertidumbre expandida bajo las condiciones de humedad y carga
+química propias de la bioconversión con BSF.
+Persiste, por tanto, una brecha metodológica crítica: la ausencia de
+marcos metrológicos explícitos ---con trazabilidad a patrones
+certificados, cuantificación de incertidumbre expandida conforme a
+estándares internacionales de metrología, y compensación cruzada por
+variables ambientales--- para sensores NDIR operando en las condiciones
+agresivas de estos sistemas.
+
+Este capítulo aborda específicamente esa brecha, respondiendo al
+\textbf{Objetivo Específico 1} de esta investigación:
+\textit{configurar y calibrar un módulo de sensores NDIR de bajo costo
+para la medición de \ce{CO2} y \ce{CH4}, determinando su precisión y
+desviación (MAPE) frente a un instrumento de referencia bajo las
+condiciones de temperatura y humedad propias del cultivo de BSF.}
+La Sección~\ref{sec:cap2_materiales_metodos} describe el diseño
+experimental, la arquitectura del nodo IoT y los protocolos de
+calibración y compensación; la
+Sección~\ref{sec:cap2_resultados} presenta el dataset experimental,
+las curvas de deriva y los indicadores de desempeño metrológico;
+la Sección~\ref{sec:cap2_discusion} contrasta los resultados con la
+literatura y discute las limitaciones operacionales; y la
+Sección~\ref{sec:cap2_conclusiones} evalúa el cumplimiento de la
+hipótesis H1.
+
+% -----------------------------------------------------------------------------
+% Placeholders para las siguientes secciones (se desarrollarán iterativamente)
+% -----------------------------------------------------------------------------
+\section{Materiales y métodos}
+\label{sec:cap2_materiales_metodos}
+\input{Capitulos/cap2_materiales_metodos.tex}
+%
+%\subsection{Diseño experimental y sustratos}
+%\subsection{Arquitectura del nodo IoT}
+%\subsection{Protocolo de calibración y compensación cruzada}
+%\subsection{Métricas de validación}
+%
+%\section{Resultados}
+%\label{sec:cap2_resultados}
+%
+%\subsection{Caracterización fisicoquímica de sustratos}
+%\subsection{Estabilidad y deriva de sensores en HR>80\%}
+%\subsection{Curvas de compensación y validación contra patrón}
+%\subsection{Dataset experimental}
+%
+%\section{Discusión}
+%\label{sec:cap2_discusion}
+%
+%\section{Conclusiones del capítulo}
+%\label{sec:cap2_conclusiones}
+

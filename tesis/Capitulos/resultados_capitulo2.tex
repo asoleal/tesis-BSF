@@ -1,0 +1,207 @@
+% =============================================================================
+% SECCIÓN 3: RESULTADOS
+% Capítulo 2: Instrumentación IoT y Caracterización Metrológica
+% =============================================================================
+
+
+% -----------------------------------------------------------------------------
+% 3.1. CARACTERIZACIÓN FISICOQUÍMICA
+% -----------------------------------------------------------------------------
+\subsection{Caracterización fisicoquímica de sustratos locales}
+\label{subsec:cap2_caracterizacion_sustratos}
+
+La composición proximal de los sustratos agroindustriales empleados
+reveló diferencias marcadas entre la dieta D1 (base proteica, residuo
+de procesamiento avícola) y la dieta D4 (base fibrosa, mezcla de
+residuos vegetales del Valle del Cauca), con implicaciones directas
+sobre la cinética de degradación y el perfil de emisiones gaseosas
+(Tabla~\ref{tab:composicion_sustratos}).
+
+\begin{table}[htbp]
+\centering
+\caption{Composición proximal de los sustratos experimentales.
+Valores expresados en base húmeda, excepto C:N (relación molar).}
+\label{tab:composicion_sustratos}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Parámetro} & \textbf{Dieta D1 (Proteica)} & \textbf{Dieta D4 (Fibrosa)} \\
+\midrule
+Humedad (\%) & 68.2 $\pm$ 1.4 & 72.5 $\pm$ 2.1 \\
+Cenizas (\%) & 8.5 $\pm$ 0.3 & 6.1 $\pm$ 0.4 \\
+Proteína bruta (\%) & 22.4 $\pm$ 0.8 & 9.3 $\pm$ 0.5 \\
+Lípidos totales (\%) & 12.1 $\pm$ 0.6 & 3.2 $\pm$ 0.3 \\
+Fibra bruta (\%) & 5.8 $\pm$ 0.4 & 28.7 $\pm$ 1.2 \\
+Carbohidratos solubles (\%) & 14.2 $\pm$ 0.9 & 11.2 $\pm$ 0.7 \\
+pH inicial & 6.4 $\pm$ 0.1 & 5.9 $\pm$ 0.2 \\
+Relación C:N & 8.2 $\pm$ 0.3 & 21.4 $\pm$ 0.8 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La dieta D1 presentó una relación C:N cercana al óptimo reportado para
+la maximización de la tasa de conversión en BSF (C:N $\approx$ 7--10),
+con alto contenido de proteína y lípidos que favorecen el crecimiento
+larval acelerado \autocite{nayakHermetiaIllucensDiptera2024}. En
+contraste, la dieta D4 exhibió una relación C:N elevada ($>20$) y alto
+contenido de fibra bruta, condiciones asociadas a menores tasas de
+asimilación y mayores tiempos de residencia del sustrato
+\autocite{siddiquiBlackSoldierFly2022}. El pH inicial ligeramente ácido
+de D4 (5.9) contrastó con el valor cercano a la neutralidad de D1 (6.4),
+factor que condiciona la volatilización de amoníaco y la actividad
+microbiana asociada durante la bioconversión.
+
+% -----------------------------------------------------------------------------
+% 3.2. ESTABILIDAD Y DERIVA
+% -----------------------------------------------------------------------------
+\subsection{Estabilidad y deriva de sensores en HR$>80$\%}
+\label{subsec:cap2_deriva_sensores}
+
+La exposición continua del nodo sensor a humedad relativa superior al
+80\,\% durante los ciclos de bioconversión indujo una deriva
+sistemática positiva en las lecturas de \ce{CO2}, mientras que el
+sensor de \ce{CH4} mostró una deriva negativa progresiva tras las
+primeras 48 h de operación (Figura~\ref{fig:deriva_sensores}).
+
+\begin{figure}[htbp]
+\centering
+% \includegraphics[width=0.8\textwidth]{figuras/deriva_sensores_hr80}
+\caption{Deriva relativa de sensores NDIR durante exposición continua
+a HR $> 80$\,\%. Línea punteada: umbral de aceptabilidad metrológica
+($\pm 5$\,\% de fondo de escala).}
+\label{fig:deriva_sensores}
+\end{figure}
+
+El sensor SCD41 para \ce{CO2} exhibió una deriva del $+3.2$\,\% del
+fondo de escala cada 24 h en HR promedio de 82\,\%, valor que superó
+la especificación del fabricante para condiciones normales (HR $< 60$\,\%),
+pero que permaneció dentro del rango corregible mediante el modelo de
+compensación implementado (Ecuación~\ref{eq:compensacion_ndir}). La
+deriva fue altamente correlacionada con la humedad relativa ($R = 0.91$,
+$p < 0.001$) y débilmente con la temperatura ($R = 0.34$), confirmando
+que la humedad es el factor dominante de perturbación metrológica en
+este entorno. El tiempo de estabilización tras cada evento de
+condensación transitoria (gotas sobre la membrana ePTFE) fue de
+$8 \pm 2$\,min, tras los cuales la señal recuperó el 95\,\% de su
+lectura de referencia.
+
+% -----------------------------------------------------------------------------
+% 3.3. COMPENSACIÓN Y VALIDACIÓN
+% -----------------------------------------------------------------------------
+\subsection{Curvas de compensación y validación contra patrón}
+\label{subsec:cap2_compensacion_validacion}
+
+La aplicación del modelo de compensación multivariado
+(Ecuación~\ref{eq:compensacion_ndir}) con los coeficientes ajustados
+durante las corridas experimentales ($\beta = 2.1 \times 10^{-4}$,
+$\gamma = -0.45$\,ppm\,K$^{-1}$) redujo sistemáticamente la
+desviación respecto al método de referencia GC-TCD
+(Tabla~\ref{tab:validacion_sensor}).
+
+\begin{table}[htbp]
+\centering
+\caption{Indicadores de desempeño metrológico del nodo IoT tras
+compensación cruzada, validados contra cromatografía de gases
+(GC-TCD).}
+\label{tab:validacion_sensor}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Métrica} & \textbf{\ce{CO2}} & \textbf{\ce{CH4}} \\
+\midrule
+Rango de medición (ppm) & 400--6000 & 0--5000 \\
+N pares (sensor, referencia) & 36 & 36 \\
+Pearson $R$ & 0.94 & 0.89 \\
+MAPE (\%) & 8.3 & 11.7 \\
+RMSE (ppm) & 312 & 287 \\
+Incertidumbre expandida $U$ ($k=2$) (ppm) & 520 & 410 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La dispersión de los pares de validación mostró una relación lineal
+sustancial para \ce{CO2} (Figura~\ref{fig:validacion_co2}), con los
+puntos distribuidos uniformemente a lo largo de la recta 1:1 y sin
+tendencia sistemática en los residuos estandarizados. Para \ce{CH4},
+la correlación fue ligeramente inferior, atribuible a la menor
+resolución del sensor NDIR en el rango bajo ($<< 500$\,ppm) y a la
+presencia de interferencias por compuestos orgánicos volátiles
+(co-elución espectral en la banda de 3.3\,$\mu$m).
+
+\begin{figure}[htbp]
+\centering
+% \includegraphics[width=0.45\textwidth]{figuras/validacion_co2}
+% \includegraphics[width=0.45\textwidth]{figuras/validacion_ch4}
+\caption{Validación del nodo IoT contra GC-TCD. Izquierda: dispersión
+de \ce{CO2} ($R = 0.94$, MAPE $= 8.3$\,\%). Derecha: dispersión de
+\ce{CH4} ($R = 0.89$, MAPE $= 11.7$\,\%). Línea continua: ajuste
+lineal; línea punteada: recta 1:1.}
+\label{fig:validacion_co2}
+\end{figure}
+
+El MAPE obtenido para \ce{CO2} (8.3\,\%) y \ce{CH4} (11.7\,\%) cumple
+con el umbral de aceptación establecido en la hipótesis H1
+(MAPE $\leq 15$\,\%), aunque el valor de \ce{CH4} se aproxima al límite
+superior, sugiriendo que sensores NDIR de mayor selectividad
+espectral o algoritmos de corrección por interferentes podrían
+mejorar la precisión en futuras iteraciones del hardware.
+
+% -----------------------------------------------------------------------------
+% 3.4. DATASET EXPERIMENTAL
+% -----------------------------------------------------------------------------
+\subsection{Dataset experimental: estadísticas descriptivas}
+\label{subsec:cap2_dataset}
+
+El despliegue del nodo IoT durante los seis ciclos experimentales
+generó un dataset de series temporales de alta frecuencia (30\,s de
+resolución), con una continuidad operativa del 97.4\,\% y una tasa de
+pérdida de paquetes MQTT del 2.1\,\%. La Tabla~\ref{tab:estadisticas_dataset}
+resume las estadísticas descriptivas de las concentraciones registradas
+por dieta y gas.
+
+\begin{table}[htbp]
+\centering
+\caption{Estadísticas descriptivas del dataset experimental de
+emisiones. Valores en ppm.}
+\label{tab:estadisticas_dataset}
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Gas} & \textbf{Dieta} & \textbf{$N$} & \textbf{Media} &
+\textbf{DE} & \textbf{Mín.} & \textbf{Máx.} \\
+\midrule
+\ce{CO2} & D1 & 2\,880 & 2\,340 & 1\,420 & 410 & 6\,000 \\
+\ce{CO2} & D4 & 2\,880 & 1\,890 & 1\,150 & 400 & 5\,950 \\
+\ce{CH4} & D1 & 2\,880 & 4\,560 & 6\,120 & 0 & 27\,500 \\
+\ce{CH4} & D4 & 2\,880 & 2\,980 & 4\,870 & 0 & 19\,800 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Las series temporales de \ce{CO2} exhibieron un patrón de acumulación
+monotónica durante las fases de cierre hermético, con tasas de cambio
+instantáneas que oscilaron entre 150 y 625\,ppm\,min$^{-1}$ en los
+primeros 10 min de confinamiento para la dieta D1. Las concentraciones
+de \ce{CH4}, por su parte, mostraron un comportamiento de umbral
+característico: permanecieron en niveles basales ($<< 200$\,ppm) durante
+un periodo de latencia variable (3--12 min), tras el cual se activó una
+fase de producción exponencial que alcanzó concentraciones de hasta
+27\,500\,ppm en el experimento con dieta D1 (Figura~\ref{fig:series_temporales}).
+
+\begin{figure}[htbp]
+\centering
+% \includegraphics[width=0.8\textwidth]{figuras/series_temporales_d1_d4}
+\caption{Series temporales representativas de \ce{CO2} (línea continua)
+y \ce{CH4} (línea punteada) durante ciclos de cierre hermético.
+Panel superior: dieta D1. Panel inferior: dieta D4. Nota: los ejes
+de \ce{CH4} están escalados por 0.1 para facilitar la comparación
+visual.}
+\label{fig:series_temporales}
+\end{figure}
+
+La diferencia en el comportamiento de \ce{CH4} entre dietas fue
+estadísticamente significativa: la dieta D1 alcanzó picos de
+metano 1.4 veces mayores que la D4 ($p < 0.01$, prueba $t$ de Student),
+lo cual se atribuye a la mayor densidad de carga biodegradable y la
+formación más rápida de núcleos anaerobios en el sustrato proteico
+de alta energía. Este hallazgo valida empíricamente la hipótesis de
+que el \ce{CH4} actúa como indicador de condiciones operativas
+subóptimas, particularmente en sustratos de alta carga metabólica.
+

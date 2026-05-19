@@ -1,0 +1,156 @@
+% =============================================================================
+% SECCIÓN 4: DISCUSIÓN
+% Capítulo 2: Instrumentación IoT y Caracterización Metrológica
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% 4.1. SÍNTESIS Y POSICIONAMIENTO METROLÓGICO
+% -----------------------------------------------------------------------------
+Los resultados obtenidos validan que un nodo de sensores NDIR de bajo
+costo, sometido a protocolos de calibración de dos puntos y compensación
+cruzada por temperatura y humedad, alcanza un desempeño metrológico
+aceptable para la cuantificación de \ce{CO2} y \ce{CH4} en biorreactores
+de \textit{H. illucens} bajo condiciones de alta humedad relativa. El
+MAPE de 8.3\,\% para \ce{CO2} y 11.7\,\% para \ce{CH4} cumple con el
+umbral de aceptación establecido en la hipótesis H1 (MAPE $\leq 15$\,\%)
+y sitúa el sistema dentro del rango de precisión requerido para
+aplicaciones de monitoreo ambiental operativo, aunque por debajo de la
+exactitud de analizadores de referencia de laboratorio (MAPE $< 2$\,\%
+para GC-TCD).
+
+% -----------------------------------------------------------------------------
+% 4.2. COMPARACIÓN CON ESTRATEGIAS DE CALIBRACIÓN EN LA LITERATURA
+% -----------------------------------------------------------------------------
+La literatura reciente ha abordado la calibración de sensores de bajo
+costo mediante técnicas de aprendizaje automático. \textcite{biagiDevelopmentMachineLearningbased2024} desarrollaron estaciones
+multiparamétricas para \ce{CO2} y \ce{CH4} en aire ambiente, utilizando
+redes neuronales para corrección post-hoc de la deriva térmica y
+hídrica. Si bien este enfoque reduce el error residual en entornos
+controlados, introduce una dependencia computacional que dificulta su
+implementación en dispositivos edge de recursos limitados. En contraste,
+el modelo de compensación física implementado en este capítulo
+(Ecuación~\ref{eq:compensacion_ndir}) opera enteramente en el
+microcontrolador ESP32, con un costo computacional de $< 5$\,ms por
+ciclo de corrección y una memoria RAM requerida de $< 2$\,KB. Esta
+eficiencia es crítica para contextos agroindustriales del Sur Global,
+donde la conectividad intermitente y la energía restringida hacen
+inviable el procesamiento en la nube \autocite{duobieneDevelopmentWirelessSensor2022}.
+
+Por otro lado, trabajos previos en monitoreo de sistemas de BSF han
+priorizado variables ambientales de confort (temperatura, humedad, pH)
+sin validación metrológica rigurosa de los gases de efecto invernadero.
+\textcite{vanIntegrationInternetofThingsSustainable2022} implementaron
+un sistema IoT para cría de BSF con sensores DHT22 y pH, pero no
+integraron sensores NDIR validados ni reportaron incertidumbre
+expandida. El aporte distintivo de este capítulo radica en la
+cuantificación explícita de la incertidumbre expandida ($U$, $k=2$)
+y la trazabilidad a patrones certificados, elementos indispensables
+para que los datos generados sean admisibles en protocolos de
+Medición, Reporte y Verificación (MRV) de emisiones.
+
+% -----------------------------------------------------------------------------
+% 4.3. MECANISMOS DE DERIVA EN CONDICIONES AGRESIVAS
+% -----------------------------------------------------------------------------
+La deriva observada en HR $> 80$\,\% se explica principalmente por dos
+mecanismos físicos. En el sensor de \ce{CO2}, la condensación de vapor
+sobre la óptica del detector reduce la transmitancia de la banda de
+absorción a 4.26\,$\mu$m, generando una lectura positiva sistemática
+que se acumula con el tiempo. La membrana ePTFE implementada mitigó
+este efecto al actuar como barrera líquida-permeable a gases, pero su
+eficacia disminuye cuando la humedad alcanza la saturación relativa
+sobre la superficie de la membrana. En el sensor de \ce{CH4}, la deriva
+negativa se atribuye a la interferencia espectral de compuestos
+orgánicos volátiles (COV) emitidos durante la descomposición del
+sustrato proteico (ácido butírico, mercaptanos), los cuales presentan
+bandas de absorción superpuestas en la región de 3.3\,$\mu$m
+\autocite{chenEffectMoistureContent2019}. Este fenómeno explica por qué
+el MAPE de \ce{CH4} (11.7\,\%) supera al de \ce{CO2} (8.3\,\%) y
+sugiere que, para aplicaciones que requieran cuantificación precisa de
+metano a niveles $< 500$\,ppm, sería necesario incorporar un sensor NDIR
+de doble longitud de onda o un filtro de corrección espectral por
+interferentes.
+
+% -----------------------------------------------------------------------------
+% 4.4. INTERPRETACIÓN DE LAS DIFERENCIAS ENTRE DIETAS
+% -----------------------------------------------------------------------------
+La marcada diferencia en el perfil de \ce{CH4} entre la dieta D1
+(proteica) y la D4 (fibrosa) tiene implicaciones directas para el
+diseño de protocolos de monitoreo. La dieta D1, con mayor carga
+biodegradable y relación C:N baja, favoreció la formación rápida de
+núcleos anaerobios en el interior del sustrato denso, activando la
+metanogénesis bacteriana tras un periodo de latencia de 3--8 minutos
+durante el confinamiento hermético. Este comportamiento de umbral
+valida empíricamente el modelo teórico de \textcite{bekkerImpactSubstrateMoisture2021},
+quienes reportaron que la humedad del sustrato $> 70$\,\% es un
+detonante crítico de microzonas anaeróbicas en sistemas BSF. En
+contraste, la dieta D4, de mayor porosidad y menor densidad energética,
+permitió una aireación más eficiente del lecho, retrasando el inicio de
+la producción de metano y reduciendo su concentración máxima en un
+factor de 1.4.
+
+Desde la perspectiva del monitoreo operativo, estos hallazgos indican
+que el umbral de alerta para anaerobiosis no puede ser un valor fijo
+de \ce{CH4}, sino que debe adaptarse al tipo de sustrato. Para dietas
+de alta carga proteica (D1), una concentración de \ce{CH4} $> 1000$\,ppm
+en los primeros 10 min de confinamiento constituye un indicador temprano
+de saturación metabólica, mientras que para dietas fibrosas (D4) el
+mismo umbral podría ser inadecuado o generar falsos negativos.
+
+% -----------------------------------------------------------------------------
+% 4.5. LIMITACIONES DEL ESTUDIO
+% -----------------------------------------------------------------------------
+Este capítulo presenta cuatro limitaciones principales que condicionan
+la generalización de los resultados. Primera, el diseño experimental se
+ejecutó a escala de mesocosmos de laboratorio (5.2\,L), con ciclos de
+confinamiento hermético de duración limitada ($<< 30$\,min). Aunque
+este enfoque permite el control metrológico riguroso de las
+concentraciones, no replica la dinámica de un biorreactor industrial
+abierto o de flujo continuo, donde la ventilación forzada modifica los
+gradientes de gas en el espacio de cabeza. Segunda, el monitoreo no
+fue continuo durante los 15 días del ciclo de bioconversión, sino
+puntual en ventanas de medición. Esta limitación se aborda
+sistemáticamente en los Capítulos \ref{sec:cap2_discusion} y 4,
+donde el modelo mecanicista y el sistema híbrido interpolan y predicen
+las emisiones entre mediciones. Tercera, el sensor de \ce{CH4} empleado
+tiene un límite de detección efectivo de $\approx 200$\,ppm, lo cual
+impide cuantificar concentraciones basales o eventos de muy baja
+emisión que podrían ser relevantes para balances de carbono de alta
+resolución. Cuarta, no se incluyó la medición directa de \ce{NH3} ni
+\ce{N2O} por limitaciones de costo en sensores electroquímicos
+selectivos, aunque la arquitectura modular del nodo permite su
+integración futura sin rediseño estructural.
+
+% -----------------------------------------------------------------------------
+% 4.6. IMPLICACIONES PARA LA GESTIÓN AGROINDUSTRIAL EN EL SUR GLOBAL
+% -----------------------------------------------------------------------------
+El sistema validado en este capítulo tiene un potencial tangible de
+transferencia a productores agroindustriales de pequeña y mediana escala
+en el Valle del Cauca y regiones tropicales análogas. El costo marginal
+del nodo IoT (estimado en $< 80$\,USD en componentes) representa menos
+del 2\,\% del valor del producto potencial (biomasa larval + frass) en
+un ciclo de 15 días, haciendo viable su adopción económica. La
+detección temprana de picos de \ce{CH4} permite intervenir el proceso
+mediante volteo del sustrato o ajuste de la densidad larval antes de
+que la eficiencia de conversión se degrade irreversiblemente. Desde una
+perspectiva de gobernanza ambiental, la disponibilidad de datos con
+trazabilidad metrológica habilita la participación de estos productores
+en mecanismos de economía circular con credenciales verificables,
+cerrando la brecha entre la innovación tecnológica y el acceso a
+mercados de carbono \autocite{jenkinsProcessingPoultryManure2025}.
+
+% -----------------------------------------------------------------------------
+% 4.7. CIERRE Y TRANSICIÓN
+% -----------------------------------------------------------------------------
+En síntesis, este capítulo establece que la instrumentación IoT de
+bajo costo puede alcanzar estándares de calidad datos admisibles para
+modelado predictivo, siempre que se incorporen protocolos de
+calibración, compensación cruzada y validación contra métodos de
+referencia. El dataset experimental generado ---con series temporales
+de \ce{CO2} y \ce{CH4} validadas, caracterizadas por dieta y
+condicionadas por variables ambientales--- constituye la base de
+entrenamiento y validación para el modelo mecanicista DEB desarrollado
+en el Capítulo \ref{chap:deb} y para la arquitectura híbrida HNODE
+presentada en el Capítulo \ref{chap:hnode}. La precisión alcanzada
+(MAPE $< 12$\,\%) garantiza que las señales de entrada a dichos modelos
+no introduzcan un error instrumental que supere la incertidumbre
+biológica inherente al sistema.
