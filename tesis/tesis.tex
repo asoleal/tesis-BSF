@@ -119,8 +119,8 @@
 
 % Si tu archivo variables.tex define estos campos, puedes dejarlos también llenos:
 \renewcommand{\departmenttwo}{Facultad de Ingeniería y Administración}
-\renewcommand{\palabrasclave}{Hermetia illucens, bioconversión de residuos, emisiones de gases, dióxido de carbono, metano, redes neuronales informadas por la física}
-\renewcommand{\keywords}{Hermetia illucens, waste bioconversion, gas emissions, carbon dioxide, methane, physics-informed neural networks}
+\renewcommand{\palabrasclave}{Hermetia illucens, bioconversión de residuos, emisiones de gases, dióxido de carbono, metano, proceso gaussiano, Dynamic Energy Budget}
+\renewcommand{\keywords}{Hermetia illucens, waste bioconversion, gas emissions, carbon dioxide, methane, gaussian process, Dynamic Energy Budget}
 
 % ==========================================
 %    INICIO DEL DOCUMENTO
@@ -179,185 +179,377 @@
 % =========================================================
 \pagenumbering{arabic}
 \setlength{\parskip}{1em}
+% ---------------------------------------------------------
+% CAPÍTULO 1
+% ---------------------------------------------------------
+\chapter{Introducción General}
+\chaptermark{Introducción}
 
-% ---------------------------------------------------------
-% CAPÍTULO 1: INTRODUCCION GENERAL
-% ---------------------------------------------------------
-\chapter{Introducción General y Marco de Referencia Crítico}
-\chaptermark{Introducción y Marco Crítico}
-% RESUMEN DEL CAPÍTULO (estilo review)
 \begin{center}
 \small
-\textbf{Resumen del capítulo.} 
-Este capítulo sintetiza el estado del arte en bioconversión con \textit{Hermetia illucens}, monitoreo de GEI y modelado híbrido, identificando vacíos críticos que motivan esta investigación. Se plantea la pregunta de investigación, las hipótesis y los objetivos del trabajo.
-\textbf{Palabras clave:} bioconversión, GEI, DEB, PINN, IoT, Sur Global.
+\textbf{Resumen del capítulo.}
+Este capítulo sitúa la bioconversión con \textit{Hermetia illucens} como alternativa de economía circular para la gestión de residuos orgánicos en contextos tropicales, identificando el vacío crítico en la cuantificación dinámica de emisiones de gases de efecto invernadero. Se plantea la pregunta de investigación, las hipótesis y los objetivos que orientan el desarrollo de un sistema híbrido integrado por sensores IoT, un modelo mecanicista de balance de carbono y un estimador no lineal parsimonioso.
+\textbf{Palabras clave:} bioconversión, \textit{Hermetia illucens}, emisiones de \ce{CO2}, \ce{CH4}, Dynamic Energy Budget, proceso gaussiano, IoT, Sur Global.
 \end{center}
 
 \section{Contexto: gestión de residuos agroindustriales y cambio climático}
-% Valle del Cauca, FORSU, IPCC AR6, FAO
+\label{sec:cap1_contexto}
+% GEI, Valle del Cauca, IPCC AR6, FAO.
 
-\section{Bioconversión con \textit{H. illucens}: potencial, limitaciones y vacíos de monitoreo}
-% Citas: Bermúdez, Surendra, Diener, Gold, Rossi, Eriksen
+\section{Bioconversión con \texorpdfstring{\textit{H. illucens}}{H. illucens}: potencial, limitaciones y vacíos de monitoreo}
+\label{sec:cap1_bsf}
+% Proceso L3--L5, reducción de masa, frass, biomasa. Caja negra.
+% Citas: Bermúdez, Surendra, Diener, Gold.
 
 \section{Emisiones de GEI en sistemas BSF: del factor estático al proxy dinámico}
-% CO2 como proxy metabólico, CH4 como indicador de falla, NH3 como control
-% Citas: Rossi 2024, Fuhrmann 2025, Bekker 2021
-
-\section{Modelado mecanicista e híbrido: de DEB a Neural ODEs}
-% Eriksen 2022 (DEBkiss), Raissi 2019 (PINNs), Florio 2025 (HNODEs/UDEs)
-% Vacío: no existe integración DEB-HNODE validada con sensores IoT en trópico
+\label{sec:cap1_emisiones}
+% CO2 como proxy metabólico; CH4 como indicador de falla operativa.
+% NH3: variable de interés para trabajo futuro, fuera del alcance.
+% Citas: Rossi 2024, Fuhrmann 2025, Bekker 2021.
 
 \section{Pregunta de investigación}
+\label{sec:cap1_pregunta}
 
-\section{Hipótesis general y específicas}
-% H1: Sensores MAPE <15%
-% H2: DEB MAPE <=15% en ventanas de 30min
-% H3: HNODE reduce error >=30% respecto a DEB puro
-% H4: Detección CH4 con Recall >80%
+\section{Hipótesis de investigación}
+\label{sec:cap1_hipotesis}
+
+\subsection{Hipótesis general}
+\label{subsec:cap1_hipotesis_general}
+% Sistema híbrido predice CO2 con MAPE < 15 % y detecta CH4 con sensibilidad > 80 %.
+
+\subsection{Hipótesis específicas}
+\label{subsec:cap1_hipotesis_especificas}
+% H1: Sensores MAPE < 15 % vs. referencia.
+% H2: Modelo DEB MAPE <= 15 % en ventanas de observación.
+% H3: GP reduce error residual >= 30 % respecto a interpolación lineal de cosechas.
+% H4: Clasificador CH4 con recall > 80 %.
 
 \section{Objetivos de la investigación}
-% OG + 4 OE (instrumentación, DEB, híbrido, métricas)
+\label{sec:cap1_objetivos}
+
+\subsection{Objetivo general}
+\label{subsec:cap1_objetivo_general}
+
+\subsection{Objetivos específicos}
+\label{subsec:cap1_objetivos_especificos}
+% OE1: Instrumentación. OE2: Modelo DEB. OE3: Estimador GP + calibración. OE4: Métricas.
 
 \section{Alcance, delimitaciones y estructura del documento}
-% Escala laboratorio, sustratos locales, no N2O directo, NH3 teórico
+\label{sec:cap1_alcance}
+% Laboratorio, 14--20 días, ~6 réplicas. Sin N2O. CH4 como indicador, no ODE.
 
 % ---------------------------------------------------------
-% CAPÍTULO 2: INSTRUMENTACIÓN IOT
+% CAPÍTULO 2
 % ---------------------------------------------------------
-\chapter{Instrumentación IoT y Caracterización Metrológica de Emisiones en Bioconversión}
-\chaptermark{Instrumentación IoT y Emisiones}
+\chapter{Instrumentación IoT y Caracterización Metrológica de Emisiones}
+\chaptermark{Instrumentación y Metrología}
 
-% Justificación del capítulo: sin datos confiables no hay modelo
-\input{Capitulos/intro_capitulo2.tex}
+\begin{center}
+\small
+\textbf{Resumen del capítulo.}
+Se describe el diseño experimental, los sensores NDIR de bajo costo, el protocolo de ventanas cerradas y la caracterización metrológica del módulo de adquisición. Se establece la trazabilidad del dato crudo que alimentará el sistema híbrido de los capítulos posteriores.
+\textbf{Palabras clave:} sensores NDIR, \ce{CO2}, \ce{CH4}, IoT, calibración, incertidumbre metrológica, ventanas cerradas.
+\end{center}
 
-\section{Resultados}
+\section{Introducción}
+\label{sec:cap2_intro}
+
+\section{Descripción del Sistema Experimental}
+\label{sec:cap2_sistema_experimental}
+
+\subsection{Reactor batch y condiciones de laboratorio}
+\label{subsec:cap2_reactor}
+
+\subsection{Biomasa larval y manejo del sustrato}
+\label{subsec:cap2_biomassa_sustrato}
+
+\section{Sensores y Arquitectura de Adquisición}
+\label{sec:cap2_sensores}
+
+\subsection{Sensor NDIR para \texorpdfstring{\ce{CO2}}{CO2} y \texorpdfstring{\ce{CH4}}{CH4}}
+\label{subsec:cap2_sensor_ndir}
+
+\subsection{Variables ambientales: temperatura y humedad relativa}
+\label{subsec:cap2_sensor_ambiental}
+
+\subsection{Nodo IoT y computación en el borde}
+\label{subsec:cap2_nodo_iot}
+
+\section{Protocolo de Medición en Ventanas Cerradas}
+\label{sec:cap2_protocolo}
+
+\subsection{Diseño del ciclo de muestreo}
+\label{subsec:cap2_ciclo_muestreo}
+
+\subsection{Conversión de concentración a flujo másico}
+\label{subsec:cap2_conversion_ppm}
+
+\section{Calibración y Caracterización Metrológica}
+\label{sec:cap2_calibracion}
+
+\subsection{Curvas de calibración frente a patrones certificados}
+\label{subsec:cap2_curvas_calibracion}
+
+\subsection{Compensación cruzada e incertidumbre combinada}
+\label{subsec:cap2_incertidumbre}
+
+\section{Resultados de la Caracterización Instrumental}
 \label{sec:cap2_resultados}
-\input{Capitulos/resultados_capitulo2.tex}
 
-\section{Discusión}
-\label{sec:cap2_discusion}
-\input{Capitulos/discusion_capitulo2.tex}
-% Comparación con Biagi 2024 (ML calibration), limitaciones de sensores electroquímicos vs NDIR
-
-\section{Conclusiones del capítulo}
-% ¿H1 validada? Tabla de cumplimiento
+\section{Conclusiones del Capítulo}
+\label{sec:cap2_conclusiones}
 % ---------------------------------------------------------
-% CAPÍTULO 3: MODELO DEB
+% CAPÍTULO 3
 % ---------------------------------------------------------
-\chapter{Modelado Mecanicista de la Bioenergética y Emisiones de CO$_2$ mediante DEB}
-\chaptermark{Modelado DEB para BSF}
+\chapter{Modelo Matemático para la Predicción de Emisiones de CO\texorpdfstring{$_2$}{2} en el Proceso de Bioconversión con \textit{Hermetia illucens}}
+\chaptermark{Modelo de Emisiones CO\textsubscript{2}}
 
 \begin{center}
 \small
-\textbf{Resumen del capítulo.} 
-Se adapta el modelo DEBkiss para \textit{H. illucens} a sustratos agroindustriales del Valle del Cauca. Se estiman los parámetros bioenergéticos ($a_{max}$, $Y$, $m$, $T_A$) mediante ajuste no lineal a datos de crecimiento y respiración, y se valida la predicción de CO$_2$ en ventanas temporales de 30 minutos.
-\textbf{Palabras clave:} Dynamic Energy Budget, DEBkiss, cinética de crecimiento, parámetros bioenergéticos, CO$_2$.
+\textbf{Resumen del capítulo.}
+Se desarrolla la generalización del modelo Dynamic Energy Budget de Eriksen (2022) desde la escala individual a la escala de reactor batch. Se formulan las ecuaciones de estado para sustrato, asimilados, biomasa, lípidos y \ce{CO2}, se demuestra la consistencia dimensional y la conservación de masa de carbono, y se analiza el comportamiento cualitativo del sistema bajo modulación térmica.
+\textbf{Palabras clave:} Dynamic Energy Budget, \textit{Hermetia illucens}, balance de carbono, ecuaciones diferenciales, cinética Holling II, Sharpe--Schoolfield.
 \end{center}
 
 \section{Introducción}
-% De Eriksen 2022 a condiciones tropicales locales
+\label{sec:cap3_intro}
 
-\section{Materiales y métodos}
-\subsection{Formulación matemática: ecuaciones DEBkiss acopladas a cinética de sustrato}
-% dE/dt, dB/dt, dL/dt, dS/dt = -k_deg * (x_r * S)^0.5
-\subsection{Corrección de Arrhenius para temperatura}
-\subsection{Método numérico: Runge-Kutta de cuarto orden (RK4)}
-\subsection{Estrategia de ajuste de parámetros (mínimos cuadrados no lineales)}
-\subsection{Análisis de identificabilidad de parámetros}
+\section{Fundamentos del Modelo DEB para \textit{Hermetia illucens}}
+\label{sec:cap3_fundamentos_deb}
 
-\section{Resultados}
-\subsection{Parámetros bioenergéticos estimados para sustratos locales}
-% Tabla con IC 95%
-\subsection{Simulación de EDOs: evolución de E(t), B(t), L(t), S(t)}
-\subsection{Predicción de tasa de CO$_2$ vs. mediciones de sensor}
-\subsection{Validación: MAPE, R$^2$, análisis de residuos}
+\subsection{Estructura de compartimentos de carbono}
+\label{subsec:cap3_compartimentos}
 
-\section{Discusión}
-% Comparación parámetros con Eriksen 2022, Nielsen 2025
-% Limitaciones: homogeneidad del sustrato, no modelado de microzonas anaeróbicas
+\subsection{Flujos metabólicos y producción de \texorpdfstring{\ce{CO2}}{CO2}}
+\label{subsec:cap3_flujos_co2}
 
-\section{Conclusiones del capítulo}
-% ¿H2 validada?
+\section{Variables de Estado y Dominio del Sistema}
+\label{sec:cap3_variables}
+
+\section{Formulación del Sistema de Ecuaciones Diferenciales}
+\label{sec:cap3_formulacion_ode}
+
+\subsection{Balance del sustrato orgánico}
+\label{subsec:cap3_ode_sustrato}
+
+\subsection{Balance de asimilados en estado cuasi-estacionario}
+\label{subsec:cap3_ode_asimilados}
+
+\subsection{Dinámica de la biomasa estructural}
+\label{subsec:cap3_ode_biomasa}
+
+\subsection{Acumulación de lípidos de reserva}
+\label{subsec:cap3_ode_lipidos}
+
+\subsection{Producción y acumulación de \texorpdfstring{\ce{CO2}}{CO2}}
+\label{subsec:cap3_ode_co2}
+
+\section{Cinética de Asimilación y Modulación Ambiental}
+\label{sec:cap3_cinetica}
+
+\subsection{Funcional respuesta tipo Holling II}
+\label{subsec:cap3_holling}
+
+\subsection{Dependencia térmica: modelo de Sharpe--Schoolfield}
+\label{subsec:cap3_sharpe_schoolfield}
+
+\section{Parámetros del Modelo y Restricciones Físicas}
+\label{sec:cap3_parametros}
+
+\section{Análisis Estructural y Consistencia del Balance de Carbono}
+\label{sec:cap3_analisis}
+% Dimensional, conservación de masa, existencia/univocidad, positividad,
+% reducción al límite de Eriksen (2022), comportamiento cualitativo.
+
+\section{Conclusiones del Capítulo}
+\label{sec:cap3_conclusiones}
+
 % ---------------------------------------------------------
-% CAPÍTULO 4: SISTEMA HÍBRIDO
+% CAPÍTULO 4
 % ---------------------------------------------------------
-\chapter{Sistema Híbrido Physics-Informed: Hybrid Neural ODEs para Estimación de Biomasa y Emisiones}
-\chaptermark{HNODE para BSF}
+\chapter{Sistema Híbrido: Integración Modelo--Datos y Estimación de Biomasa}
+\chaptermark{Sistema Híbrido DEB--GP}
 
 \begin{center}
 \small
-\textbf{Resumen del capítulo.} 
-Se desarrolla un Hybrid Neural ODE (HNODE/UDE) donde una red neuronal feedforward se integra dentro del campo vectorial del modelo DEB para aproximar la cinética específica de degradación de sustratos locales. Se implementa un soft sensor de biomasa larval y se cuantifica la reducción del error predictivo respecto al modelo mecanicista puro.
-\textbf{Palabras clave:} Physics-Informed Neural Networks, Neural ODE, soft sensor, biomasa larval, estimación de estados.
+\textbf{Resumen del capítulo.}
+Se integra el modelo DEB con un estimador externo de biomasa basado en Proceso Gaussiano parsimonioso, entrenado con cosechas destructivas. Se establece la estrategia de calibración por fases, la función de pérdida basada en pendientes de emisión y la validación predictiva frente a sensores NDIR. El \ce{CH4} se trata como residual de diagnóstico para detección de anaerobiosis.
+\textbf{Palabras clave:} sistema híbrido, proceso gaussiano, calibración, pendientes de emisión, \ce{CO2}, \ce{CH4}, validación predictiva.
 \end{center}
 
 \section{Introducción}
-% De caja negra a grey-box: por qué HNODE y no RNA pura
+\label{sec:cap4_intro}
+% Brecha: B(t) solo en cosechas. Se requiere estimador externo y
+% confrontación de pendientes para evitar sesgo por saturación.
 
-\section{Materiales y métodos}
-% ================================================================
-\section{Modelo mecanicista de dinámica de compartimentos}
-% ================================================================
-\input{Capitulos/propuesta-hibrida.tex}
-\subsection{Entrenamiento: adjoint sensitivity + multiple shooting}
-\subsection{Soft sensor de biomasa: entradas (CO2, T, RH) y arquitectura}
-\subsection{Baseline comparativo: DEB puro vs. RNA black-box vs. HNODE}
+\section{Arquitectura Conceptual y Flujo de Información}
+\label{sec:cap4_arquitectura}
+% Diagrama: sensores → GP → \hat{B} → DEB → \dot{C}_{modelo} vs.
+% \dot{C}_{sensor}. Jerarquía de tiempos: días vs. minutos.
 
-\section{Resultados}
-\subsection{Convergencia y estabilidad del entrenamiento del HNODE}
-\subsection{Estimación de biomasa larval: validación vs. pesajes destructivos}
-\subsection{Comparativa de error: MAPE y RMSE por modelo}
-% DEB puro: MAPE=X%, HNODE: MAPE=Y%, RNA: MAPE=Z%
-\subsection{Ingeniería inversa: parámetros cinéticos no medibles estimados}
+\section{Estimador Externo de Biomasa mediante Proceso Gaussiano}
+\label{sec:cap4_estimador}
+% GP único por parsimonia (N < 100). Sin MLP profundo.
 
-\section{Discusión}
-% Interpretabilidad vs. opacidad, costo computacional, generalización
+\subsection{Justificación fuera de la ODE y criterio de parsimonia}
+\label{subsec:cap4_justificacion}
+% NN dentro de la ODE = autodiff agresivo, sin interpretabilidad.
+% GP con kernel Matérn 3/2 es más robusto.
 
-\section{Conclusiones del capítulo}
-% ¿H3 validada? Reducción >=30% del error residual
+\subsection{Variables de entrada y codificación del estado del reactor}
+\label{subsec:cap4_entradas}
+% C(t), M(t), S(t), \bar{T}, \bar{H}, CDD (Grados-Día Acumulados).
+
+\subsection{Formulación del Proceso Gaussiano}
+\label{subsec:cap4_gp}
+% \hat{B} \sim \mathcal{GP}(m(x), k(x,x')). Varianza posterior analítica.
+
+\subsection{Entrenamiento supervisado y validación leave-one-replica-out}
+\label{subsec:cap4_entrenamiento}
+% Cosechas cada 5 días, 6 réplicas. Métrica: RMSE < 15 %.
+
+\subsection{Propagación de la incertidumbre al pseudo-observable \texorpdfstring{$\hat{B}$}{B}}
+\label{subsec:cap4_incertidumbre}
+% \sigma_B^{efectivo} = \sqrt{\sigma_{med}^2 + \sigma_{est}^2(t)}.
+
+\section{Estrategia de Calibración del Modelo DEB}
+\label{sec:cap4_calibracion}
+
+\subsection{Fase A: semillas de parámetros a partir de Eriksen (2022)}
+\label{subsec:cap4_fase_a}
+% \kappa, m, a_{\max}, Y_B, Y_L fijos desde Tabla S1 de Eriksen.
+
+\subsection{Fase B: ajuste local con series de sensores NDIR}
+\label{subsec:cap4_fase_b}
+% Libres: \tau_h, \beta_0, \rho_{\text{conv}}, T_A, T_{\text{opt}}, T_H.
+
+\subsection{Restricciones de caja y método de optimización}
+\label{subsec:cap4_restricciones}
+% L-BFGS-B. Gradiente por diferencias finitas centradas. Sin autodiff.
+
+\section{Función de Pérdida y Confrontación Modelo--Sensor}
+\label{sec:cap4_perdida}
+
+\subsection{Comparación de pendientes de emisión en ventanas cerradas}
+\label{subsec:cap4_pendientes}
+% Se comparan derivadas, no acumulados. Ver Eq. en desarrollo.
+
+\subsection{Tratamiento del \texorpdfstring{\ce{CH4}}{CH4} como residual de diagnóstico}
+\label{subsec:cap4_ch4_residual}
+% CH4 NO entra en la ODE. Indicador binario de anaerobiosis.
+
+% NOTA: Conversión ppm→g/min en Cap. 2. No repetir aquí.
+
+\section{Validación Predictiva y Métricas de Desempeño}
+\label{sec:cap4_validacion}
+
+\subsection{Coeficiente de determinación y error porcentual absoluto medio}
+\label{subsec:cap4_mape}
+% R^2 y MAPE. Umbral: < 15 % éxito, < 10 % excepcional.
+
+\subsection{Análisis de residuos y detección de eventos de anaerobiosis}
+\label{subsec:cap4_residuos}
+% Normalidad de residuales. Colas pesadas = procesos omitidos (Cap. 5).
+
+\section{Resultados de la Integración Modelo--Datos}
+\label{sec:cap4_resultados}
+% \hat{B} vs cosechas, pendientes obs vs pred, MAPE por fases,
+% mapa de calor residuos vs tiempo/temperatura.
+
+\section{Conclusiones del Capítulo}
+\label{sec:cap4_conclusiones}
+% DEB+GP estima biomasa y calibra con MAPE < X %. CH4 diagnóstico.
+
 % ---------------------------------------------------------
-% CAPÍTULO 5: MÉTRICAS
+% CAPÍTULO 5
 % ---------------------------------------------------------
-\chapter{Métricas Ambientales Dinámicas y Marco de Reporte Climático para Bioconversión}
-\chaptermark{Métricas Ambientales y MRV}
+\chapter{Métricas Ambientales y Herramienta de Diagnóstico Operativo}
+\chaptermark{Métricas y Diagnóstico}
 
 \begin{center}
 \small
-\textbf{Resumen del capítulo.} 
-Se derivan factores de emisión específicos de CO$_2$ y CH$_4$ para sustratos agroindustriales del Valle del Cauca, se cuantifica el inventario dinámico de carbono y se propone un protocolo de Medición, Reporte y Verificación (MRV) alineado con estándares internacionales. Se discuten las implicaciones para la gestión de residuos en el Sur Global.
-\textbf{Palabras clave:} factores de emisión, MRV, huella de carbono, IPCC, economía circular.
+\textbf{Resumen del capítulo.}
+Se cuantifica el balance de carbono del ciclo de bioconversión mediante un inventario dinámico, se opera el clasificador de umbral para detección de anaerobiosis y se calculan métricas ambientales comparables con la literatura. Se documenta el entregable técnico de soporte a la decisión.
+\textbf{Palabras clave:} inventario de carbono, factor de emisión, anaerobiosis, clasificador de umbral, eficiencia de conversión.
 \end{center}
 
 \section{Introducción}
-% De datos a política: por qué MRV importa para BSF
+\label{sec:cap5_intro}
+% Cierre del arco: datos (Cap. 2) + modelo (Cap. 3) + integración
+% (Cap. 4) → indicadores ambientales y diagnóstico.
 
-\section{Materiales y métodos}
-\subsection{Cuantificación de factores de emisión específicos}
-% g CO2/kg sustrato, g CH4/kg sustrato, incertidumbre expandida k=2
-\subsection{Inventario dinámico de carbono: integración temporal}
-\subsection{Detección de eventos de anaerobiosis (umbral CH4, Recall)}
-\subsection{Alineación con IPCC Tier 2--3 y VCS}
+\section{Inventario Dinámico de Carbono}
+\label{sec:cap5_inventario}
 
-\section{Resultados}
-\subsection{Factores de emisión para dietas D1 y D4}
-\subsection{Comparativa ambiental: BSF monitoreado vs. BSF estático vs. compostaje vs. vertedero}
-\subsection{Detección de eventos: matriz de confusión y sensibilidad}
-\subsection{Discrepancia acumulada $\Delta_{Total}$ (real vs. estimación estática)}
+\subsection{Balance de masa de carbono en el ciclo de bioconversión}
+\label{subsec:cap5_balance_masa}
+% C inicial = biomasa final + lípidos + CO2 + frass residual.
 
-\section{Discusión}
-% Implicaciones para productores agroindustriales, brecha digital, e-waste
-% Limitaciones de escala piloto
+\subsection{Discrepancia acumulada \texorpdfstring{$\Delta_{\text{Total}}$}{Delta\_Total} entre modelo y sensor}
+\label{subsec:cap5_discrepancia}
+% \Delta_{Total} = \int (\dot{C}_{sensor} - \dot{C}_{modelo}) dt.
 
-\section{Conclusiones del capítulo}
-% ¿H4 validada? Recall >80%
+\section{Detección de Eventos de Anaerobiosis}
+\label{sec:cap5_anaerobiosis}
 
-\section{Conclusiones generales de la tesis}
-% Tabla matricial: Objetivo -- Hipótesis -- Resultado -- ¿Cumple?
-% 3 contribuciones originales al conocimiento (bullets concretos)
+\subsection{Clasificador de umbral para la predicción de episodios de \texorpdfstring{\ce{CH4}}{CH4}}
+\label{subsec:cap5_clasificador}
+% \mathcal{I}_{CH4}(t) = 1 si [CH4] > \theta_{CH4} y \delta(t) > k_\alpha \sigma_\epsilon.
 
-\section{Recomendaciones y trabajo futuro}
-% NH3 directo, N2O, escalamiento TRL 7-9, mercados de carbono
+\subsection{Umbrales de clasificación y métricas de sensibilidad}
+\label{subsec:cap5_umbrales}
+% Recall > 80 %. Matriz de confusión.
 
+\section{Métricas de Desempeño Ambiental}
+\label{sec:cap5_metricas}
+
+\subsection{Factor de emisión específico de \texorpdfstring{\ce{CO2}}{CO2} por unidad de sustrato procesado}
+\label{subsec:cap5_factor_emision}
+% g CO2 / kg sustrato. Comparación Rossi, Fuhrmann.
+
+\subsection{Eficiencia de conversión de carbono y huella de bioconversión}
+\label{subsec:cap5_eficiencia}
+% Fracción convertida a biomasa vs. emitida.
+
+\subsection{Comparación dinámica versus estimaciones estáticas tradicionales}
+\label{subsec:cap5_comparativa}
+% Inventario dinámico vs. factores de emisión promedio estáticos.
+
+\section{Herramienta de Diagnóstico Operativo}
+\label{sec:cap5_diagnostico}
+% Entregable técnico Fase IV. No condiciona H1--H4.
+
+\subsection{Dashboard de monitoreo y semáforo de riesgo}
+\label{subsec:cap5_dashboard}
+% 1--2 páginas. Grafana/Streamlit. Verde/ámbar/rojo.
+
+\subsection{Protocolo de respuesta ante alertas ambientales}
+\label{subsec:cap5_protocolo}
+% Verde: normal. Ámbar: revisar humedad. Rojo: volteo/aireación.
+
+\section{Resultados de la Evaluación Ambiental}
+\label{sec:cap5_resultados}
+% Tablas y figuras: balance, \Delta_{Total}, matriz confusión,
+% factores de emisión, dashboard.
+
+\section{Conclusiones del Capítulo}
+\label{sec:cap5_conclusiones}
+% Inventario dinámico, clasificador CH4, métricas comparables.
+% MRV (IPCC, Verra) como horizonte de trabajo futuro.
+
+% ---------------------------------------------------------
+% CONCLUSIONES GENERALES
+% ---------------------------------------------------------
+\chapter{Conclusiones Generales y Perspectivas}
+\chaptermark{Conclusiones}
+
+\section{Síntesis de hallazgos}
+
+\section{Limitaciones del estudio}
+
+\section{Trabajos futuros}
+% Incluir aquí la nota sobre compatibilidad con estándares MRV
+% (IPCC Tier 2--3, Verra) como línea futura de investigación.
 
 % =========================================================
 % ANEXOS
@@ -366,25 +558,19 @@ Se derivan factores de emisión específicos de CO$_2$ y CH$_4$ para sustratos a
 \renewcommand{\chaptername}{Anexo}
 
 \chapter{Especificaciones técnicas del módulo de sensores}
-% \input{Anexos/anexo_a_sensores.tex}
-% Aquí van: diagramas de circuito, código de calibración, tablas completas de error.
+% Diagramas, código de calibración, tablas de error.
 
 \chapter{Formulación matemática detallada del modelo}
- \input{Anexos/anexo_b_modelo.tex}
-% Aquí van: deducción de EDO, parámetros completos, ecuaciones extendidas.
+% Deducción de EDO, parámetros completos.
 
 \chapter{Algoritmos de aprendizaje automático}
-% \input{Anexos/anexo_c_algoritmos.tex}
-% Aquí van: arquitectura de la red, hiperparámetros, código fuente.
+% Hiperparámetros GP, código fuente.
 
 \chapter{Datos experimentales completos}
-% \input{Anexos/anexo_d_datos.tex}
-% Aquí van: tablas extensas de mediciones, series temporales completas.
+% Series temporales y tablas de mediciones.
 
 \chapter{Comparación teórica: BSF vs.\ compostaje vs.\ vertido}
-% \input{Anexos/anexo_e_comparacion.tex}
-% Aquí va el análisis teórico de emisiones por método de tratamiento.
-
+% Análisis de emisiones por método de tratamiento.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Bibliografia
