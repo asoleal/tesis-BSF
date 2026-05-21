@@ -1,0 +1,101 @@
+% =========================================================
+% SECCIÓN 3.6 - PARÁMETROS DEL MODELO Y RESTRICCIONES FÍSICAS
+% =========================================================
+
+El sistema de ecuaciones diferenciales formulado en la Sección \ref{sec:cap3_formulacion_ode} depende de un conjunto de parámetros bioenergéticos y cinéticos cuya estimación condiciona la validez predictiva del modelo. Esta sección presenta los valores semilla derivados de la literatura —principalmente de \parencite{eriksenDynamicModellingFeed2022}—, distingue los parámetros fijos de las variables libres de calibración local, y establece las restricciones físicas que garantizan la conservación de masa de carbono y la disipación metabólica positiva.
+
+% ---------------------------------------------------------
+\subsection{Parámetros semilla y variables de calibración}
+\label{subsec:cap3_parametros_semilla}
+
+La Tabla \ref{tab:cap3_parametros} resume los parámetros del modelo DEB escalado a reactor batch, organizados en tres categorías: (i) parámetros fijos adoptados directamente de la literatura; (ii) parámetros semilla sujetos a ajuste fino en el Capítulo \ref{chap:hibrido}; y (iii) variables libres de calibración local cuyos valores se inferirán mediante confrontación con las series de sensores NDIR.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Parámetros del modelo DEB para \emph{Hermetia illucens} a escala de reactor batch.}
+    \label{tab:cap3_parametros}
+    \begin{tabular}{@{}llllll@{}}
+        \toprule
+        \textbf{Símbolo} & \textbf{Descripción} & \textbf{Unidad} & \textbf{Semilla} & \textbf{Rango calibración} & \textbf{Fuente} \\
+        \midrule
+        \multicolumn{6}{l}{\textit{Parámetros fijos (literatura)}} \\
+        $\kappa_A$ & Eficiencia de asimilación intestinal & adimensional & \num{0.70} & [\num{0.55}, \num{0.80}] & \parencite{guillaumeAsymptoticEstimatedDigestibility2023} \\
+        $a_{\max}$ & Tasa máxima de ingesta específica & g C$^{1/3}$/min & \num{1.25e-4} & [\num{5e-5}, \num{3e-4}] & \parencite{eriksenDynamicModellingFeed2022} \\
+        $m$ & Tasa específica de mantenimiento a \num{30} °C & min$^{-1}$ & \num{2.1e-4} & [\num{1e-4}, \num{5e-4}] & \parencite{eriksenDynamicModellingFeed2022} \\
+        $Y_B$ & Rendimiento de conversión en biomasa & adimensional & \num{0.80} & [\num{0.60}, \num{0.90}] & \parencite{eriksenDynamicModellingFeed2022} \\
+        $Y_L$ & Rendimiento de conversión en lípidos & adimensional & \num{0.75} & [\num{0.50}, \num{0.85}] & \parencite{grausaMetabolicModelingHermetia2023} \\
+        $\kappa$ & Prioridad de crecimiento versus mantenimiento & adimensional & \num{0.60} & [\num{0.40}, \num{0.80}] & \parencite{eriksenDynamicModellingFeed2022} \\
+        \midrule
+        \multicolumn{6}{l}{\textit{Variables libres de calibración local}} \\
+        $\tau_h$ & Constante de semisaturación del sustrato & g C & \num{150} & [\num{50}, \num{500}] & Este estudio \\
+        $\beta_0$ & Factor de corrección por densidad larval & adimensional & \num{1.0} & [\num{0.5}, \num{1.5}] & Este estudio \\
+        $\rho_{\mathrm{conv}}$ & Factor de conversión biomasa húmeda a carbono & g C/g húmeda & \num{0.12} & [\num{0.08}, \num{0.18}] & Este estudio \\
+        $T_A$ & Energía de activación de Arrhenius & K & \num{5000} & [\num{2000}, \num{8000}] & \parencite{chia2018} \\
+        $T_{\mathrm{opt}}$ & Temperatura óptima metabólica & K & \num{303} & [\num{301}, \num{308}] & \parencite{salamEffectDifferentEnvironmental2022} \\
+        $T_H$ & Temperatura de inactivación enzimática & K & \num{312} & [\num{305}, \num{320}] & \parencite{nayakHermetiaIllucensDiptera2024} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Los parámetros fijos se adoptan de la Tabla S1 del trabajo de Eriksen, convertidos a unidades consistentes con el sistema de EDO (minutos y gramos de carbono). La eficiencia de asimilación $\kappa_A = \num{0.70}$ refleja la alta aptitud de la mezcla de pulpa de café y cáscaras de frutas utilizada en el Capítulo \ref{chap:instrumentacion}, valor intermedio dentro del rango reportado para sustratos agroindustriales \parencite{guillaumeAsymptoticEstimatedDigestibility2023}. La tasa de mantenimiento $m$ y la tasa máxima de ingesta $a_{\max}$ se escalan desde valores individuales (g C/larva/día) hasta el reactor completo mediante el número de larvas $N_{\mathrm{larvas}}$ y el factor de conversión $\rho_{\mathrm{conv}}$.
+
+Las variables libres de calibración local responden a condiciones experimentales específicas que la literatura no cubre exhaustivamente. La constante de semisaturación $\tau_h$ depende de la granulometría del sustrato y de la humedad, que afectan la accesibilidad física del alimento; el factor $\beta_0$ corrige desviaciones del escalamiento isométrico $B^{2/3}$ cuando la densidad larval excede el rango óptimo; y $\rho_{\mathrm{conv}}$ vincula la biomasa húmeda destructiva con el carbono estructural, dependiendo del contenido de agua y cenizas del tejido larval en las condiciones tropicales del Valle del Cauca.
+
+% ---------------------------------------------------------
+\subsection{Restricciones de no negatividad y acotamiento}
+\label{subsec:cap3_restricciones_caja}
+
+La validez física del modelo exige que todos los parámetros de rendimiento y eficiencia se mantengan dentro de rangos biológicamente plausibles:
+
+\begin{align}
+    0 < \kappa_A &\leq 1, \label{eq:cap3_rest_kappa_a} \\
+    0 < Y_B, Y_L &\leq 1, \label{eq:cap3_rest_rendimientos} \\
+    0 < \kappa &\leq 1, \label{eq:cap3_rest_kappa} \\
+    \tau_h &> 0, \label{eq:cap3_rest_tauh} \\
+    \rho_{\mathrm{conv}} &> 0. \label{eq:cap3_rest_rho}
+\end{align}
+
+Las desigualdades \eqref{eq:cap3_rest_kappa_a}--\eqref{eq:cap3_rest_kappa} garantizan que ningún proceso de conversión supere el \num{100}\% de eficiencia termodinámica, violación que implicaría generación espontánea de carbono. Los rendimientos $Y_B$ y $Y_L$ deben estrictamente ser menores que \num{1}, dado que la síntesis de tejido requiere inevitablemente disipación de carbono como \ce{CO2} (overhead metabólico); valores de \num{1} implicarían costo de síntesis nulo, contrario a la segunda ley de la termodinámica \parencite{nielsenMetabolicPerformanceMealworms2025}.
+
+Adicionalmente, la conservación de la reserva de asimilados en estado cuasi-estacionario (ecuación \eqref{eq:cap3_balance_asimilados_qss}) impone que el flujo de crecimiento neto no exceda el flujo de asimilación disponible:
+
+\begin{equation}
+    \kappa \cdot \bigl(\dot{A} - \dot{M}\bigr) \leq \dot{A},
+    \label{eq:cap3_rest_prioridad}
+\end{equation}
+
+condición que se satisface automáticamente cuando $\dot{A} \geq \dot{M}$ y $\kappa \leq 1$. Si $\dot{A} < \dot{M}$, el modelo impone $\dot{G}_B = \dot{G}_L = 0$, evitando que el crecimiento se financie con catabolismo estructural en condiciones de ayuno —a menos que se active explícitamente el término de removilización $\delta_B > 0$, no considerado en el régimen de alimentación ad libitum del presente estudio.
+
+% ---------------------------------------------------------
+\subsection{Consistencia dimensional}
+\label{subsec:cap3_consistencia_dimensional}
+
+La homogeneidad dimensional del sistema de EDO se verifica inspeccionando cada ecuación del balance. En la ecuación \eqref{eq:cap3_balance_sustrato}, el lado derecho tiene unidades de g C/min: $N_{\mathrm{larvas}}$ (adimensional) multiplicado por $\tilde{\imath}$ (g C/larva/min). En la ecuación \eqref{eq:cap3_dinamica_biomasa_simplificada}, $\dot{G}_B$ proviene del balance de asimilados \eqref{eq:cap3_balance_asimilados_qss}, donde todos los términos comparten unidades de g C/min. La ecuación \eqref{eq:cap3_produccion_co2} acumula carbono en g C/min, cuya conversión a flujo másico de \ce{CO2} en g/min mediante la ecuación \eqref{eq:cap3_co2_flujo_masico} introduce el factor $M_{\mathrm{CO_2}}/M_C$ (g \ce{CO2}/g C), adimensional en cuanto a masa pero con unidades molares consistentes.
+
+La función de dependencia térmica $f(T)$ definida en la ecuación \eqref{eq:cap3_sharpe_schoolfield} es adimensional, al ser cociente de exponenciales con argumentos adimensionales ($T_A/T$). Por tanto, la tasa de mantenimiento $\dot{M} = m \cdot B \cdot f(T)$ conserva las unidades de $m$ (min$^{-1}$) por $B$ (g C), resultando en g C/min. Análogamente, la funcional Holling II $S/(\tau_h + S)$ es adimensional, de modo que la ingesta $\tilde{\imath}$ mantiene las unidades de $a_{\max} B^{2/3}$ (g C$^{1/3}$/min $\cdot$ g C$^{2/3}$ = g C/min), cerrando la consistencia dimensional.
+
+% ---------------------------------------------------------
+\subsection{Cierre del balance de carbono}
+\label{subsec:cap3_balance_carbono}
+
+El principio de conservación de masa exige que el carbono total del reactor, $C_{\mathrm{tot}}$, se reparta en cada instante entre los compartimentos del modelo, el sustrato inerte y la fracción no degradable:
+
+\begin{equation}
+    C_{\mathrm{tot}} = S(t) + E(t) + B(t) + L(t) + C_{\mathrm{CO_2}}(t) + S_{\mathrm{inerte}} + S_{\mathrm{no\_deg}}(t),
+    \label{eq:cap3_balance_carbono_global}
+\end{equation}
+
+donde $S_{\mathrm{no\_deg}}(t)$ representa el carbono orgánico que ha perdido reactivity química por procesos de humificación o condensación durante el ciclo, excluido de la ingesta larval. En el horizonte temporal del experimento (\num{15} días), esta fracción se considera despreciable frente a la mineralización rápida mediada por larvas y microbiota, por lo que $S_{\mathrm{no\_deg}} \approx 0$ en la calibración del Capítulo \ref{chap:hibrido}.
+
+Derivando la ecuación \eqref{eq:cap3_balance_carbono_global} respecto al tiempo y sustituyendo las EDO \eqref{eq:cap3_balance_sustrato}--\eqref{eq:cap3_produccion_co2}, se obtiene:
+
+\begin{equation}
+    \frac{\mathrm{d}}{\mathrm{d}t}\bigl(S + E + B + L + C_{\mathrm{CO_2}}\bigr) = -\dot{I}_{\mathrm{tot}} + 0 + \dot{G}_B + \dot{G}_L + \dot{D}_{\mathrm{larval}} + \dot{D}_{\mu}.
+    \label{eq:cap3_derivada_balance}
+\end{equation}
+
+En el estado cuasi-estacionario de la reserva ($\mathrm{d}E/\mathrm{d}t \approx 0$), el balance de asimilados \eqref{eq:cap3_balance_asimilados_qss} implica que $\dot{A} = \dot{M} + \dot{G}_B/Y_B + \dot{G}_L/Y_L$. Reemplazando $\dot{I}_{\mathrm{tot}} = \dot{A}/\kappa_A$ y expandiendo $\dot{D}_{\mathrm{larval}}$ según la ecuación \eqref{eq:cap3_produccion_co2}, se verifica que la suma de flujos se anula identicamente, confirmando que el sistema de EDO conserva la masa de carbono en el dominio $\Omega$ definido en la ecuación \eqref{eq:cap3_dominio_omega}. La verificación algebraica detallada se presenta en el Anexo \ref{anexo:formulacion_matematica} para no sobrecargar la exposición.
+
+Es importante destacar que el metano (\ce{CH4}) no participa en el balance \eqref{eq:cap3_balance_carbono_global}. Dado que el modelo asume metabolismo aeróbico exclusivo, cualquier carbono emitido como \ce{CH4} proviene de rutas fermentativas microbianas no incluidas en las EDO larval. En el Capítulo \ref{chap:metricas}, la detección de \ce{CH4} se utiliza precisamente para cuantificar la magnitud de esta vía anaeróbica paralela, permitiendo calcular una discrepancia $\Delta_{\mathrm{Total}}$ entre el balance teórico y la medición sensorial.
+
+En síntesis, esta sección ha definido los parámetros numéricos, sus rangos de variación y las restricciones físicas que garantizan la plausibilidad biológica del modelo. El siguiente paso consiste en analizar el comportamiento cualitativo del sistema —estabilidad, sensibilidad y régimen transitorio— antes de cerrar el capítulo con las conclusiones.

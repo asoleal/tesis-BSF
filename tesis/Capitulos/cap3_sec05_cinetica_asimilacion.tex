@@ -1,0 +1,78 @@
+% =========================================================
+% SECCIÓN 3.5 - CINÉTICA DE ASIMILACIÓN Y MODULACIÓN AMBIENTAL
+% =========================================================
+
+Las ecuaciones de balance del sistema de EDO formuladas en la Sección \ref{sec:cap3_formulacion_ode} requieren la especificación explícita de la tasa de ingesta $\tilde{\imath}(S,B,T)$ y de la tasa de mantenimiento $\dot{M}(B,T)$. Esta sección cierra esas formas funcionales mediante una cinética de ingesta tipo Holling II —que captura la saturación por disponibilidad de sustrato— y un factor de dependencia térmica basado en el modelo de Sharpe--Schoolfield —que describe la modulación de la tasa metabólica por la temperatura del sustrato. Ambas funciones se parametrizan con semillas tomadas de la literatura y dejan variables libres para su ajuste local en el Capítulo \ref{chap:hibrido}.
+
+% ---------------------------------------------------------
+\subsection{Funcional respuesta tipo Holling II}
+\label{subsec:cap3_holling}
+
+La ingesta específica por larva, $\tilde{\imath}$ (g C/larva/min), se modela como el producto de tres factores multiplicativos: una tasa máxima de procesamiento, una función de disponibilidad de sustrato y un factor de modulación térmica:
+
+\begin{equation}
+    \tilde{\imath}\bigl(S(t), B(t), T(t)\bigr) = a_{\max} \, B(t)^{2/3} \, f\bigl(T(t)\bigr) \, \frac{S(t)}{\tau_h + S(t)}.
+    \label{eq:cap3_holling_ingesta}
+\end{equation}
+
+El factor $B^{2/3}$ refleja la hipótesis de similitud isométrica: la superficie bucal y el área de contacto con el sustrato crecen proporcionalmente al cuadrado del diámetro corporal, mientras que la masa estructural crece con el cubo; por ende, la tasa de ingesta específica escala con la superficie relativa $B^{2/3}$ \parencite{eriksenDynamicModellingFeed2022}. Esta aproximación es consistente con los rangos de densidad larval del protocolo experimental (\num{2.5}--\num{5.0} g/L), donde la competencia por el alimento no altera sustancialmente la geometría de contacto individual.
+
+El parámetro $a_{\max}$ (g C$^{1/3}$/min) representa la tasa máxima de búsqueda y procesamiento de alimento por unidad de superficie metabólica a la temperatura de referencia. \parencite{eriksenDynamicModellingFeed2022} reportan un valor semilla de $a_{\max} \approx \num{0.18}$ g C$^{1/3}$/día para larvas de BSF en sustrato de alta calidad, equivalente a \num{1.25e-4} g C$^{1/3}$/min tras conversión de unidades.
+
+La fracción $S/(\tau_h + S)$ es la funcional respuesta tipo Holling II, donde $\tau_h$ (g C) es la constante de semisaturación del sustrato —esto es, la masa de carbono disponible a la cual la ingesta alcanza la mitad de su valor máximo. Este parámetro se deja como variable libre de calibración ($\tau_h \in [\num{50}, \num{500}]$ g C) dado que depende fuertemente de la composición física del sustrato (partículas gruesas de pulpa de café versus cáscaras de fruta desmenuzadas) y de la humedad, que afecta la plasticidad del medio y la eficiencia de fragmentación mecánica por las larvas \parencite{bekkerImpactSubstrateMoisture2021}.
+
+La asimilación neta por larva se obtiene multiplicando la ingesta por la eficiencia de asimilación intestinal $\kappa_A$:
+
+\begin{equation}
+    \tilde{a}\bigl(S(t), B(t), T(t)\bigr) = \kappa_A \, \tilde{\imath}\bigl(S(t), B(t), T(t)\bigr),
+    \label{eq:cap3_asimilacion_especifica}
+\end{equation}
+
+con $\kappa_A \in [\num{0.55}, \num{0.80}]$ según la calidad del sustrato \parencite{guillaumeAsymptoticEstimatedDigestibility2023}. En el protocolo experimental del Capítulo \ref{chap:instrumentacion}, la mezcla de pulpa de café y cáscaras de frutas (\num{70}:\num{30}) se clasifica como sustrato de alta aptitud, por lo que se adopta la semilla $\kappa_A = \num{0.70}$.
+
+La ingesta total del reactor resulta entonces $\dot{I}_{\mathrm{tot}} = N_{\mathrm{larvas}} \cdot \tilde{\imath}$, que ingresa directamente en la ecuación \eqref{eq:cap3_balance_sustrato} del balance de sustrato. La no linealidad de la Holling II garantiza que, cuando $S \gg \tau_h$, la ingesta se satura en $a_{\max} B^{2/3} f(T)$, evitando predicciones no realistas de consumo infinito; conversamente, cuando $S \to 0$, la ingesta se anula y el sustrato se preserva no negativo.
+
+% ---------------------------------------------------------
+\subsection{Dependencia térmica: modelo de Sharpe--Schoolfield}
+\label{subsec:cap3_sharpe_schoolfield}
+
+La temperatura del sustrato constituye la variable ambiental de mayor impacto sobre la cinética metabólica de \emph{H. illucens}. Estudios de campo y de laboratorio documentan que la tasa de asimilación y el crecimiento larval se incrementan de forma monotona desde los \num{20} °C hasta un óptimo cercano a los \num{30}--\num{32} °C, para luego colapsar abruptamente por encima de los \num{35} °C debido a la desnaturalización enzimática y al estrés térmico \parencite{salamEffectDifferentEnvironmental2022,nayakHermetiaIllucensDiptera2024}.
+
+Para capturar este perfil asimétrico, se adopta el modelo de Sharpe--Schoolfield con inactivación de alta temperatura, expresado en escala Kelvin:
+
+\begin{equation}
+    f(T) = \frac{ \exp\left( \frac{T_A}{T_{\mathrm{ref}}} - \frac{T_A}{T} \right) }{ 1 + \exp\left( \frac{T_A}{T_H} - \frac{T_A}{T} \right) },
+    \label{eq:cap3_sharpe_schoolfield}
+\end{equation}
+
+donde:
+\begin{itemize}
+    \item $T$ es la temperatura absoluta del sustrato (K), derivada de la lectura del sensor SHT30 inmerso a \num{5} cm de profundidad (Sección \ref{subsec:cap2_sensores_ambientales});
+    \item $T_{\mathrm{ref}} = \num{303.15}$ K (\num{30} °C) es la temperatura de referencia del protocolo experimental;
+    \item $T_A$ (K) es la energía de activación de Arrhenius, que gobierna el ascenso exponencial de la tasa metabólica por debajo del óptimo;
+    \item $T_H$ (K) es la temperatura de inactivación enzimática por desnaturalización, que controla el colapso del metabolismo por encima del óptimo.
+\end{itemize}
+
+El modelo \eqref{eq:cap3_sharpe_schoolfield} asume que la inactivación a baja temperatura es despreciable en el rango operativo del reactor (\num{25}--\num{35} °C), hipótesis validada para insectos tropicales donde el umbral inferior de actividad metabólica se sitúa por debajo de los \num{20} °C \parencite{chia2018}. En el rango experimental, la función $f(T)$ presenta un máximo suave en $T \approx T_{\mathrm{opt}}$, definido implícitamente por la condición $\mathrm{d}f/\mathrm{d}T = 0$, que ocurre cuando los términos de activación e inactivación se balancean.
+
+Los parámetros térmicos se tratan como variables libres de calibración con rangos semilla basados en la literatura entomológica:
+\begin{align}
+    T_A &\in [\num{2000}, \num{8000}] \text{ K}, \\
+    T_H &\in [\num{305}, \num{315}] \text{ K } (\num{32} \text{--} \num{42} \text{ °C}), \\
+    T_{\mathrm{opt}} &\in [\num{301}, \num{308}] \text{ K } (\num{28} \text{--} \num{35} \text{ °C}).
+\end{align}
+
+La temperatura óptima $T_{\mathrm{opt}}$ no es un parámetro independiente en la ecuación \eqref{eq:cap3_sharpe_schoolfield}, sino una propiedad emergente de $T_A$ y $T_H$; sin embargo, se incluye como variable de calibración auxiliar en el algoritmo de optimización del Capítulo \ref{chap:hibrido} para restringir la búsqueda a regiones biológicamente plausibles.
+
+La tasa de mantenimiento específico, que aparece en la ecuación \eqref{eq:cap3_balance_asimilados_qss}, se modula térmicamente mediante el mismo factor $f(T)$:
+
+\begin{equation}
+    \dot{M}(t) = m \cdot B(t) \cdot f\bigl(T(t)\bigr),
+    \label{eq:cap3_mantenimiento_termico}
+\end{equation}
+
+con $m$ la tasa de mantenimiento a la temperatura de referencia. Esta formulación garantiza que tanto la ingesta como el mantenimiento comparten la misma dependencia térmica, manteniendo la coherencia bioenergética del modelo DEB \parencite{eriksenDynamicModellingFeed2022}.
+
+Respecto a la humedad relativa (HR), la literatura indica que valores por debajo del \num{50}\% reducen la tasa de asimilación y aumentan la mortalidad, mientras que valores superiores al \num{80}\% favorecen la formación de microambientes anaeróbicos \parencite{bekkerImpactSubstrateMoisture2021}. En el presente modelo, la HR no se incorpora como variable cinética explícita en las EDO, sino que se trata como una condición de contorno operativa: el protocolo del Capítulo \ref{chap:instrumentacion} la mantiene dentro del rango \num{60}\%--\num{80}\%, y las desviaciones transitorias se absorben en la calibración de $\tau_h$ y $a_{\max}$. Esta simplificación es consistente con el enfoque mecanicista del DEB, donde la humedad afecta indirectamente la disponibilidad de sustrato pero no la termodinámica intrínseca del metabolismo larval.
+
+En síntesis, las ecuaciones \eqref{eq:cap3_holling_ingesta} y \eqref{eq:cap3_sharpe_schoolfield} cierran las formas funcionales de los flujos metabólicos, transformando las EDO del modelo DEB en un sistema predictivo que responde a las variables ambientales medidas por los sensores IoT del Capítulo \ref{chap:instrumentacion}. La siguiente sección detalla los parámetros numéricos, sus unidades, rangos semilla y las restricciones físicas que garantizan la conservación de masa.

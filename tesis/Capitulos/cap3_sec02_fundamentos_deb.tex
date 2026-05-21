@@ -1,0 +1,63 @@
+% =========================================================
+% SECCIÓN 3.2 - FUNDAMENTOS DEL MODELO DEB
+% =========================================================
+
+El Dynamic Energy Budget (DEB) constituye un marco teórico unificador para describir el metabolismo de organismos heterótrofos mediante balances de masa y energía a lo largo de su ciclo de vida \parencite{eriksenDynamicModellingFeed2022}. A diferencia de modelos empíricos de crecimiento —que ajustan curvas logísticas o de Gompertz sin desagregar los flujos subyacentes—, el DEB explicita cómo la materia ingerida se distribuye entre mantenimiento, crecimiento somático, reserva reproductiva y dissipación metabólica, expresando cada flujo en unidades de carbono o energía por unidad de tiempo.
+
+En el contexto de la bioconversión con \emph{Hermetia illucens}, el modelo DEB adquiere una función predictiva dual: no solo estima la acumulación de biomasa larval, sino que cuantifica la tasa de respiración —y por ende la emisión de \ce{CO2}— como resultado inevitable de los costos de mantenimiento y síntesis. Esta sección resume los principios del DEB escalado a larvas de BSF y su adaptación al reactor batch descrito en el Capítulo \ref{chap:instrumentacion}.
+
+% ---------------------------------------------------------
+\subsection{Estructura de compartimentos de carbono}
+\label{subsec:cap3_compartimentos_carbono}
+
+Siguiendo la parametrización de \parencite{eriksenDynamicModellingFeed2022}, se define un sistema de cinco compartimentos de carbono interconectados, cada uno con una concentración o masa específica expresada en gramos de carbono (g C) o en moles de carbono según convenga para la cinética:
+
+\begin{enumerate}
+    \item \textbf{Sustrato orgánico disponible} ($S$): masa de carbono orgánico en el reactor susceptible de ser ingerida por las larvas, expresada en g C. Incluye los polímeros degradables (carbohidratos, proteínas, lípidos) pero excluye la fracción lignocelulósica recalcitrante, que en el sustrato de pulpa de café y cáscaras de frutas (Sección \ref{subsec:cap2_sistema_experimental}) representa menos del \num{15}\% de la masa total \parencite{brunoValorizationOrganicWaste2025}.
+    
+    \item \textbf{Reserva de asimilados} ($E$): carbono absorbido por el intestino larval y almacenado temporalmente antes de su destino a metabolismo energético o biosíntesis. Eriksen la identifica como el ``banco'' de carbono que amortigua la variabilidad entre ingesta y demanda metabólica. Su unidad es g C por larva, o g C total en el reactor cuando se escala a población.
+    
+    \item \textbf{Biomasa estructural} ($B$): carbono incorporado en tejidos somáticos (músculo, cutícula, sistema nervioso, tracto digestivo). Esta variable se correlaciona directamente con la biomasa húmeda medida destructivamente cada \num{48} h en el protocolo del Capítulo \ref{chap:instrumentacion}, mediante un factor de conversión $\rho_{\mathrm{conv}}$ (g C/g biomasa húmeda) que se calibrará localmente.
+    
+    \item \textbf{Lípidos de reserva} ($L$): fracción de carbono destinada al almacenamiento energético de largo plazo, predominante en estadios tardíos (L5--prepupa). \parencite{grausaMetabolicModelingHermetia2023} documentan que esta fracción puede alcanzar hasta el \num{35}\% de la biomasa seca en sustratos ricos en carbohidratos, y constituye un sumidero de carbono paralelo a la estructura.
+    
+    \item \textbf{Dióxido de carbono acumulado} ($C_{\mathrm{CO_2}}$): carbono emitido como \ce{CO2} por respiración larval y microbiana, expresado en g C. En el reactor batch cerrado, esta variable se vincula directamente con la concentración medida por el sensor NDIR mediante la ecuación de conversión derivada en la Sección \ref{subsec:cap2_concentracion_flujo}.
+\end{enumerate}
+
+La elección del carbono como \emph{currency} metabólica —en lugar de la energía en joules— responde a dos criterios prácticos. Primero, los sensores NDIR miden directamente la concentración de \ce{CO2}, que es un proxy lineal del carbono respirado si se desprecia la fracción disuelta en el sustrato (menor al \num{2}\% en condiciones de pH \num{5.5}--\num{6.5}). Segundo, los balances de masa de carbono permiten validación cruzada con el método de \emph{mass balance} estándar en estudios de BSF \parencite{parodiBioconversionEfficienciesGreenhouse2020,rossiEstimatingDynamicsGreenhouse2024}.
+
+% ---------------------------------------------------------
+\subsection{Flujos metabólicos y producción de CO\texorpdfstring{$_2$}{2}}
+\label{subsec:cap3_flujos_metabolicos}
+
+El metabolismo larval se descompone en cinco flujos principales, todos expresados como tasas de transferencia de carbono (g C/d o g C/min):
+
+\begin{description}
+    \item[Ingesta ($\dot{I}$)] Velocidad a la que el carbono del sustrato pasa al tracto digestivo. Está limitada por la densidad larval, la humedad del sustrato y la disponibilidad física de alimento. \parencite{dienerConversionOrganicMaterial2009} reportan tasas máximas de \num{100} mg alimento/larva/día en condiciones óptimas.
+    
+    \item[Asimilación ($\dot{A}$)] Fracción de la ingesta que cruza la pared intestinal y se incorpora a la reserva $E$. La eficiencia de asimilación $\kappa_A$ depende de la calidad del sustrato; valores entre \num{0.55} y \num{0.80} son típicos para residuos agroindustriales \parencite{guillaumeAsymptoticEstimatedDigestibility2023}.
+    
+    \item[Mantenimiento somático ($\dot{M}$)] Costo basal de preservar la viabilidad celular, la homeostasis iónica y la motilidad. Es proporcional a la biomasa estructural $B$ y modulado por la temperatura según una cinética tipo Arrhenius o Sharpe--Schoolfield (Sección \ref{subsec:cap3_sharpe_schoolfield}). Eriksen estima que el mantenimiento consume entre el \num{15}\% y el \num{25}\% del carbono asimilado en larvas de BSF.
+    
+    \item[Síntesis de biomasa ($\dot{G}_B$) y de lípidos ($\dot{G}_L$)] Flujos de crecimiento que translocan carbono desde la reserva $E$ hacia los compartimentos estructural y lipidico. La prioridad entre $\dot{G}_B$ y $\dot{G}_L$ cambia con el estadio larval: dominan la síntesis de estructura en L3--L4, mientras que la lipogénesis se acelera en L5 previo a la metamorfosis \parencite{eriksenDynamicModellingFeed2022,grausaMetabolicModelingHermetia2023}.
+    
+    \item[Dissipación ($\dot{D}$)] Carbono perdido irrevocablemente como \ce{CO2} durante los procesos de mantenimiento y síntesis. En el marco DEB, la respiración total es la suma de dos términos disipativos:
+    \begin{equation}
+        \dot{D}(t) = \dot{M}(t) + (1 - \kappa_G)\,\dot{G}_B(t) + (1 - \kappa_L)\,\dot{G}_L(t),
+        \label{eq:cap3_dissipacion_total}
+    \end{equation}
+    donde $\kappa_G$ y $\kappa_L$ representan las eficiencias de conversión de reserva en biomasa estructural y lípidos, respectivamente. El término $(1-\kappa_G)$ captura el costo de síntesis (overhead), que en insectos holometábolos suele situarse entre \num{0.2} y \num{0.4} \parencite{nielsenMetabolicPerformanceMealworms2025}.
+\end{description}
+
+La producción de \ce{CO2} medida por los sensores NDIR —expresada como flujo másico $\dot{m}_{\mathrm{CO_2}}(t)$ en g/min— se identifica con la dissipación $\dot{D}(t)$ escalada al reactor completo, más una contribución microbiana $\dot{D}_{\mu}(t)$ que modela la respiración heterotrófica del sustrato no ingerido:
+
+\begin{equation}
+    \dot{m}_{\mathrm{CO_2}}(t) = \frac{M_{\mathrm{CO_2}}}{M_C}\,\bigl[\,N_{\mathrm{larvas}}\,\dot{D}(t) + \dot{D}_{\mu}(t)\,\bigr],
+    \label{eq:cap3_co2_sensor_deb}
+\end{equation}
+
+donde $M_{\mathrm{CO_2}} = \num{44.01}$ g/mol y $M_C = \num{12.01}$ g/mol son las masas molares del dióxido de carbono y del carbono elemental, respectivamente, y $N_{\mathrm{larvas}}$ es el número de larvas en el reactor, derivado de la biomasa inicial y la curva de supervivencia. La ecuación \eqref{eq:cap3_co2_sensor_deb} constituye el \emph{puente cuantitativo} entre la teoría bioenergética y el dato crudo del Capítulo \ref{chap:instrumentacion}: permite interpretar una pendiente de concentración de \num{200} ppm/\num{30} min no como un número aislado, sino como la manifestación física de los costos metabólicos de un conjunto larval en un estado fisiológico determinado.
+
+Es relevante notar que el modelo DEB, en su formulación estándar para BSF, asume metabolismo aeróbico exclusivo. Por tanto, la generación de \ce{CH4} no aparece en los balances de carbono de las EDO; su presencia transitoria se trata como una perturbación estocástica que indica desviación del régimen aeróbico, tema que se aborda en el Capítulo \ref{chap:metricas} mediante el clasificador de eventos de anaerobiosis.
+
+En síntesis, los compartimentos de carbono y los flujos metabólicos descritos en esta sección proporcionan la arquitectura conceptual sobre la cual se construye el sistema de ecuaciones diferenciales de la Sección \ref{sec:cap3_formulacion_ode}. La consistencia del balance de carbono —que se verifica formalmente en la Sección \ref{sec:cap3_analisis_estructural}— garantiza que toda unidad de carbono ingerida se accountabilice como biomasa, lípidos, \ce{CO2} o sustrato residual, cerrando el ciclo de masa requerido para la validación del modelo contra datos experimentales.

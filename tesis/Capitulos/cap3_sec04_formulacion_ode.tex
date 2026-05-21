@@ -1,0 +1,118 @@
+% =========================================================
+% SECCIÓN 3.4 - FORMULACIÓN DEL SISTEMA DE ECUACIONES DIFERENCIALES
+% =========================================================
+
+Con las variables de estado y el dominio físico establecidos en la Sección \ref{sec:cap3_variables_estado}, esta sección formula el sistema de ecuaciones diferenciales ordinarias (EDO) que gobierna la evolución del vector $\mathbf{x}(t)$ en el reactor batch. El sistema se deriva directamente de los flujos metabólicos definidos en la Sección \ref{subsec:cap3_flujos_metabolicos}, imponiendo la conservación de masa de carbono en cada compartimento. Las formas explícitas de las funciones cinéticas —ingesta, asimilación y modulación térmica— se detallan en la Sección \ref{sec:cap3_cinetica_asimilacion}.
+
+Se asume que el sistema satisface las condiciones de Carathéodory locales en $\Omega$, garantizando existencia y unicidad de la solución para condiciones iniciales $\mathbf{x}_0 \in \Omega$; las demostraciones formales se remiten al Anexo \ref{anexo:formulacion_matematica} para no interrumpir el desarrollo del capítulo.
+
+% ---------------------------------------------------------
+\subsection{Balance del sustrato orgánico}
+\label{subsec:cap3_balance_sustrato}
+
+La masa de carbono orgánico disponible $S(t)$ disminuye exclusivamente por la ingesta larval, dado que la degradación microbiana del sustrato no ingerido se modela como una fuente de \ce{CO2} externa al balance de sustrato (vía $\dot{D}_{\mu}$ en la Sección \ref{subsec:cap3_produccion_co2}). La ecuación de balance es:
+
+\begin{equation}
+    \frac{\mathrm{d}S}{\mathrm{d}t} = - \dot{I}_{\mathrm{tot}}(t) = - N_{\mathrm{larvas}} \cdot \tilde{\imath}\bigl(S(t), B(t), T(t)\bigr),
+    \label{eq:cap3_balance_sustrato}
+\end{equation}
+
+donde $\tilde{\imath}$ es la tasa de ingesta específica por larva (g C/larva/min), función creciente de la biomasa estructural $B$ —que determina la superficie bucal y la capacidad de procesamiento— y de la disponibilidad de sustrato $S$. La dependencia térmica se incorpora mediante el factor $f(T)$ definido en la Sección \ref{subsec:cap3_sharpe_schoolfield}. La forma funcional de $\tilde{\imath}$ sigue la cinética de Holling II, cuya parametrización se presenta en la Sección \ref{sec:cap3_cinetica_asimilacion}.
+
+La condición inicial $S(0) = S_0$ está dada por la ecuación \eqref{eq:cap3_s0}. El dominio requiere $S(t) \geq 0$; cuando $S \to 0$, la ingesta se anula ($\tilde{\imath} \to 0$) y el sustrato permaneje no negativo, comportamiento que se verifica cualitativamente en la Sección \ref{sec:cap3_analisis_estructural}.
+
+% ---------------------------------------------------------
+\subsection{Balance de asimilados en estado cuasi-estacionario}
+\label{subsec:cap3_balance_asimilados}
+
+La reserva de asimilados $E(t)$ opera como un compartimento de amortiguamiento de alta velocidad respecto a la dinámica de crecimiento. Siguiendo la hipótesis de separación de escalas temporales propia del marco DEB \parencite{eriksenDynamicModellingFeed2022}, se impone el estado cuasi-estacionario:
+
+\begin{equation}
+    \frac{\mathrm{d}E}{\mathrm{d}t} \approx 0,
+    \label{eq:cap3_qss_asimilados}
+\end{equation}
+
+lo cual equivale a igualar el flujo de entrada (asimilación) con los flujos de salida (mantenimiento y síntesis). La asimilación total se expresa como $\dot{A} = \kappa_A \cdot \dot{I}_{\mathrm{tot}}$, donde $\kappa_A \in (0,1]$ es la eficiencia de asimilación intestinal. El balance resultante es:
+
+\begin{equation}
+    \dot{A}(t) = \dot{M}(t) + \frac{\dot{G}_B(t)}{Y_B} + \frac{\dot{G}_L(t)}{Y_L},
+    \label{eq:cap3_balance_asimilados_qss}
+\end{equation}
+
+donde:
+\begin{itemize}
+    \item $\dot{M}(t) = m \cdot B(t) \cdot f\bigl(T(t)\bigr)$ es la tasa de mantenimiento somático (g C/min), con $m$ la tasa específica de mantenimiento a la temperatura de referencia;
+    \item $\dot{G}_B(t)$ y $\dot{G}_L(t)$ son los flujos de síntesis de biomasa estructural y lípidos (g C/min);
+    \item $Y_B, Y_L \in (0,1]$ son los rendimientos de conversión de reserva en biomasa y lípidos, respectivamente, de modo que $\dot{G}_B/Y_B$ representa el carbono total extraído de la reserva incluyendo la fracción disipada como \ce{CO2} durante la síntesis (overhead metabólico).
+\end{itemize}
+
+La partición del excedente asimilado neto $\dot{A} - \dot{M}$ entre los compartimentos de crecimiento obedece a la regla de prioridad $\kappa$ del DEB. Si $\dot{A} > \dot{M}$:
+
+\begin{align}
+    \dot{G}_B(t) + \dot{G}_L(t) &= \kappa \cdot \bigl(\dot{A}(t) - \dot{M}(t)\bigr), \label{eq:cap3_prioridad_kappa} \\
+    \intertext{y si $\dot{A} \leq \dot{M}$:}
+    \dot{G}_B(t) = \dot{G}_L(t) &= 0,
+\end{align}
+
+donde $\kappa \in (0,1]$ es el parámetro de prioridad de crecimiento versus mantenimiento. La asignación específica entre $\dot{G}_B$ y $\dot{G}_L$ —esto es, la fracción del flujo de crecimiento destinada a lípidos en función del estadio larval— sigue la parametrización etaria de \parencite{eriksenDynamicModellingFeed2022}, documentada en el Anexo \ref{anexo:formulacion_matematica}.
+
+% ---------------------------------------------------------
+\subsection{Dinámica de la biomasa estructural}
+\label{subsec:cap3_dinamica_biomasa}
+
+La biomasa estructural $B(t)$ crece por deposición de carbono desde la reserva y puede decrecer por removilización catabólica en condiciones de ayuno extremo:
+
+\begin{equation}
+    \frac{\mathrm{d}B}{\mathrm{d}t} = \dot{G}_B(t) - \delta_B \cdot B(t),
+    \label{eq:cap3_dinamica_biomasa}
+\end{equation}
+
+donde $\delta_B$ es la tasa específica de removilización estructural. En el régimen experimental del Capítulo \ref{chap:instrumentacion} —alimentación ad libitum con renovación cada \num{48} h— la condición $\dot{A} > \dot{M}$ se satisface durante la mayor parte del ciclo, por lo que $\dot{G}_B > 0$ y $\delta_B \approx 0$. La ecuación se reduce entonces a:
+
+\begin{equation}
+    \frac{\mathrm{d}B}{\mathrm{d}t} \approx \dot{G}_B(t),
+    \label{eq:cap3_dinamica_biomasa_simplificada}
+\end{equation}
+
+que vincula directamente la curva de crecimiento teórica con las mediciones destructivas de biomasa húmeda. La condición inicial $B(0) = B_0$ proviene de la ecuación \eqref{eq:cap3_b0}.
+
+% ---------------------------------------------------------
+\subsection{Acumulación de lípidos de reserva}
+\label{subsec:cap3_acumulacion_lipidos}
+
+El compartimento lipidico $L(t)$ acumula carbono destinado al almacenamiento energético de largo plazo, predominante en estadios tardíos previos a la metamorfosis:
+
+\begin{equation}
+    \frac{\mathrm{d}L}{\mathrm{d}t} = \dot{G}_L(t) - \delta_L \cdot L(t),
+    \label{eq:cap3_acumulacion_lipidos}
+\end{equation}
+
+con $\delta_L$ la tasa de movilización lipidica. Bajo el mismo argumento de alimentación suficiente, $\delta_L \approx 0$ y la dinámica se simplifica a $\mathrm{d}L/\mathrm{d}t \approx \dot{G}_L(t)$. La condición inicial $L(0) = L_0 = 0$ refleja la ausencia de reservas significativas en estadio L3 inicial.
+
+La acumulación de lípidos constituye un sumidero de carbono paralelo a la biomasa estructural. Su magnitud relativa —que puede alcanzar hasta el \num{35}\% de la biomasa seca en sustratos ricos en carbohidratos según \parencite{grausaMetabolicModelingHermetia2023}— condiciona directamente el balance de carbono disponible para emisión como \ce{CO2}, motivando su inclusión explícita en el modelo en lugar de agruparla en un único compartimento de ``biomasa total''.
+
+% ---------------------------------------------------------
+\subsection{Producción y acumulación de CO\texorpdfstring{$_2$}{2}}
+\label{subsec:cap3_produccion_co2}
+
+La quinta ecuación del sistema acumula el carbono emitido como dióxido de carbono, integrando las fuentes larval y microbiana:
+
+\begin{equation}
+    \frac{\mathrm{d}C_{\mathrm{CO_2}}}{\mathrm{d}t} = \underbrace{\dot{M}(t) + (1-Y_B)\,\dot{G}_B(t) + (1-Y_L)\,\dot{G}_L(t)}_{\dot{D}_{\mathrm{larval}}(t)} + \underbrace{\dot{D}_{\mu}(t)}_{\text{microbiana}},
+    \label{eq:cap3_produccion_co2}
+\end{equation}
+
+donde $\dot{D}_{\mathrm{larval}}$ es la dissipación metabólica directa de las larvas. Los términos $(1-Y_B)\dot{G}_B$ y $(1-Y_L)\dot{G}_L$ capturan el costo de síntesis (overhead): la fracción de reserva consumida que no se incorpora a tejido sino que se pierde como \ce{CO2} en las reacciones anabólicas. El término $\dot{D}_{\mu}(t)$ modela la respiración aeróbica de la microbiota asociada al sustrato no ingerido o al tracto digestivo, que se trata como una fuente externa no acoplada al metabolismo larval en las presentes EDO.
+
+La conexión con la señal del sensor NDIR se establece mediante la conversión de moles de carbono a gramos de \ce{CO2} por minuto:
+
+\begin{equation}
+    \dot{m}_{\mathrm{CO_2}}(t) = \frac{M_{\mathrm{CO_2}}}{M_C} \cdot \frac{\mathrm{d}C_{\mathrm{CO_2}}}{\mathrm{d}t},
+    \label{eq:cap3_co2_flujo_masico}
+\end{equation}
+
+donde $M_{\mathrm{CO_2}} = \num{44.01}$ g/mol y $M_C = \num{12.01}$ g/mol. Esta expresión es consistente con la ecuación \eqref{eq:cap3_co2_sensor_deb} y permite confrontar directamente la predicción del modelo con las pendientes $\Delta C/\Delta t$ convertidas a flujo másico en el protocolo de ventanas cerradas del Capítulo \ref{chap:instrumentacion}.
+
+Es importante recalcar que el metano (\ce{CH4}) no aparece en las ecuaciones \eqref{eq:cap3_produccion_co2} ni \eqref{eq:cap3_co2_flujo_masico}. Dado que el modelo asume metabolismo aeróbico exclusivo, cualquier emisión de \ce{CH4} detectada por el sensor MQ-4 se interpreta como una desviación del régimen ideal, cuya detección y cuantificación se abordan en el Capítulo \ref{chap:metricas} como variable residual de diagnóstico operativo.
+
+En conjunto, las ecuaciones \eqref{eq:cap3_balance_sustrato}--\eqref{eq:cap3_produccion_co2} constituyen un sistema de cinco EDO acopladas no lineales, gobernado por los parámetros semilla $\{\kappa_A, m, a_{\max}, Y_B, Y_L, \kappa\}$ y las variables libres de calibración $\{\tau_h, \beta_0, \rho_{\mathrm{conv}}, T_A, T_{\mathrm{opt}}, T_H\}$. La siguiente sección detalla la cinética de asimilación y la modulación ambiental que cierran las formas funcionales de los flujos metabólicos.
