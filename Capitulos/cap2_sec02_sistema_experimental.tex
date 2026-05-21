@@ -1,0 +1,28 @@
+% =========================================================
+% SECCIÓN 2.2 - DESCRIPCIÓN DEL SISTEMA EXPERIMENTAL
+% =========================================================
+
+\section{Descripción del Sistema Experimental}
+\label{sec:cap2_sistema_experimental}
+
+El diseño experimental se estructuró como un ensayo de laboratorio controlado en reactores batch cerrados, orientado a cuantificar las emisiones de \ce{CO2} y \ce{CH4} durante el ciclo larval de \textit{Hermetia illucens} bajo condiciones ambientales estandarizadas. La elección de un sistema batch responde a la necesidad de mantener trazabilidad de masa (sustrato, biomasa, gases) en ventanas temporales discretas, facilitando la correlación posterior con el modelo bioenergético del Capítulo 3 \parencite{eriksenDynamicModellingFeed2022, padmanabhaComprehensiveDynamicGrowth2020}. A continuación se detallan las especificaciones del reactor, las condiciones de laboratorio y el manejo de la biomasa y el sustrato.
+
+% ---------------------------------------------------------
+\subsection{Reactor batch y condiciones de laboratorio}
+\label{subsec:cap2_reactor}
+
+Los ensayos se ejecutaron en reactores cilíndricos de polipropileno alimentario de \SI{20}{\litre} de capacidad útil, provistos de tapa hermética con junta de silicona y tres puertos: (i) entrada de aire para acondicionamiento previo, (ii) muestreo de gases mediante septum de silicona para sensores NDIR, y (iii) sonda de temperatura/humedad relativa (\cref{fig:cap2_reactor_esquema}). El volumen de cabeza libre se fijó en \SI{5}{\litre} para estandarizar la acumulación gaseosa durante las ventanas cerradas de medición. Los reactores se ubicaron en una cámara ambiental con control termohigrométrico activo, manteniendo una temperatura de \SI{30}{\celsius} $\pm$\,\SI{2}{\celsius} y una humedad relativa (HR) del \SI{60}{\percent}--\SI{80}{\percent}, rangos reportados como óptimos para la maximización de la tasa metabólica larval \parencite{salamEffectDifferentEnvironmental2022, nayakHermetiaIllucensDiptera2024}.
+
+El protocolo de ventanas cerradas se organizó en ciclos de \SI{30}{\minute} de acumulación gaseosa, intercalados con periodos de aireación de \SI{10}{\minute} para evitar la hipoxia y la saturación de \ce{CO2} por encima de \SI{5000}{ppm}, umbral que podría inducir inhibición metabólica \parencite{rossiEstimatingDynamicsGreenhouse2024}. Durante las fases de aireación, se inyectó aire ambiente filtrado (\SI{0.2}{\micro\metre}) a un caudal de \SI{1}{\litre\per\minute}, garantizando renovación del volumen de cabeza libre. La iluminación se mantuvo en ciclo 12:12 (L:D) con lámparas LED de espectro blanco (\SI{3000}{\kelvin}), intensidad \SI{500}{\lux}, condición suficiente para evitar comportamiento fotofóbico excesivo sin inducir estrés térmico \parencite{nayakHermetiaIllucensDiptera2024}.
+
+Se establecieron seis réplicas ($n = 6$) por condición experimental, más dos controles (sustrato sin larvas), distribuidos en bloques completos al azar dentro de la cámara ambiental para controlar efectos de posición. El periodo experimental cubrió \SI{15}{\day}, correspondiente al ciclo completo de alimentación desde estadio L3 hasta pre-pupa \parencite{dienerConversionOrganicMaterial2009}.
+
+% ---------------------------------------------------------
+\subsection{Biomasa larval y manejo del sustrato}
+\label{subsec:cap2_biomassa_sustrato}
+
+Las larvas de \textit{H. illucens} se obtuvieron de una colonia estabilizada en la Sede Palmira (Universidad Nacional de Colombia), sincronizadas por edad (\SI{5}{\day} post-eclosión, estadio L3 inicial) y pesadas en grupo para determinar la biomasa inicial húmeda. La densidad de siembra se fijó en \SI{2.5}{\gram} de larvas húmedas por litro de sustrato, equivalente aproximadamente a \num{5} larvas/cm$^2$, valor intermedio dentro del rango óptimo reportado para maximizar la reducción de masa sin comprometer la supervivencia por sobrepoblación \parencite{dienerConversionOrganicMaterial2009, salamEffectDifferentEnvironmental2022}.
+
+El sustrato consistió en una mezcla homogeneizada de pulpa de café (\textit{Coffea arabica}) y cáscaras de frutas tropicales (plátano, papaya) en proporción 70:30 (base húmeda), seleccionada por su alta aptitud para la bioconversión y disponibilidad estacional en el Valle del Cauca \parencite{brunoValorizationOrganicWaste2025}. La humedad inicial del sustrato se ajustó a \SI{65}{\percent} $\pm$\,\SI{5}{\percent} mediante adición controlada de agua destilada, valor dentro del intervalo \SI{60}{\percent}--\SI{80}{\percent} que Bekker et al. \parencite{bekkerImpactSubstrateMoisture2021} identifican como crítico para el mantenimiento de la tasa de asimilación y el crecimiento exponencial larval. El pH se registró entre 5.5 y 6.5, sin corrección química, dado que la acidificación natural por metabolismo microbiano no alcanzó niveles inhibitorios durante el ciclo.
+
+La alimentación se realizó \textit{ad libitum} con renovación cada \SI{48}{\hour}, momento en que se registró la masa de sustrato residual y se adicionó sustrato fresco para mantener cobertura completa. No se ejecutó volteo mecánico del sustrato, salvo en las réplicas destinadas al estudio de perturbación (Capítulo 5), para preservar la formación de gradientes naturales de oxigenación que permiten evaluar la validez del modelo DEB bajo heterogeneidad real. Al final del ciclo (\SI{15}{\day}), se procedió a la separación mecánica de larvas del sustrato residual (frass), pesaje individual de una submuestra ($n = 30$ por réplica) y determinación de materia seca (\SI{60}{\celsius}, \SI{48}{\hour}) para expresar la biomasa en base seca.

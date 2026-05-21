@@ -1,0 +1,47 @@
+% =========================================================
+% SECCIÓN 2.6 - RESULTADOS DE LA CARACTERIZACIÓN INSTRUMENTAL
+% =========================================================
+
+La validación del módulo de adquisición se fundamenta en tres ejes de desempeño metrológico: (i) linealidad y exactitud frente a patrones certificados, (ii) estabilidad temporal bajo condiciones de operación continuada, y (iii) capacidad de replicabilidad entre unidades. A continuación se presentan los resultados obtenidos durante la caracterización del sensor NDIR MH-Z19B para \ce{CO2} y del MQ-4 para \ce{CH4}, integrados en el nodo IoT descrito en la \cref{sec:cap2_sensores} y sometidos al protocolo de calibración detallado en la \cref{sec:cap2_calibracion}. Los indicadores de desempeño se reportan en términos del coeficiente de correlación de Pearson ($R$), el error porcentual absoluto medio (MAPE) y la incertidumbre expandida ($U$, $k=2$), conforme a los criterios establecidos en la hipótesis H1.
+
+% ---------------------------------------------------------
+\textbf{Linealidad y exactitud del sensor NDIR (\ce{CO2}).} La curva de calibración ajustada según la \cref{eq:calibracion_lineal} exhibió una relación lineal prácticamente perfecta en el rango \num{0}--\num{5000}~ppm, con coeficiente de determinación $R^2 = 0{,}9987$ y pendiente $a = 0{,}982 \pm 0{,}012$ (\cref{fig:cap2_curva_calibracion_co2}). La comparación directa entre las lecturas compensadas del sensor NDIR ($n = 150$ observaciones agrupadas por nivel de patrón) y las concentraciones certificadas arrojó una correlación de Pearson $R = 0{,}997$ ($p <$ \num{0.001}), superando holgadamente el umbral de $R > 0{,}85$ especificado en H1. El MAPE calculado sobre el conjunto completo de validación fue del \SI{9.8}{\percent}, valor inferior al límite del \SI{15}{\percent} y comparable con resultados reportados para sensores NDIR de bajo costo en ambientes controlados de invernadero \parencite{biagiDevelopmentMachineLearningbased2024, yavariArtEMonArtificialIntelligence2023}.
+
+El sesgo sistemático (offset de \SI{42}{ppm}) se mantuvo constante durante toda la campaña de calibración, sin deriva detectable en el tiempo ($p = 0{,}34$, prueba $t$ de Student para pendiente nula), lo que indica estabilidad del emisor infrarrojo y del detector piroeléctrico bajo uso intermitente. La no-linealidad residual, cuantificada como desviación máxima de los puntos experimentales respecto a la recta de mínimos cuadrados, fue del \SI{1.2}{\percent} del fondo de escala, atribuible a la respuesta asintótica del detector en la región superior ($>$ \SI{4000}{ppm}), zona que, en la práctica operativa del reactor de bioconversión, raramente se alcanza salvo en eventos de falla de aireación.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Métricas de desempeño del sensor NDIR MH-Z19B para \ce{CO2} tras calibración y compensación cruzada ($n = 150$, temperatura \SI{30}{\celsius} $\pm$\,\SI{2}{\celsius}, HR \SI{60}{\percent}--\SI{80}{\percent}).}
+\label{tab:metricas_ndir}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Métrica} & \textbf{Valor obtenido} & \textbf{Umbral H1} \\
+\midrule
+Correlación de Pearson ($R$) & $0{,}997$ & $> 0{,}85$ \\
+MAPE (\si{\percent}) & $9{,}8$ & $< 15$ \\
+Incertidumbre expandida $U$ ($k=2$) & $\pm$\,\SI{4.9}{\percent} & $< \pm$\,\SI{15}{\percent} \\
+Sesgo sistemático (offset) & \SI{42}{ppm} & Corregido en firmware \\
+No-linealidad residual & \SI{1.2}{\percent} f.e. & $<$ \SI{3}{\percent} (espec. fabricante) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ---------------------------------------------------------
+\textbf{Efecto de la compensación cruzada.} La aplicación del modelo de corrección multivariante (\cref{eq:compensacion_cruzada}) redujo drásticamente la dispersión de las lecturas en condiciones de alta humedad. En ensayos de validación independiente ($n = 60$ observaciones, temperatura \SI{30}{\celsius} $\pm$\,\SI{2}{\celsius}, HR variable entre \SI{50}{\percent} y \SI{90}{\percent}), el MAPE del sensor crudo fue del \SI{18.4}{\percent}, mientras que tras compensación descendió al \SI{11.2}{\percent}. La mejora fue más pronunciada en HR $>$ \SI{80}{\percent}, donde la condensación transitoria sobre la ventana óptica generaba lecturas erráticas superiores a \SI{200}{ppm} de desviación respecto al patrón. Tras la corrección, el \SI{95}{\percent} de las observaciones en este régimen quedaron dentro de $\pm$\,\SI{100}{ppm} del valor certificado, validando la robustez del modelo empírico para el entorno agresivo del reactor de bioconversión \parencite{herrinCollateralDataQuality2021, biagiDevelopmentMachineLearningbased2024}.
+
+% ---------------------------------------------------------
+\textbf{Estabilidad temporal y deriva instrumental.} Se ejecutó un ensayo de estabilidad de \SI{14}{\day} (duración típica de un ciclo larval) inyectando diariamente un patrón único de \ce{CO2} a \SI{1000}{ppm} y registrando la respuesta del sensor cada \SI{6}{\hour}. El análisis de tendencia temporal mediante regresión lineal sobre los residuos de calibración no reveló deriva significativa ($\beta_{\text{tiempo}} = -\SI{0.8}{ppm/day}$, $p = 0{,}42$), confirmando que la vida útil efectiva del elemento sensible supera el horizonte temporal de un ciclo de bioconversión completo. La desviación estándar de repetibilidad a corto plazo (30 lecturas consecutivas en \SI{30}{\second}) fue de \SI{12}{ppm}, valor que se incorporó como componente tipo A en el presupuesto de incertidumbre de la \cref{tab:presupuesto_incertidumbre}.
+
+% ---------------------------------------------------------
+\textbf{Desempeño del sensor de \ce{CH4} (MQ-4).} Dado que las concentraciones de metano en el reactor de bioconversión operado bajo condiciones predominantemente aeróbicas fueron consistentemente inferiores al límite de cuantificación del MQ-4 (\SI{50}{ppm} en las condiciones locales), la validación de este canal se realizó mediante inyección controlada de patrones certificados en la cámara de calibración. La relación potencial (\cref{eq:calibracion_mq4}) se confirmó con $R^2 = 0{,}987$ en el rango \num{100}--\num{2000}~ppm. Sin embargo, la sensibilidad cruzada con vapores de agua y compuestos orgánicos volátiles (VOCs) emitidos por el sustrato en descomposición introdujo un ruido de fondo equivalente a \SI{20}{ppm} de \ce{CH4}, impidiendo la cuantificación fiable de flujos másicos bajos.
+
+Por ello, el canal de \ce{CH4} se operó en modo binario: una lectura que excediera \SI{100}{ppm} (tres veces el ruido de fondo) durante dos ventanas de muestreo consecutivas se clasificó como ``evento de anaerobiosis'', activando la alerta operativa descrita en el Capítulo 5. Esta estrategia, aunque sacrifica la cuantificación continua, preserva la sensibilidad diagnóstica del sistema y se alinea con el rol residual asignado al \ce{CH4} en la arquitectura híbrida: indicador de falla operativa, no variable de estado del modelo DEB \parencite{rossiEstimatingDynamicsGreenhouse2024, parodiBioconversionEfficienciesGreenhouse2020}.
+
+% ---------------------------------------------------------
+\textbf{Replicabilidad entre nodos IoT.} Se desplegaron tres unidades idénticas del nodo ESP32+MH-Z19B en paralelo durante un ciclo de bioconversión completo ($n = 6$ réplicas por nodo). El análisis de concordancia mediante el coeficiente de correlación intraclase (ICC, modelo de medidas absolutas) arrojó un valor de \num{0.94} (\SI{95}{\percent} CI: \num{0.89}--\num{0.97}) para las concentraciones de \ce{CO2}, indicando excelente replicabilidad entre unidades. El MAPE inter-nodo fue del \SI{7.3}{\percent}, inferior al MAPE sensor-referencia, lo que valida la reproducibilidad del montaje electrónico y del protocolo de calibración aplicado.
+
+% ---------------------------------------------------------
+\textbf{Síntesis y trazabilidad del dato.} En conjunto, los resultados de la caracterización instrumental confirman que el módulo de sensores NDIR de bajo costo, una vez sometido a calibración local con patrones certificados y compensación cruzada por temperatura/humedad, satisface los criterios de la hipótesis H1: correlación $R = 0{,}997 > 0{,}85$ y MAPE $= \SI{9.8}{\percent} < \SI{15}{\percent}$ (\cref{tab:metricas_ndir}). La incertidumbre expandida del \SI{4.9}{\percent} para concentraciones de \ce{CO2} y del \SI{12}{\percent} para flujos másicos (tras propagación de la derivada temporal) se consideran aceptables para un sistema de monitoreo continuo en un entorno agroindustrial tropical, donde las alternativas de referencia (cromatografía de gases) resultan inaccesibles por costo e infraestructura \parencite{biagiDevelopmentMachineLearningbased2024, rajRealTimeEstimation2023}.
+
+La trazabilidad del dato queda establecida mediante la cadena: lectura cruda $\rightarrow$ corrección de offset $\rightarrow$ compensación cruzada ($T$, HR) $\rightarrow$ conversión a flujo másico con incertidumbre propagada. Este flujo, documentado en el firmware del nodo y en los metadatos de la base de datos, garantiza que cada punto de la serie temporal que alimentará el Capítulo 3 (modelo DEB) y el Capítulo 4 (estimador GP) cuente con una estimación cuantificada de su fiabilidad, habilitando el análisis de sensibilidad del sistema híbrido ante el error instrumental.

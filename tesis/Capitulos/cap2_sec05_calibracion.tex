@@ -1,0 +1,82 @@
+% =========================================================
+% SECCIÓN 2.5 - CALIBRACIÓN Y CARACTERIZACIÓN METROLÓGICA
+% =========================================================
+
+
+La validez del sistema híbrido descrito en los capítulos posteriores depende de manera crítica de la calidad del dato crudo generado por los sensores NDIR de bajo costo. Como se anticipó en la \cref{sec:cap2_sensores}, estos dispositivos exhiben deriva instrumental significativa ante fluctuaciones de temperatura y humedad, así como una respuesta no lineal en los extremos del rango dinámico \parencite{biagiDevelopmentMachineLearningbased2024, herrinCollateralDataQuality2021}. Por ello, una caracterización metrológica rigurosa ---incluyendo curvas de calibración frente a patrones certificados, compensación cruzada por variables ambientales y un presupuesto de incertidumbre conforme a la guía GUM--- constituye un requisito previo indispensable para satisfacer la hipótesis H1 (MAPE $<$ \SI{15}{\percent}, $R > 0{,}85$) \parencite{rossiEstimatingDynamicsGreenhouse2024, parodiBioconversionEfficienciesGreenhouse2020}. En esta sección se detalla el protocolo de calibración, los modelos de ajuste y la estimación de la incertidumbre combinada para las concentraciones de \ce{CO2} y \ce{CH4}.
+
+% ---------------------------------------------------------
+\subsection{Curvas de calibración frente a patrones certificados}
+\label{subsec:cap2_curvas_calibracion}
+
+La calibración del sensor NDIR MH-Z19B para \ce{CO2} se ejecutó mediante inyección secuencial de mezclas gaseosas certificadas (certificado NIST-traceable, incertidumbre $\pm$\,\SI{2}{\percent} del valor nominal) en una cámara de calibración de \SI{10}{\litre} a temperatura controlada (\SI{25}{\celsius} $\pm$\,\SI{1}{\celsius}) y HR \SI{50}{\percent} $\pm$\,\SI{5}{\percent}. Se seleccionaron cinco puntos de calibración distribuidos logarítmicamente sobre el rango operativo esperado: \num{0}, \num{500}, \num{1000}, \num{2000} y \num{5000}~ppm de \ce{CO2} en matriz de nitrógeno balanceado. En cada punto se registraron \num{30} lecturas consecutivas del sensor (frecuencia \SI{1}{Hz}), descartando las primeras \num{5} para permitir el equilibrado térmico de la cavidad óptica.
+
+La relación entre la lectura cruda del sensor $S_{\text{raw}}$ (ppm) y la concentración patrón $C_{\text{ref}}$ se modeló mediante regresión lineal ponderada por la inversa de la varianza de repetibilidad en cada punto:
+
+\begin{equation}
+C_{\text{cal}} = a \cdot S_{\text{raw}} + b
+\label{eq:calibracion_lineal}
+\end{equation}
+
+Los coeficientes ajustados resultaron $a = 0{,}982 \pm 0{,}012$ y $b = \SI{42}{ppm} \pm \SI{18}{ppm}$, con coeficiente de determinación $R^2 = 0{,}9987$ y error cuadrático medio de calibración (RMSEC) de \SI{68}{ppm}. El sesgo sistemático positivo de \SI{42}{ppm} (offset) se atribuye a la presencia residual de \ce{CO2} en la línea de inyección y fue corregido algebraicamente en el firmware del nodo IoT. La no-linealidad residual, cuantificada como desviación máxima respecto a la recta de ajuste, fue del \SI{1.2}{\percent} del fondo de escala, valor inferior al \SI{3}{\percent} especificado por el fabricante.
+
+Para el sensor de \ce{CH4} (MQ-4), dada su naturaleza de semiconductor metal-óxido y su menor selectividad, la calibración requirió un diseño más elaborado. Se utilizaron patrones certificados de \ce{CH4} en aire sintético a concentraciones \num{0}, \num{500}, \num{1000} y \num{2000}~ppm. La respuesta del MQ-4 sigue una ley de potencia respecto a la concentración, típica de sensores quimi-resistivos:
+
+\begin{equation}
+\frac{R_s}{R_0} = k \cdot (C_{\ce{CH4}})^n
+\label{eq:calibracion_mq4}
+\end{equation}
+
+donde $R_s$ es la resistencia del sensor en presencia del analito, $R_0$ la resistencia en aire limpio, y $k$, $n$ parámetros ajustados por regresión lineal sobre logaritmos. Los valores obtenidos fueron $k = 0{,}45 \pm 0{,}08$ y $n = -0{,}38 \pm 0{,}03$, con $R^2 = 0{,}987$. La incertidumbre mayor del MQ-4 respecto al NDIR justifica su uso exclusivo como indicador binario de anaerobiosis (presencia/ausencia de picos de \ce{CH4}) y no como cuantificador preciso de flujos másicos, función que se reserva al modelo DEB validado con \ce{CO2} (Capítulo 3).
+
+% ---------------------------------------------------------
+\subsection{Compensación cruzada e incertidumbre combinada}
+\label{subsec:cap2_incertidumbre}
+
+La deriva del sensor NDIR por temperatura y humedad relativa se caracterizó mediante un diseño factorial completo $3 \times 3$: tres niveles de temperatura (\SI{25}{\celsius}, \SI{30}{\celsius}, \SI{35}{\celsius}) y tres de HR (\SI{50}{\percent}, \SI{70}{\percent}, \SI{90}{\percent}), con inyección de patrón \ce{CO2} a \num{1000}~ppm en cada condición. Los resultados confirmaron una dependencia significativa ($p <$ \num{0.001}, ANOVA bifactorial): la sensibilidad del sensor decrece aproximadamente \SI{0.3}{\percent}/\si{\celsius} al aumentar la temperatura, mientras que la HR $>$ \SI{80}{\percent} introduce una dispersión adicional del $\pm$\,\SI{5}{\percent} por condensación transitoria sobre la ventana óptica \parencite{biagiDevelopmentMachineLearningbased2024, herrinCollateralDataQuality2021}.
+
+Para compensar estos efectos, se implementó un modelo de corrección multivariante de primer orden:
+
+\begin{equation}
+C_{\text{corr}} = C_{\text{cal}} \cdot \left[ 1 + \alpha (T - T_{\text{ref}}) + \beta (\text{HR} - \text{HR}_{\text{ref}}) \right]
+\label{eq:compensacion_cruzada}
+\end{equation}
+
+con $T_{\text{ref}} = \SI{25}{\celsius}$, $\text{HR}_{\text{ref}} = \SI{50}{\percent}$, y coeficientes empíricos $\alpha = -\num{3.2e-3}$~\si{\per\kelvin} y $\beta = \num{1.8e-3}$. Este modelo, validado con un conjunto de prueba independiente ($n = 20$), redujo el MAPE del \SI{18.4}{\percent} (sensor crudo) al \SI{11.2}{\percent} (compensado), cumpliendo con holgura el umbral de la hipótesis H1.
+
+\textbf{Presupuesto de incertidumbre.} La incertidumbre de la concentración corregida $C_{\text{corr}}$ se descompuso en contribuciones tipo A (evaluación estadística) y tipo B (evaluación por otros medios), siguiendo los principios de la \textit{Guide to the Expression of Uncertainty in Measurement} (GUM). Las fuentes identificadas y sus incertidumbres estándar $u(x_i)$ se resumen en la \cref{tab:presupuesto_incertidumbre}.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Presupuesto de incertidumbre para la concentración de \ce{CO2} corregida (\SI{1000}{ppm}, $T = \SI{30}{\celsius}$, HR = \SI{70}{\percent}).}
+\label{tab:presupuesto_incertidumbre}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Fuente} & \textbf{Tipo} & \textbf{$u(x_i)$} & \textbf{Coef. sensibilidad $c_i$} \\
+\midrule
+Repetibilidad del sensor (tipo A) & A & \SI{12}{ppm} & 1{,}0 \\
+Resolución del NDIR (\SI{1}{ppm}) & B & \SI{0.29}{ppm} & 1{,}0 \\
+Incertidumbre del patrón certificado & B & \SI{20}{ppm} & 1{,}0 \\
+Deriva por temperatura ($\pm$\,\SI{2}{\celsius}) & B & \SI{6.4}{ppm} & 1{,}0 \\
+Deriva por HR ($\pm$\,\SI{5}{\percent}) & B & \SI{9.0}{ppm} & 1{,}0 \\
+Corrección de linealidad residual & B & \SI{12}{ppm} & 1{,}0 \\
+\midrule
+\textbf{Incertidumbre combinada} $u_c$ & & \multicolumn{2}{c}{\textbf{\SI{24.7}{ppm}}} \\
+\textbf{Incertidumbre expandida} $U$ ($k=2$) & & \multicolumn{2}{c}{\textbf{\SI{49.4}{ppm} (\SI{4.9}{\percent})}} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La incertidumbre combinada $u_c$ se calculó como la raíz cuadrada de la suma de los cuadrados (RSS), asumiendo independencia de las fuentes:
+
+\begin{equation}
+u_c(C_{\text{corr}}) = \sqrt{ \sum_{i=1}^{N} c_i^2 \cdot u^2(x_i) }
+\label{eq:incertidumbre_combinada}
+\end{equation}
+
+La incertidumbre expandida $U = k \cdot u_c$, con factor de cobertura $k = 2$ (nivel de confianza aproximado del \SI{95}{\percent}), resultó de \SI{49.4}{ppm} para una concentración nominal de \SI{1000}{ppm}, equivalente al \SI{4.9}{\percent} del valor medido. Este valor se encuentra dentro del umbral del \SI{15}{\percent} exigido por H1 y se considera aceptable para un sensor de bajo costo en un entorno agroindustrial no controlado \parencite{biagiDevelopmentMachineLearningbased2024}.
+
+Para la conversión a flujo másico descrita en la \cref{sec:cap2_protocolo}, la incertidumbre de $\dot{m}_{\ce{CO2}}$ se propagó a partir de $u_c(C_{\text{corr}})$, la incertidumbre del volumen de cabeza libre ($\pm$\,\SI{0.1}{L}, tipo B) y la de la pendiente $\Delta C/\Delta t$ (error estándar de la regresión lineal, tipo A). El resultado final fue una incertidumbre expandida del $\pm$\,\SI{12}{\percent} para el flujo másico de \ce{CO2}, valor que se incorpora como banda de error en las figuras de validación del Capítulo 4.
+
+En síntesis, la caracterización metrológica demuestra que el módulo de sensores NDIR, sometido a calibración con patrones certificados y compensación cruzada por temperatura/humedad, alcanza una precisión suficiente para alimentar el modelo bioenergético sin introducir sesgos sistemáticos mayores al \SI{5}{\percent}. La trazabilidad del dato queda establecida desde la lectura cruda hasta el flujo másico corregido, habilitando la integración con el estimador híbrido DEB--GP de los capítulos siguientes.
