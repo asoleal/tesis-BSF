@@ -243,6 +243,7 @@ Este capítulo sitúa la bioconversión con \textit{Hermetia illucens} como alte
 % ---------------------------------------------------------
 \chapter{Instrumentación IoT y Caracterización Metrológica de Emisiones}
 \chaptermark{Instrumentación y Metrología}
+\label{chap:instrumentacion}
 
 \begin{center}
 \small
@@ -331,6 +332,7 @@ Se desarrolla la generalización del modelo Dynamic Energy Budget de Eriksen (20
 % ---------------------------------------------------------
 \chapter{Sistema Híbrido: Integración Modelo--Datos y Estimación de Biomasa}
 \chaptermark{Sistema Híbrido DEB--GP}
+\label{chap:hibrido}
 
 \begin{center}
 \small
@@ -340,93 +342,63 @@ Se integra el modelo DEB con un estimador externo de biomasa basado en Proceso G
 \end{center}
 
 \section{Introducción}
-\label{sec:cap4_intro}
+\label{sec:cap4_introduccion}
 % Brecha: B(t) solo en cosechas. Se requiere estimador externo y
 % confrontación de pendientes para evitar sesgo por saturación.
+\input{Capitulos/cap4_sec01_introduccion.tex}
 
 \section{Arquitectura Conceptual y Flujo de Información}
 \label{sec:cap4_arquitectura}
 % Diagrama: sensores → GP → \hat{B} → DEB → \dot{C}_{modelo} vs.
 % \dot{C}_{sensor}. Jerarquía de tiempos: días vs. minutos.
+\input{Capitulos/cap4_sec02_arquitectura.tex}
 
 \section{Estimador Externo de Biomasa mediante Proceso Gaussiano}
-\label{sec:cap4_estimador}
+\label{sec:cap4_estimador_gp}
 % GP único por parsimonia (N < 100). Sin MLP profundo.
-
-\subsection{Justificación fuera de la ODE y criterio de parsimonia}
-\label{subsec:cap4_justificacion}
-% NN dentro de la ODE = autodiff agresivo, sin interpretabilidad.
-% GP con kernel Matérn 3/2 es más robusto.
-
-\subsection{Variables de entrada y codificación del estado del reactor}
-\label{subsec:cap4_entradas}
-% C(t), M(t), S(t), \bar{T}, \bar{H}, CDD (Grados-Día Acumulados).
-
-\subsection{Formulación del Proceso Gaussiano}
-\label{subsec:cap4_gp}
-% \hat{B} \sim \mathcal{GP}(m(x), k(x,x')). Varianza posterior analítica.
-
-\subsection{Entrenamiento supervisado y validación leave-one-replica-out}
-\label{subsec:cap4_entrenamiento}
-% Cosechas cada 5 días, 6 réplicas. Métrica: RMSE < 15 %.
-
-\subsection{Propagación de la incertidumbre al pseudo-observable \texorpdfstring{$\hat{B}$}{B}}
-\label{subsec:cap4_incertidumbre}
-% \sigma_B^{efectivo} = \sqrt{\sigma_{med}^2 + \sigma_{est}^2(t)}.
+% Incluye subsecciones: justificación, variables, formulación,
+% entrenamiento LORO, propagación de incertidumbre.
+\input{Capitulos/cap4_sec03_estimador_gp.tex}
 
 \section{Estrategia de Calibración del Modelo DEB}
 \label{sec:cap4_calibracion}
-
-\subsection{Fase A: semillas de parámetros a partir de Eriksen (2022)}
-\label{subsec:cap4_fase_a}
-% \kappa, m, a_{\max}, Y_B, Y_L fijos desde Tabla S1 de Eriksen.
-
-\subsection{Fase B: ajuste local con series de sensores NDIR}
-\label{subsec:cap4_fase_b}
-% Libres: \tau_h, \beta_0, \rho_{\text{conv}}, T_A, T_{\text{opt}}, T_H.
-
-\subsection{Restricciones de caja y método de optimización}
-\label{subsec:cap4_restricciones}
-% L-BFGS-B. Gradiente por diferencias finitas centradas. Sin autodiff.
+% Fase A: semillas desde Eriksen. Fase B: ajuste local NDIR.
+% Restricciones de caja y L-BFGS-B.
+% Incluye subsecciones: Fase A, Fase B, restricciones.
+\input{Capitulos/cap4_sec04_calibracion.tex}
 
 \section{Función de Pérdida y Confrontación Modelo--Sensor}
 \label{sec:cap4_perdida}
-
-\subsection{Comparación de pendientes de emisión en ventanas cerradas}
-\label{subsec:cap4_pendientes}
-% Se comparan derivadas, no acumulados. Ver Eq. en desarrollo.
-
-\subsection{Tratamiento del \texorpdfstring{\ce{CH4}}{CH4} como residual de diagnóstico}
-\label{subsec:cap4_ch4_residual}
-% CH4 NO entra en la ODE. Indicador binario de anaerobiosis.
-
+% Comparación de derivadas en ventanas de 30 min.
+% CH4 como residual de diagnóstico (indicador binario).
 % NOTA: Conversión ppm→g/min en Cap. 2. No repetir aquí.
+% Incluye subsecciones: pendientes de emisión, tratamiento CH4.
+\input{Capitulos/cap4_sec05_perdida.tex}
 
 \section{Validación Predictiva y Métricas de Desempeño}
 \label{sec:cap4_validacion}
-
-\subsection{Coeficiente de determinación y error porcentual absoluto medio}
-\label{subsec:cap4_mape}
 % R^2 y MAPE. Umbral: < 15 % éxito, < 10 % excepcional.
-
-\subsection{Análisis de residuos y detección de eventos de anaerobiosis}
-\label{subsec:cap4_residuos}
-% Normalidad de residuales. Colas pesadas = procesos omitidos (Cap. 5).
+% Análisis de residuos y detección de anaerobiosis.
+% Incluye subsecciones: métricas de regresión, análisis de residuos.
+\input{Capitulos/cap4_sec06_validacion.tex}
 
 \section{Resultados de la Integración Modelo--Datos}
 \label{sec:cap4_resultados}
 % \hat{B} vs cosechas, pendientes obs vs pred, MAPE por fases,
 % mapa de calor residuos vs tiempo/temperatura.
+\input{Capitulos/cap4_sec07_resultados.tex}
 
 \section{Conclusiones del Capítulo}
 \label{sec:cap4_conclusiones}
 % DEB+GP estima biomasa y calibra con MAPE < X %. CH4 diagnóstico.
+\input{Capitulos/cap4_sec08_conclusiones.tex}
 
 % ---------------------------------------------------------
 % CAPÍTULO 5
 % ---------------------------------------------------------
 \chapter{Métricas Ambientales y Herramienta de Diagnóstico Operativo}
 \chaptermark{Métricas y Diagnóstico}
+\label{chap:metricas}
 
 \begin{center}
 \small
@@ -436,66 +408,33 @@ Se cuantifica el balance de carbono del ciclo de bioconversión mediante un inve
 \end{center}
 
 \section{Introducción}
-\label{sec:cap5_intro}
+\label{sec:cap5_introduccion}
 % Cierre del arco: datos (Cap. 2) + modelo (Cap. 3) + integración
 % (Cap. 4) → indicadores ambientales y diagnóstico.
 
-\section{Inventario Dinámico de Carbono}
-\label{sec:cap5_inventario}
+\section{Arquitectura de la Plataforma de Soporte a la Decisión}
+\label{sec:cap5_arquitectura}
+\input{Capitulos/cap5_sec02_arquitectura.tex}
 
-\subsection{Balance de masa de carbono en el ciclo de bioconversión}
-\label{subsec:cap5_balance_masa}
-% C inicial = biomasa final + lípidos + CO2 + frass residual.
+\section{Semáforo de Riesgo Ambiental y Estados Operativos}
+\label{sec:cap5_semaforo}
+\input{Capitulos/cap5_sec03_semaforo.tex}
 
-\subsection{Discrepancia acumulada \texorpdfstring{$\Delta_{\text{Total}}$}{Delta\_Total} entre modelo y sensor}
-\label{subsec:cap5_discrepancia}
-% \Delta_{Total} = \int (\dot{C}_{sensor} - \dot{C}_{modelo}) dt.
+\section{Protocolo de Respuesta ante Eventos de Anaerobiosis}
+\label{sec:cap5_protocolo}
+\input{Capitulos/cap5_sec04_protocolo.tex}
 
-\section{Detección de Eventos de Anaerobiosis}
-\label{sec:cap5_anaerobiosis}
+\section{Generación Automatizada de Reportes MRV}
+\label{sec:cap5_mrv}
+\input{Capitulos/cap5_sec05_mrv.tex}
 
-\subsection{Clasificador de umbral para la predicción de episodios de \texorpdfstring{\ce{CH4}}{CH4}}
-\label{subsec:cap5_clasificador}
-% \mathcal{I}_{CH4}(t) = 1 si [CH4] > \theta_{CH4} y \delta(t) > k_\alpha \sigma_\epsilon.
-
-\subsection{Umbrales de clasificación y métricas de sensibilidad}
-\label{subsec:cap5_umbrales}
-% Recall > 80 %. Matriz de confusión.
-
-\section{Métricas de Desempeño Ambiental}
-\label{sec:cap5_metricas}
-
-\subsection{Factor de emisión específico de \texorpdfstring{\ce{CO2}}{CO2} por unidad de sustrato procesado}
-\label{subsec:cap5_factor_emision}
-% g CO2 / kg sustrato. Comparación Rossi, Fuhrmann.
-
-\subsection{Eficiencia de conversión de carbono y huella de bioconversión}
-\label{subsec:cap5_eficiencia}
-% Fracción convertida a biomasa vs. emitida.
-
-\subsection{Comparación dinámica versus estimaciones estáticas tradicionales}
-\label{subsec:cap5_comparativa}
-% Inventario dinámico vs. factores de emisión promedio estáticos.
-
-\section{Herramienta de Diagnóstico Operativo}
-\label{sec:cap5_diagnostico}
-% Entregable técnico Fase IV. No condiciona H1--H4.
-
-\subsection{Dashboard de monitoreo y semáforo de riesgo}
-\label{subsec:cap5_dashboard}
-% 1--2 páginas. Grafana/Streamlit. Verde/ámbar/rojo.
-
-\subsection{Protocolo de respuesta ante alertas ambientales}
-\label{subsec:cap5_protocolo}
-% Verde: normal. Ámbar: revisar humedad. Rojo: volteo/aireación.
-
-\section{Resultados de la Evaluación Ambiental}
-\label{sec:cap5_resultados}
-% Tablas y figuras: balance, \Delta_{Total}, matriz confusión,
-% factores de emisión, dashboard.
+\section{Validación de la Utilidad Operativa y Pruebas de Campo}
+\label{sec:cap5_validacion}
+\input{Capitulos/cap5_sec06_validacion.tex}
 
 \section{Conclusiones del Capítulo}
 \label{sec:cap5_conclusiones}
+\input{Capitulos/cap5_sec07_conclusiones.tex}
 % Inventario dinámico, clasificador CH4, métricas comparables.
 % MRV (IPCC, Verra) como horizonte de trabajo futuro.
 

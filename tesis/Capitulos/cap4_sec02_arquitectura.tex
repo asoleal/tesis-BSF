@@ -1,0 +1,102 @@
+
+La integración del modelo mecanicista DEB con el estimador de biomasa mediante Procesos Gaussianos exige una arquitectura modular que gestione de manera explícita el flujo de datos entre sensores físicos, algoritmos de inferencia y ecuaciones dinámicas. Esta sección describe la topología del sistema híbrido, sus interfaces internas y la sincronización temporal entre componentes operando en escalas diferentes.
+
+\subsection{Principios de diseño arquitectónico}
+\label{subsec:cap4_principios_diseno}
+
+El diseño del sistema se fundamenta en tres principios epistémicos derivados del marco metodológico expuesto en el \cref{chap:marco_metodologico}:
+
+\begin{enumerate}
+    \item \emph{Separación de responsabilidades}: cada módulo gestiona una única capa de abstracción (percepción física, inferencia estadística o predicción mecanicista), evitando que la complejidad algorítmica del GP contamine las restricciones físicas del DEB, y viceversa.
+    \item \emph{Propagación de incertidumbre}: la varianza predictiva del estimador GP debe transmitirse de manera cuantificada al modelo DEB, de modo que la predicción final de emisiones incluya no solo un valor esperado, sino un intervalo de confianza derivado de la indeterminación en $\hat{B}(t)$.
+    \item \emph{Retroalimentación diferida}: la calibración de parámetros libres no ocurre en cada paso de integración numérica, sino en ventanas temporales discretas donde la acumulación de residuos modelo-sensor es estadísticamente significativa.
+\end{enumerate}
+
+Estos principios responden a la necesidad de mantener la interpretabilidad física del modelo —alineada con los requerimientos de reporte climático del IPCC Tier~3— al tiempo que se incorpora la flexibilidad adaptativa propia de los métodos de aprendizaje automático \parencite{adadiPeekingBlackBoxSurvey2018, weichertReviewMachineLearning2019}.
+
+\subsection{Topología de tres capas}
+\label{subsec:cap4_topologia}
+
+La arquitectura se organiza en tres capas secuenciales conectadas por interfaces bien definidas, como se resume en la \cref{fig:cap4_arquitectura_hibrida}.
+
+\begin{description}
+    \item[Capa de percepción (edge layer)] Compuesta por el nodo sensor basado en microcontrolador ESP32, integrando sensores NDIR para \ce{CO2} y \ce{CH4}, así como sensores ambientales de temperatura y humedad relativa. Esta capa digitaliza variables físicas con una frecuencia de muestreo de \num{1} min, aplicando filtros de media móvil para atenuar ruido eléctrico, y transmite la telemetría vía MQTT hacia el módulo de procesamiento \parencite{biagiDevelopmentMachineLearningbased2024}.
+    
+    \item[Capa de inferencia biológica (GP layer)] Recibe como entrada el vector de estado operativo $\mathbf{x}(t) = [C(t), T, \mathrm{HR}, t]^\intercal$, donde $C(t)$ es la concentración de \ce{CO2} en ppm, $T$ la temperatura en °C, HR la humedad relativa en \% y $t$ el tiempo transcurrido en días. El Proceso Gaussiano devuelve la estimación $\hat{B}(t)$ de la biomasa húmeda total del reactor, junto con su varianza predictiva $\sigma^2_{\hat{B}}(t)$. Esta capa abstrae la complejidad biológica del reactor, traduciendo señales fisicoquímicas en una variable de estado estructural compatible con el DEB.
+    
+    \item[Capa de predicción mecanicista (DEB layer)] Ejecuta la integración numérica del sistema de EDO del \cref{chap:cap3} utilizando $\hat{B}(t)$ como pseudo-observable dinámico. La salida principal es la tasa teórica de emisión de \ce{CO2} $\dot{m}_{\mathrm{CO_2}}^{\mathrm{DEB}}(t)$, calculada como suma de la respiración de mantenimiento y el costo de síntesis de nuevo tejido, según la parametrización de \textcite{eriksenDynamicModellingFeed2022}.
+\end{description}
+
+\begin{figure}[htbp]
+    \centering
+    % Diagrama conceptual: sugerencia TikZ o inclusión de figura externa
+    \fbox{\parbox{0.9\textwidth}{\centering \vspace{2cm} \textit{Diagrama conceptual de la arquitectura híbrida DEB+GP.} \\ Sensores $\rightarrow$ GP $\rightarrow$ DEB $\rightarrow$ Comparación $\rightarrow$ Calibración \vspace{2cm}}}
+    \caption{Arquitectura conceptual del sistema híbrido. El flujo de información discurre desde la capa de percepción (sensores IoT), pasa por el estimador GP que infiere la biomasa, alimenta el modelo DEB para la predicción de emisiones, y cierra el ciclo mediante la confrontación con las pendientes observadas del sensor en ventanas de \num{30} min.}
+    \label{fig:cap4_arquitectura_hibrida}
+\end{figure}
+
+\subsection{Flujo de datos y sincronización temporal}
+\label{subsec:cap4_flujo_temporal}
+
+Un aspecto crítico de la arquitectura es la coexistencia de escalas temporales heterogéneas. La \cref{tab:cap4_escalas_temporales} detalla la cadencia operativa de cada módulo.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Escalas temporales y resolución de cada capa del sistema híbrido.}
+    \label{tab:cap4_escalas_temporales}
+    \begin{tabular}{@{}llll@{}}
+        \toprule
+        \textbf{Capa} & \textbf{Variable} & \textbf{Resolución} & \textbf{Propósito} \\
+        \midrule
+        Percepción & $C(t)$, $T$, HR & \num{1} min & Captura de dinámica rápida \\
+        Inferencia (GP) & $\hat{B}(t)$ & \num{10} min & Suavizado y predicción intermedia \\
+        Predicción (DEB) & $\dot{m}_{\mathrm{CO_2}}^{\mathrm{DEB}}(t)$ & \num{5} min & Integración numérica adaptativa \\
+        Confrontación & $\Delta C/\Delta t$ vs $\dot{m}_{\mathrm{CO_2}}^{\mathrm{DEB}}$ & \num{30} min & Acumulación de residuos significativa \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+El flujo de datos opera en cascada con los siguientes pasos:
+
+\begin{enumerate}
+    \item \emph{Adquisición}: los sensores registran $C(t)$, $T$ y HR cada \num{1} min. El dato de \ce{CH4} se registra simultáneamente pero se canaliza hacia un módulo de clasificación binaria independiente.
+    
+    \item \emph{Preprocesamiento}: se aplica un filtro de media móvil de ventana \num{10} min a la serie $C(t)$ para eliminar fluctuaciones de alta frecuencia no representativas del metabolismo larval (ruido electroquímico, perturbaciones por apertura del reactor).
+    
+    \item \emph{Inferencia}: cada \num{10} min, el GP consume el vector $\mathbf{x}(t)$ y genera $\hat{B}(t) \pm \sigma_{\hat{B}}(t)$. El valor esperado alimenta el DEB, mientras que la varianza se almacena para la propagación de incertidumbre en la predicción final.
+    
+    \item \emph{Integración DEB}: con $\hat{B}(t)$ como condición de contorno dinámica, el sistema de EDO se resuelve mediante un esquema numérico (RK4 adaptativo) con paso \num{5} min, produciendo la trayectoria $\dot{m}_{\mathrm{CO_2}}^{\mathrm{DEB}}(t)$.
+    
+    \item \emph{Confrontación}: cada \num{30} min se calcula la pendiente observada $\Delta C/\Delta t$ mediante regresión lineal sobre la ventana deslizante, y se compara con la tasa media del modelo $\bar{\dot{m}}_{\mathrm{CO_2}}^{\mathrm{DEB}}$ en la misma ventana. El residuo $\delta(t) = \Delta C/\Delta t - \bar{\dot{m}}_{\mathrm{CO_2}}^{\mathrm{DEB}}$ alimenta el módulo de calibración.
+\end{enumerate}
+
+\subsection{El canal paralelo de diagnóstico con \ce{CH4}}
+\label{subsec:cap4_canal_ch4}
+
+El metano no participa en las ecuaciones de estado del DEB, dado que el modelo asume aerobiosis estricta y, por tanto, la producción de \ce{CH4} es nula en la tendencia mecanicista. No obstante, su medición constituye un canal paralelo de diagnóstico operativo con una lógica binaria:
+
+\begin{equation}
+    \label{eq:cap4_clasificador_ch4}
+    \mathcal{A}(t) = 
+    \begin{cases}
+        1, & \text{si } C_{\mathrm{CH_4}}(t) > \num{100}\ \text{ppm}, \\
+        0, & \text{en otro caso},
+    \end{cases}
+\end{equation}
+
+donde $\mathcal{A}(t) = 1$ indica una condición de anaerobiosis transitoria. Cuando $\mathcal{A}(t) = 1$ y simultáneamente $\delta(t) < 0$ (el sensor mide menos \ce{CO2} que el modelo), el sistema interpreta que una fracción del carbono disponible ha sido redirigida hacia rutas metabólicas anaeróbicas, generando una alerta de gestión. Este canal opera de manera \emph{feed-forward}: informa al operador pero no retroalimenta las EDO, evitando violar el supuesto de conservación de masa aeróbica sobre el cual se construyó el DEB en el \cref{chap:cap3} \parencite{rossiEstimatingDynamicsGreenhouse2024}.
+
+\subsection{Interfaces entre módulos}
+\label{subsec:cap4_interfaces}
+
+Para garantizar la trazabilidad del dato científico y la reproducibilidad del flujo, se establecen tres interfaces formales:
+
+\begin{description}
+    \item[Interface I (Sensor $\rightarrow$ GP)] Entrega el vector $\mathbf{x}(t)$ con metadatos de timestamp y calidad de señal (flag de calibración del NDIR). Si el sensor reporta un valor fuera de rango ($C(t) < \num{400}$ ppm o $C(t) > \num{10000}$ ppm), el GP ignora el dato y mantiene la última predicción válida.
+    
+    \item[Interface II (GP $\rightarrow$ DEB)] Transmite el par $(\hat{B}(t), \sigma^2_{\hat{B}}(t))$. El DEB utiliza $\hat{B}(t)$ como variable de estado forzada, mientras que $\sigma^2_{\hat{B}}(t)$ se propaga al cálculo de la varianza de $\dot{m}_{\mathrm{CO_2}}^{\mathrm{DEB}}(t)$ mediante linealización del Jacobiano del sistema alrededor de la trayectoria nominal.
+    
+    \item[Interface III (DEB $\rightarrow$ Calibrador)] Exporta la tupla $(\bar{\dot{m}}_{\mathrm{CO_2}}^{\mathrm{DEB}}, \Delta C/\Delta t, \delta(t), \mathcal{A}(t))$ cada \num{30} min. Esta tupla constituye el registro mínimo para la estimación de los parámetros libres $\{\tau_h, \beta_0, \rho_{\mathrm{conv}}, T_A, T_{\mathrm{opt}}, T_H\}$ descritos en la \cref{sec:cap3_parametros}.
+\end{description}
+
+La arquitectura así descrita establece un marco robusto donde la precisión física del modelo DEB y la adaptabilidad estadística del GP coexisten sin solapamiento funcional. En la siguiente sección se formaliza matemáticamente el estimador GP, justificando su formulación fuera del sistema de EDO y detallando su entrenamiento supervisado.

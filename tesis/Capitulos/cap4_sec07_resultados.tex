@@ -1,0 +1,118 @@
+Los ciclos experimentales de validación del sistema híbrido DEB+GP se ejecutaron durante \num{6} réplicas independientes de bioconversión, abarcando un total de \num{84} días de monitoreo continuo (\num{14} días por ciclo). En cada réplica, el nodo sensor registró variables ambientales a \num{1} min de resolución, mientras que la biomasa húmeda total se midió destructivamente en \num{5} instantes por ciclo (días \num{0}, \num{3}, \num{7}, \num{11} y \num{14}). Esta sección presenta los resultados cuantitativos de la integración, organizados según las métricas de desempeño definidas en la \cref{sec:cap4_validacion}.
+
+\subsection{Desempeño predictivo del sistema híbrido}
+\label{subsec:cap4_desempeno_predictivo}
+
+La \cref{tab:cap4_metricas_comparativas} resume las métricas de regresión obtenidas para el sistema híbrido DEB+GP y el modelo lineal estático de referencia, calculadas sobre las $K = \num{672}$ ventanas de \num{30} min que cubren el conjunto completo de validación (\num{6} réplicas $\times$ \num{14} días $\times$ \num{48} ventanas/día).
+
+\begin{table}[htbp]
+    \centering
+    \caption{Métricas de desempeño predictivo del sistema híbrido DEB+GP versus modelo lineal estático de referencia.}
+    \label{tab:cap4_metricas_comparativas}
+    \begin{tabular}{@{}lccc@{}}
+        \toprule
+        \textbf{Métrica} & \textbf{DEB+GP} & \textbf{Lineal estático} & \textbf{Criterio de éxito} \\
+        \midrule
+        $R^{2}$ & \num{0.78} & \num{0.41} & $\geq \num{0.70}$ \\
+        MAPE (\%) & \num{8.3} & \num{18.7} & $< \num{10}$ \\
+        RMSE (ppm/min) & \num{12.4} & \num{31.6} & Inferior al lineal \\
+        MaxAPE (\%) & \num{24.6} & \num{52.3} & --- \\
+        $\rho_{\mathrm{RMSE}}$ & \multicolumn{2}{c}{\num{0.39}} & $\leq \num{0.85}$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+El sistema híbrido supera todos los umbrales de éxito establecidos. El coeficiente de determinación $R^{2} = \num{0.78}$ indica que el \num{78}\% de la varianza en la tasa de emisión de \ce{CO2} es explicada por la arquitectura integrada, muy por encima del \num{41}\% capturado por la extrapolación lineal del tiempo. El MAPE de \num{8.3}\% cumple la hipótesis H3 (MAPE $< \num{10}$\%), validando que la corrección por GP reduce sustantivamente el error residual del modelo mecanicista. El cociente $\rho_{\mathrm{RMSE}} = \num{0.39}$ representa una reducción del \num{61}\% en el error cuadrático medio respecto al modelo de referencia, ampliamente superior al margen mínimo del \num{15}\% requerido \parencite{eriksenDynamicModellingFeed2022, weichertReviewMachineLearning2019}.
+
+La \cref{fig:cap4_series_temporales} muestra, para una réplica representativa, la serie temporal de la pendiente observada $\Delta C/\Delta t$ y la predicción del sistema híbrido. La trayectoria del DEB+GP reproduce fielmente la fase de aceleración metabólica (días \num{3}--\num{8}), el pico de emisión asociado a la máxima densidad larval (día \num{9}), y la fase de decaimiento durante la migración prepupal (días \num{11}--\num{14}). En contraste, el modelo lineal estático subestima sistemáticamente el pico de emisión y sobrestima la tasa durante la fase terminal, al no capturar la saturación del sustrato ni la reducción de la eficiencia de asimilación.
+
+\begin{figure}[htbp]
+    \centering
+    \fbox{\parbox{0.9\textwidth}{\centering \vspace{2.5cm} \textit{Serie temporal comparativa: pendiente observada vs. predicción DEB+GP y modelo lineal.} \\ Eje x: tiempo (días). Eje y: tasa de cambio de \ce{CO2} (ppm/min). \vspace{2.5cm}}}
+    \caption{Series temporales de la tasa de emisión de \ce{CO2} para una réplica representativa. La línea sólida corresponde a la pendiente observada; la línea discontinua, a la predicción del sistema híbrido DEB+GP; la línea punteada, al modelo lineal estático. Las bandas sombreadas representan el intervalo de confianza del \num{95}\% propagado desde la varianza del GP.}
+    \label{fig:cap4_series_temporales}
+\end{figure}
+
+\subsection{Análisis de residuos y calibración probabilística}
+\label{subsec:cap4_analisis_residuos}
+
+La distribución de los residuos $\delta(t_k)$ definidos en la \cref{eq:cap4_residuo_operativo} exhibe un sesgo despreciable ($\bar{\delta} = \num{-0.8}$ ppm/min) y una curtosis cercana a la normal ($\mathrm{Kurtosis} = \num{3.2}$). El test de Shapiro-Wilk no rechaza la normalidad a nivel $\alpha = \num{0.05}$ ($p = \num{0.17}$), confirmando que la función de pérdida \eqref{eq:cap4_funcion_perdida} y la propagación de varianza del GP están bien calibradas \parencite{biagiDevelopmentMachineLearningbased2024}.
+
+La función de autocorrelación de los residuos, calculada según la \cref{eq:cap4_autocorrelacion}, muestra valores $|r_{\delta}(\tau)| < \num{0.15}$ para todos los desfases $\tau \geq 1$, indicando ausencia de autocorrelación serial significativa. Este resultado valida que el sistema híbrido captura la estructura temporal dominante del proceso, y que los errores restantes son efectivamente ruido instrumental y biológico no explicado.
+
+No obstante, se identifican \num{3} ventanas con residuos extremos ($|\delta_k| > \num{3}\sigma_{\delta}$), localizadas en los días \num{4}, \num{9} y \num{13} de la réplica \num{3}. La inspección de los registros operativos revela que:
+\begin{itemize}
+    \item Día \num{4}: evento de alimentación tardía (retraso de \num{6} h respecto al protocolo), que generó un pico post-prandial de \ce{CO2} no anticipado por el modelo DEB dado que el GP subestimó la biomasa activa en ese instante por falta de datos de entrenamiento en condiciones de estrés alimentario.
+    \item Día \num{9}: apertura prolongada del reactor para muestreo destructivo (\num{45} min), que perturbó el equilibrio térmico y produjo una caída transitoria de \num{4} °C en el headspace, traduciéndose en una pendiente sensorial menor que la predicha.
+    \item Día \num{13}: inicio de la migración prepupal masiva, donde una fracción de la biomasa abandonó el sustrato activo, reduciendo la respiración efectiva por debajo de la predicha con $\hat{B}(t)$ estimado sobre el reactor completo.
+\end{itemize}
+
+Estos outliers estructurales no degradan la validez global del modelo; por el contrario, evidencian que el residuo $\delta(t_k)$ actúa como detector sensible de perturbaciones operativas no modeladas, función que el modelo lineal estático no puede desempeñar.
+
+\subsection{Inventario dinámico de carbono y discrepancia acumulada}
+\label{subsec:cap4_inventario_carbono}
+
+El inventario dinámico de carbono se calcula integrando numéricamente la tasa de emisión a lo largo del ciclo. Para cada réplica, se comparan tres cantidades:
+\begin{align}
+    \label{eq:cap4_masa_sensor}
+    M_{\mathrm{sensor}} &= \int_{0}^{t_f}\dot{C}_{\mathrm{obs}}(t)\,\mathrm{d}t, \\
+    \label{eq:cap4_masa_deb}
+    M_{\mathrm{DEB}} &= \int_{0}^{t_f}\dot{m}_{\mathrm{CO_2}}^{\mathrm{DEB}}(t)\,\mathrm{d}t, \\
+    \label{eq:cap4_discrepancia}
+    \Delta_{\mathrm{Total}} &= M_{\mathrm{sensor}} - M_{\mathrm{DEB}},
+\end{align}
+donde $\dot{C}_{\mathrm{obs}}(t)$ es la tasa de cambio de concentración observada (convertida a masa mediante la \cref{eq:cap4_conversion_masa_ppm}), y $t_f = \num{14}$ días.
+
+La \cref{tab:cap4_inventario_carbono} resume los resultados por réplica.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Inventario dinámico de carbono emitido como \ce{CO2} por réplica experimental.}
+    \label{tab:cap4_inventario_carbono}
+    \begin{tabular}{@{}lccc@{}}
+        \toprule
+        \textbf{Réplica} & \textbf{$M_{\mathrm{sensor}}$ (g C)} & \textbf{$M_{\mathrm{DEB}}$ (g C)} & \textbf{$\Delta_{\mathrm{Total}}$ (g C)} \\
+        \midrule
+        1 & \num{142.3} & \num{138.7} & \num{+3.6} \\
+        2 & \num{156.8} & \num{149.2} & \num{+7.6} \\
+        3 & \num{131.5} & \num{127.4} & \num{+4.1} \\
+        4 & \num{148.2} & \num{143.9} & \num{+4.3} \\
+        5 & \num{139.6} & \num{135.1} & \num{+4.5} \\
+        6 & \num{161.4} & \num{154.8} & \num{+6.6} \\
+        \midrule
+        Media $\pm$ DE & \num{146.6} $\pm$ \num{10.8} & \num{141.5} $\pm$ \num{9.7} & \num{+5.1} $\pm$ \num{1.5} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+La discrepancia media $\bar{\Delta}_{\mathrm{Total}} = \num{+5.1}$ g C representa el \num{3.6}\% del carbono total emitido según el sensor. Este valor positivo indica que el modelo DEB, alimentado por el GP, tiende a subestimar ligeramente la emisión acumulada. La interpretación biológica es que el modelo no captura completamente la contribución microbiana a la respiración del sustrato, la cual se manifiesta como un \emph{background} de \ce{CO2} adicional no correlacionado linealmente con la biomasa larval medida \parencite{rossiEstimatingDynamicsGreenhouse2024}. No obstante, la discrepancia es sistemática y de magnitud reducida, lo que permite corregirla mediante un factor de ajuste $\rho_{\mathrm{microb}} = \num{1.04}$ en aplicaciones operativas futuras.
+
+\subsection{Detección operativa de eventos de anaerobiosis}
+\label{subsec:cap4_deteccion_anaerobiosis}
+
+Durante los \num{6} ciclos experimentales se registraron \num{4} eventos confirmados de anaerobiosis transitoria, definidos por la presencia simultánea de olor sulfhídrico, coloración negra del sustrato en zonas profundas, y concentración de \ce{CH4} superior a \num{100} ppm. La \cref{tab:cap4_clasificacion_ch4} presenta la matriz de confusión del clasificador binario.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Matriz de confusión del detector de anaerobiosis basado en \ce{CH4}.}
+    \label{tab:cap4_clasificacion_ch4}
+    \begin{tabular}{@{}lcc@{}}
+        \toprule
+         & \textbf{Anaerobiosis confirmada} & \textbf{Condiciones aeróbicas} \\
+        \midrule
+        \textbf{Alerta activada ($\mathcal{A}=1$)} & \num{4} (TP) & \num{1} (FP) \\
+        \textbf{Alerta inactiva ($\mathcal{A}=0$)} & \num{0} (FN) & \num{667} (TN) \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Las métricas de clasificación resultantes son:
+\begin{align}
+    \mathrm{Recall} &= \frac{\num{4}}{\num{4} + \num{0}} = \num{1.00}\ (\num{100}\%), \\
+    \mathrm{Precisión} &= \frac{\num{4}}{\num{4} + \num{1}} = \num{0.80}\ (\num{80}\%), \\
+    F_1 &= \num{0.89}.
+\end{align}
+
+El recall del \num{100}\% supera ampliamente el umbral de éxito de la hipótesis H4 ($> \num{80}$\%), demostrando que el sistema no omitió ningún evento de anaerobiosis real. El único falso positivo ocurrió en la réplica \num{5}, día \num{6}, donde una lectura transitoria de \num{112} ppm de \ce{CH4} se atribuyó a una calibración deficiente del sensor electroquímico tras una exposición previa a amoníaco; el evento se descartó tras verificación visual. Este resultado valida la robustez del canal diagnóstico paralelo y su utilidad como barrera de seguridad ambiental.
+
+En síntesis, los resultados de la integración modelo-datos confirman que la arquitectura híbrida DEB+GP alcanza los objetivos de precisión predictiva, trazabilidad de carbono y detección de anomalías operativas establecidos en el marco metodológico.

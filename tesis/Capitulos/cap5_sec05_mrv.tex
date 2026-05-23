@@ -1,0 +1,44 @@
+La cuantificación de emisiones de gases de efecto invernadero adquiere valor para la gestión ambiental solo cuando puede ser comunicada de manera verificable, comparable y auditada. Esta sección describe la estructura del reporte dinámico de carbono generado automáticamente por la plataforma al finalizar cada ciclo de bioconversión, así como los mecanismos de trazabilidad, timestamping y sellado de datos que alinean el sistema con los requisitos de los estándares internacionales de Medición, Reporte y Verificación (MRV), específicamente el enfoque IPCC Tier~3 y el Verified Carbon Standard (VCS) de Verra \parencite{verraVCSStandardV472024}.
+
+El reporte MRV no es un documento estático, sino una síntesis computacional de la serie temporal completa del ciclo. Su generación se dispara automáticamente cuando el sistema detecta el fin del ciclo productivo (biomasa larval estimada alcanza el estadio de pre-pupación o el operador marca la cosecha en el dashboard), consolidando los datos almacenados en PostgreSQL durante las \num{14}--\num{20} días de operación.
+
+\subsection{Estructura del reporte dinámico de carbono}
+\label{subsec:cap5_estructura_reporte}
+
+El reporte se organiza en cinco bloques informativos que cubren el inventario de emisiones, la calidad del modelo, el registro de eventos anómalos, la línea base de referencia y la declaración de reducciones atribuibles:
+
+\begin{enumerate}
+    \item \textbf{Inventario dinámico de carbono ($C_{\text{total}}$ y $\Delta_{\text{Total}}$):} este bloque presenta la masa total de carbono emitida como \ce{CO2} durante el ciclo, calculada mediante integración numérica (regla trapezoidal) de la serie temporal de concentraciones medidas por el sensor NDIR, convertidas a flujo másico mediante el caudal de ventilación del reactor y el factor de conversión molecular (\ce{CO2} a C). El valor central del reporte es la discrepancia acumulada:
+    \begin{equation}
+        \Delta_{\text{Total}} = \int_{0}^{t_{\text{ciclo}}} \bigl( Y_{\text{sensor}}(t) - Y_{\text{DEB+GP}}(t) \bigr) \, \mathrm{d}t,
+        \label{eq:delta_total_reporte}
+    \end{equation}
+    expresada en gramos de carbono. En los ciclos validados en el \cref{ch:cap4}, $\Delta_{\text{Total}}$ alcanzó un valor medio de $+\num{5.1}$~g~C, equivalente al \num{3.6}~\% del carbono total medido, lo cual indica que el modelo híbrido subestima levemente la emisión real en condiciones de operación estándar. Esta discrepancia se reporta explícitamente como métrica de incertidumbre modelada, no como error a ocultar.
+    
+    \item \textbf{Métricas predictivas del modelo (R$^2$, MAPE, RMSE):} el reporte incluye las métricas de desempeño del sistema híbrido calculadas sobre el ciclo completo. Según la validación del \cref{ch:cap4}, los valores de referencia son R$^2$ = \num{0.78}, MAPE = \num{8.3}~\% y $\rho_{\text{RMSE}}$ = \num{0.39} respecto a un modelo lineal estático. Estos indicadores demuestran que el sistema captura la dinámica biológica del proceso más allá de una extrapolación por factores de emisión promedio.
+    
+    \item \textbf{Log de eventos de anaerobiosis:} tabla cronológica de cada evento de nivel rojo detectado, con timestamp de inicio, duración, concentración máxima de \ce{CH4}, latencia de intervención $\tau_{\text{int}}$ y tasa de mitigación $\eta_{\text{mit}}$ (ver \cref{sec:cap5_protocolo}). Este registro permite a un auditor externo reconstruir la frecuencia y severidad de las desviaciones operativas, así como la capacidad de respuesta del productor.
+    
+    \item \textbf{Línea base de referencia y reducción neta:} el reporte contrasta las emisiones medidas contra una línea base calculada mediante factores de emisión estáticos del IPCC para compostaje aeróbico de residuos orgánicos (nivel Tier~1). La diferencia a favor —es decir, la emisión evitada por la eficiencia superior de la bioconversión con \textit{Hermetia illucens}— se presenta como reducción neta atribuible al proceso. Esta cifra constituye el insumo potencial para la generación de créditos de carbono bajo estándares voluntarios.
+    
+    \item \textbf{Metadatos del ciclo:} identificador único del reactor, tipo y masa de sustrato procesado, densidad larval inicial, fecha de inicio y cosecha, versión del firmware del nodo sensor, versión del modelo DEB+GP ejecutado, y condiciones ambientales medias (temperatura y humedad). Estos metadatos habilitan la trazabilidad completa desde el dato bruto hasta la declaración final.
+\end{enumerate}
+
+El formato de salida del reporte es un documento estructurado (JSON para integración con plataformas de registro de carbono, PDF para presentación a autoridades locales o compradores de créditos) firmado digitalmente mediante un hash SHA-256 del contenido concatenado con el timestamp de cierre del ciclo. La firma se almacena en la base de datos y se incluye en el encabezado del documento PDF, garantizando la detección de alteraciones posteriores.
+
+\subsection{Trazabilidad, timestamping y sellado de datos}
+\label{subsec:cap5_trazabilidad}
+
+La credibilidad de un reporte MRV depende de la capacidad para demostrar que los datos no han sido manipulados entre su captura y su presentación. La plataforma implementa una cadena de custodia digital que vincula cada dato a su origen físico y temporal mediante tres mecanismos:
+
+\begin{itemize}
+    \item \textbf{Timestamping cronológico estricto:} cada lectura del sensor NDIR recibe un timestamp en el momento de la adquisición en el nodo ESP32, sincronizado periódicamente mediante NTP (Network Time Protocol) cuando existe conectividad, o mantenido por el reloj interno del microcontrolador con deriva acotada ($<$ \num{1}~s/día) durante períodos offline. El timestamp se propaga sin modificación a través de las tres capas de la arquitectura, de modo que el reporte MRV puede reconstruir la serie temporal original con resolución de \num{1}~segundo.
+    
+    \item \textbf{Hash encadenado por bloques de ciclo:} inspirado en estructuras de registro inmutable, el sistema calcula un hash criptográfico (SHA-256) de cada bloque de \num{1000} lecturas consecutivas, incluyendo el hash del bloque anterior. Esta cadena de hashes se almacena tanto en el nodo edge como en el servidor PostgreSQL, de modo que cualquier alteración retrospectiva de una lectura individual invalida la cadena completa, detectable mediante una verificación de integridad automática ejecutada antes de la generación del reporte.
+    
+    \item \textbf{Sellado de datos con estándar Verra VCS:} el reporte final se estructura según los requisitos del \textit{VCS Standard v4.7} \parencite{verraVCSStandardV472024}, incluyendo: (i)~descripción del proyecto de bioconversión; (ii)~delimitación espacial del reactor; (iii)~periodo de reporte; (iv)~método de cuantificación (modelo híbrido DEB+GP con calibración local); (v)~datos de monitoreo con incertidumbre; (vi)~procedimiento de control de calidad; y (vii)~declaración de reducciones netas con línea base transparente. El cumplimiento con IPCC Tier~3 se evidencia en el uso de un modelo mecanicista parametrizado localmente (DEB) combinado con datos de sensores en tiempo real, en lugar de factores de emisión genéricos (Tier~1) o factores específicos de país sin medición directa (Tier~2).
+\end{itemize}
+
+La trazabilidad se extiende también al hardware: cada nodo sensor lleva un identificador único de fábrica (MAC address) y un registro de calibración con fecha, gas patrón utilizado, coeficientes de compensación aplicados y técnico responsable. Este registro se adjunta como anexo técnico al reporte MRV, permitiendo a un auditor verificar que el sensor operó dentro de su rango calibrado (\num{0}--\num{6000}~ppm para \ce{CO2}) durante todo el ciclo.
+
+Finalmente, la plataforma mantiene un registro de versionado del software: cada ejecución del motor DEB+GP queda asociada a la versión del algoritmo, los hiperparámetros del kernel RBF-ARD y los parámetros DEB calibrados ($\tau_h$, $\beta_0$, $\rho_{\text{conv}}$, $T_A$, $T_{\text{opt}}$, $T_H$). Esta práctica de \textit{provenance} computacional asegura que un reporte generado en el futuro pueda ser reproducido exactamente con los mismos insumos técnicos, un requisito explícito de los estándares de transparencia algorítmica \parencite{adadiPeekingBlackBoxSurvey2018} y de calidad de datos IoT \parencite{herrinCollateralDataQuality2021}.

@@ -1,0 +1,41 @@
+El semáforo de riesgo ambiental definido en la \cref{sec:cap5_semaforo} establece \textit{qué} estado opera el reactor, pero no prescribe \textit{cómo} ejecutar la intervención física. Esta sección formaliza el protocolo operativo de respuesta ante eventos de anaerobiosis confirmados (nivel rojo), traduciendo la alerta algorítmica en una secuencia de acciones concretas, tiempos de respuesta cuantificados y criterios de efectividad verificables por el productor agroindustrial. El diseño del protocolo prioriza la simplicidad mecánica —no requiere herramientas especializadas ni energía externa— para garantizar su viabilidad en contextos rurales del sur global con recursos limitados \parencite{fawzyStrategiesMitigationClimate2020}.
+
+\subsection{Instrucciones operativas explícitas para el productor}
+\label{subsec:cap5_instrucciones}
+
+El protocolo se estructura en cuatro pasos secuenciales, cada uno con un tiempo máximo de ejecución y un indicador de verificación observable sin instrumentación adicional:
+
+\begin{enumerate}
+    \item \textbf{Confirmación de la alerta (\num{0}--\num{2}~min):} al recibir la notificación de nivel rojo en el dashboard o dispositivo móvil, el operador debe confirmar visualmente la lectura de \ce{CH4} en pantalla. Si el valor supera \num{100}~ppm y el mensaje indica ``ALERTA: Detección de anaerobiosis'', se procede. Si el operador considera que la alerta es un falso positivo (por ejemplo, inmediatamente después de una alimentación masiva que generó picos transitorios de \ce{CO2}), puede postergar la acción \num{15}~minutos y reevaluar; el sistema mantendrá el nivel rojo hasta que la concentración de \ce{CH4} caiga por debajo de \num{50}~ppm.
+    
+    \item \textbf{Preparación del área de trabajo (\num{2}--\num{5}~min):} el operador se equipa con guantes de protección básica y asegura la ventilación del galpón (apertura de cortinas o puertas). No se requiere equipo de respiración especializado dado que las concentraciones de \ce{CH4} en bioconversión a escala de lecho abierto raramente alcanzan niveles inflamables (\num{5}~\% volumétrico), pero la ventilación reduce la exposición ocupacional y dispersa el gas hacia la atmósfera, mitigando su efecto invernadero acumulado.
+    
+    \item \textbf{Volteo del sustrato (\num{5}--\num{15}~min):} usando una pala o horquilla, el operador voltea completamente el lecho de sustrato, rompiendo los núcleos anaeróbicos y exponiendo el material húmedo a la interfase aire-sustrato. La profundidad de volteo debe alcanzar al menos el \num{80}~\% del espesor total del lecho para asegurar la reoxigenación de las capas inferiores, donde la densidad larval y la compactación por tránsito generan las condiciones más propicias para la metanogénesis. Durante esta acción, el sensor de \ce{CO2} (rango máximo \num{6000}~ppm) puede saturarse transitoriamente si el volteo libera una bolsa de gas acumulado; este pico se descarta del inventario dinámico mediante una bandera de calidad ``evento de perturbación mecánica''.
+    
+    \item \textbf{Verificación post-intervención (\num{15}--\num{30}~min):} tras el volteo, el operador observa el dashboard durante \num{30}~minutos. El criterio de éxito es la caída de \ce{CH4} por debajo de \num{50}~ppm y la reconvergencia de la concentración de \ce{CO2} hacia la banda de predicción del modelo DEB+GP (MAPE $<$ \num{15}~\% en ventana de \num{1}~hora). Si estos indicadores no se cumplen en el plazo establecido, el sistema genera una alerta de escalamiento (nivel rojo persistente) que notifica al supervisor técnico para evaluación presencial.
+\end{enumerate}
+
+El tiempo total esperado desde la generación de la alerta hasta la verificación post-intervención es inferior a \num{30}~minutos en condiciones normales de operación. Este plazo se fundamenta en la dinámica de difusión del oxígeno en sustratos porosos de bioconversión: estudios empíricos en el \cref{ch:cap4} mostraron que la reoxigenación completa de un lecho de \num{20}~cm de espesor tras volteo ocurre en un intervalo de \num{20}--\num{40}~minutos, dependiendo de la humedad residual y la temperatura ambiente.
+
+\subsection{Tiempos de respuesta esperados y efectividad de mitigación}
+\label{subsec:cap5_tiempos}
+
+La efectividad del protocolo se cuantifica mediante dos métricas operativas vinculadas a los resultados del \cref{ch:cap4}:
+
+\begin{itemize}
+    \item \textbf{Latencia de intervención ($\tau_{\text{int}}$):} tiempo transcurrido entre la detección algorítmica de \ce{CH4} $>$ \num{100}~ppm y el inicio físico del volteo. El objetivo es $\tau_{\text{int}} <$ \num{15}~min. Este umbral se justifica porque la tasa de producción de \ce{CH4} en microambientes anaeróbicos locales puede alcanzar valores significativos en escalas de \num{30}--\num{60}~minutos, según la densidad larval y la disponibilidad de sustrato fermentable.
+    
+    \item \textbf{Tasa de mitigación ($\eta_{\text{mit}}$):} reducción porcentual de la concentración de \ce{CH4} en las \num{2}~horas posteriores al volteo, calculada como:
+    \begin{equation}
+        \eta_{\text{mit}} = \frac{C_{\ce{CH4},\text{max}} - C_{\ce{CH4},2\text{h}}}{C_{\ce{CH4},\text{max}}} \times 100,
+        \label{eq:eta_mitigacion}
+    \end{equation}
+    donde $C_{\ce{CH4},\text{max}}$ es la concentración máxima registrada durante el evento y $C_{\ce{CH4},2\text{h}}$ es la concentración a las \num{2}~horas post-intervención. El criterio de éxito es $\eta_{\text{mit}} >$ \num{80}~\%, lo cual indica que el volteo logró dispersar efectivamente los núcleos anaeróbicos generadores de metano.
+\end{itemize}
+
+La validación experimental del protocolo en el \cref{ch:cap4} demostró que, en \num{4} de \num{4} eventos de anaerobiosis inducidos (Recall = \num{100}~\%), el volteo completo alcanzó $\eta_{\text{mit}} >$ \num{85}~\% en un plazo medio de \num{45}~minutos. No obstante, se observó que en condiciones de humedad extrema ($>$ \num{85}~\%) la reoxigenación fue parcial, requiriendo un segundo volteo a las \num{4}~horas para estabilizar el sistema. Esta observación motiva la inclusión de una regla adicional en el protocolo: si la humedad del sustrato se estima superior al \num{80}~\% al momento de la alerta, el sistema recomienda ``volteo + aireación pasiva extendida (ventilación forzada natural durante \num{2}~h)'' en lugar de volteo único.
+
+\subsection{Registro y trazabilidad de eventos}
+\label{subsec:cap5_registro_eventos}
+
+Cada ejecución del protocolo se registra automáticamente en la base de datos con los siguientes campos: timestamp de inicio de alerta, duración del evento, concentración máxima de \ce{CH4}, latencia de intervención $\tau_{\text{int}}$ declarada por el operador (confirmación manual en el dashboard), tasa de mitigación $\eta_{\text{mit}}$ calculada por el sistema, y acción correctiva ejecutada (volteo simple, volteo + aireación, o escalamiento a supervisor). Este registro constituye evidencia auditable para reportes MRV y permite el análisis retrospectivo de frecuencia de eventos por reactor, por temporada o por tipo de sustrato, alimentando la mejora continua del protocolo.

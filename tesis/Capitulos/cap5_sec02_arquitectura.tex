@@ -1,0 +1,66 @@
+La plataforma de soporte a la decisión materializa la arquitectura tecnológica de tres capas esbozada en el \cref{sec:cap5_introduccion}. Su diseño sigue el principio de descentralización funcional: cada capa opera con autonomía suficiente para garantizar resiliencia ante fallos parciales, manteniendo al mismo tiempo una interfaz de comunicación estandarizada que permite la sincronización temporal del flujo de datos desde la percepción física hasta la visualización operativa. Esta sección detalla las especificaciones funcionales, los requerimientos de hardware y software, y los protocolos de intercambio entre capas, sin incluir código de implementación, el cual se documenta en el Anexo~D.
+
+La arquitectura se fundamenta en tres principios de diseño derivados de las limitaciones identificadas en el \cref{ch:marco_teorico} y validadas en el \cref{ch:cap4}: (i)~\textit{robustez en entornos agresivos}, dado que la humedad relativa del lecho de bioconversión supera frecuentemente el \num{80}~\% y la presencia de amoníaco y compuestos volátiles corrosivos acelera la degradación de componentes electrónicos \parencite{duobieneDevelopmentWirelessSensor2022}; (ii)~\textit{soberanía de datos}, de modo que el procesamiento crítico ocurra en el borde sin dependencia permanente de servicios en la nube \parencite{rajRealTimeEstimation2023}; y (iii)~\textit{escalabilidad frugal}, de forma que el costo total del nodo sensor sea marginal respecto al valor económico de la biomasa y el frass producidos en un ciclo de \num{14}--\num{20} días.
+
+\subsection{Capa de percepción y edge computing}
+\label{subsec:cap5_percepcion}
+
+La capa de percepción tiene como función la digitalización continua de variables físicas y químicas del proceso de bioconversión, así como la ejecución local de algoritmos de preprocesamiento crítico. Está compuesta por un nodo de sensor autónomo basado en microcontrolador de bajo consumo (ESP32 o equivalente), integrando un sensor NDIR para \ce{CO2} con rango máximo de \num{6000}~ppm, complementado con sensores electroquímicos o semiconductorios para \ce{CH4}, temperatura del sustrato, humedad relativa del aire ambiente y, opcionalmente, oxígeno disuelto.
+
+El requerimiento central de esta capa es la autonomía operativa en zonas rurales con conectividad intermitente. Para ello, el nodo implementa las siguientes funciones de edge computing:
+
+\begin{itemize}
+    \item \textbf{Adquisición y filtrado digital:} lectura de sensores a frecuencias entre \num{0.1}~Hz y \num{1}~Hz, seguida de la aplicación de filtros de media móvil y compensación cruzada de temperatura para atenuar el ruido eléctrico inherente al entorno exotérmico. La calibración del nodo se realiza contra instrumentos de referencia (cromatografía de gases) siguiendo el protocolo descrito en la Fase~I del \cref{ch:cap4}, garantizando un MAPE $\leq$ \num{15}~\% bajo condiciones de alta humedad.
+    
+    \item \textbf{Resiliencia local:} almacenamiento temporal en memoria no volátil (tarjeta microSD o memoria flash interna) mediante un buffer circular que preserva las últimas \num{72}~horas de telemetría. Esta estrategia evita pérdida de datos ante desconexiones de red de hasta tres días, una contingencia frecuente en infraestructuras rurales del sur global \parencite{herrinCollateralDataQuality2021}.
+    
+    \item \textbf{Telemetría asincrónica:} transmisión de la trama de datos mediante protocolo ligero (MQTT sobre Wi-Fi o LoRaWAN, según disponibilidad de infraestructura local) hacia la capa de procesamiento. El formato del mensaje incluye timestamp del nodo, identificador del reactor, valores brutos, valores compensados y banderas de calidad del dato (validado, sospechoso, no disponible).
+\end{itemize}
+
+La elección de un sensor NDIR de bajo costo con rango \num{6000}~ppm, en lugar de analizadores de referencia de laboratorio, responde a la necesidad de mantener el costo marginal del sistema por debajo del \num{5}~\% del valor del producto generado en un ciclo. Aunque este sensor presenta deriva instrumental en ambientes saturados, el protocolo de calibración periódica y la compensación cruzada con temperatura demostraron en el \cref{ch:cap4} que es posible mantener una correlación de Pearson $R > \num{0.85}$ respecto a mediciones de referencia. El rango de \num{6000}~ppm resulta adecuado para los perfiles de emisión observados experimentalmente, donde las concentraciones máximas en batch cerrado alcanzan aproximadamente \num{5000}~ppm en ventanas de \num{5}~minutos, dejando un margen de seguridad del \num{20}~\% antes de la saturación del instrumento.
+
+\subsection{Capa de procesamiento híbrido}
+\label{subsec:cap5_procesamiento}
+
+La capa de procesamiento constituye el núcleo computacional de la plataforma. Su función es orquestar la ejecución secuencial del motor híbrido DEB+GP desarrollado en el \cref{ch:cap4}, gestionar la persistencia histórica de datos y exponer una interfaz de programación (API) para la capa de aplicación. Está implementada sobre una arquitectura de microservicios ligera, con un backend desarrollado en Node.js que coordina los siguientes módulos:
+
+\begin{enumerate}
+    \item \textbf{Gestor de ingesta de datos:} recibe la telemetría vía MQTT, ejecuta validación de rangos (sanitización) y descarta lecturas fuera de límites físicos plausibles (por ejemplo, \ce{CO2} $>$ \num{6000}~ppm o temperatura del sustrato $>$ \num{60}~°C). Los datos validados se almacenan en una base de datos relacional (PostgreSQL) con esquema temporal que permite consultas agregadas por ventanas deslizantes.
+    
+    \item \textbf{Motor híbrido de estimación:} ejecuta el pipeline en cascada validado en el \cref{ch:cap4}. Primero, el estimador de biomasa basado en procesos Gaussianos (kernel RBF-ARD) infiere la masa larval $W(t)$ a partir del historial de emisiones y variables ambientales. Segundo, el modelo DEB calibrado (parámetros $\tau_h$, $\beta_0$, $\rho_{\text{conv}}$, $T_A$, $T_{\text{opt}}$, $T_H$ con restricciones de caja) resuelve la tasa de respiración teórica. Tercero, la capa de corrección residual ajusta la predicción mediante diferencias finitas centradas sobre las pendientes de emisión observadas. El resultado es una estimación de la tasa de \ce{CO2} con incertidumbre propagada y un residuo operativo que alimenta el detector de anaerobiosis.
+    
+    \item \textbf{Detector de eventos:} implementa la lógica de clasificación binaria de anaerobiosis validada en el \cref{ch:cap4}. Si la concentración de \ce{CH4} supera el umbral de \num{100}~ppm y correlaciona con una divergencia significativa entre el modelo DEB y el sensor de \ce{CO2}, el sistema genera una alerta de nivel rojo. Este módulo opera con latencia inferior a \num{1}~minuto respecto a la recepción del dato.
+    
+    \item \textbf{Inventario dinámico de carbono:} integra numéricamente la diferencia entre la emisión medida y la estimada, acumulando la discrepancia de masa $\Delta_{\text{Total}}$ en gramos de carbono a lo largo del ciclo. Al finalizar el ciclo productivo, este módulo genera los insumos cuantitativos para el reporte MRV.
+\end{enumerate}
+
+La elección de PostgreSQL como sistema de gestión de bases de datos responde a su soporte nativo para tipos temporales y su capacidad de extensión mediante PostGIS, lo cual habilita futuras integraciones con datos georreferenciados de múltiples plantas de bioconversión. El backend Node.js se selecciona por su modelo de eventos no bloqueante, adecuado para la concurrencia típica de arquitecturas IoT donde múltiples nodos transmiten de forma asincrónica \parencite{weichertReviewMachineLearning2019}.
+
+\subsection{Capa de aplicación: dashboard web y API de alertas}
+\label{subsec:cap5_aplicacion}
+
+La capa de aplicación traduce las salidas del motor híbrido en información actionable para el operador no experto. Se compone de un dashboard web y una API de alertas que sirven como interfaz semántica entre la precisión matemática del modelo y la toma de decisiones empírica del productor.
+
+El dashboard web, desarrollado sobre un framework de frontend moderno (Next.js o equivalente), despliega las siguientes vistas funcionales:
+
+\begin{itemize}
+    \item \textbf{Monitorización dinámica:} gráficos de series temporales que contrastan la concentración medida de \ce{CO2} (línea continua) contra la trayectoria estimada por el modelo DEB+GP (línea punteada), incluyendo bandas de incertidumbre del \num{95}~\%. La visualización incluye también la serie de \ce{CH4} en eje secundario para facilitar la correlación visual entre picos de metano y desviaciones del modelo.
+    
+    \item \textbf{Estado semafórico del sistema:} indicador visual de tres niveles (verde, ámbar, rojo) que condensa el estado operativo del reactor en un único elemento gráfico de alto contraste, visible desde dispositivos móviles con pantallas pequeñas. La lógica de transición entre niveles se detalla en la \cref{sec:cap5_semaforo}.
+    
+    \item \textbf{Inventario acumulado:} panel numérico que muestra la masa total de carbono emitida ($C_{\text{total}}$), la discrepancia modelo-sensor ($\Delta_{\text{Total}}$) y las métricas de desempeño del ciclo (R$^2$, MAPE, RMSE), actualizadas en tiempo real.
+    
+    \item \textbf{Log de eventos:} tabla cronológica de alertas generadas, con timestamp, nivel de severidad, variable desencadenante y acción recomendada. Esta vista proporciona trazabilidad operativa para auditorías internas.
+\end{itemize}
+
+La API de alertas expone endpoints REST que permiten la integración con sistemas externos (por ejemplo, notificaciones push a teléfonos móviles del operador o integración con plataformas de gestión de granjas existentes). Los mensajes de alerta siguen un formato estandarizado que incluye: identificador del reactor, timestamp UTC, nivel de riesgo, variable anómala, valor medido, valor esperado, desviación porcentual y instrucción operativa sugerida. La latencia end-to-end —desde la lectura del sensor en el borde hasta la notificación en el dispositivo del operador— se mantiene estrictamente inferior a \num{1}~minuto, cumpliendo el requisito de utilidad para la detección temprana de anaerobiosis.
+
+Es relevante destacar que el dashboard no incluye controles de actuación automática (por ejemplo, activación de ventiladores o sistemas de riego). Esta decisión de diseño es intencional y responde al principio de soberanía técnica del operador: la plataforma informa y recomienda, pero la decisión final de intervención física permanece en manos del productor, quien posee conocimiento contextual sobre disponibilidad de mano de obra, condiciones climáticas externas y prioridades de producción que el sistema no puede modelar \parencite{fawzyStrategiesMitigationClimate2020}. La arquitectura, por tanto, es deliberadamente de \textit{soporte a la decisión}, no de control automático del proceso biológico.
+
+La \cref{fig:arquitectura_tres_capas} resume el flujo de datos y la distribución funcional entre las tres capas. El diagrama ilustra cómo la señal física atraviesa el filtro de edge computing, es ingerida por el backend híbrido, procesada por el motor DEB+GP y finalmente presentada al operador mediante el semáforo de riesgo y el reporte dinámico de carbono.
+
+\begin{figure}[htbp]
+    \centering
+    \caption{Arquitectura funcional de tres capas de la plataforma de soporte a la decisión. La capa de percepción (edge) garantiza autonomía rural; la capa de procesamiento ejecuta el motor DEB+GP; la capa de aplicación traduce resultados en indicadores operativos y reportes MRV.}
+    \label{fig:arquitectura_tres_capas}
+\end{figure}
