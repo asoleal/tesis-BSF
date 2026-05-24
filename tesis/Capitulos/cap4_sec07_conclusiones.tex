@@ -1,0 +1,21 @@
+% ------------------------------------------------------------------
+% Sección 4.7: Conclusiones del Capítulo 4
+% ------------------------------------------------------------------
+\section{Conclusiones del Capítulo}
+\label{sec:cap4_conclusiones}
+
+Este capítulo ha desarrollado la arquitectura, la construcción y la justificación epistemológica del sistema híbrido DEB--MLP. A continuación se sintetizan los aportes principales y se establece el puente hacia la validación predictiva que se aborda en el Capítulo~\ref{chap:cap5}.
+
+\textbf{Arquitectura híbrida aprobada.} Se formuló y validó una arquitectura de seis bloques funcionales (DEB Forward, sensor NDIR, extractor de pendientes, comparador, MLP calibrador y estimador de estado) que opera en lazo cerrado de calibración discreta por ventanas de observación. El flujo offline (entrenamiento) y online (inferencia) están desacoplados, garantizando latencia inferior a 5~s por ventana y compatibilidad con despliegue en microcontrolador ESP32.
+
+\textbf{Extractor de pendientes y criterios de calidad.} Se formalizó el protocolo de extracción de la pendiente $s_k$ en ventanas de 3--5~min post-cierre del reactor, con tres filtros de calidad: linealidad ($R^2 > 0{,}95$), saturación ($C < 5800$~ppm) y anaerobiosis ($\mathrm{CH_4} < 100$~ppm). La aplicación de estos filtros reduce el conjunto de ventanas válidas al 70--80\% del total, asegurando que el MLP se entrene exclusivamente con residuos atribuibles a sesgo paramétrico, no a artefactos instrumentales.
+
+\textbf{Calibrador neuronal paramétrico.} Se adoptó un perceptrón multicapa de dos capas ocultas (16+8 neuronas) como corrector de escala sobre el subconjunto de primera sensibilidad $\{\tau_h, \rho_{\mathrm{conv}}, T_{\mathrm{opt}}\}$. La salida acotada ($\pm 20$\% mediante $\tanh$ escalada) garantiza que la red actúe como ajustador fino local, no como redefinidor global de la fisiología larval. La función de pérdida compuesta balancea ajuste al residuo de CO$_2$, regularización L2 sobre las correcciones y prior nulo hacia $\boldsymbol{\alpha} = \mathbf{0}$, reforzando la parsimonia.
+
+\textbf{Estrategia de calibración por fases.} La calibración se estructuró en tres fases secuenciales: (i) semillas biofísicas desde Eriksen~(2022); (ii) ajuste local de parámetros libres mediante L-BFGS-B con restricciones de caja; y (iii) corrección neuronal en tiempo real mediante actualización multiplicativa $\boldsymbol{\theta}_k = \boldsymbol{\theta}^{\mathrm{Cap3}} \odot (1+\boldsymbol{\alpha}_k)$. Esta división preserva la interpretabilidad del núcleo mecanicista mientras adapta el modelo a la variabilidad inter-réplica.
+
+\textbf{Justificación epistemológica por eliminación.} En la Sección~\ref{sec:cap4_comparativa} se sometió a prueba una arquitectura alternativa (RNA-B) que estima biomasa directamente desde variables operativas. Su fallo sistemático en validación cruzada por réplica (MAPE de validación $> 40$\%, predicciones no físicas de crecimiento negativo) demuestra que el problema inverso biomasa$\rightarrow$CO$_2$ no es abordable con redes neuronales puras bajo las restricciones de muestreo destructivo propias de la bioconversión. Esta evidencia negativa justifica formalmente la adopción del calibrador paramétrico: la red neuronal nunca ``ve'' biomasa, sino que corrige parámetros mecanicistas dentro de un modelo de trayectoria biológicamente consistente.
+
+\textbf{Delimitación del alcance.} El metano (CH$_4$) fue mantenido fuera de las ecuaciones de estado del DEB, conforme al supuesto de aerobiosis estricta. Su detección por el sensor MQ-4 opera como canal paralelo de diagnóstico binario (umbral 100~ppm), activando alertas operativas de anaerobiosis que se detallan en el Capítulo~\ref{chap:cap5}.
+
+En síntesis, este capítulo ha transformado el modelo mecanicista DEB del Capítulo~\ref{chap:cap3} en un sistema híbrido operativo: sensores $\rightarrow$ extractor de pendientes $\rightarrow$ comparador $\rightarrow$ MLP corrector $\rightarrow$ DEB re-simulado $\rightarrow$ estimación de emisiones y biomasa. La arquitectura queda construida, calibrada y justificada; el siguiente capítulo somete esta arquitectura a \emph{validación predictiva externa}, cuantificando su precisión, robustez y utilidad operativa en condiciones experimentales reales.

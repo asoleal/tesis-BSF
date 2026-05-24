@@ -1,0 +1,77 @@
+\section{Calibrador Neuronal Paramétrico}
+\label{sec:cap4_calibrador}
+
+El núcleo adaptativo del sistema híbrido es el MLP que corrige la escala de los parámetros de primera sensibilidad. A diferencia de un predictor directo de biomasa, este calibrador opera sobre el residuo de \ch{CO2}, preservando la dinámica mecanicista del DEB y evitando el problema inverso mal condicionado.
+
+\subsection{Arquitectura de la red}
+
+La entrada al MLP en la ventana $k$ es el vector
+\begin{equation}
+\mathbf{x}_k = \bigl[\,\varepsilon_k,\;T_k,\;\mathrm{HR}_k,\;t_k\,\bigr]^{\top} \in \mathbb{R}^{4},
+\label{eq:mlp_entrada}
+\end{equation}
+donde:
+\begin{itemize}
+\item $\varepsilon_k = s_k - J_k^{\mathrm{DEB}}(\boldsymbol{\theta}^{\mathrm{Cap3}})$ es el residuo de \ch{CO2} (\si{ppm\per\minute});
+\item $T_k$ es la temperatura del sustrato (\si{\celsius});
+\item $\mathrm{HR}_k$ es la humedad relativa (\%);
+\item $t_k$ es el tiempo biológico transcurrido (días).
+\end{itemize}
+
+La red consta de dos capas ocultas densas con activación $\sigma(\cdot)$ (función logística sigmoide):
+\begin{align}
+\mathbf{h}^{(1)} &= \sigma\bigl(\mathbf{W}^{(1)}\mathbf{x}_k + \mathbf{b}^{(1)}\bigr), \\
+\mathbf{h}^{(2)} &= \sigma\bigl(\mathbf{W}^{(2)}\mathbf{h}^{(1)} + \mathbf{b}^{(2)}\bigr),
+\end{align}
+con dimensionalidades $\mathbf{h}^{(1)} \in \mathbb{R}^{16}$ y $\mathbf{h}^{(2)} \in \mathbb{R}^{8}$. La capa de salida es lineal y produce la corrección paramétrica:
+\begin{equation}
+\boldsymbol{\alpha}_k = \mathbf{W}^{(3)}\mathbf{h}^{(2)} + \mathbf{b}^{(3)},
+\qquad
+\boldsymbol{\alpha}_k \in \mathbb{R}^{3},
+\label{eq:mlp_salida}
+\end{equation}
+cuyas componentes se indexan según el subconjunto de primera sensibilidad:
+\begin{equation}
+\boldsymbol{\alpha}_k = \bigl[\alpha_{\tau_h},\;\alpha_{\rho_{\mathrm{conv}}},\;\alpha_{T_{\mathrm{opt}}}\bigr]^{\top}.
+\end{equation}
+
+Para preservar interpretabilidad biofísica y evitar que la red aprenda correcciones fisiológicamente absurdas, se aplica una activación $\tanh$ escalada en la salida:
+\begin{equation}
+\alpha_i = 0{,}20 \cdot \tanh(\tilde{\alpha}_i),
+\qquad i \in \{\tau_h, \rho_{\mathrm{conv}}, T_{\mathrm{opt}}\},
+\label{eq:activacion_salida}
+\end{equation}
+lo que acota cada corrección al rango $[-0{,}20,\;+0{,}20]$ (es decir, $\pm 20\%$ de desviación respecto a la calibración del Capítulo~\ref{chap:modelo_deb}). Este acotamiento garantiza que el MLP actúe como \emph{ajustador fino} local, no como redefinidor global de la fisiología larval.
+
+\subsection{Función de pérdida}
+
+El entrenamiento minimiza una pérdida compuesta que balancea el ajuste al residuo de \ch{CO2} con la regularización física:
+\begin{equation}
+\mathcal{L}(\boldsymbol{\phi}) =
+\underbrace{\frac{1}{K}\sum_{k=1}^{K} \varepsilon_k\bigl(\boldsymbol{\theta}^{\mathrm{Cap3}} \odot (1+\mathcal{N}_{\boldsymbol{\phi}}(\mathbf{x}_k))\bigr)^2}_{\text{Ajuste a datos}}
+\;+\;
+\lambda
+\underbrace{\bigl\|\boldsymbol{\alpha}_k\bigr\|_{2}^{2}}_{\text{Regularización L2}}
+\;+\;
+\mu
+\underbrace{\bigl\|\boldsymbol{\alpha}_k - \boldsymbol{\alpha}_{\mathrm{lit}}\bigr\|_{2}^{2}}_{\text{Anclaje a literatura}},
+\label{eq:perdida_mlp}
+\end{equation}
+donde $\boldsymbol{\phi} = \{\mathbf{W}^{(\ell)}, \mathbf{b}^{(\ell)}\}_{\ell=1}^{3}$ son los pesos de la red, $\lambda = 10^{-4}$ es el coeficiente de regularización L2 sobre las correcciones, y $\mu = 10^{-3}$ penaliza desviaciones respecto a un prior nulo $\boldsymbol{\alpha}_{\mathrm{lit}} = \mathbf{0}$, reforzando la parsimonia. El primer término requiere integrar numéricamente el DEB para cada evaluación de la red, lo que se implementa mediante diferencias finitas centradas sin dependencia de frameworks de diferenciación automática, garantizando compatibilidad con el despliegue en el microcontrolador ESP32.
+
+\subsection{Entrenamiento two-stage}
+
+El esquema de entrenamiento es \emph{desacoplado} (two-stage):
+
+\begin{enumerate}
+\item \textbf{Stage 1:} Extraer todas las pendientes $s_k$ del lote experimental, simular el DEB con $\boldsymbol{\theta}^{\mathrm{Cap3}}$, formar pares $(\mathbf{x}_k, \varepsilon_k)$ y entrenar el MLP minimizando~\eqref{eq:perdida_mlp} mediante Adam con tasa de aprendizaje $\eta = 0{,}001$ durante $500$~épocas, con early stopping sobre un conjunto de validación ($20\%$ de las ventanas).
+\item \textbf{Stage 2 (validación externa):} Congelar $\boldsymbol{\phi}$ y evaluar la recuperación de $B_{\max}$ en los días de cosecha destructiva (14, 21, 28~días), reportando MAPE de biomasa y residuos de \ch{CO2}.
+\end{enumerate}
+
+Es crucial enfatizar que el MLP \textbf{nunca} recibe biomasa $B_k$ como supervisión durante el entrenamiento. Su única señal de error es el residuo $\varepsilon_k$ de \ch{CO2}. Esta decisión evita el problema inverso mal condicionado que surgiría al intentar mapear $s_k \mapsto B(t)$ directamente: múltiples trayectorias de $(S, E, B, L)$ pueden producir tasas respiratorias similares en ventanas cortas, pero el DEB impone la restricción dinámica que desambigua esas trayectorias.
+
+La elección de un calibrador paramétrico sobre un estimador directo de biomasa 
+no es arbitraria. En la Sección~\ref{sec:cap4_comparativa} se somete a prueba 
+una arquitectura alternativa (RNA-B) que predice biomasa directamente desde 
+variables operativas; su fallo sistemático en validación cruzada justifica 
+formalmente la arquitectura MLP corrector aquí adoptada.

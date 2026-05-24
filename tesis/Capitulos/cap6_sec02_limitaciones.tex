@@ -1,0 +1,17 @@
+% ------------------------------------------------------------------
+% Sección 6.2: Limitaciones del Estudio
+% ------------------------------------------------------------------
+\section{Limitaciones del Estudio}
+\label{sec:cap6_limitaciones}
+
+A pesar de los resultados obtenidos, es necesario reconocer explícitamente las limitaciones que acotan la generalización de los hallazgos y delimitan el alcance de las conclusiones.
+
+\textbf{Limitaciones instrumentales.} El sensor NDIR MH-Z19B, aunque calibrado y compensado, presenta una deriva residual en condiciones de humedad relativa $> 90$\% que no fue completamente eliminada por el modelo de corrección multivariante de primer orden. El canal de CH$_4$ (MQ-4) operó exclusivamente como clasificador binario debido a su sensibilidad cruzada con vapores de agua y compuestos orgánicos volátiles, impidiendo la cuantificación continua de flujos másicos de metano. La ausencia de un sensor de referencia de cromatografía de gases en tiempo real durante los ciclos experimentales limita la validación absoluta de las pendientes convertidas a flujo másico.
+
+\textbf{Limitaciones del modelo mecanicista.} El modelo DEB escalado a reactor batch asume homogeneidad espacial en el lecho de sustrato, promediando los gradientes de oxigenación y temperatura en una única variable ambiental efectiva. Esta simplificación, aunque conservadora para reactores de 20~L, puede perder predictividad en escalas mayores (200--1000~L) donde la formación de núcleos anaeróbicos es más probable y menos reversible. Asimismo, el modelo asume metabolismo aeróbico exclusivo, excluyendo explícitamente la generación de CH$_4$ y N$_2$O de las ecuaciones de estado; su detección queda como variable residual de diagnóstico, no como componente del balance de carbono.
+
+\textbf{Limitaciones del calibrador neuronal.} El MLP corrector se entrenó con datos de seis réplicas experimentales (84 días totales), lo que representa un volumen limitado para capturar la variabilidad estacional del sustrato, la degradación genética de la colonia o cambios en la granulometría del alimento. La validación cruzada por réplica (LORO) demuestra generalización entre colonias, pero no entre condiciones ambientales extremas (temperaturas $< 20^\circ$C o $> 35^\circ$C) que quedan fuera del rango experimental. La arquitectura del MLP (16+8 neuronas) fue seleccionada por parsimonia, pero no se exploró sistemáticamente el espacio de hiperparámetros; una arquitectura más profunda o un esquema de atención temporal podrían mejorar la captura de dependencias de largo plazo.
+
+\textbf{Limitaciones de la validación de utilidad.} Las métricas de usabilidad (tasa de interpretación correcta del semáforo, tiempo de localización de información) se evaluaron mediante protocolo de prueba de usuario simulado, no en condiciones de campo prolongadas con productores reales. La pertinencia contextual y la adopción por pequeños productores requieren estudios etnográficos y de seguimiento longitudinal que exceden el alcance de esta tesis.
+
+\textbf{Limitaciones de escala y transferibilidad.} El sistema fue validado a escala de laboratorio (reactores de 20~L, cámaras ambientales controladas). La transferencia a escala piloto industrial implica desafíos de calibración en lotes mayores, conectividad en zonas sin cobertura Wi-Fi/LoRaWAN, y mantenimiento técnico que pueden alterar los costos marginales y la viabilidad económica del sistema.

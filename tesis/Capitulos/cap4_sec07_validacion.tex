@@ -1,0 +1,60 @@
+\section{Validación Predictiva y Métricas de Desempeño}
+\label{sec:cap4_validacion}
+
+La utilidad del sistema híbrido DEB--MLP no reside únicamente en su capacidad para generar predicciones, sino en la demostración cuantitativa de que dichas predicciones superan, en precisión y robustez, a los métodos de estimación estática convencionales. Esta sección establece el protocolo de validación predictiva, las métricas de regresión y los criterios de éxito alineados con las hipótesis H2, H3 y H4.
+
+\subsection{Métricas de regresión de la pendiente de \ch{CO2}}
+
+Sea $\{y_k\}_{k=1}^{K}$ el conjunto de pendientes observadas $s_k$ en las $K$ ventanas válidas, y $\{\hat{y}_k\}_{k=1}^{K}$ las predicciones del sistema híbrido (es decir, $J_k^{\mathrm{DEB}}(\boldsymbol{\theta}_k)$ convertido a \si{ppm\per\minute}). Se definen:
+
+\begin{itemize}
+\item \textbf{Coeficiente de determinación ($R^2$):}
+\begin{equation}
+R^2 = 1 - \frac{\sum_{k=1}^{K}(y_k - \hat{y}_k)^2}{\sum_{k=1}^{K}(y_k - \bar{y})^2}.
+\end{equation}
+Criterio de éxito: $R^2 \geq 0{,}70$ (hipótesis~H2).
+
+\item \textbf{Error porcentual absoluto medio (MAPE):}
+\begin{equation}
+\mathrm{MAPE} = \frac{100}{K}\sum_{k=1}^{K} \left|\frac{y_k - \hat{y}_k}{y_k}\right|.
+\end{equation}
+Criterio de éxito: $\mathrm{MAPE} < 10\%$ (hipótesis~H3).
+
+\item \textbf{Raíz del error cuadrático medio (RMSE):}
+\begin{equation}
+\mathrm{RMSE} = \sqrt{\frac{1}{K}\sum_{k=1}^{K}(y_k - \hat{y}_k)^2},
+\end{equation}
+reportado en \si{ppm\per\minute} para comparabilidad directa con la resolución del sensor.
+
+\item \textbf{Recuperación de $B_{\max}$:} En los días de cosecha destructiva ($t = 14, 21, 28$~días), se compara la biomasa estructural predicha $\hat{B}(t)$ con la biomasa húmeda medida $B_{\mathrm{obs}}(t)$:
+\begin{equation}
+\mathrm{MAPE}_B = \frac{100}{N_{\mathrm{cosechas}}}\sum_{j=1}^{N_{\mathrm{cosechas}}} \left|\frac{B_{\mathrm{obs}}(t_j) - \hat{B}(t_j)}{B_{\mathrm{obs}}(t_j)}\right|.
+\end{equation}
+Criterio de éxito: $\mathrm{MAPE}_B < 20\%$.
+\end{itemize}
+
+\subsection{Análisis de residuos y detección de anaerobiosis}
+
+El residuo operativo $\delta(t_k) = y_k - \hat{y}_k$ se somete a análisis estructural:
+
+\begin{enumerate}
+\item \textbf{Autocorrelación temporal:} Se computa la función de autocorrelación hasta desfase de 5 ventanas. Valores $|r_{\delta}(\tau)| > 0{,}20$ para $\tau \geq 1$ sugieren estructura no capturada (inercia térmica, efectos de memoria metabólica).
+\item \textbf{Normalidad:} Test de Shapiro-Wilk sobre $\{\delta_k\}$. El rechazo de normalidad ($p < 0{,}05$) indica presencia de outliers sistemáticos o mala especificación del modelo.
+\item \textbf{Detección de anaerobiosis:} El \ch{CH4} se mantiene fuera de la función de pérdida del MLP, operando como clasificador binario independiente. Se define el indicador:
+\begin{equation}
+\mathcal{A}(t) =
+\begin{cases}
+1, & \text{si } C_{\mathrm{CH_4}}(t) > \SI{100}{ppm} \text{ durante 2 ventanas consecutivas}, \\
+0, & \text{en caso contrario}.
+\end{cases}
+\end{equation}
+Las métricas de clasificación son:
+\begin{equation}
+\mathrm{Recall} = \frac{TP}{TP+FN},
+\qquad
+\mathrm{Precision} = \frac{TP}{TP+FP},
+\qquad
+F_1 = 2\frac{\mathrm{Precision}\cdot\mathrm{Recall}}{\mathrm{Precision}+\mathrm{Recall}}.
+\end{equation}
+Criterio de éxito (hipótesis~H4): $\mathrm{Recall} > 0{,}80$. Se prioriza el recall sobre la precisión porque, en gestión ambiental, el costo de omitir una condición anaeróbica supera el costo de una falsa alarma.
+\end{enumerate}

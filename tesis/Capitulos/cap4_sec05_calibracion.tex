@@ -1,0 +1,88 @@
+\section{Estrategia de Calibración del Modelo DEB}
+\label{sec:cap4_calibracion}
+
+La calibración del modelo DEB sigue una secuencia de tres fases que va desde los valores de literatura hasta la corrección neuronal en tiempo real. Cada fase reduce la incertidumbre paramétrica en un orden de magnitud distinto.
+
+\subsection{Fase A: Semillas de parámetros desde Eriksen (2022)}
+
+Los parámetros semilla se extraen del modelo DEB individual de \textcite{Eriksen2022}, escalados a reactor batch mediante la densidad larval inicial. Estos valores se consideran a priori biofísicamente plausibles y no se alteran durante la calibración local:
+
+\begin{table}[htbp]
+\centering
+\caption{Parámetros semilla del modelo DEB, fijos durante la calibración neuronal.}
+\label{tab:parametros_semilla}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Símbolo & Valor & Unidad & Significado biológico \\
+\midrule
+$\kappa_A$ & $0{,}70$ & adimensional & Eficiencia de asimilación intestinal \\
+$m$ & $2{,}1 \times 10^{-4}$ & \si{\per\minute} & Tasa específica de mantenimiento \\
+$a_{\max}$ & $1{,}25 \times 10^{-4}$ & \si{\gram\tothe{1/3}\per\minute} & Coeficiente de asimilación máxima \\
+$Y_B$ & $0{,}80$ & adimensional & Eficiencia de conversión a biomasa \\
+$Y_L$ & $0{,}75$ & adimensional & Eficiencia de conversión a lípidos \\
+$\kappa$ & $0{,}60$ & adimensional & Prioridad de crecimiento vs.~mantenimiento \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La fracción $\kappa = 0{,}60$ implica que el $60\%$ de la energía asimilada se destina a mantenimiento y crecimiento somático, mientras que el $40\%$ restante se reserva para acumulación lipídica. La tasa de mantenimiento $m$ refleja el costo metabólico basal por unidad de biomasa estructural, y $a_{\max}$ codifica la capacidad máxima de ingestión por unidad de superficie corporal, asumiendo isometría volumen-superficie típica de insectos \autocite{Eriksen2022}.
+
+\subsection{Fase B: Ajuste local con series NDIR}
+
+Los parámetros libres capturan la variabilidad operativa entre réplicas y se ajustan minimizando la discrepancia de pendientes de emisión sobre las ventanas de confrontación modelo-sensor. El vector de parámetros libres es:
+\begin{equation}
+\boldsymbol{\theta}_{\mathrm{libre}} = \bigl[\,\tau_h,\;\beta_0,\;\rho_{\mathrm{conv}},\;T_A,\;T_{\mathrm{opt}},\;T_H\,\bigr]^{\top}.
+\label{eq:parametros_libres}
+\end{equation}
+
+La calibración se ejecuta sobre las $K$ ventanas válidas del ciclo experimental, excluyendo aquellas marcadas como evento de anaerobiosis (metano (\ch{CH4}) superior a \SI{100}{ppm}). El problema de optimización se plantea con restricciones de caja:
+\begin{equation}
+\hat{\boldsymbol{\theta}}_{\mathrm{libre}} = \arg\min_{\boldsymbol{\theta} \in \boldsymbol{\Theta}} \mathcal{L}(\boldsymbol{\theta}),
+\qquad
+\boldsymbol{\Theta} = \prod_{d=1}^{6} \bigl[\theta_d^{\min},\,\theta_d^{\max}\bigr],
+\label{eq:optimizacion_caja}
+\end{equation}
+donde los límites se detallan en la Tabla~\ref{tab:restricciones_caja}.
+
+\begin{table}[htbp]
+\centering
+\caption{Restricciones de caja para los parámetros libres del modelo DEB.}
+\label{tab:restricciones_caja}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Parámetro & Límite inferior & Límite superior & Justificación \\
+\midrule
+$\tau_h$ & \SI{50}{\gram} & \SI{500}{\gram} & Semisaturación del sustrato (accesibilidad física, g C) \\
+$\beta_0$ & $0{,}5$ & $2{,}0$ & Corrección del escalamiento isométrico \\
+$\rho_{\mathrm{conv}}$ & \SI{0{,}05}{\gram\per\gram} & \SI{0{,}15}{\gram\per\gram} & Fracción de carbono en biomasa húmeda (g C/g húmeda) \\
+$T_A$ & \SI{2000}{\kelvin} & \SI{8000}{\kelvin} & Energía de activación de Arrhenius \\
+$T_{\mathrm{opt}}$ & \SI{25}{\celsius} & \SI{35}{\celsius} & Rango de confort térmico larval \\
+$T_H$ & \SI{38}{\celsius} & \SI{45}{\celsius} & Temperatura letal de inactivación \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Dado que el gradiente analítico de $\mathcal{L}$ respecto a $\boldsymbol{\theta}$ encadena integración numérica de EDO, interpolación y derivadas de series temporales, se emplea el algoritmo L-BFGS-B con gradientes por diferencias finitas centradas de paso adaptativo:
+\begin{equation}
+\frac{\partial \mathcal{L}}{\partial \theta_d} \approx
+\frac{\mathcal{L}(\theta_d + h_d) - \mathcal{L}(\theta_d - h_d)}{2h_d},
+\qquad
+h_d = 10^{-4}\,|\theta_d| + 10^{-6}.
+\label{eq:gradiente_df}
+\end{equation}
+
+El resultado de la Fase~B es el vector $\boldsymbol{\theta}^{\mathrm{Cap3}}$, específico por réplica, que sirve como punto de anclaje para la corrección neuronal.
+
+\subsection{Fase C: Corrección neuronal en tiempo real}
+
+Una vez obtenido $\boldsymbol{\theta}^{\mathrm{Cap3}}$, el MLP calibrador opera como corrector de escala dinámico. En cada ventana $k$, los parámetros actualizados son:
+\begin{equation}
+\tau_h^{(k)} = \tau_h^{\mathrm{Cap3}} \cdot (1 + \alpha_{\tau_h}),
+\quad
+\rho_{\mathrm{conv}}^{(k)} = \rho_{\mathrm{conv}}^{\mathrm{Cap3}} \cdot (1 + \alpha_{\rho_{\mathrm{conv}}}),
+\quad
+T_{\mathrm{opt}}^{(k)} = T_{\mathrm{opt}}^{\mathrm{Cap3}} \cdot (1 + \alpha_{T_{\mathrm{opt}}}).
+\label{eq:actualizacion_param}
+\end{equation}
+
+Los demás parámetros ($\beta_0, T_A, T_H$) se mantienen fijos tras la Fase~B, dado que el análisis de sensibilidad del Capítulo~\ref{chap:modelo_deb} demostró que su efecto sobre la pendiente $s_k$ en ventanas de \SI{5}{\minute} es de segundo orden en el rango térmico controlado del experimento ($30 \pm \SI{2}{\celsius}$).

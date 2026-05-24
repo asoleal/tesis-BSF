@@ -1,0 +1,107 @@
+% ------------------------------------------------------------------
+% Sección 5.2: Validación Predictiva y Métricas de Desempeño
+% ------------------------------------------------------------------
+\section{Validación Predictiva y Métricas de Desempeño}
+\label{sec:cap5_validacion}
+
+La utilidad del sistema híbrido DEB--MLP no reside únicamente en su capacidad para generar predicciones, sino en la demostración cuantitativa de que dichas predicciones superan, en precisión y robustez, a los métodos de estimación estática convencionales. Esta sección establece el protocolo de validación externa, las métricas de regresión y los criterios de éxito alineados con las hipótesis H2, H3 y H4 del proyecto.
+
+% ------------------------------------------------------------------
+\subsection{Diseño del protocolo de validación externa}
+\label{subsec:cap5_protocolo_validacion}
+% ------------------------------------------------------------------
+
+Los ciclos experimentales de validación se ejecutaron durante seis réplicas independientes de bioconversión, abarcando un total de 84 días de monitoreo continuo (14 días por ciclo). En cada réplica, el nodo sensor registró variables ambientales a 1 min de resolución, mientras que la biomasa húmeda total se midió destructivamente en cinco instantes por ciclo (días 0, 3, 7, 11 y 14).
+
+El conjunto de ventanas válidas se formó aplicando los filtros de calidad definidos en la Sección~\ref{sec:cap4_ventanas}: linealidad ($R^2 > 0{,}95$), saturación ($C < 5800$~ppm) y anaerobiosis ($\mathrm{CH_4} < 100$~ppm). Las ventanas marcadas como eventos anaeróbicos se excluyeron del cálculo de métricas de regresión del CO$_2$, pero se reservaron para la validación de la hipótesis H4 (detección de anomalías).
+
+La validación se estructura en tres ejes:
+
+\begin{enumerate}
+    \item \textbf{Eje predictivo:} comparación entre la pendiente observada $s_k$ y la predicción del sistema híbrido $J_k^{\mathrm{DEB}}(\tilde{\boldsymbol{\theta}}_k)$ convertida a ppm/min.
+    \item \textbf{Eje diagnóstico:} capacidad del clasificador binario de CH$_4$ para detectar eventos de anaerobiosis confirmados.
+    \item \textbf{Eje de inventario:} cuantificación de la discrepancia acumulada de carbono $\Delta_{\mathrm{Total}}$ entre sensor y modelo.
+\end{enumerate}
+
+% ------------------------------------------------------------------
+\subsection{Métricas de regresión de la pendiente de CO$_2$}
+\label{subsec:cap5_metricas_regresion}
+% ------------------------------------------------------------------
+
+Sea $\{y_k\}_{k=1}^{K}$ el conjunto de pendientes observadas $s_k$ en las $K$ ventanas válidas, y $\{\hat{y}_k\}_{k=1}^{K}$ las predicciones del sistema híbrido (es decir, $J_k^{\mathrm{DEB}}(\tilde{\boldsymbol{\theta}}_k)$ convertido a ppm/min). Se definen:
+
+\paragraph{Coeficiente de determinación ($R^2$):}
+\begin{equation}
+R^2 = 1 - \frac{\sum_{k=1}^{K}(y_k - \hat{y}_k)^2}{\sum_{k=1}^{K}(y_k - \bar{y})^2}.
+\label{eq:r2}
+\end{equation}
+Criterio de éxito: $R^2 \geq 0{,}70$ (hipótesis H2).
+
+\paragraph{Error porcentual absoluto medio (MAPE):}
+\begin{equation}
+\mathrm{MAPE} = \frac{100}{K}\sum_{k=1}^{K}\left|\frac{y_k - \hat{y}_k}{y_k}\right|.
+\label{eq:mape}
+\end{equation}
+Criterio de éxito: $\mathrm{MAPE} < 10$\% (hipótesis H3).
+
+\paragraph{Raíz del error cuadrático medio (RMSE):}
+\begin{equation}
+\mathrm{RMSE} = \sqrt{\frac{1}{K}\sum_{k=1}^{K}(y_k - \hat{y}_k)^2},
+\label{eq:rmse}
+\end{equation}
+reportado en ppm/min para comparabilidad directa con la resolución del sensor.
+
+\paragraph{Recuperación de máxima biomasa:} en los días de cosecha destructiva ($t = 3, 7, 11, 14$ días), se compara la biomasa estructural predicha $\hat{B}(t)$ con la biomasa húmeda medida $B_{\mathrm{obs}}(t)$:
+\begin{equation}
+\mathrm{MAPE}_B = \frac{100}{N_{\mathrm{cosechas}}}\sum_{j=1}^{N_{\mathrm{cosechas}}}\left|\frac{B_{\mathrm{obs}}(t_j) - \hat{B}(t_j)}{B_{\mathrm{obs}}(t_j)}\right|.
+\label{eq:mape_b}
+\end{equation}
+Criterio de éxito: $\mathrm{MAPE}_B < 20$\%.
+
+% ------------------------------------------------------------------
+\subsection{Análisis de residuos y detección de anaerobiosis}
+\label{subsec:cap5_residuos_anaerobiosis}
+% ------------------------------------------------------------------
+
+El residuo operativo $\delta(t_k) = y_k - \hat{y}_k$ se somete a análisis estructural para detectar información no capturada por el modelo:
+
+\begin{enumerate}
+    \item \textbf{Autocorrelación temporal:} se computa la función de autocorrelación hasta desfase de 5 ventanas. Valores $|r_{\delta}(\tau)| > 0{,}20$ para $\tau \geq 1$ sugieren estructura no capturada (inercia térmica, efectos de memoria metabólica).
+    \item \textbf{Normalidad:} test de Shapiro-Wilk sobre $\{\delta_k\}$. El rechazo de normalidad ($p < 0{,}05$) indica presencia de \textit{outliers} sistemáticos o mala especificación del modelo.
+\end{enumerate}
+
+\paragraph{Detección de anaerobiosis (H4).} El CH$_4$ se mantiene fuera de la función de pérdida del MLP, operando como clasificador binario independiente. Se define el indicador:
+\begin{equation}
+\mathcal{A}(t) = 
+\begin{cases}
+1, & \text{si } C_{\mathrm{CH_4}}(t) > 100 \text{ ppm durante 2 ventanas consecutivas}, \\
+0, & \text{en caso contrario}.
+\end{cases}
+\label{eq:indicador_anaerobiosis}
+\end{equation}
+
+Las métricas de clasificación son:
+\begin{equation}
+\mathrm{Recall} = \frac{TP}{TP + FN}, \qquad
+\mathrm{Precision} = \frac{TP}{TP + FP}, \qquad
+F_1 = 2\frac{\mathrm{Precision} \cdot \mathrm{Recall}}{\mathrm{Precision} + \mathrm{Recall}}.
+\label{eq:metricas_clasificacion}
+\end{equation}
+
+Criterio de éxito (hipótesis H4): $\mathrm{Recall} > 0{,}80$. Se prioriza el \textit{recall} sobre la \textit{precision} porque, en gestión ambiental, el costo de omitir una condición anaeróbica supera el costo de una falsa alarma.
+
+% ------------------------------------------------------------------
+\subsection{Inventario dinámico de carbono}
+\label{subsec:cap5_inventario}
+% ------------------------------------------------------------------
+
+El inventario dinámico de carbono se calcula integrando numéricamente la tasa de emisión a lo largo del ciclo. Para cada réplica, se comparan tres cantidades:
+\begin{equation}
+M_{\mathrm{sensor}} = \int_{0}^{t_f} \dot{C}_{\mathrm{obs}}(t)\,\mathrm{d}t, \qquad
+M_{\mathrm{DEB}} = \int_{0}^{t_f} \dot{m}_{\mathrm{CO_2}}^{\mathrm{DEB}}(t)\,\mathrm{d}t, \qquad
+\Delta_{\mathrm{Total}} = M_{\mathrm{sensor}} - M_{\mathrm{DEB}},
+\label{eq:inventario_carbono}
+\end{equation}
+donde $t_f = 14$ días. La discrepancia $\Delta_{\mathrm{Total}}$, expresada en gramos de carbono, cuantifica la fracción de emisión no explicada por el modelo mecanicista puro (respiración microbiana del sustrato, eventos anaeróbicos parciales) y constituye una métrica de incertidumbre modelada, no un error a ocultar.
+
+En la siguiente sección se presentan los valores numéricos obtenidos para cada métrica y su interpretación frente a los criterios de éxito establecidos.

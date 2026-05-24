@@ -1,0 +1,37 @@
+\section{Extractor de Pendientes y Ventanas de Observabilidad}
+\label{sec:cap4_ventanas}
+
+El observable robusto que alimenta tanto el comparador como el entrenamiento del MLP es la pendiente $s_k$ de concentración de \ch{CO2} en las primeras fases de una ventana cerrada, antes de que la acumulación gaseosa alcance la zona no lineal o sature el sensor NDIR. Esta sección formaliza el protocolo de extracción, los criterios de calidad y el rechazo de ventanas inválidas.
+
+\subsection{Protocolo de extracción de $s_k$}
+
+Sea $C(t)$ la serie temporal de concentración de \ch{CO2} (ppm) registrada por el sensor NDIR con paso de muestreo $\Delta t_s = \SI{10}{\second}$. En cada evento de cierre del reactor (ventana $k$), se dispone de una serie temporal de duración $\tau_k \leq \SI{5}{\minute}$ durante la cual la concentración crece aproximadamente linealmente antes de saturar hacia los \SI{6000}{ppm} del instrumento.
+
+El extractor de pendientes aplica regresión lineal por mínimos cuadrados ordinarios (OLS) sobre los $N_k$ puntos de la sub-ventana $[t_k, t_k+\tau_k]$:
+\begin{equation}
+s_k = \frac{\sum_{n=1}^{N_k}(t_n - \bar{t})(C_n - \bar{C})}{\sum_{n=1}^{N_k}(t_n - \bar{t})^2},
+\qquad
+\bar{t} = \frac{1}{N_k}\sum_{n=1}^{N_k} t_n,\;
+\bar{C} = \frac{1}{N_k}\sum_{n=1}^{N_k} C_n,
+\label{eq:pendiente_ols}
+\end{equation}
+donde $s_k$ tiene unidades de \si{ppm\per\minute}. La pendiente se relaciona con el flujo respiratorio del DEB mediante el volumen de cabeza libre $V_{\mathrm{head}}$ del reactor:
+\begin{equation}
+s_k \approx \frac{1}{V_{\mathrm{head}}}\,J_{\mathrm{CO_2}}(t_k;\boldsymbol{\theta}) + \varepsilon_k^{\mathrm{noise}},
+\label{eq:pendiente_flujo}
+\end{equation}
+donde $\varepsilon_k^{\mathrm{noise}}$ agrupa el ruido de medición del NDIR, las fugas del batch y la variabilidad de mezcla del gas.
+
+Se descartan los primeros \SI{2}{\minute} de lecturas tras el cierre de válvulas para permitir la homogeneización del gas en la cámara de cabeza libre, evitando gradientes de concentración por estratificación térmica. Por tanto, la ventana efectiva de extracción es $t \in [\SI{2}{\minute}, \SI{5}{\minute}]$ post-cierre.
+
+\subsection{Criterios de linealidad y rechazo de ventanas}
+
+No todas las ventanas de \SI{5}{\minute} producen una pendiente válida. Se implementan tres filtros de calidad:
+
+\begin{enumerate}
+\item \textbf{Filtro de linealidad.} Se exige que el coeficiente de determinación $R^2$ de la regresión OLS supere $0{,}95$. Ventanas con $R^2 < 0{,}95$ indican perturbación externa (apertura accidental, volteo del sustrato, variación térmica brusca) y se excluyen del entrenamiento y de la calibración online.
+\item \textbf{Filtro de saturación.} Si en cualquier instante de la ventana $C(t) > \SI{5800}{ppm}$ (margen de seguridad del 3\% respecto al fondo de escala de \SI{6000}{ppm}), la pendiente se considera sesgada por inhibición metabólica o limitación instrumental y se descarta.
+\item \textbf{Filtro de anaerobiosis.} Si el sensor de \ch{CH4} registra una concentración superior a \SI{100}{ppm} durante la ventana, esta se marca como ``evento anaeróbico''. La pendiente $s_k$ de \ch{CO2} en dichas ventanas \emph{no} se utiliza para calibrar parámetros aeróbicos del DEB, pero sí se registra como dato de validación de la hipótesis~H4 (detección de anomalías).
+\end{enumerate}
+
+La aplicación de estos filtros reduce típicamente el conjunto de ventanas válidas a un 70--80\% del total registrado, garantizando que el MLP se entrene exclusivamente con residuos atribuibles a sesgo parameétrico, no a artefactos instrumentales o eventos de anaerobiosis.

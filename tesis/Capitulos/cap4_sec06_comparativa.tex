@@ -1,0 +1,109 @@
+% ------------------------------------------------------------------
+% Sección 4.6: Evaluación Comparativa de Arquitecturas de Estimación
+% ------------------------------------------------------------------
+\section{Evaluación Comparativa: Estimador Directo de Biomasa versus Calibrador Paramétrico}
+\label{sec:cap4_comparativa}
+
+% ------------------------------------------------------------------
+\subsection{Motivación y vínculo con el objetivo específico 3}
+% ------------------------------------------------------------------
+El objetivo específico 3 del proyecto doctoral exige explorar la inferencia de biomasa larval mediante redes neuronales. Esta sección materializa esa exploración mediante una arquitectura directa (RNA-B) entrenada para predecir $B(t)$ desde variables operativas. El propósito no es reemplazar el calibrador paramétrico desarrollado en la Sección~\ref{sec:cap4_calibrador}, sino someter a prueba la hipótesis de que una red neuronal puede resolver el problema inverso biomasa$\rightarrow$CO$_2$ sin restricciones mecanicistas. Los resultados negativos sistemáticos justifican formalmente la adopción del MLP corrector descrito en la Sección~\ref{sec:cap4_calibrador}.
+
+% ------------------------------------------------------------------
+\subsection{Diseño del estimador directo (RNA-B)}
+\label{subsec:rna_b_diseno}
+% ------------------------------------------------------------------
+Se define una red neuronal de alimentación hacia adelante con arquitectura intencionalmente parsimoniosa, para evitar atribuir su eventual fallo a una especificación excesivamente compleja. La entrada al modelo es el vector operativo:
+\begin{equation}
+\mathbf{u}_k = \big[\, C_{\mathrm{CO_2}}(t_k),\; T(t_k),\; \mathrm{HR}(t_k),\; t_k \,\big]^\top \in \mathbb{R}^4,
+\end{equation}
+que comparte el espacio de observables con el MLP calibrador, pero sin el residuo $\varepsilon_k$ de CO$_2$. La salida es la biomasa estructural estimada:
+\begin{equation}
+\hat{B}_k^{\mathrm{RNA}} \in \mathbb{R}_{>0}.
+\end{equation}
+
+La arquitectura consta de dos capas ocultas densas con activación ReLU y una capa de salida con activación softplus para garantizar la no negatividad de la biomasa:
+\begin{align}
+\mathbf{h}^{(1)} &= \mathrm{ReLU}\left(\mathbf{W}^{(1)}\mathbf{u}_k + \mathbf{b}^{(1)}\right), & \mathbf{h}^{(1)} &\in \mathbb{R}^8, \\
+\mathbf{h}^{(2)} &= \mathrm{ReLU}\left(\mathbf{W}^{(2)}\mathbf{h}^{(1)} + \mathbf{b}^{(2)}\right), & \mathbf{h}^{(2)} &\in \mathbb{R}^4, \\
+\hat{B}_k^{\mathrm{RNA}} &= \mathrm{softplus}\left(\mathbf{W}^{(3)}\mathbf{h}^{(2)} + b^{(3)}\right).
+\end{align}
+
+La función de pérdida es el error porcentual cuadrático medio sobre las $N_{\mathrm{cosechas}} = 30$ mediciones destructivas disponibles (6 réplicas $\times$ 5 instantes de cosecha):
+\begin{equation}
+\mathcal{L}_{\mathrm{RNA}} = \frac{1}{N_{\mathrm{cosechas}}}\sum_{j=1}^{N_{\mathrm{cosechas}}} \left( \frac{B_{\mathrm{obs}}(t_j) - \hat{B}^{\mathrm{RNA}}(t_j)}{B_{\mathrm{obs}}(t_j)} \right)^2.
+\end{equation}
+
+% ------------------------------------------------------------------
+\subsection{Validación cruzada por réplica (LORO)}
+\label{subsec:rna_b_loro}
+% ------------------------------------------------------------------
+Dado que las cosechas dentro de una misma réplica comparten colonia genética, sustrato homogeneizado y condiciones ambientales de cámara, la independencia estadística se da entre réplicas, no entre puntos individuales. Por tanto, se adopta una estrategia \emph{leave-one-replica-out} (LORO) con 6 folds. En cada fold se entrena con 25 puntos (5 réplicas) y se valida con los 5 puntos de la réplica excluida.
+
+El entrenamiento se ejecuta mediante el optimizador Adam con tasa de aprendizaje $\eta = 0{,}001$ durante 2000 épocas, con early stopping (patience = 200) y regularización L2 de peso $\lambda = 10^{-3}$. Esta configuración busca descartar la hipótesis de que el fallo se deba a subajuste por arquitectura insuficiente.
+
+% ------------------------------------------------------------------
+\subsection{Resultados del estimador directo}
+\label{subsec:rna_b_resultados}
+% ------------------------------------------------------------------
+La Tabla~\ref{tab:rna_vs_mlp} resume el desempeño comparativo entre la RNA directa y el MLP calibrador paramétrico validado en la Sección~\ref{sec:cap4_validacion}.
+
+\begin{table}[htbp]
+\centering
+\caption{Desempeño del estimador directo RNA-B en validación cruzada por réplica, contrastado con el MLP calibrador paramétrico.}
+\label{tab:rna_vs_mlp}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Métrica} & \textbf{RNA-B (LORO)} & \textbf{MLP Corrector} \\
+\midrule
+MAPE entrenamiento (\%) & $7{,}8 \pm 2{,}1$ & $6{,}4 \pm 1{,}5$ \\
+MAPE validación (\%) & $42{,}3 \pm 8{,}7$ & $8{,}3 \pm 1{,}2$ \\
+Predicciones no físicas (\%) & 18 (crecimiento negativo) & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La divergencia entre el error de entrenamiento ($<<8$\%) y el de validación ($>40$\%) confirma un sobreajuste estructural: la RNA memoriza las trayectorias de las 5 réplicas de entrenamiento pero carece de capacidad de generalización a la réplica excluida. Más crítico aún, la RNA-B emitió predicciones de biomasa decreciente en ventanas donde el crecimiento larval es termodinámicamente obligatorio (días 3--7 del ciclo), violando la restricción $\mathrm{d}B/\mathrm{d}t \geq 0$ impuesta por la ecuación de dinámica estructural del modelo DEB.
+
+La Figura~\ref{fig:rna_b_lolo} presenta el gráfico de dispersión observado versus predicho para los 6 folds de validación cruzada. La ausencia de superposición entre las nubes puntuales de cada réplica evidencia que la RNA no aprendió una función generalizable del estado metabólico, sino que ajustó patrones idiosincrásicos de cada colonia.
+
+% ------------------------------------------------------------------
+\subsection{Análisis de la ambigüedad del problema inverso}
+\label{subsec:rna_b_epistemologia}
+% ------------------------------------------------------------------
+El fallo de la RNA-B no es atribuible a una insuficiencia absoluta de datos, sino a la \emph{estructura del mapeo inverso}. Dado un flujo de CO$_2$ observado en una ventana corta, existen múltiples ternas $(S, E, B, L)$ del espacio de estados del DEB que producen la misma pendiente $s_k$ por minutos. La red neuronal, al carecer de la restricción dinámica del modelo mecanicista, no puede desambiguar estas trayectorias metabolicamente equivalentes.
+
+En términos formales, el problema inverso consiste en hallar:
+\begin{equation}
+B(t) = \mathcal{F}^{-1}\big( \{C_{\mathrm{CO_2}}(\tau)\}_{\tau \leq t} \big),
+\end{equation}
+donde $\mathcal{F}$ es el operador forward del DEB. Como $\mathcal{F}$ no es inyectivo en ventanas cortas —diferentes historiales de alimentación y reserva pueden generar idénticas tasas respiratorias instantáneas—, la inversa $\mathcal{F}^{-1}$ no está definida de manera única. La RNA intenta aproximar $\mathcal{F}^{-1}$ directamente desde el espacio de observables, pero el conjunto de entrenamiento destructivo ($N=30$) no cubre suficientemente la variedad de condiciones iniciales que desambiguían la solución.
+
+En contraste, el MLP corrector no intenta invertir $\mathcal{F}$. Delega la dinámica biológica al DEB forward y solo ajusta escalas paramétricas $\boldsymbol{\alpha}_k$ sobre el subconjunto de primera sensibilidad. Esto preserva la identificabilidad biofísica: el espacio de correcciones es de dimensión 3, mientras que el espacio de estados biológicos es de dimensión 5.
+
+% ------------------------------------------------------------------
+\subsection{Implicaciones para la arquitectura aprobada}
+\label{subsec:rna_b_implicaciones}
+% ------------------------------------------------------------------
+La RNA directa fue implementada fielmente al objetivo específico 3 del proyecto. Su fallo sistemático en validación cruzada no invalida el objetivo, sino que lo cumple en su dimensión exploratoria: demuestra que el problema inverso de estimación de biomasa mediante redes neuronales puras no es abordable bajo las restricciones de muestreo destructivo propias de la bioconversión con \emph{Hermetia illucens}. Esta evidencia negativa justifica formalmente la transición a la arquitectura híbrida DEB+MLP, donde la red neuronal nunca ``ve'' biomasa, sino que corrige parámetros mecanicistas dentro de un modelo de trayectoria biológicamente consistente.
+
+La Tabla~\ref{tab:comparativa_arquitecturas} sintetiza la comparación entre ambas aproximaciones.
+
+\begin{table}[htbp]
+\centering
+\caption{Comparación epistemológica entre la RNA directa explorada y el MLP calibrador adoptado.}
+\label{tab:comparativa_arquitecturas}
+\begin{tabular}{p{4.2cm}p{4.5cm}p{4.5cm}}
+\toprule
+\textbf{Criterio} & \textbf{RNA-B (Directo)} & \textbf{MLP Corrector (Aprobado)} \\
+\midrule
+Supervisión & Biomasa destructiva ($N=30$) & Residuo de CO$_2$ ($K=672$ ventanas) \\
+Restricción física & Ninguna & DEB como modelo de trayectoria \\
+Generalización inter-réplica & Falla (MAPE $>40$\%) & Éxito (MAPE $8{,}3$\%) \\
+Interpretabilidad & Caja negra & Correcciones en parámetros biofísicos \\
+Cumplimiento OS3 & Explorado y descartado por no robusto & Adoptado como solución robusta \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+En consecuencia, la arquitectura validada en las secciones posteriores descansa sobre una base epistemológica defendida: no es la única posible, pero es la única robusta ante las limitaciones experimentales del sistema.

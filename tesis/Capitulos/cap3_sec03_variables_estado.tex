@@ -2,108 +2,104 @@
 % SECCIÓN 3.3 - VARIABLES DE ESTADO Y DOMINIO DEL SISTEMA
 % =========================================================
 
-La formulación del modelo DEB a escala de reactor batch exige la definición explícita de las variables de estado, sus unidades físicas, los valores iniciales derivados del protocolo experimental y el dominio matemático que garantiza la existencia de soluciones biológicamente significativas. Esta sección establece el \emph{espacio de fases} sobre el cual opera el sistema de ecuaciones diferenciales presentado en la Sección \ref{sec:cap3_formulacion_ode}.
+La formulación del modelo DEB a escala de reactor batch exige la definición explícita de las variables de estado, sus unidades físicas, los valores iniciales derivados del protocolo experimental y el dominio matemático que garantiza la existencia de soluciones biológicamente significativas. Esta sección establece el espacio de fases sobre el cual opera el sistema de ecuaciones diferenciales presentado en la Sección \ref{sec:cap3_formulacion_ode}.
 
 % ---------------------------------------------------------
 \subsection{Vector de estado y notación}
 \label{subsec:cap3_vector_estado}
+% ---------------------------------------------------------
 
 Se define el vector de estado $\mathbf{x}(t) \in \mathbb{R}_{\geq 0}^{5}$ como:
-
 \begin{equation}
-    \mathbf{x}(t) = \begin{bmatrix} S(t) & E(t) & B(t) & L(t) & C_{\mathrm{CO_2}}(t) \end{bmatrix}^{\!\top},
+    \mathbf{x}(t) = \begin{bmatrix} S(t) & E(t) & B(t) & L(t) & C_{\ch{CO2}}(t) \end{bmatrix}^{\!\top},
     \label{eq:cap3_vector_estado}
 \end{equation}
-
 cuyas componentes se describen en la Tabla \ref{tab:cap3_variables_estado}.
 
 \begin{table}[htbp]
     \centering
     \caption{Variables de estado del modelo DEB escalado a reactor batch.}
     \label{tab:cap3_variables_estado}
-    \begin{tabular}{@{}llll@{}}
+    \begin{tabular}{@{}clcc@{}}
         \toprule
         \textbf{Símbolo} & \textbf{Descripción} & \textbf{Unidad} & \textbf{Rango típico} \\
         \midrule
         $S(t)$ & Sustrato orgánico disponible & g C & $[0, S_0]$ \\
         $E(t)$ & Reserva de asimilados & g C & $[0, E_{\max}]$ \\
-        $B(t)$ & Biomasa estructural & g C & $[B_0, B_{\max}]$ \\
+        $B(t)$ & Biomasa estructural & g C & $[B_{\min}, B_{\max}]$ \\
         $L(t)$ & Lípidos de reserva & g C & $[0, L_{\max}]$ \\
-        $C_{\mathrm{CO_2}}(t)$ & Carbono emitido como \ce{CO2} & g C & $[0, C_{\mathrm{tot}}]$ \\
+        $C_{\ch{CO2}}(t)$ & Carbono emitido como \ch{CO2} & g C & $[0, C_{\mathrm{tot}}]$ \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-La variable $S(t)$ representa la masa de carbono orgánico en el reactor que es físicamente accesible y químicamente degradable por las larvas. Excluye la fracción lignocelulósica recalcitrante, que se agrupa en un término de ``sustrato inerte'' $S_{\mathrm{inerte}}$ constante durante el ciclo. La suma $S(t) + S_{\mathrm{inerte}}$ más el carbono transferido a biomasa, lípidos y \ce{CO2} debe igualar el carbono total inicial $C_{\mathrm{tot}}$, propiedad que se verifica en la Sección \ref{sec:cap3_analisis_estructural}.
+La variable $S(t)$ representa la masa de carbono orgánico en el reactor que es físicamente accesible y químicamente degradable por las larvas. Excluye la fracción lignocelulósica recalcitrante, que se agrupa en un término de ``sustrato inerte'' $S_{\mathrm{inerte}}$ constante durante el ciclo. La suma $S(t) + S_{\mathrm{inerte}}$ más el carbono transferido a biomasa, lípidos y \ch{CO2} debe igualar el carbono total inicial $C_{\mathrm{tot}}$, propiedad que se verifica en la Sección \ref{sec:cap3_analisis}.
 
-La reserva $E(t)$ actúa como amortiguador metabólico: cuando la ingesta excede la demanda combinada de mantenimiento y síntesis, $E$ se acumula; cuando la ingesta es insuficiente, $E$ se moviliza para cubrir el déficit. Esta dinámica de buffer evita que la biomasa estructural $B$ se catabolice ante fluctuaciones transitorias de alimento, un mecanismo documentado en el DEB estándar y conservado en la parametrización de Eriksen para BSF \parencite{eriksenDynamicModellingFeed2022}.
+La reserva $E(t)$ actúa como amortiguador metabólico: cuando la ingesta excede la demanda combinada de mantenimiento y síntesis, $E$ se acumula; cuando la ingesta es insuficiente, $E$ se moviliza para cubrir el déficit. Esta dinámica de \emph{buffer} evita que la biomasa estructural $B$ se catabolice ante fluctuaciones transitorias de alimento, un mecanismo documentado en el DEB estándar y conservado en la parametrización de Eriksen para BSF \parencite{eriksenDynamicModellingFeed2022}.
 
-La biomasa estructural $B(t)$ se vincula con la biomasa húmeda medida destructivamente mediante el factor de conversión $\rho_{\mathrm{conv}}$ (g C/g biomasa húmeda). Este parámetro, que depende del contenido de agua y cenizas del tejido larval, se deja como variable libre de calibración en el Capítulo \ref{chap:hibrido}. La semilla teórica del factor de conversión se sitúa entre 0.10 y 0.15 g C/g húmeda, basada en la composición proximal reportada por \parencite{nayakHermetiaIllucensDiptera2024}.
+La biomasa estructural $B(t)$ se vincula con la biomasa húmeda medida destructivamente mediante el factor de conversión $\rho_{\mathrm{conv}}$ (g C/g biomasa húmeda). Este parámetro, que depende del contenido de agua y cenizas del tejido larval, se deja como variable libre de calibración en el Capítulo \ref{chap:hibrido}. La semilla teórica del factor de conversión se sitúa entre $0.10$ y $0.11$ g C/g húmeda, basada en la composición proximal reportada por \textcite{nayakHermetiaIllucensDiptera2024}.
 
-Los lípidos de reserva $L(t)$ modelan el almacenamiento energético previo a la metamorfosis. A diferencia de $B$, que se asume irreversible durante el ciclo larval (sin removilización estructural), $L$ puede experimentar tasas netas negativas si la larva moviliza grasas para mantenimiento en condiciones de ayuno. Sin embargo, en el régimen de alimentación ad libitum del protocolo experimental (Sección \ref{subsec:cap2_sistema_experimental}), se espera que $\dot{L}(t) \geq 0$ durante la mayor parte del ciclo.
+Los lípidos de reserva $L(t)$ modelan el almacenamiento energético previo a la metamorfosis. A diferencia de $B$, que se asume irreversible durante el ciclo larval (sin removilización estructural), $L$ puede experimentar tasas netas negativas si la larva moviliza grasas para mantenimiento en condiciones de ayuno. Sin embargo, en el régimen de alimentación \emph{ad libitum} del protocolo experimental (Sección \ref{sec:cap2_biomassa}), se espera que $L(t) \geq 0$ durante la mayor parte del ciclo.
 
-La variable $C_{\mathrm{CO_2}}(t)$ acumula el carbono emitido como dióxido de carbono. Su derivada temporal $\dot{C}_{\mathrm{CO_2}}(t)$ se relaciona directamente con el flujo másico medido por el sensor NDIR mediante la ecuación \eqref{eq:cap3_co2_sensor_deb}, permitiendo la confrontación modelo--sensor en el Capítulo \ref{chap:hibrido}.
+La variable $C_{\ch{CO2}}(t)$ acumula el carbono emitido como dióxido de carbono. Su derivada temporal $\dot{C}_{\ch{CO2}}(t)$ se relaciona directamente con el flujo másico medido por el sensor NDIR mediante la ecuación \eqref{eq:cap3_puente_sensor}, permitiendo la confrontación modelo--sensor en el Capítulo \ref{chap:hibrido}.
 
 % ---------------------------------------------------------
 \subsection{Variables ambientales y forzamiento externo}
-\label{subsec:cap3_variables_ambientales}
+\label{subsec:cap3_forzamiento}
+% ---------------------------------------------------------
 
-Además del vector de estado $\mathbf{x}(t)$, el sistema recibe dos variables ambientales medidas por los sensores SHT30 desplegados en el reactor (Sección \ref{subsec:cap2_sensores_ambientales}):
-
+Además del vector de estado $\mathbf{x}(t)$, el sistema recibe dos variables ambientales medidas por los sensores SHT30 desplegados en el reactor (Sección \ref{sec:cap2_sensores_ambientales}):
 \begin{align}
-    T(t) &\;:\; \text{temperatura del aire de cabeza libre o del sustrato, en °C}, \\
-    \mathrm{HR}(t) &\;:\; \text{humedad relativa del aire de cabeza libre, en \%}.
+    T(t) &: \text{temperatura del aire de cabeza libre o del sustrato, en } ^\circ\mathrm{C}, \\
+    \mathrm{HR}(t) &: \text{humedad relativa del aire de cabeza libre, en \%}.
 \end{align}
 
-Estas variables actúan como \emph{forzamiento externo} que modula la cinética de asimilación y la tasa metabólica mediante la función de dependencia térmica $f(T)$ y el efecto de la humedad sobre la disponibilidad de sustrato, detallados en la Sección \ref{sec:cap3_cinetica_asimilacion}. No son variables de estado en el sentido dinámico del sistema, pues su evolución temporal está dictada por el control ambiental de la cámara termohigrométrica (30 °C $\pm$ 2 °C, HR 60--80\%) y no por retroalimentación del metabolismo larval.
+Estas variables actúan como forzamiento externo que modula la cinética de asimilación y la tasa metabólica mediante la función de dependencia térmica $f(T)$ y el efecto de la humedad sobre la disponibilidad de sustrato, detallados en la Sección \ref{sec:cap3_cinetica}. No son variables de estado en el sentido dinámico del sistema, pues su evolución temporal está dictada por el control ambiental de la cámara termohigrométrica ($30^\circ\mathrm{C} \pm 2^\circ\mathrm{C}$, HR $60$--$80\%$) y no por retroalimentación del metabolismo larval.
 
-Se incluye además una variable pseudo--observable $\hat{B}(t)$, estimada externamente por el Proceso Gaussiano del Capítulo \ref{chap:hibrido}, que sirve como entrada dinámica al modelo DEB cuando las mediciones destructivas de biomasa no están disponibles. En la fase de calibración, $\hat{B}(t)$ se reemplaza por el valor interpolado de las mediciones destructivas cada 48 h.
+Se incluye además una variable pseudo-observable $\hat{B}(t)$, estimada externamente por el calibrador neuronal del Capítulo \ref{chap:hibrido}, que sirve como entrada dinámica al modelo DEB cuando las mediciones destructivas de biomasa no están disponibles. En la fase de calibración, $\hat{B}(t)$ se reemplaza por el valor interpolado de las mediciones destructivas cada 48 h.
 
 % ---------------------------------------------------------
 \subsection{Dominio físico y restricciones de no negatividad}
-\label{subsec:cap3_dominio_fisico}
+\label{subsec:cap3_dominio}
+% ---------------------------------------------------------
 
 El dominio matemático $\Omega \subset \mathbb{R}_{\geq 0}^{5}$ se define como:
-
 \begin{equation}
-    \Omega = \bigl\{ \mathbf{x} \in \mathbb{R}^{5} \;\big|\; S \geq 0,\; E \geq 0,\; B \geq B_{\min},\; L \geq 0,\; C_{\mathrm{CO_2}} \geq 0 \bigr\},
-    \label{eq:cap3_dominio_omega}
+    \Omega = \Bigl\{ \mathbf{x} \in \mathbb{R}^{5} \;\Big|\; S \geq 0,\; E \geq 0,\; B \geq B_{\min},\; L \geq 0,\; C_{\ch{CO2}} \geq 0 \Bigr\},
+    \label{eq:cap3_dominio}
 \end{equation}
-
-donde $B_{\min} > 0$ representa la biomasa estructural mínima compatible con la viabilidad celular (aproximadamente la biomasa inicial $B_0$). La restricción $B \geq B_{\min}$ evita la extinción biológica del sistema, aunque en la práctica experimental la mortalidad larval es despreciable ($<< 5$\%) en condiciones óptimas \parencite{salamEffectDifferentEnvironmental2022}.
+donde $B_{\min} > 0$ representa la biomasa estructural mínima compatible with la viabilidad celular (aproximadamente la biomasa inicial $B_0$). La restricción $B \geq B_{\min}$ evita la extinción biológica del sistema, aunque en la práctica experimental la mortalidad larval es despreciable (inferior al $5\%$) en condiciones óptimas \parencite{salamEffectDifferentEnvironmental2022}.
 
 Las condiciones iniciales $\mathbf{x}(0) = \mathbf{x}_0$ se derivan directamente del protocolo del Capítulo \ref{chap:instrumentacion}:
-
 \begin{align}
-    S(0) &= S_0 = M_{\mathrm{sustrato}} \cdot w_C \cdot (1 - f_{\mathrm{inerte}}), \label{eq:cap3_s0} \\
-    E(0) &= E_0 \approx 0.05 \cdot B_0, \label{eq:cap3_e0} \\
-    B(0) &= B_0 = m_{\mathrm{larvas}} \cdot N_{\mathrm{larvas}} \cdot \rho_{\mathrm{conv}}, \label{eq:cap3_b0} \\
-    L(0) &= L_0 \approx 0, \label{eq:cap3_l0} \\
-    C_{\mathrm{CO_2}}(0) &= C_0 = 0, \label{eq:cap3_c0}
+    S(0) &= S_0 = M_{\mathrm{sustrato}} \cdot w_{\ch{C}} \cdot (1 - f_{\mathrm{inerte}}), \label{eq:cap3_S0} \\
+    E(0) &= E_0 \approx 0.05 \cdot B_0, \label{eq:cap3_E0} \\
+    B(0) &= B_0 = m_{\mathrm{larvas}} \cdot N_{\mathrm{larvas}} \cdot \rho_{\mathrm{conv}}, \label{eq:cap3_B0} \\
+    L(0) &= L_0 \approx 0, \label{eq:cap3_L0} \\
+    C_{\ch{CO2}}(0) &= C_0 = 0, \label{eq:cap3_C0}
 \end{align}
+donde $M_{\mathrm{sustrato}}$ es la masa húmeda inicial de sustrato (\SI{14}{\kilo\gram} en el reactor de \SI{20}{\litre}), $w_{\ch{C}}$ la fracción de carbono en base húmeda del sustrato ($0.35$--$0.45$ para pulpa de café y cáscaras de frutas), $f_{\mathrm{inerte}}$ la fracción lignocelulósica ($0.10$--$0.15$), $m_{\mathrm{larvas}}$ la biomasa húmeda inicial por larva (\SI{0,005}{\gram} en estadio L3 sincronizado), y $N_{\mathrm{larvas}}$ el número total de larvas sembradas (\num{5000} larvas/reactor para una densidad de \SI{2,5}{\gram\per\litre}).
 
-donde $M_{\mathrm{sustrato}}$ es la masa húmeda inicial de sustrato (14 kg en el reactor de 20 L), $w_C$ la fracción de carbono en base húmeda del sustrato (0.35--0.45 para pulpa de café y cáscaras de frutas), $f_{\mathrm{inerte}}$ la fracción lignocelulósica (0.10--0.15), $m_{\mathrm{larvas}}$ la biomasa húmeda inicial por larva (0.005 g en estadio L3 sincronizado), y $N_{\mathrm{larvas}}$ el número total de larvas sembradas (5000 larvas/reactor para una densidad de 2.5 g/L).
-
-La reserva inicial $E_0$ se fija en un 5\% de la biomasa estructural inicial, valor consistente con larvas recién transferidas del medio de cría al reactor experimental, donde la ingesta previa ha sido limitada. La condición $L_0 = 0$ refleja que los estadios tempranos (L3 inicial) poseen reservas lipidicas mínimas; la acumulación de $L$ se activa en estadios posteriores mediante la función de prioridad de asignación descrita en la Sección \ref{subsec:cap3_flujos_metabolicos}.
+La reserva inicial $E_0$ se fija en un $5\%$ de la biomasa estructural inicial, valor consistente con larvas recién transferidas del medio de cría al reactor experimental, donde la ingesta previa ha sido limitada. La condición $L_0 = 0$ refleja que los estadios tempranos (L3 inicial) poseen reservas lipídicas mínimas; la acumulación de $L$ se activa en estadios posteriores mediante la función de prioridad de asignación descrita en la Sección \ref{subsec:cap3_flujos}.
 
 % ---------------------------------------------------------
 \subsection{Escalamiento de individuo a reactor batch}
 \label{subsec:cap3_escalamiento}
+% ---------------------------------------------------------
 
-El modelo DEB de \parencite{eriksenDynamicModellingFeed2022} está formulado para una larva individual, con variables expresadas por organismo (g C/larva). Para adaptarlo al reactor batch, se adopta la \emph{hipótesis de equivalencia fisiológica}: se asume que todas las larvas del reactor comparten el mismo estado metabólico promedio, de modo que las variables de estado a escala de reactor son el producto del número de larvas $N_{\mathrm{larvas}}$ por la variable individual, salvo el sustrato $S$ que es una cantidad compartida.
+El modelo DEB de \parencite{eriksenDynamicModellingFeed2022} está formulado para una larva individual, con variables expresadas por organismo (g C/larva). Para adaptarlo al reactor batch, se adopta la hipótesis de equivalencia fisiológica: se asume que todas las larvas del reactor comparten el mismo estado metabólico promedio, de modo que las variables de estado a escala de reactor son el producto del número de larvas $N_{\mathrm{larvas}}$ por la variable individual, salvo el sustrato $S$ que es una cantidad compartida.
 
-Formalmente, si $\tilde{E}$, $\tilde{B}$, $\tilde{L}$ y $\tilde{C}_{\mathrm{CO_2}}$ denotan las variables por larva, entonces:
-
+Formalmente, si $\tilde{E}$, $\tilde{B}$, $\tilde{L}$ y $\tilde{C}_{\ch{CO2}}$ denotan las variables por larva, entonces:
 \begin{equation}
     E = N_{\mathrm{larvas}} \cdot \tilde{E}, \quad
     B = N_{\mathrm{larvas}} \cdot \tilde{B}, \quad
     L = N_{\mathrm{larvas}} \cdot \tilde{L}, \quad
-    C_{\mathrm{CO_2}} = N_{\mathrm{larvas}} \cdot \tilde{C}_{\mathrm{CO_2}}.
+    C_{\ch{CO2}} = N_{\mathrm{larvas}} \cdot \tilde{C}_{\ch{CO2}}.
     \label{eq:cap3_escalamiento}
 \end{equation}
 
-Esta hipótesis es razonable cuando la densidad larval se mantiene dentro del rango óptimo (2.5--5.0 g/L), donde la competencia por el alimento es limitada y la heterogeneidad de crecimiento entre individuos es baja \parencite{dienerConversionOrganicMaterial2009,guillaumeAsymptoticEstimatedDigestibility2023}. En densidades superiores, la variabilidad interindividual aumenta y el escalamiento medio puede subestimar la dispersión de la respiración; esta limitación se mitiga en el Capítulo \ref{chap:hibrido} mediante la incertidumbre del Proceso Gaussiano.
+Esta hipótesis es razonable cuando la densidad larval se mantiene dentro del rango óptimo (\SI{2,5}{}--\SI{5,0}{\gram\per\litre}), donde la competencia por el alimento es limitada y la heterogeneidad de crecimiento entre individuos es baja \parencite{dienerConversionOrganicMaterial2009,guillaumeAsymptoticEstimatedDigestibility2023}. En densidades superiores, la variabilidad interindividual aumenta y el escalamiento medio puede subestimar la dispersión de la respiración; esta limitación se mitiga en el Capítulo \ref{chap:hibrido} mediante la incertidumbre del estimador neuronal.
 
-El número de larvas $N_{\mathrm{larvas}}$ se trata como constante durante el ciclo de 15 días, dado que la mortalidad registrada en condiciones controladas es inferior al 5\% \parencite{salamEffectDifferentEnvironmental2022}. Cualquier reducción por mortalidad se absorbe en la calibración del parámetro de eficiencia de conversión $\kappa_G$.
+El número de larvas $N_{\mathrm{larvas}}$ se trata como constante durante el ciclo de 15 días, dado que la mortalidad registrada en condiciones controladas es inferior al $5\%$ \parencite{salamEffectDifferentEnvironmental2022}. Cualquier reducción por mortalidad se absorbe en la calibración del parámetro de eficiencia de conversión $\kappa_G$.
 
 En resumen, esta sección ha definido el espacio de estados, las condiciones iniciales experimentales y el dominio matemático del modelo. El siguiente paso consiste en formular las ecuaciones diferenciales que gobiernan la evolución de $\mathbf{x}(t)$ dentro de $\Omega$, tema de la Sección \ref{sec:cap3_formulacion_ode}.

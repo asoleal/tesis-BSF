@@ -331,74 +331,30 @@ Se desarrolla la generalización del modelo Dynamic Energy Budget de Eriksen (20
 % CAPÍTULO 4
 % ---------------------------------------------------------
 \chapter{Sistema Híbrido: Integración Modelo--Datos y Estimación de Biomasa}
-\chaptermark{Sistema Híbrido DEB--GP}
+\chaptermark{Sistema Híbrido DEB--MLP}
 \label{chap:hibrido}
 
 \begin{center}
 \small
 \textbf{Resumen del capítulo.}
-Se integra el modelo DEB con un estimador externo de biomasa basado en Proceso Gaussiano parsimonioso, entrenado con cosechas destructivas. Se establece la estrategia de calibración por fases, la función de pérdida basada en pendientes de emisión y la validación predictiva frente a sensores NDIR. El \ce{CH4} se trata como residual de diagnóstico para detección de anaerobiosis.
-\textbf{Palabras clave:} sistema híbrido, proceso gaussiano, calibración, pendientes de emisión, \ce{CO2}, \ce{CH4}, validación predictiva.
+Se integra el modelo DEB con un calibrador neuronal paramétrico (MLP) que corrige, en tiempo real, el subconjunto de parámetros de primera sensibilidad respecto a la pendiente de emisión de \ch{CO2}. Se rechaza el uso de un Proceso Gaussiano como predictor directo de biomasa por inviabilidad metodológica e incoherencia con los objetivos del proyecto. Se detalla el protocolo de extracción de pendientes $s_k$ en ventanas cerradas de 3--5 min, la arquitectura del MLP two-stage y la estrategia de calibración por fases (semillas Eriksen, ajuste local NDIR, corrección neuronal). El \ch{CH4} se trata como residual de diagnóstico para detección de anaerobiosis.\\
+\textbf{Palabras clave:} sistema híbrido, calibrador neuronal, Dynamic Energy Budget, pendientes de emisión, \ch{CO2}, \ch{CH4}, estimación de biomasa, validación predictiva.
 \end{center}
 
-\section{Introducción}
-\label{sec:cap4_introduccion}
-% Brecha: B(t) solo en cosechas. Se requiere estimador externo y
-% confrontación de pendientes para evitar sesgo por saturación.
 \input{Capitulos/cap4_sec01_introduccion.tex}
-
-\section{Arquitectura Conceptual y Flujo de Información}
-\label{sec:cap4_arquitectura}
-% Diagrama: sensores → GP → \hat{B} → DEB → \dot{C}_{modelo} vs.
-% \dot{C}_{sensor}. Jerarquía de tiempos: días vs. minutos.
 \input{Capitulos/cap4_sec02_arquitectura.tex}
-
-\section{Estimador Externo de Biomasa mediante Proceso Gaussiano}
-\label{sec:cap4_estimador_gp}
-% GP único por parsimonia (N < 100). Sin MLP profundo.
-% Incluye subsecciones: justificación, variables, formulación,
-% entrenamiento LORO, propagación de incertidumbre.
-\input{Capitulos/cap4_sec03_estimador_gp.tex}
-
-\section{Estrategia de Calibración del Modelo DEB}
-\label{sec:cap4_calibracion}
-% Fase A: semillas desde Eriksen. Fase B: ajuste local NDIR.
-% Restricciones de caja y L-BFGS-B.
-% Incluye subsecciones: Fase A, Fase B, restricciones.
-\input{Capitulos/cap4_sec04_calibracion.tex}
-
-\section{Función de Pérdida y Confrontación Modelo--Sensor}
-\label{sec:cap4_perdida}
-% Comparación de derivadas en ventanas de 30 min.
-% CH4 como residual de diagnóstico (indicador binario).
-% NOTA: Conversión ppm→g/min en Cap. 2. No repetir aquí.
-% Incluye subsecciones: pendientes de emisión, tratamiento CH4.
-\input{Capitulos/cap4_sec05_perdida.tex}
-
-\section{Validación Predictiva y Métricas de Desempeño}
-\label{sec:cap4_validacion}
-% R^2 y MAPE. Umbral: < 15 % éxito, < 10 % excepcional.
-% Análisis de residuos y detección de anaerobiosis.
-% Incluye subsecciones: métricas de regresión, análisis de residuos.
-\input{Capitulos/cap4_sec06_validacion.tex}
-
-\section{Resultados de la Integración Modelo--Datos}
-\label{sec:cap4_resultados}
-% \hat{B} vs cosechas, pendientes obs vs pred, MAPE por fases,
-% mapa de calor residuos vs tiempo/temperatura.
-\input{Capitulos/cap4_sec07_resultados.tex}
-
-\section{Conclusiones del Capítulo}
-\label{sec:cap4_conclusiones}
-% DEB+GP estima biomasa y calibra con MAPE < X %. CH4 diagnóstico.
-\input{Capitulos/cap4_sec08_conclusiones.tex}
-
+\input{Capitulos/cap4_sec03_ventanas.tex}
+\input{Capitulos/cap4_sec04_calibrador.tex}
+\input{Capitulos/cap4_sec05_calibracion.tex}
+\input{Capitulos/cap4_sec06_comparativa.tex}   % NUEVO: RNA vs MLP
+\input{Capitulos/cap4_sec07_validacion.tex}
+\input{Capitulos/cap4_sec08_resultados.tex}
+\input{Capitulos/cap4_sec09_conclusiones.tex}
 % ---------------------------------------------------------
 % CAPÍTULO 5
 % ---------------------------------------------------------
-\chapter{Métricas Ambientales y Herramienta de Diagnóstico Operativo}
-\chaptermark{Métricas y Diagnóstico}
-\label{chap:metricas}
+\chapter{Validación Predictiva y Diagnóstico Operativo}
+\label{chap:cap5}
 
 \begin{center}
 \small
@@ -407,51 +363,24 @@ Se cuantifica el balance de carbono del ciclo de bioconversión mediante un inve
 \textbf{Palabras clave:} inventario de carbono, factor de emisión, anaerobiosis, clasificador de umbral, eficiencia de conversión.
 \end{center}
 
-\section{Introducción}
-\label{sec:cap5_introduccion}
-% Cierre del arco: datos (Cap. 2) + modelo (Cap. 3) + integración
-% (Cap. 4) → indicadores ambientales y diagnóstico.
-
-\section{Arquitectura de la Plataforma de Soporte a la Decisión}
-\label{sec:cap5_arquitectura}
-\input{Capitulos/cap5_sec02_arquitectura.tex}
-
-\section{Semáforo de Riesgo Ambiental y Estados Operativos}
-\label{sec:cap5_semaforo}
-\input{Capitulos/cap5_sec03_semaforo.tex}
-
-\section{Protocolo de Respuesta ante Eventos de Anaerobiosis}
-\label{sec:cap5_protocolo}
-\input{Capitulos/cap5_sec04_protocolo.tex}
-
-\section{Generación Automatizada de Reportes MRV}
-\label{sec:cap5_mrv}
-\input{Capitulos/cap5_sec05_mrv.tex}
-
-\section{Validación de la Utilidad Operativa y Pruebas de Campo}
-\label{sec:cap5_validacion}
-\input{Capitulos/cap5_sec06_validacion.tex}
-
-\section{Conclusiones del Capítulo}
-\label{sec:cap5_conclusiones}
-\input{Capitulos/cap5_sec07_conclusiones.tex}
-% Inventario dinámico, clasificador CH4, métricas comparables.
-% MRV (IPCC, Verra) como horizonte de trabajo futuro.
-
-% ---------------------------------------------------------
-% CONCLUSIONES GENERALES
-% ---------------------------------------------------------
+\input{Capitulos/cap5_sec01_introduccion.tex}   % NUEVO
+\input{Capitulos/cap5_sec02_validacion.tex}
+\input{Capitulos/cap5_sec03_resultados.tex}
+\input{Capitulos/cap5_sec04_plataforma.tex}
+\input{Capitulos/cap5_sec05_semaforo.tex}
+\input{Capitulos/cap5_sec06_protocolo.tex}
+\input{Capitulos/cap5_sec07_mrv.tex}
+\input{Capitulos/cap5_sec08_utilidad.tex}
+\input{Capitulos/cap5_sec09_conclusiones.tex}
+% ==================================================================
+% CAPÍTULO 6: Conclusiones Generales y Perspectivas
+% ==================================================================
 \chapter{Conclusiones Generales y Perspectivas}
-\chaptermark{Conclusiones}
+\label{chap:cap6}
 
-\section{Síntesis de hallazgos}
-
-\section{Limitaciones del estudio}
-
-\section{Trabajos futuros}
-% Incluir aquí la nota sobre compatibilidad con estándares MRV
-% (IPCC Tier 2--3, Verra) como línea futura de investigación.
-
+\input{Capitulos/cap6_sec01_sintesis.tex}
+\input{Capitulos/cap6_sec02_limitaciones.tex}
+\input{Capitulos/cap6_sec03_trabajos_futuros.tex}
 % =========================================================
 % ANEXOS
 % =========================================================

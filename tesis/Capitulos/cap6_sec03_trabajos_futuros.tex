@@ -1,0 +1,19 @@
+% ------------------------------------------------------------------
+% Sección 6.3: Trabajos Futuros
+% ------------------------------------------------------------------
+\section{Trabajos Futuros}
+\label{sec:cap6_futuro}
+
+Los hallazgos y limitaciones de esta tesis delinean cinco líneas de investigación y desarrollo prioritarias para consolidar la bioconversión con \emph{Hermetia illucens} como una tecnología climáticamente verificable y socialmente justa.
+
+\textbf{1. Incorporación de N$_2$O y balance de nitrógeno.} El sistema actual monitorea CO$_2$ y CH$_4$, pero excluye el óxido nitroso (N$_2$O), un gas de efecto invernadero con potencial de calentamiento global 265 veces superior al del CO$_2$ en horizonte de 100 años. La integración de sensores electroquímicos de bajo costo para N$_2$O y la extensión del modelo DEB con un compartimento de nitrógeno (excreción, mineralización) permitiría cerrar el balance de gases de efecto invernadero completo y comparar la huella climática de la BSF contra compostaje y digestión anaerobia de manera más rigurosa.
+
+\textbf{2. Escalamiento a reactor continuo y modelado espacial.} La transición de reactores batch (20~L) a sistemas de flujo continuo o lotes mayores (200--1000~L) exige abandonar la hipótesis de homogeneidad espacial. Se propone desarrollar un modelo de reactor en coordenadas cilíndricas (radial y axial) que acople la difusión de oxígeno en el lecho poroso con la cinética metabólica larval, permitiendo predecir la formación de núcleos anaeróbicos como fenómeno emergente y no como perturbación estocástica.
+
+\textbf{3. Arquitecturas de IA explicable y robusta.} El MLP corrector actual opera como caja gris: aunque sus salidas son correcciones paramétricas interpretables, sus capas ocultas no ofrecen diagnóstico sobre qué variables operativas impulsan cada corrección. Se propone explorar: (i) redes neuronales con atención temporal para ponderar explícitamente la influencia de cada ventana histórica; (ii) modelos de conjunto (\emph{ensemble}) que promedien múltiples calibradores entrenados en subconjuntos bootstrap, cuantificando la incertidumbre epistémica; y (iii) integración de filtros de Kalman para fusión sensorial entre el DEB y las lecturas NDIR en tiempo continuo, en lugar de ventanas discretas.
+
+\textbf{4. Validación de campo y co-diseño con productores.} La utilidad operativa del sistema requiere validación longitudinal en granjas reales del Valle del Cauca, con protocolos de co-diseño que incorporen el conocimiento empírico de los productores en la definición de umbrales de alerta y acciones correctivas. Se propone un estudio de seguimiento de 12 meses que mida no solo métricas técnicas (MAPE, recall), sino indicadores de adopción sostenible (tasa de uso del dashboard, reducción de eventos anaeróbicos, percepción de soberanía de datos).
+
+\textbf{5. Integración con mercados de carbono y estándares MRV.} El reporte MRV automatizado desarrollado en esta tesis sienta las bases técnicas para la certificación de reducciones de emisiones bajo estándares voluntarios (Verra VCS, Gold Standard). Los trabajos futuros deben: (i) someter un proyecto piloto a validación de tercera parte (\emph{validation}); (ii) establecer la línea base regional para compostaje de residuos agroindustriales en Colombia mediante medición directa, no extrapolación de factores IPCC genéricos; y (iii) desarrollar contratos inteligentes (\emph{smart contracts}) sobre blockchain para la comercialización automatizada de créditos de carbono verificados por sensores IoT.
+
+En síntesis, esta tesis ha transformado la bioconversión con \emph{Hermetia illucens} de un proceso de ``caja negra'' en un sistema de monitoreo dinámico interpretable. Los trabajos futuros apuntan a escalar esta transparencia desde el laboratorio hasta la granja, desde el dato hasta el mercado, y desde la predicción hasta la acción climática verificable.

@@ -1,0 +1,82 @@
+% ------------------------------------------------------------------
+% Sección 5.5: Semáforo de Riesgo Ambiental y Estados Operativos
+% ------------------------------------------------------------------
+\section{Semáforo de Riesgo Ambiental y Estados Operativos}
+\label{sec:cap5_semaforo}
+
+El semáforo de riesgo ambiental constituye el mecanismo de traducción principal entre las salidas cuantitativas del motor híbrido DEB--MLP y las decisiones operativas del productor agroindustrial. Su diseño responde a la necesidad, identificada en el marco teórico, de convertir datos técnicos complejos en señales interpretables para operadores no expertos. El sistema clasifica el estado del reactor en tres niveles ---verde, ámbar y rojo--- cada uno asociado a un régimen metabólico dominante, un perfil de emisiones de CO$_2$ y CH$_4$, y un conjunto de acciones de manejo concretas.
+
+La lógica de transición entre niveles no se basa únicamente en umbrales absolutos de concentración, sino en una combinación de: (i) la discrepancia entre la emisión de CO$_2$ medida y la estimada por el modelo DEB ($|Y_{\mathrm{sensor}} - Y_{\mathrm{DEB}}|$); (ii) la presencia y tendencia de CH$_4$; y (iii) la pendiente de cambio de la relación CO$_2$/O$_2$ inferida del modelo. Esta estrategia multivariable evita falsos positivos derivados de picos transitorios de CO$_2$ asociados a eventos de alimentación o perturbaciones mecánicas, y aprovecha la capacidad del detector de CH$_4$ validada en la Sección~\ref{sec:cap5_resultados} (Recall $= 100$\%, Precision $= 80$\%) como confirmador de anaerobiosis.
+
+% ------------------------------------------------------------------
+\subsection{Nivel verde: eficiencia aeróbica y acumulación de créditos de carbono}
+\label{subsec:cap5_verde}
+% ------------------------------------------------------------------
+
+El nivel verde indica que el reactor opera dentro del régimen aeróbico esperado. Se define simultáneamente por tres condiciones:
+
+\begin{enumerate}
+    \item La concentración de CO$_2$ se mantiene dentro de la banda de predicción del sistema híbrido con un MAPE inferior al 10\% y sin tendencia sistemática al alza.
+    \item La concentración de CH$_4$ permanece por debajo del umbral de detección operativo (50~ppm), confirmando la ausencia de microambientes anaeróbicos significativos.
+    \item La discrepancia acumulada de carbono $\Delta_{\mathrm{Total}}$ se aproxima a cero o es ligeramente positiva, indicando que el modelo captura adecuadamente la dinámica de emisión.
+\end{enumerate}
+
+En este estado, el sistema valida la acumulación de créditos de carbono verificables. El inventario dinámico registra la masa total de carbono emitida como CO$_2$ ($C_{\mathrm{total}}$) y la compara contra una línea base de referencia (estimación estática por factores de emisión promedio). La diferencia a favor ---es decir, la emisión medida menor que la línea base--- se contabiliza como reducción atribuible a la eficiencia del proceso de bioconversión. Este dato constituye el insumo principal para la generación de reportes MRV descritos en la Sección~\ref{sec:cap5_mrv}.
+
+La acción operativa asociada al nivel verde es la continuidad del manejo estándar: alimentación según programa, monitoreo rutinario de temperatura y humedad, y registro fotográfico del estado del sustrato. El dashboard muestra un indicador de color verde sólido junto con el mensaje: ``Régimen aeróbico estable. Acumulando créditos de carbono.''
+
+% ------------------------------------------------------------------
+\subsection{Nivel ámbar: tendencia preventiva y revisión de humedad}
+\label{subsec:cap5_ambar}
+% ------------------------------------------------------------------
+
+El nivel ámbar se activa como estado preventivo cuando los indicadores muestran una deriva hacia condiciones subóptimas, pero aún sin confirmación de anaerobiosis. Las condiciones de transición son:
+
+\begin{enumerate}
+    \item La concentración de CO$_2$ presenta una tendencia al alza respecto a la predicción DEB--MLP, con una divergencia creciente que supera el 15\% en una ventana deslizante de 2~horas, pero sin correlación con CH$_4$.
+    \item La humedad del sustrato, inferida indirectamente mediante la relación entre temperatura del lecho y caída de oxígeno, sugiere valores cercanos o superiores al 70\%.
+    \item La pendiente de la relación CO$_2$/O$_2$ aumenta monótonamente, indicando una posible saturación de la capacidad de difusión de oxígeno en el lecho.
+\end{enumerate}
+
+Este nivel representa una ventana de oportunidad para intervenciones de bajo costo que eviten la transición al estado crítico. La acción operativa recomendada es la revisión inmediata de la humedad del sustrato mediante prueba manual (apretón de puñado) y, si se confirma exceso, la activación de aireación pasiva (volteo parcial o apertura de ventilación) sin detener el ciclo productivo. El dashboard muestra un indicador ámbar intermitente con el mensaje: ``Tendencia preventiva: revisar humedad y aireación.''
+
+El nivel ámbar es deliberadamente sensible: se prefiere una tasa de falsos positivos moderada a cambio de maximizar el tiempo de reacción ante condiciones que, de no atenderse, evolucionan hacia anaerobiosis en un plazo de 6--12~horas según las dinámicas observadas en la validación experimental.
+
+% ------------------------------------------------------------------
+\subsection{Nivel rojo: alerta de anaerobiosis e intervención inmediata}
+\label{subsec:cap5_rojo}
+% ------------------------------------------------------------------
+
+El nivel rojo constituye una alerta crítica que exige intervención física inmediata. Se activa cuando se cumple al menos una de las siguientes condiciones:
+
+\begin{enumerate}
+    \item La concentración de CH$_4$ supera el umbral de 100~ppm, confirmando la presencia de zonas anaeróbicas en el lecho. Este umbral corresponde al valor que demostró Recall $= 100$\% en la validación del Capítulo~\ref{chap:cap4}.
+    \item La divergencia entre CO$_2$ medido y estimado supera el 30\% y correlaciona temporalmente con un pico de CH$_4$, descartando la hipótesis de error instrumental o evento de alimentación.
+    \item La temperatura del sustrato desciende abruptamente ($> 3^\circ$C en 30~minutos) simultáneamente con la detección de CH$_4$, indicando colapso metabólico local por agotamiento de oxígeno.
+\end{enumerate}
+
+La acción operativa asociada es la intervención inmediata mediante volteo completo del sustrato para reoxigenar el lecho y dispersar los núcleos anaeróbicos. El tiempo de respuesta esperado es inferior a 15~minutos desde la generación de la alerta hasta el inicio del volteo. La efectividad de esta mitigación se evalúa mediante la caída de CH$_4$ por debajo de 50~ppm en un plazo de 1--2~horas posteriores a la intervención.
+
+En el dashboard, el indicador rojo es sólido y de alto contraste, acompañado de un mensaje de texto explícito: ``ALERTA: Detección de anaerobiosis. Volteo inmediato requerido.'' La API de alertas dispara notificaciones push de máxima prioridad a los dispositivos registrados del operador y del supervisor técnico. El evento se registra automáticamente en el log de eventos con timestamp, duración, nivel máximo de CH$_4$ alcanzado y confirmación manual de la acción correctiva.
+
+% ------------------------------------------------------------------
+\subsection{Resumen del semáforo y acciones operativas}
+\label{subsec:cap5_resumen_semaforo}
+% ------------------------------------------------------------------
+
+La Tabla~\ref{tab:semaforo_resumen} resume la correspondencia entre niveles, condiciones técnicas, perfiles de emisión y acciones operativas.
+
+\begin{table}[htbp]
+\centering
+\caption{Resumen del semáforo de riesgo ambiental: condiciones de transición y acciones operativas.}
+\label{tab:semaforo_resumen}
+\begin{tabular}{p{1.8cm}p{4.5cm}p{3.8cm}p{3.5cm}}
+\toprule
+\textbf{Nivel} & \textbf{Condiciones técnicas} & \textbf{Perfil de emisiones} & \textbf{Acción operativa} \\
+\midrule
+Verde & CO$_2$ dentro de banda DEB--MLP (MAPE $< 10$\%); CH$_4 < 50$~ppm; $\Delta_{\mathrm{Total}} \approx 0$ & Emisiones aeróbicas estándar; acumulación de créditos de carbono & Continuidad de manejo estándar \\
+Ámbar & CO$_2$ divergente $> 15$\% en 2~h sin CH$_4$; humedad $\geq 70$\%; pendiente CO$_2$/O$_2$ al alza & Tendencia a emisiones subóptimas; riesgo incipiente de anaerobiosis & Revisar humedad; aireación pasiva (volteo parcial) \\
+Rojo & CH$_4 > 100$~ppm; divergencia CO$_2 > 30$\% + CH$_4$; caída térmica $> 3^\circ$C en 30~min + CH$_4$ & Anaerobiosis confirmada; emisiones fugitivas de metano & Volteo inmediato; reoxigenación del lecho \\
+\bottomrule
+\end{tabular}
+\end{table}
