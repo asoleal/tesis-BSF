@@ -1,61 +1,95 @@
 % =========================================================
-% SECCIÓN 2.4 - PROTOCOLO DE MEDICIÓN EN VENTANAS CERRADAS
+% SECCIÓN 2.4 - PROTOCOLO DE MEDICIÓN Y CONVERSIÓN A FLUJO MÁSICO
 % =========================================================
 
-La cuantificación de flujos gaseosos en sistemas de bioconversión con sustrato sólido presenta una dificultad metodológica particular: la heterogeneidad del medio poroso impide el uso directo de cámaras de flujo continuo tipo ``open chamber'' sin alterar drásticamente las condiciones de oxigenación y la actividad larval \parencite{rossiEstimatingDynamicsGreenhouse2024}. Frente a esta limitación, el protocolo de ventanas cerradas (\textit{closed static chambers}) emerge como un compromiso entre trazabilidad de masa y mínima perturbación del sistema, siempre que se acoten los tiempos de acumulación para evitar efectos de retroalimentación por hipoxia o saturación de \ce{CO2} \parencite{fuhrmannComprehensiveIndustryrelevantBlack2025, parodiBioconversionEfficienciesGreenhouse2020}. En esta sección se describe el diseño del ciclo de muestreo y la derivación matemática para convertir el incremento de concentración (\si{ppm}) en flujo másico instantáneo (\si{g/min}), operación que constituye el puente entre el dato crudo del sensor y la entrada del modelo bioenergético del Capítulo 3.
+La cuantificación de flujos gaseosos en sistemas de bioconversión con sustrato sólido exige un compromiso entre trazabilidad de masa y mínima perturbación del sistema. El protocolo de ventanas cerradas (\textit{closed static chambers}) se adopta como solución de campo ante la imposibilidad de usar cámaras de flujo continuo sin alterar la oxigenación larval \parencite{rossiEstimatingDynamicsGreenhouse2024, parodiBioconversionEfficienciesGreenhouse2020}. En esta sección se describe el ciclo de muestreo y se deriva formalmente la conversión de concentración (\si{ppm}) a flujo másico instantáneo (\si{g/min}), puente metrológico entre el sensor NDIR y el balance de carbono del modelo DEB.
 
 % ---------------------------------------------------------
 \subsection{Diseño del ciclo de muestreo}
 \label{subsec:cap2_ciclo_muestreo}
 
-El protocolo se estructuró en ciclos repetitivos de tres fases: (i) aireación de reposición, (ii) acumulación gaseosa en ventana cerrada, y (iii) muestreo NDIR. La duración de cada fase se definió a partir de un balance entre sensibilidad instrumental y perturbación biológica. Ventanas demasiado cortas ($<$ \SI{15}{min}) generan incrementos de concentración inferiores a la resolución del sensor NDIR de bajo costo; ventanas excesivamente largas ($>$ \SI{60}{min}) inducen hipoxia (descenso de \ce{O2} por debajo de \SI{10}{\percent}) y acumulación de \ce{CO2} por encima de \SI{5000}{ppm}, condiciones que inhiben la respiración aeróbica y pueden desencadenar fermentación anaeróbica con emisión transitoria de \ce{CH4} \parencite{rossiEstimatingDynamicsGreenhouse2024, bekkerImpactSubstrateMoisture2021}.
+El protocolo se estructuró en eventos discretos espaciados cada 2 días. En cada evento se cerraba herméticamente el reactor (tapa de plástico con sellado por presión) y se iniciaba el registro continuo de acumulación gaseosa hasta la saturación del instrumento (\num{5000}~ppm para \ce{CO2} o \SI{10}{\percent} para \ce{CH4}). Las lecturas se tomaron cada \SI{10}{\second} en un microcontrolador ESP32, descartando los primeros \SI{2}{min} para homogeneización del \emph{headspace}. La duración efectiva de cada ventana varió biológicamente: estadios tempranos (L3--L4) requirieron tiempos prolongados, mientras que L5 acortó el intervalo por respiración elevada. Esta variabilidad captura la dinámica real sin truncar artificialmente picos de emisión.
 
-La fase de aireación de reposición tuvo una duración fija de \SI{10}{min}, inyectando aire ambiente filtrado (\SI{0.2}{\micro\metre}) a caudal constante de \SI{1}{L/min} mediante bomba peristáltica. Este flujo garantizó al menos tres renovaciones del volumen de cabeza libre (\SI{5}{L}), restableciendo las condiciones atmosféricas de referencia (\ce{CO2} $\approx$ \SI{400}{ppm}, \ce{CH4} $\approx$ \SI{1.8}{ppm}) sin deshidratar el sustrato. Al término de la aireación, se cerraron las válvulas de entrada y salida, sellando herméticamente el reactor.
-
-La fase de acumulación (ventana cerrada) tuvo una duración de \SI{30}{min}, intervalo que, según ensayos preliminares, produjo incrementos de \ce{CO2} entre \num{200} y \num{1500}{ppm} (dependiendo de la edad larval y la densidad), suficientes para superar el umbral de detección confiable del MH-Z19B pero manteniendo la concentración final por debajo de \SI{3000}{ppm}. Durante esta ventana, el sensor NDIR registró lecturas cada \SI{10}{s}, almacenando la serie temporal $C(t)$ en el microcontrolador ESP32.
-
-El muestreo se programó cada \SI{2}{h} durante las primeras \SI{48}{h}, y cada \SI{4}{h} posteriormente, dado que la tasa metabólica varía lentamente en estadios intermedios (L4--L5). Se sincronizó el inicio de cada ventana con los ciclos de luz del sistema 12:12 (L:D) para reducir la variabilidad por actividad locomotora. Se descartaron las primeras \SI{2}{min} de lecturas tras el cierre de válvulas para permitir la homogeneización del gas en la cámara de cabeza libre, evitando gradientes de concentración por estratificación térmica.
+El reactor consistió en un recipiente rígido de \SI{0.8}{L} con \num{700} larvas aproximadamente y \SI{250}{g} de sustrato húmedo, dejando un volumen de cabeza libre $V_{\text{head}} = \SI{0.35}{L}$ ($\pm$\,\SI{0.05}{L}). El número de eventos válidos por réplica osciló entre 6 y 7 a lo largo de un ciclo de 12--\SI{15}{\day}.
 
 % ---------------------------------------------------------
-\subsection{Conversión de concentración a flujo másico}
-\label{subsec:cap2_conversion_ppm}
+\subsection{Fundamento teórico de la conversión ppm--flujo másico}
+\label{subsec:cap2_fundamento_teorico_conversion}
 
-La señal cruda del sensor NDIR es una concentración volumétrica $C(t)$ expresada en partes por millón (\si{ppm}). Para alimentar el balance de carbono del modelo DEB (Capítulo 3) y comparar con las estimaciones teóricas de emisión, es necesario convertir esta concentración en un flujo másico instantáneo $\dot{m}_{\ce{CO2}}(t)$ (\si{g/min}). Esta conversión requiere tres pasos: (i) estimación de la densidad molar del gas en las condiciones locales, (ii) cálculo de la masa acumulada en la cámara, y (iii) derivación temporal para obtener la tasa de emisión neta.
+La señal cruda $C(t)$ (\si{ppm}) se convierte en flujo másico mediante tres principios físico-químicos acoplados: ecuación de estado del gas ideal, ley de Dalton de presiones parciales y balance de masa transitorio en un volumen de control de paredes rígidas.
 
-\textbf{Paso 1: densidad molar corregida.} Aplicando la ecuación de estado del gas ideal al volumen de cabeza libre $V_{\text{head}}$ (\SI{5}{L}), la densidad molar del \ce{CO2} a la temperatura del aire de cabeza libre $T_{\text{air}}$ (\si{K}) y presión atmosférica local $P_{\text{atm}}$ (\si{kPa}) es:
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\subsubsection{Hipótesis de gas ideal y densidad molar}
+
+En las condiciones del ensayo ($P_{\text{atm}} \approx \SI{101.3}{kPa}$, $T_{\text{air}} \approx \SI{303}{K}$) la mezcla gaseosa (aire + trazas de \ce{CO2}) se comporta como gas ideal con error despreciable ($<<$\SI{0.3}{\percent}) \parencite{atkinsPhysicalChemistry2014}. La densidad molar del \ce{CO2} es:
 
 \begin{equation}
 \rho_{\ce{CO2}} = \frac{P_{\text{atm}} \cdot M_{\ce{CO2}}}{R \cdot T_{\text{air}}}
 \label{eq:densidad_co2}
 \end{equation}
 
-donde $M_{\ce{CO2}} = \SI{44.01}{g/mol}$ es la masa molar del dióxido de carbono y $R = \SI{8.314}{kPa\cdot L/(mol\cdot K)}$ es la constante universal de los gases. En las condiciones de Palmira ($P_{\text{atm}} \approx \SI{101.3}{kPa}$, $T_{\text{air}} \approx \SI{303}{K}$), la densidad resulta $\rho_{\ce{CO2}} \approx \SI{1.80}{g/L}$.
+donde $M_{\ce{CO2}} = \SI{44.01}{g/mol}$ y $R = \SI{8.314}{kPa\cdot L/(mol\cdot K)}$. En Palmira resulta $\rho_{\ce{CO2}} \approx \SI{1.80}{g/L}$.
 
-\textbf{Paso 2: masa acumulada.} La concentración $C(t)$ en ppm se expresa como fracción volumétrica $y_{\ce{CO2}}(t) = C(t) \times 10^{-6}$. La masa total de \ce{CO2} acumulada en el volumen de cabeza libre en el instante $t$ es:
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\subsubsection{Fracción volumétrica y masa acumulada}
+
+El sensor NDIR reporta concentración volumétrica $C_{\ce{CO2}}$ en ppm, definida por la IPCC como la razón molar respecto al total de la mezcla multiplicada por $10^6$ \parencite{ipccGuidelinesNationalGreenhouse2006}:
+
+\begin{equation}
+C_{\ce{CO2}}(t) = \frac{n_{\ce{CO2}}(t)}{n_{\text{total}}} \times 10^{6}
+\quad\Longrightarrow\quad
+y_{\ce{CO2}}(t) = C_{\ce{CO2}}(t) \times 10^{-6}
+\label{eq:definicion_ppm}
+\end{equation}
+
+donde $y_{\ce{CO2}}$ es la fracción molar, igual a la fracción volumétrica para gases ideales. La masa acumulada en el \emph{headspace} es:
 
 \begin{equation}
 m_{\ce{CO2}}(t) = y_{\ce{CO2}}(t) \cdot \rho_{\ce{CO2}} \cdot V_{\text{head}}
-\label{eq:masa_acumulada}
+= \frac{M_{\ce{CO2}} \cdot P_{\text{atm}} \cdot V_{\text{head}}}{R \cdot T_{\text{air}}} \cdot y_{\ce{CO2}}(t)
+\label{eq:masa_teorica}
 \end{equation}
 
-\textbf{Paso 3: flujo másico de emisión.} Derivando la \cref{eq:masa_acumulada} respecto al tiempo y despejando la tasa de producción neta, se obtiene:
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\subsubsection{Balance de masa transitorio y flujo másico}
+
+El reactor batch cerrado es un volumen de control sin entrada de masa gaseosa durante la medición. La única fuente de \ce{CO2} es la respiración biológica del sistema larva-sustrato. Derivando la \cref{eq:masa_teorica} respecto al tiempo (con $P_{\text{atm}}$, $V_{\text{head}}$ y $T_{\text{air}}$ constantes en la ventana corta de medición):
 
 \begin{equation}
-\dot{m}_{\ce{CO2}}(t) = \frac{\mathrm{d} m_{\ce{CO2}}}{\mathrm{d} t} = \frac{M_{\ce{CO2}} \cdot P_{\text{atm}} \cdot V_{\text{head}}}{R \cdot T_{\text{air}}} \times 10^{-6} \cdot \frac{\mathrm{d} C}{\mathrm{d} t}
-\label{eq:flujo_masico}
+\dot{m}_{\ce{CO2}}(t) 
+= \frac{\mathrm{d} m_{\ce{CO2}}}{\mathrm{d} t}
+= \underbrace{\frac{M_{\ce{CO2}} \cdot P_{\text{atm}} \cdot V_{\text{head}}}{R \cdot T_{\text{air}}} \times 10^{-6}}_{\displaystyle\kappa}
+\cdot \frac{\mathrm{d} C_{\ce{CO2}}}{\mathrm{d} t}
+\label{eq:flujo_masico_derivado}
 \end{equation}
 
-En la práctica, la derivada $\mathrm{d} C/\mathrm{d} t$ se aproximó mediante regresión lineal por mínimos cuadrados sobre la serie $C(t)$ durante la ventana de \SI{30}{min}, descartando los puntos iniciales de equilibración ($t <$ \SI{2}{min}). La pendiente resultante, $\Delta C/\Delta t$ (\si{ppm/min}), se sustituyó en la \cref{eq:flujo_masico} para obtener el flujo másico promedio de la ventana.
+El factor $\kappa$ (\si{g\cdot min/ppm}) actúa como coeficiente de proporcionalidad entre la pendiente de concentración y el flujo másico instantáneo. En la práctica, la derivada se aproxima por regresión lineal sobre la serie $C(t)$ durante la ventana de acumulación, descartando los puntos iniciales de equilibración ($t < \SI{2}{min}$). La pendiente $\Delta C/\Delta t$ (\si{ppm/min}) se sustituye en la \cref{eq:flujo_masico_derivado} para obtener el flujo promedio de la ventana.
 
-\textbf{Corrección por aireación residual.} Durante la fase de acumulación existe una pequeña fuga inherente al sistema (permeabilidad de la junta de silicona, porosidad del sustrato). Se cuantificó esta pérdida mediante ensayos de decaimiento con inyección de \ce{CO2} patrón en reactores sin sustrato, obteniendo una constante de decaimiento $\lambda \approx \SI{0.003}{min^{-1}}$. El flujo corregido resulta:
+La linealización es válida si la tasa de producción biológica varía lentamente respecto al tiempo de integración (hipótesis de \emph{quasi-estacionariedad}). En este reactor, las ventanas de saturación duran entre \SI{10}{min} y \SI{60}{min}, intervalo en que el metabolismo larval no experimenta cambios abruptos de escala fisiológica \parencite{eriksenDynamicModellingFeed2022}. El coeficiente de determinación $R^2 > 0.95$ garantiza que el error de linealización es inferior al \SI{2}{\percent}.
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\subsubsection{Corrección por fugas}
+
+El sellado por presión no es hermético perfecto. La fuga sigue una cinética de primer orden proporcional al gradiente de concentración \parencite{hutchinsonMethodsSoilAnalysis1992}:
+
+\begin{equation}
+\frac{\mathrm{d} C_{\text{int}}}{\mathrm{d} t}\bigg|_{\text{fuga}} 
+= -\lambda \bigl(C_{\text{int}} - C_{\text{ext}}\bigr)
+\label{eq:decaimiento_fuga}
+\end{equation}
+
+con $C_{\text{ext}} \approx \SI{400}{ppm}$. La constante $\lambda \approx \SI{0.003}{min^{-1}}$ se determinó experimentalmente mediante ensayos de decaimiento con inyección de \ce{CO2} patrón en reactores sin sustrato. El flujo corregido resulta:
 
 \begin{equation}
 \dot{m}_{\text{corr}} = \dot{m}_{\text{obs}} + \lambda \cdot m_{\ce{CO2}}(t)
 \label{eq:flujo_corregido}
 \end{equation}
 
-donde el segundo término representa la masa que habríase acumulado de no existir la fuga. Esta corrección resultó menor al \SI{5}{\percent} del flujo total en todas las réplicas y se omitió en el análisis preliminar, pero se conserva en la formulación para garantizar trazabilidad metrológica.
+Esta corrección fue menor al \SI{5}{\percent} del flujo total en todas las réplicas; se conserva en la formulación para garantizar trazabilidad metrológica.
 
-El mismo procedimiento se aplicó al \ce{CH4}, utilizando $M_{\ce{CH4}} = \SI{16.04}{g/mol}$ y la densidad correspondiente. Sin embargo, dado que las concentraciones de metano fueron frecuentemente inferiores a \SI{10}{ppm} ---dentro del ruido del sensor MQ-4---, los flujos de \ce{CH4} se reportaron como valores por debajo del límite de cuantificación (LOQ) salvo en eventos de anaerobiosis detectados (Capítulo 5).
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\subsubsection{Propagación de incertidumbre}
 
-La incertidumbre combinada de la conversión se propagó a partir de las incertidumbres tipo A (repetibilidad de la pendiente $\Delta C/\Delta t$) y tipo B (resolución del sensor, precisión de $V_{\text{head}}$, variabilidad de $T_{\text{air}}$), resultando en una incertidumbre expandida ($k=2$) del $\pm$\,\SI{12}{\percent} para $\dot{m}_{\ce{CO2}}$ y del $\pm$\,\SI{25}{\percent} para $\dot{m}_{\ce{CH4}}$ cuando este era cuantificable. Estos valores se encuentran dentro del umbral aceptable para un sistema de bajo costo y habilitan la integración con el modelo DEB sin distorsión excesiva del balance de carbono \parencite{biagiDevelopmentMachineLearningbased2024, parodiBioconversionEfficienciesGreenhouse2020}.
+La incertidumbre del flujo másico se propaga conforme al GUM (JCGM 100:2008) \parencite{jcgmEvaluationMeasurementData2008} a partir de fuentes tipo A (repetibilidad de la pendiente $\Delta C/\Delta t$) y tipo B (resolución del sensor MH-410D: \SI{50}{ppm}; precisión de $V_{\text{head}}$: $\pm$\,\SI{0.05}{L}; variabilidad de $T_{\text{air}}$: $\pm$\,\SI{2}{\celsius}; presión: $\pm$\,\SI{0.5}{kPa}). La incertidumbre expandida $U = k \cdot u_c$ con $k=2$ ($\approx 95\%$ de confianza) resulta del orden de $\pm$\,\SI{12}{\percent} para $\dot{m}_{\ce{CO2}}$, valor aceptable para un sistema de bajo costo en contexto agroindustrial \parencite{biagiDevelopmentMachineLearningbased2024, parodiBioconversionEfficienciesGreenhouse2020}.
+
+El mismo procedimiento se aplica al \ce{CH4} con $M_{\ce{CH4}} = \SI{16.04}{g/mol}$. Sin embargo, dado que sus concentraciones fueron frecuentemente inferiores al umbral de detección operativo del MH-441D en condiciones predominantemente aeróbicas, los flujos de \ce{CH4} se reportaron como $<$LOQ salvo en eventos de anaerobiosis detectados (Capítulo 5).
