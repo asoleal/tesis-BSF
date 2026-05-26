@@ -2,11 +2,11 @@
 % SECCIÓN 3.4 - FORMULACIÓN DEL SISTEMA DE ECUACIONES DIFERENCIALES
 % =========================================================
 
-Con las variables de estado y el dominio físico establecidos en la Sección~\ref{sec:cap3_variables}, esta sección formula el sistema de ecuaciones diferenciales ordinarias (EDO) que gobierna la evolución del vector $\mathbf{x}(t)$ en el reactor batch. El sistema se deriva directamente de los flujos metabólicos definidos en la Sección~\ref{subsec:cap3_flujos}, imponiendo la conservación de masa de carbono en cada compartimento. Las formas explícitas de las funciones cinéticas ---ingesta, asimilación y modulación térmica--- se detallan en la Sección~\ref{sec:cap3_cinetica}.
+Con las variables de estado y el dominio físico establecidos en la Sección~\ref{sec:cap3_variables}, esta sección formula el sistema de ecuaciones diferenciales ordinarias (EDO) que gobierna la evolución del vector $\mathbf{x}(t)$ en el reactor batch. El sistema se deriva directamente de los flujos metabólicos definidos en la Sección~\ref{subsec:cap3_flujos}, imponiendo la conservación de masa de carbono en cada compartimento. Las formas funcionales de ingesta y modulación térmica se cierran mediante cinética Holling~II y modelo de Sharpe--Schoolfield, de modo que el sistema queda completamente especificado.
 
-Se asume que el sistema satisface las condiciones de Carathéodory locales en $\Omega$, garantizando existencia y unicidad de la solución para condiciones iniciales $\mathbf{x}_0 \in \Omega$; las demostraciones formales se remiten al Anexo~\ref{anexo:formulacion_matematica} para no interrumpir el desarrollo del capítulo.
+Se asume que el sistema satisface las condiciones de Carathéodory locales en $\Omega$, garantizando existencia y unicidad de la solución para condiciones iniciales $\mathbf{x}_0 \in \Omega$; las demostraciones formales se remiten al Anexo~\ref{anexo:formulacion_matematica}.
 
-Es importante precisar que, si bien el vector de estado formal incluye cinco componentes (Sección~\ref{sec:cap3_variables}), la reserva de asimilados $E(t)$ opera en estado cuasi-estacionario (dE/dt $\approx$ 0). En consecuencia, el sistema dinámico efectivo se reduce a cuatro EDO acopladas para $S$, $B$, $L$ y $C_{\ch{CO2}}$, más una ecuación algebraica que determina $E$ en cada instante.
+Es importante precisar que, si bien el vector de estado formal incluye cinco componentes (Sección~\ref{sec:cap3_variables}), la reserva de asimilados $E(t)$ opera en estado cuasi-estacionario ($\mathrm{d}E/\mathrm{d}t \approx 0$). En consecuencia, el sistema dinámico efectivo se reduce a cuatro EDO acopladas para $S$, $B$, $L$ y $C_{\ch{CO2}}$, más una ecuación algebraica que determina $E$ en cada instante.
 
 % ---------------------------------------------------------
 \subsection{Balance del sustrato orgánico}
@@ -18,9 +18,24 @@ La masa de carbono orgánico disponible $S(t)$ disminuye exclusivamente por la i
     \frac{\mathrm{d}S}{\mathrm{d}t} = -\dot{I}_{\mathrm{tot}}(t) = -N_{\mathrm{larvas}} \cdot \tilde{\imath}\bigl(S(t), \tilde{b}(t), T(t)\bigr),
     \label{eq:cap3_ode_sustrato}
 \end{equation}
-donde $\tilde{b}(t) = B(t)/N_{\mathrm{larvas}}$ es la biomasa estructural por larva (\si{\gram C \per larva}) y $\tilde{\imath}$ es la tasa de ingesta específica (\si{\gram C \per larva \per \minute}), función creciente de la biomasa individual ---que determina la superficie bucal y la capacidad de procesamiento--- y de la disponibilidad de sustrato $S$. La dependencia térmica se incorpora mediante el factor $f(T)$ definido en la Sección~\ref{sec:cap3_cinetica}. La forma funcional de $\tilde{\imath}$ sigue la cinética de Holling~II, cuya parametrización se presenta en la Sección~\ref{sec:cap3_cinetica}.
+donde $\tilde{b}(t) = B(t)/N_{\mathrm{larvas}}$ es la biomasa estructural por larva (\si{\gram C \per larva}) y $\tilde{\imath}$ es la tasa de ingesta específica (\si{\gram C \per larva \per \minute}).
 
-La condición inicial $S(0) = S_0$ está dada por la ecuación~\eqref{eq:cap3_S0}. El dominio requiere $S(t) \geq 0$; cuando $S \to 0$, la ingesta se anula ($\tilde{\imath} \to 0$) y el sustrato permanece no negativo, comportamiento que se verifica cualitativamente en la Sección~\ref{sec:cap3_analisis}.
+La forma funcional de $\tilde{\imath}$ sigue la cinética de Holling~II, que captura la saturación por disponibilidad de sustrato y la escala isométrica de la superficie bucal \parencite{eriksenDynamicModellingFeed2022}:
+\begin{equation}
+    \tilde{\imath}(S, \tilde{b}, T) = a_{\max}\, \tilde{b}^{2/3}\, f(T)\, \frac{S}{\tau_h + S},
+    \label{eq:cap3_holling}
+\end{equation}
+con $a_{\max} = 1{,}25 \times 10^{-4}$~(\si{\gram C}/larva)$^{1/3}$/\si{\minute} (semilla convertida de \textcite{eriksenDynamicModellingFeed2022}) y $\tau_h \in [20, 200]$~\si{\gram C} como única variable libre de calibración local, que absorbe la variabilidad del tipo de residuo y la humedad del sustrato \parencite{bekkerImpactSubstrateMoisture2021}. La eficiencia de asimilación intestinal es $\kappa_A = 0{,}70$ para el sustrato de alta aptitud del protocolo experimental.
+
+El factor de modulación térmica $f(T)$, compartido por ingesta y mantenimiento, sigue el modelo de Sharpe--Schoolfield con inactivación de alta temperatura, normalizado para que $f(T_{\mathrm{ref}})=1$:
+\begin{equation}
+    f(T) = \frac{\exp\!\left(T_A\left(\frac{1}{T_{\mathrm{ref}}} - \frac{1}{T}\right)\right)}{1 + \exp\!\left(T_A\left(\frac{1}{T_H} - \frac{1}{T}\right)\right)}
+    \cdot \left[1 + \exp\!\left(T_A\left(\frac{1}{T_H} - \frac{1}{T_{\mathrm{ref}}}\right)\right)\right],
+    \label{eq:cap3_sharpe_schoolfield}
+\end{equation}
+donde $T$ es la temperatura absoluta del sustrato (\si{\kelvin}), $T_{\mathrm{ref}} = 303{,}15$~\si{\kelvin} (\SI{30}{\celsius}), $T_A = 6000$~\si{\kelvin} (energía de activación) y $T_H = 310$~\si{\kelvin} (temperatura de inactivación enzimática). Estos valores se toman como semillas fijas de la literatura entomológica \parencite{nayakHermetiaIllucensDiptera2024,salamEffectDifferentEnvironmental2022}. La humedad relativa se trata como condición de contorno operativa ($60$--$80$\%) y sus efectos se absorben en el valor calibrado de $\tau_h$.
+
+La condición inicial $S(0) = S_0$ está dada por la ecuación~\eqref{eq:cap3_S0}. El dominio requiere $S(t) \geq 0$; cuando $S \to 0$, la ingesta se anula ($\tilde{\imath} \to 0$) y el sustrato permanece no negativo.
 
 % ---------------------------------------------------------
 \subsection{Balance de asimilados en estado cuasi-estacionario}
@@ -44,7 +59,7 @@ La tasa de mantenimiento somático se expresa como:
     \dot{M}(t) = m \cdot B(t) \cdot f\bigl(T(t)\bigr),
     \label{eq:cap3_mantenimiento}
 \end{equation}
-con $m$ la tasa específica de mantenimiento a la temperatura de referencia (\si{\per\minute}), $B(t)$ la biomasa estructural total del reactor (\si{\gram C}), y $f(T)$ el factor de modulación térmica.
+con $m$ la tasa específica de mantenimiento a la temperatura de referencia (\si{\per\minute}), $B(t)$ la biomasa estructural total del reactor (\si{\gram C}), y $f(T)$ el factor definido en la ecuación~\eqref{eq:cap3_sharpe_schoolfield}.
 
 La partición del excedente asimilado neto $\dot{A} - \dot{M}$ entre los compartimentos de crecimiento obedece a la ley de prioridad del DEB para organismos en fase de crecimiento somático (larvas): si $\dot{A} > \dot{M}$,
 \begin{equation}
@@ -99,7 +114,9 @@ La quinta ecuación del sistema acumula el carbono emitido como dióxido de carb
     \frac{\mathrm{d}C_{\ch{CO2}}}{\mathrm{d}t} = \underbrace{\dot{M}(t) + (1-Y_B)\dot{G}_B(t) + (1-Y_L)\dot{G}_L(t)}_{\dot{D}_{\mathrm{larval}}(t)} + \underbrace{\lambda_{\mu} \cdot S(t)}_{\dot{D}_{\mu}(t)},
     \label{eq:cap3_ode_co2}
 \end{equation}
-donde $\dot{D}_{\mathrm{larval}}$ es la disipación metabólica directa de las larvas. Los términos $(1-Y_B)\dot{G}_B$ y $(1-Y_L)\dot{G}_L$ capturan el costo de síntesis (\emph{overhead}): la fracción del flujo bruto desde la reserva que no se incorpora a tejido sino que se pierde como \ch{CO2} en las reacciones anabólicas. El término $\dot{D}_{\mu}(t) = \lambda_{\mu} S(t)$ modela la respiración aeróbica de la microbiota asociada al sustrato no ingerido, con $\lambda_{\mu}$ (\si{\per\minute}) la tasa específica de mineralización microbiana del carbono remanente. Esta forma cinética se justifica en la Sección~\ref{sec:cap3_cinetica} como límite de primer orden en sustrato abundante.
+donde $\dot{D}_{\mathrm{larval}}$ es la disipación metabólica directa de las larvas. Los términos $(1-Y_B)\dot{G}_B$ y $(1-Y_L)\dot{G}_L$ capturan el costo de síntesis (\emph{overhead}): la fracción del flujo bruto desde la reserva que no se incorpora a tejido sino que se pierde como \ch{CO2} en las reacciones anabólicas.
+
+El término $\dot{D}_{\mu}(t) = \lambda_{\mu} S(t)$ modela la respiración aeróbica de la microbiota asociada al sustrato no ingerido, con $\lambda_{\mu}$ (\si{\per\minute}) la tasa específica de mineralización microbiana del carbono remanente. Esta forma cinética es obligada al pasar de la escala individual de \textcite{eriksenDynamicModellingFeed2022} al reactor batch: en el modelo individual el sustrato ingerido se asimila directamente, mientras que en el reactor de \SI{0,8}{\litre} con \SI{250}{\gram} de sustrato inicial la mayor parte de la masa permanece no ingerida y es colonizada por microbiota heterotrófica. \textcite{rossiEstimatingDynamicsGreenhouse2024} cuantifican que el sustrato aislado (sin larvas) emite $0{,}20$--$0{,}33$~\si{\gram}~\ch{CO2}/\si{\gram} sustrato seco, confirmando una fuente de \ch{CO2} independiente de la respiración larval. Asimismo, \textcite{parodiBioconversionEfficienciesGreenhouse2020} reportan que el $24\%$ del carbono dietario se pierde por emisiones gaseosas provenientes del metabolismo conjunto larva--microbiota. Por tanto, se adopta cinética de primer orden $\dot{D}_{\mu}=\lambda_{\mu} S(t)$, consistente con la dinámica de degradación aeróbica de residuos orgánicos en matrices sólidas de alta humedad.
 
 La conexión con la señal del sensor NDIR se establece mediante la conversión de carbono elemental a flujo másico de \ch{CO2}:
 \begin{equation}
@@ -110,4 +127,4 @@ donde $M_{\ch{CO2}} = 44{,}01$~\si{\gram\per\mol} y $M_{\ch{C}} = 12{,}01$~\si{\
 
 Es importante recalcar que el metano (\ch{CH4}) no aparece en las ecuaciones~\eqref{eq:cap3_ode_co2} ni~\eqref{eq:cap3_conversion_masica}. Dado que el modelo asume metabolismo aeróbico exclusivo, cualquier emisión de \ch{CH4} detectada por el sensor MH-441D se interpreta como una desviación del régimen ideal, cuya detección y cuantificación se aborda en el Capítulo~\ref{chap:metricas} como variable residual de diagnóstico operativo.
 
-En conjunto, las ecuaciones~\eqref{eq:cap3_ode_sustrato}--\eqref{eq:cap3_ode_co2} constituyen un sistema de cuatro EDO acopladas no lineales para $\{S, B, L, C_{\ch{CO2}}\}$, con $E$ determinada algebraicamente por el QSS~\eqref{eq:cap3_balance_asimilados}. El sistema se gobierna por los parámetros semilla $\{\kappa_A, m, a_{\max}, Y_B, Y_L\}$ tomados de la literatura \parencite{eriksenDynamicModellingFeed2022,padmanabhaComprehensiveDynamicGrowth2020}, y deja como variables de calibración local en el Capítulo~\ref{chap:hibrido} el subconjunto reducido $\{\rho_{\mathrm{conv}}, \beta_0\}$, correspondientes al factor de conversión biomasa--carbono y al parámetro de escala de la cinética de ingesta. La Sección~\ref{sec:cap3_cinetica} detalla las formas funcionales que cierran los flujos metabólicos.
+En conjunto, las ecuaciones~\eqref{eq:cap3_ode_sustrato}--\eqref{eq:cap3_ode_co2} constituyen un sistema de cuatro EDO acopladas no lineales para $\{S, B, L, C_{\ch{CO2}}\}$, con $E$ determinada algebraicamente por el QSS~\eqref{eq:cap3_balance_asimilados}. El sistema queda completamente cerrado: las cinéticas de ingesta~\eqref{eq:cap3_holling} y modulación térmica~\eqref{eq:cap3_sharpe_schoolfield}, junto con los parámetros semilla $\{\kappa_A, a_{\max}, m, Y_B, Y_L, T_A, T_H\}$ de la literatura, permiten la simulación directa. El subconjunto reducido de calibración local en el Capítulo~\ref{chap:hibrido} se limita a $\{\tau_h, \rho_{\mathrm{conv}}, \lambda_{\mu}\}$, correspondientes a la semisaturación del sustrato (específica del tipo de residuo), el factor de conversión biomasa--carbono y la tasa de mineralización microbiana.
