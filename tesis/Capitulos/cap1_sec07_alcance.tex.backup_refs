@@ -1,0 +1,41 @@
+\section{Alcance, delimitaciones y estructura del documento}
+
+\subsection{Alcance}
+
+Esta tesis desarrolla y valida un sistema híbrido a escala de laboratorio (mesocosmos) para la estimación dinámica de emisiones de \ce{CO2} en la bioconversión con \textit{Hermetia illucens}. El alcance técnico comprende: (i) la instrumentación de un nodo IoT con sensores NDIR de bajo costo para \ce{CO2} y \ce{CH4}; (ii) la formulación de un modelo mecanicista basado en EDO siguiendo el marco Dynamic Energy Budget (DEB); (iii) la integración de un calibrador neuronal parámetrico (MLP) que refine las predicciones del modelo DEB; y (iv) la validación del sistema mediante métricas de regresión, detección de anaerobiosis e inventario dinámico de carbono.
+
+El sistema no pretende sustituir el juicio técnico del operador, sino actuar como herramienta de soporte a la decisión. Su propósito es proporcionar a productores información cuantitativa para correlacionar decisiones operativas (densidad, sustrato, aireación) con la huella de carbono resultante.
+
+\subsection{Delimitaciones}
+
+\begin{itemize}
+    \item \textbf{Variables de GEI:} No se mide directamente \ce{N2O} en esta etapa por limitaciones de costo en sensores de bajo costo, aunque la arquitectura modular del sistema está diseñada para permitir su integración futura, reconociendo su importancia en el balance global de GEI.
+    
+    \item \textbf{Horizonte temporal experimental:} La validación experimental se restringe a la fase de crecimiento larval temprano (días 0--7 del ciclo) con dos dietas: sustrato de pollo estándar y mezcla de residuos agroindustriales (pulpa de café, cáscaras de plátano y naranja). Los estadios tardíos (L5/prepupa) y la fase de metamorfosis quedan fuera del alcance experimental.
+    
+    \item \textbf{Condiciones ambientales:} El protocolo experimental opera en régimen isotermo ($30 \pm 2^\circ\text{C}$) con humedad relativa controlada (60--80\%). La modulación térmica de Sharpe--Schoolfield se valida en este rango; la variación térmica intencional queda como trabajo futuro.
+    
+    \item \textbf{Escala espacial:} Los reactores batch tienen volumen útil de 0.7--0.9 L con 700 larvas y 250 g de sustrato. Los resultados son extrapolables a escala piloto con reservas metodológicas, pero no a escala industrial sin validación adicional.
+    
+    \item \textbf{Arquitectura de ML:} El sistema explora la estimación directa de biomasa mediante RNA (objetivo específico 3, dimensión exploratoria) y la arquitectura híbrida DEB--MLP calibrador parámetrico. La RNA directa se implementa y valida como baseline; el MLP calibrador es la arquitectura aprobada para la operación del sistema.
+\end{itemize}
+
+\subsection{Estructura del documento}
+
+El documento se organiza en seis capítulos principales más anexos técnicos:
+
+\begin{description}
+    \item[Capítulo 1] \textbf{Introducción General.} Situación del problema, contexto de residuos agroindustriales y cambio climático, bioconversión con BSF, planteamiento del problema, pregunta de investigación, hipótesis, objetivos y alcance.
+    
+    \item[Capítulo 2] \textbf{Instrumentación IoT y Caracterización Metrológica.} Diseño experimental, sensores NDIR, arquitectura del nodo IoT, protocolo de ventanas cerradas, calibración frente a patrones certificados, compensación cruzada por temperatura y humedad, presupuesto de incertidumbre GUM y resultados de caracterización instrumental.
+    
+    \item[Capítulo 3] \textbf{Modelo Matemático para la Predicción de Emisiones.} Fundamentos del modelo DEB para \textit{H. illucens}, variables de estado, formulación del sistema de EDO, cinética de asimilación (Holling II), modulación térmica (Sharpe--Schoolfield), parámetros semilla y restricciones físicas, análisis estructural y consistencia del balance de carbono.
+    
+    \item[Capítulo 4] \textbf{Sistema Híbrido: Integración Modelo--Datos.} Arquitectura del sistema híbrido DEB--MLP, extractor de pendientes en ventanas cerradas, calibrador neuronal parámetrico, estrategia de calibración por fases (semillas Eriksen, ajuste local NDIR, corrección neuronal), evaluación comparativa RNA-B vs. MLP, validación predictiva y resultados de integración modelo--datos.
+    
+    \item[Capítulo 5] \textbf{Validación Predictiva y Diagnóstico Operativo.} Inventario dinámico de carbono, clasificador de umbral para detección de anaerobiosis, métricas MRV comparables con la literatura, plataforma técnica de soporte a la decisión y semáforo operativo.
+    
+    \item[Capítulo 6] \textbf{Conclusiones Generales y Perspectivas.} Síntesis de aportes, limitaciones del estudio, trabajos futuros y recomendaciones para la escalabilidad del sistema.
+\end{description}
+
+Los anexos técnicos complementan el cuerpo del documento con especificaciones de hardware, formulaciones matemáticas detalladas, algoritmos de aprendizaje automático, datos experimentales completos y comparaciones teóricas con tecnologías alternativas.

@@ -1,0 +1,19 @@
+\section{Hipótesis de investigación}
+
+\subsection{Hipótesis general}
+
+Un sistema híbrido que integre modelamiento matemático basado en ecuaciones diferenciales ordinarias (EDO), sensores IoT de bajo costo y algoritmos de aprendizaje automático permite estimar las emisiones de \ce{CO2} y \ce{CH4} en tiempo real con un error absoluto medio porcentual (MAPE) inferior al 10\% respecto a mediciones de referencia. Esta capacidad de monitoreo continuo proporciona, a su vez, indicadores dinámicos sobre la eficiencia metabólica del proceso, permitiendo identificar ineficiencias operativas (como la anaerobiosis) y cuantificar el desempeño ambiental del sistema más allá de las estimaciones estáticas tradicionales.
+
+\subsection{Hipótesis específicas}
+
+\begin{enumerate}
+    \item[H1:] \textbf{Precisión instrumental de bajo costo.} Los sensores NDIR de bajo costo, sometidos a protocolos de calibración y preacondicionamiento de señal, permiten medir concentraciones de \ce{CO2} y \ce{CH4} en el entorno de bioconversión con una desviación (MAPE) $\leq 15\%$ respecto a equipos certificados de laboratorio.
+    
+    \item[H2:] \textbf{Capacidad predictiva del modelo mecanicista.} El modelo de EDO, fundamentado en la bioenergética del crecimiento larval y parametrizado con datos locales, es capaz de predecir la tasa de producción de \ce{CO2} durante el ciclo experimental de 15 días con un error porcentual absoluto medio (MAPE) $\leq 15\%$. Esta validación, realizada en ventanas de observación de 30 minutos cada dos días, demuestra que el modelo captura correctamente la dinámica metabólica subyacente del sistema.
+    
+    \item[H3:] \textbf{Refinamiento por aprendizaje automático.} La integración de una capa de corrección mediante algoritmos de aprendizaje automático reduce el error residual del modelo de EDO en al menos un 30\%, logrando que el sistema híbrido alcance un MAPE $< 10\%$ ante perturbaciones no modeladas.
+    
+    \item[H4:] \textbf{Valor para la gestión operativa.} La incorporación de medición directa de \ce{CH4} en el esquema de monitoreo permite la detección inmediata de eventos transitorios de anaerobiosis (picos de emisión) que los modelos estáticos basados en factores de emisión promedio omiten. Esto proporciona indicadores dinámicos que habilitan acciones correctivas en tiempo real, reduciendo la incertidumbre operativa frente a las estimaciones puramente teóricas.
+\end{enumerate}
+
+Las métricas de precisión (H1--H3) se evaluarán bajo condiciones experimentales de laboratorio ($30^\circ\text{C} \pm 2^\circ\text{C}$, HR 60--70\%), mientras que la H4 se validará mediante análisis de escenarios operativos.

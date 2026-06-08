@@ -180,80 +180,22 @@
 \pagenumbering{arabic}
 \setlength{\parskip}{1em}
 % ---------------------------------------------------------
-% CAPÍTULO 1
-% ---------------------------------------------------------
+% CAPÍTULO 1: INTRODUCCIÓN GENERAL
+%=============================================================================
 \chapter{Introducción General}
-\chaptermark{Introducción}
-
-\begin{center}
-\small
-\textbf{Resumen del capítulo.}
-Este capítulo sitúa la bioconversión con \textit{Hermetia illucens} como alternativa de economía circular para la gestión de residuos orgánicos en contextos tropicales, identificando el vacío crítico en la cuantificación dinámica de emisiones de gases de efecto invernadero. Se plantea la pregunta de investigación, las hipótesis y los objetivos que orientan el desarrollo de un sistema híbrido integrado por sensores IoT, un modelo mecanicista de balance de carbono y un estimador no lineal parsimonioso.
-\textbf{Palabras clave:} bioconversión, \textit{Hermetia illucens}, emisiones de \ce{CO2}, \ce{CH4}, Dynamic Energy Budget, proceso gaussiano, IoT, Sur Global.
-\end{center}
-
-\section{Contexto: gestión de residuos agroindustriales y cambio climático}
-\label{sec:cap1_contexto}
-% GEI, Valle del Cauca, IPCC AR6, FAO.
-
-\section{Bioconversión con \texorpdfstring{\textit{H. illucens}}{H. illucens}: potencial, limitaciones y vacíos de monitoreo}
-\label{sec:cap1_bsf}
-% Proceso L3--L5, reducción de masa, frass, biomasa. Caja negra.
-% Citas: Bermúdez, Surendra, Diener, Gold.
-
-\section{Emisiones de GEI en sistemas BSF: del factor estático al proxy dinámico}
-\label{sec:cap1_emisiones}
-% CO2 como proxy metabólico; CH4 como indicador de falla operativa.
-% NH3: variable de interés para trabajo futuro, fuera del alcance.
-% Citas: Rossi 2024, Fuhrmann 2025, Bekker 2021.
-
-\section{Pregunta de investigación}
-\label{sec:cap1_pregunta}
-
-\section{Hipótesis de investigación}
-\label{sec:cap1_hipotesis}
-
-\subsection{Hipótesis general}
-\label{subsec:cap1_hipotesis_general}
-% Sistema híbrido predice CO2 con MAPE < 15 % y detecta CH4 con sensibilidad > 80 %.
-
-\subsection{Hipótesis específicas}
-\label{subsec:cap1_hipotesis_especificas}
-% H1: Sensores MAPE < 15 % vs. referencia.
-% H2: Modelo DEB MAPE <= 15 % en ventanas de observación.
-% H3: GP reduce error residual >= 30 % respecto a interpolación lineal de cosechas.
-% H4: Clasificador CH4 con recall > 80 %.
-
-\section{Objetivos de la investigación}
-\label{sec:cap1_objetivos}
-
-\subsection{Objetivo general}
-\label{subsec:cap1_objetivo_general}
-
-\subsection{Objetivos específicos}
-\label{subsec:cap1_objetivos_especificos}
-% OE1: Instrumentación. OE2: Modelo DEB. OE3: Estimador GP + calibración. OE4: Métricas.
-
-\section{Alcance, delimitaciones y estructura del documento}
-\label{sec:cap1_alcance}
-% Laboratorio, 14--20 días, ~6 réplicas. Sin N2O. CH4 como indicador, no ODE.
+\input{Capitulos/cap1_sec01_introduccion}
+\input{Capitulos/cap1_sec02_antecedentes}
+\input{Capitulos/cap1_sec03_planteamiento}
+\input{Capitulos/cap1_sec04_pregunta}
+\input{Capitulos/cap1_sec05_hipotesis}
+\input{Capitulos/cap1_sec06_objetivos}
+\input{Capitulos/cap1_sec07_alcance}
 
 % ---------------------------------------------------------
-% CAPÍTULO 2
-% ---------------------------------------------------------
-\chapter{Instrumentación IoT y Caracterización Metrológica de Emisiones}
-\chaptermark{Instrumentación y Metrología}
-\label{chap:instrumentacion}
-
-\begin{center}
-\small
-\textbf{Resumen del capítulo.}
-Se describe el diseño experimental, los sensores NDIR de bajo costo, el protocolo de ventanas cerradas y la caracterización metrológica del módulo de adquisición. Se establece la trazabilidad del dato crudo que alimentará el sistema híbrido de los capítulos posteriores.
-\textbf{Palabras clave:} sensores NDIR, \ce{CO2}, \ce{CH4}, IoT, calibración, incertidumbre metrológica, ventanas cerradas.
-\end{center}
-
-\section{Introducción}
-\label{sec:cap2_intro}
+% CAPÍTULO 2: SISTEMA EXPERIMENTAL
+%=============================================================================
+\chapter{Instrumentación IoT y Caracterización Metrológica}
+label{chap:instrumentacion}
 \input{Capitulos/cap2_sec01_introduccion}
 
 \section{Descripción del Sistema Experimental}
@@ -311,21 +253,21 @@ Se desarrolla la generalización del modelo Dynamic Energy Budget de Eriksen (20
 
 \section{Cinética de Asimilación y Modulación Ambiental}
 \label{sec:cap3_cinetica}
-%\input{Capitulos/cap3_sec05_cinetica_asimilacion.tex}
+\input{Capitulos/cap3_sec05_cinetica_asimilacion.tex}
 
 \section{Parámetros del Modelo y Restricciones Físicas}
 \label{sec:cap3_parametros}
-%\input{Capitulos/cap3_sec06_parametros.tex}
+\input{Capitulos/cap3_sec06_parametros.tex}
 
 \section{Análisis Estructural y Consistencia del Balance de Carbono}
 \label{sec:cap3_analisis}
 % Dimensional, conservación de masa, existencia/univocidad, positividad,
 % reducción al límite de Eriksen (2022), comportamiento cualitativo.
-%\input{Capitulos/cap3_sec07_analisis_estructural.tex}
+\input{Capitulos/cap3_sec07_analisis_estructural.tex}
 
 \section{Conclusiones del Capítulo}
 \label{sec:cap3_conclusiones}
-%\input{Capitulos/cap3_sec08_conclusiones.tex}
+\input{Capitulos/cap3_sec08_conclusiones.tex}
 
 % ---------------------------------------------------------
 % CAPÍTULO 4
@@ -341,15 +283,15 @@ Se integra el modelo DEB con un calibrador neuronal paramétrico (MLP) que corri
 \textbf{Palabras clave:} sistema híbrido, calibrador neuronal, Dynamic Energy Budget, pendientes de emisión, \ch{CO2}, \ch{CH4}, estimación de biomasa, validación predictiva.
 \end{center}
 
-%\input{Capitulos/cap4_sec01_introduccion.tex}
-%\input{Capitulos/cap4_sec02_arquitectura.tex}
-% \input{Capitulos/cap4_sec03_ventanas.tex}
-% \input{Capitulos/cap4_sec04_calibrador.tex}
-% \input{Capitulos/cap4_sec05_calibracion.tex}
-% \input{Capitulos/cap4_sec06_comparativa.tex}   % NUEVO: RNA vs MLP
-% \input{Capitulos/cap4_sec07_validacion.tex}
-% \input{Capitulos/cap4_sec08_resultados.tex}
-% \input{Capitulos/cap4_sec09_conclusiones.tex}
+\input{Capitulos/cap4_sec01_introduccion.tex}
+\input{Capitulos/cap4_sec02_arquitectura.tex}
+ \input{Capitulos/cap4_sec03_ventanas.tex}
+ \input{Capitulos/cap4_sec04_calibrador.tex}
+ \input{Capitulos/cap4_sec05_calibracion.tex}
+ \input{Capitulos/cap4_sec06_comparativa.tex}   % NUEVO: RNA vs MLP
+ \input{Capitulos/cap4_sec07_validacion.tex}
+ \input{Capitulos/cap4_sec08_resultados.tex}
+ \input{Capitulos/cap4_sec09_conclusiones.tex}
 % ---------------------------------------------------------
 % CAPÍTULO 5
 % ---------------------------------------------------------

@@ -12,7 +12,6 @@ Las ecuaciones de balance del sistema de EDO formuladas en la Sección~\ref{sec:
 La ingesta específica por larva, $\tilde{\imath}$ (\si{\gram C \per larva \per \minute}), se modela como el producto de tres factores multiplicativos: una tasa máxima de procesamiento, una función de disponibilidad de sustrato y un factor de modulación térmica:
 \begin{equation}
     \tilde{\imath}\bigl(S(t), \tilde{b}(t), T(t)\bigr) = a_{\max}\, \tilde{b}(t)^{2/3}\, f\bigl(T(t)\bigr)\, \frac{S(t)}{\tau_h + S(t)},
-    \label{eq:cap3_holling}
 \end{equation}
 donde $\tilde{b}(t) = B(t)/N_{\mathrm{larvas}}$ es la biomasa estructural por larva (\si{\gram C \per larva}), definida en la Sección~\ref{sec:cap3_variables}.
 
@@ -41,7 +40,6 @@ La temperatura del sustrato constituye la variable ambiental de mayor impacto so
 Para capturar este perfil asimétrico, se adopta el modelo de Sharpe--Schoolfield con inactivación de alta temperatura, normalizado para que el factor valga $f(T_{\mathrm{ref}})=1$ en la temperatura de referencia del protocolo:
 \begin{equation}
     f(T) = \frac{\exp\!\left(T_A\left(\frac{1}{T_{\mathrm{ref}}} - \frac{1}{T}\right)\right)}{1 + \exp\!\left(T_A\left(\frac{1}{T_H} - \frac{1}{T}\right)\right)} \cdot \left[1 + \exp\!\left(T_A\left(\frac{1}{T_H} - \frac{1}{T_{\mathrm{ref}}}\right)\right)\right],
-    \label{eq:cap3_sharpe_schoolfield}
 \end{equation}
 donde:
 \begin{itemize}
