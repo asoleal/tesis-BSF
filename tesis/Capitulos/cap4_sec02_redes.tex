@@ -1,0 +1,71 @@
+%=============================================================================
+% 4.6.4 Red neuronal physics-informed para biomasa (PI-RNA-B)
+%=============================================================================
+\subsection{Red neuronal physics-informed para biomasa (PI-RNA-B)}
+\label{subsec:cap4_pi_rna_b}
+
+La arquitectura RNA-B directa descrita en la \S\ref{subsec:cap4_rna_b_directa} exhibió un comportamiento típico de sobreajuste severo en el escenario LORO: si bien el MAPE en entrenamiento fue del $7{,}8\,$\%, la validación inter-réplica superó el $40\,$\%, con predicciones no físicas que incluían biomasas negativas y trayectorias de crecimiento no monótonas en régimen \textit{ad libitum}. Antes de descartar definitivamente la vía de estimación directa, se evaluó una variante \textit{physics-informed} (PI-RNA-B) que impone restricciones físicas duras tanto en la arquitectura como en la función de pérdida, con el objetivo de determinar si el fallo de generalización era atribuible únicamente a la escasez de datos o también a la incapacidad estructural de una red de caja negra pura para resolver un problema inverso no inyectivo.
+
+%---------------------------------------------------------------------------
+\subsubsection*{Formulación de la arquitectura}
+%---------------------------------------------------------------------------
+
+La PI-RNA-B se concibe como un perceptrón multicapa de una sola capa oculta con 6 neuronas y función de activación $\tanh$, lo que garantiza la diferenciabilidad de la salida respecto a la entrada temporal requerida para el cálculo automático de derivadas. La capa de salida utiliza una activación sigmoide escalada al rango biológico admisible:
+
+\begin{equation}
+\hat{B}(t;\boldsymbol{\theta}) = B_{\min} + (B_{\max}-B_{\min})\,\sigma\!\left(W^{(2)}\tanh\!\left(W^{(1)}\mathbf{x}+b^{(1)}\right)+b^{(2)}\right),
+\label{eq:cap4_pi_rna_salida}
+\end{equation}
+
+donde $\mathbf{x}=[t,\,C_{\mathrm{CO}_2},\,T,\,\mathrm{HR}]^{\top}$ es el vector de entrada compuesto por el tiempo en días, la concentración de CO$_2$ en ppm, la temperatura en $^{\circ}$C y la humedad relativa en \%. Los límites de acotamiento duro se fijan en $[B_{\min},B_{\max}]=[0{,}005,\,0{,}120]$ g/larva, valores compatibles con la literatura experimental para larvas de \textit{Hermetia illucens} en las condiciones de alimentación del ensayo.
+
+La función de pérdida compuesta incorpora tres términos:
+
+\begin{equation}
+\mathcal{L}(\boldsymbol{\theta}) = 
+\underbrace{\frac{1}{N}\sum_{i=1}^{N}\left(B_i^{\mathrm{obs}}-\hat{B}_i\right)^2}_{\mathcal{L}_{\mathrm{datos}}}
++ \lambda_{\mathrm{mon}}\underbrace{\frac{1}{M}\sum_{j=1}^{M}\mathrm{ReLU}\!\left(-\frac{\partial \hat{B}}{\partial t}\bigg|_{t_j}\right)}_{\mathcal{L}_{\mathrm{mon}}}
++ \lambda_{\mathrm{reg}}\underbrace{\|\boldsymbol{\theta}\|_2^2}_{\mathcal{L}_{\mathrm{reg}}}.
+\label{eq:cap4_pi_rna_perdida}
+\end{equation}
+
+El término $\mathcal{L}_{\mathrm{datos}}$ asegura el ajuste a las $N\approx 30$ mediciones destructivas de biomasa disponibles. El término de monotonicidad $\mathcal{L}_{\mathrm{mon}}$ penaliza derivadas temporales negativas de la biomasa estimada; su justificación física deriva del modelo DEB presentado en el Capítulo \ref{cap:3}: en condiciones de alimentación \textit{ad libitum} y temperatura dentro del rango térmico viable, la tasa de crecimiento estructural $dB/dt$ es no negativa (véase la ecuación de acumulación de estructura \eqref{eq:cap3_deb_growth}). Los puntos de colocación para la evaluación de esta restricción consisten en $M=200$ instantes temporales densamente distribuidos en el intervalo experimental, donde la derivada $\partial \hat{B}/\partial t$ se calcula mediante diferenciación automática (\textit{autograd}) sin requerir mediciones de biomasa en dichos puntos. El término $\mathcal{L}_{\mathrm{reg}}$ impone regularización $L_2$ sobre los parámetros entrenables.
+
+Los hiperparámetros adoptados fueron $\lambda_{\mathrm{mon}}=0{,}5$ y $\lambda_{\mathrm{reg}}=10^{-5}$, con entrenamiento mediante el optimizador Adam durante 3000--5000 épocas. La elección de una única capa oculta con 6 neuronas responde al principio de parsimonia: la red cuenta con aproximadamente 50 parámetros entrenables, una cifra del mismo orden de magnitud que el tamaño del conjunto de entrenamiento, lo que constituye ya un escenario de alta varianza.
+
+%---------------------------------------------------------------------------
+\subsubsection*{Resultados y análisis de identificabilidad}
+%---------------------------------------------------------------------------
+
+La imposición de restricciones físicas duras logró su objetivo primario: la PI-RNA-B eliminó completamente las predicciones no físicas. Las trayectorias de salida respetaron el acotamiento $[0{,}005,\,0{,}120]$ g/larva y exhibieron monotonicidad estricta en todo el dominio temporal, eliminando así los crecimientos negativos espurios observados en la RNA-B directa.
+
+No obstante, el problema de identificabilidad estructural persistió. En la validación cruzada por réplica (LORO), el MAPE de validación se mantuvo por encima del $30\,$\%. La red ajustaba satisfactoriamente los $N\approx 30$ puntos destructivos de la réplica de entrenamiento —evidencia de sobreajuste local—, pero al extrapolar a una réplica genéticamente distinta, la trayectoria de biomasa divergía sistemáticamente. Este comportamiento no es sorprendente desde la perspectiva del problema inverso: la relación $C_{\mathrm{CO}_2}\rightarrow B$ es no inyectiva. Múltiples estados metabólicos (diferentes tasas de asimilación, mantenimiento o maduración) pueden producir idénticas tasas de emisión de CO$_2$, de modo que la red carece de información suficiente para discriminar entre estados internos distintos que generan la misma señal observada. La restricción de monotonicidad reduce el espacio de soluciones admisibles, pero no restaura la inyectividad perdida en la proyección del estado metabólico sobre la variable escalar de concentración gaseosa.
+
+%---------------------------------------------------------------------------
+\subsubsection*{Conclusión de la subsección}
+%---------------------------------------------------------------------------
+
+La PI-RNA-B demuestra que incluso imponiendo restricciones físicas fuertes —acotamiento biológico, monotonicidad temporal, regularización estructural— la vía de estimación directa de biomasa mediante redes neuronales puras \textbf{no es robusta} bajo muestreo destructivo limitado. El límite fundamental no reside en la arquitectura de caja negra, sino en la naturaleza no inyectiva del operador inverso que relaciona emisiones de CO$_2$ con biomasa individual. Este resultado cierra formalmente la exploración de arquitecturas de caja negra pura dentro del objetivo específico 3 y justifica el salto al paradigma de MLP calibrador paramétrico, donde la estructura a priori del modelo DEB (Capítulo \ref{cap:3}) actúa como regularizador físico que compensa la escasez de datos. La arquitectura aprobada se detalla en la \S\ref{subsec:cap4_mlp_calibrador}.
+
+%=============================================================================
+% Tabla comparativa final (ubicar al cierre de la Sección 4.6, subsección 4.6.7)
+%=============================================================================
+\begin{table}[htbp]
+\centering
+\caption{Comparación de arquitecturas evaluadas para la estimación de biomasa en el Capítulo \ref{cap:4}.}
+\label{tab:cap4_comparativa_arquitecturas}
+\small
+\begin{tabular}{@{}p{3.2cm}p{2.4cm}p{2.6cm}p{2.0cm}p{2.2cm}p{1.8cm}@{}}
+\toprule
+\textbf{Arquitectura} & \textbf{Supervisión} & \textbf{Restricción física} & \textbf{Capacidad (neuronas)} & \textbf{Generalización LORO} & \textbf{Estado} \\
+\midrule
+RNA-B directa (\S\ref{subsec:cap4_rna_b_directa}) & Datos destructivos ($N\approx 30$) & Ninguna (caja negra pura) & 1 oculta $\times$ 10 & MAPE $>40\,$\% & Rechazada \\
+\addlinespace
+PI-RNA-B (\S\ref{subsec:cap4_pi_rna_b}) & Datos destructivos + colocación ($M=200$) & Acotamiento + monotonicidad + regularización $L_2$ & 1 oculta $\times$ 6 & MAPE $>30\,$\% & Rechazada \\
+\addlinespace
+MLP calibrador paramétrico (\S\ref{subsec:cap4_mlp_calibrador}) & Datos destructivos + señales continuas CO$_2$/CH$_4$ & Estructura DEB completa (parámetros fisiológicos) & 1 oculta $\times$ 8 (calibrador $\boldsymbol{\alpha}_k$) & MAPE $<15\,$\% (proyectado) & Aprobada \\
+\bottomrule
+\end{tabular}
+\\[0.5em]
+\footnotesize\textit{Nota:} La columna \textit{Generalización LORO} reporta el MAPE en validación cruzada por réplica. La arquitectura aprobada se fundamenta en la hipótesis de que la estructura mecanicista del modelo DEB restaura la identificabilidad del problema inverso.
+\end{table}
