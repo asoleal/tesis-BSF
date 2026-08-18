@@ -272,7 +272,7 @@ La ausencia de monitoreo continuo no se resuelve solo importando tecnología. Se
           agroindustriales~\cite{singh2019inclusive,bermudez2023comprehensive}
    \item \textbf{Alta Eficiencia}: reduce masa de residuos 50--80\% en 10--14 d\'ias~\cite{singh2019inclusive,surendra2016bioconversion}
     \item \textbf{Crecimiento exponencial}: larva multiplica su peso hasta 
-          \textbf{1.000$\times$} en dos semanas~\cite{padmanabha2020comprehensive,eriksen2022dynamic}
+          \textbf{1.000$\times$} en dos semanas~\cite{padmanabhaComprehensiveDynamicGrowth2020,eriksenDynamicModellingFeed2022}
     \item \textbf{Resiliente tropical}: tolera 15--40$^\circ$C, ideal para el tr\'opico 
           sin climatizaci\'on costosa~\cite{salam2022effect}
 \end{itemize}
@@ -333,8 +333,8 @@ cerrando el ciclo de nutrientes
     \begin{itemize}
         \item Temperatura: 25--30$^\circ$C~\cite{salam2022effect}
         \item Humedad del sustrato: 60--70\%~\cite{bekker2021impact}
-        \item Proceso \textbf{aer\'obico}~\cite{diener2009conversion}
-        \item Duraci\'on: 10--14 d\'ias~\cite{diener2009conversion,surendra2016bioconversion}
+        \item Proceso \textbf{aer\'obico}~\cite{dienerConversionOrganicMaterial2011}
+        \item Duraci\'on: 10--14 d\'ias~\cite{dienerConversionOrganicMaterial2011,surendra2016bioconversion}
     \end{itemize}
     
     \item \textbf{Salidas:}
@@ -368,7 +368,7 @@ cerrando el ciclo de nutrientes
     \item \textbf{Biomasa larval desconocida} $\rightarrow$ no se identifica con precisión el momento óptimo de cosecha
     \item \textbf{Prepupa no detectable} $\rightarrow$ se pierde biomasa por migración no anticipada
     \item \textbf{Variables ambientales opacas} $\rightarrow$ temperatura, humedad y aireación no se interpretan dinámicamente
-    \item \textbf{Dieta y respiración parcialmente caracterizadas} $\rightarrow$ modelos DEB \parencite{eriksen2022dynamic,padmanabha2020comprehensive} y estudios de metabolismo larval \parencite{bekker2021impact,rossi2024estimating} describen flujos de carbono y efecto del sustrato, pero su acoplamiento con monitoreo continuo para predicción operativa de CO$_2$ y riesgo de anaerobiosis no está implementado
+    \item \textbf{Dieta y respiración parcialmente caracterizadas} $\rightarrow$ modelos DEB \parencite{eriksenDynamicModellingFeed2022,padmanabhaComprehensiveDynamicGrowth2020} y estudios de metabolismo larval \parencite{bekker2021impact,rossi2024estimating} describen flujos de carbono y efecto del sustrato, pero su acoplamiento con monitoreo continuo para predicción operativa de CO$_2$ y riesgo de anaerobiosis no está implementado
     \item \textbf{Sin trazabilidad robusta} $\rightarrow$ se limita la validación ambiental y la escalabilidad del sistema
 \end{itemize}
 \end{alertblock}
@@ -459,7 +459,7 @@ Si el CO$_2$ medido se desv\'ia del modelo DEB:
 En \textit{Hermetia illucens}, el estado del arte muestra los siguientes avances principales:
 \begin{itemize}
     \item \textbf{Mediciones de GEI:} cuantifican emisiones, pero con muestreos puntuales y metodologías heterogéneas~\cite{rossi2024estimating,fuhrmann2025comprehensive}.
-    \item \textbf{Modelos DEB:} describen crecimiento larval y respiración de CO$_2$~\cite{padmanabha2020comprehensive,eriksen2022dynamic}.
+    \item \textbf{Modelos DEB:} describen crecimiento larval y respiración de CO$_2$~\cite{padmanabhaComprehensiveDynamicGrowth2020,eriksenDynamicModellingFeed2022}.
     \item \textbf{Monitoreo IoT:} permite seguimiento operativo, aunque sin capacidad predictiva integrada~\cite{raj2023real,duobiene2022development}.
     \item \textbf{Viabilidad ambiental:} La bioconversión con BSF muestra potencial como alternativa de baja emisión frente a rutas convencionales, pero su validación climática sigue limitada por la falta de monitoreo continuo y de factores de emisión específicos~\cite{smetana2019sustainable,jenkins2025processing}.
 \end{itemize}
@@ -671,7 +671,7 @@ Módulo de sensores calibrado y estable, operando durante ciclos completos de 14
 \begin{block}{Fundamento bioenergético}
 \scriptsize
 \begin{itemize}
-    \item EDO simplificado siguiendo el marco DEB para BSF \textcite{eriksen2022dynamic}
+    \item EDO simplificado siguiendo el marco DEB para BSF \textcite{eriksenDynamicModellingFeed2022}
     \item La producción de CO$_2$ se desagrega en dos costos acoplados:
     \begin{itemize}
         \scriptsize
@@ -704,7 +704,7 @@ Módulo de sensores calibrado y estable, operando durante ciclos completos de 14
 
 \begin{alertblock}{Entregable de la Fase II}
 \scriptsize
-Ecuaciones de tasa respiratoria parametrizadas para BSF. Se fija un umbral conservador de $R^2 > 0{,}70$, acorde al alcance de un prototipo experimental con sensores de bajo costo, frente a los ajustes $R^2 > 0{,}90$ reportados en modelos dinámicos validados para \textit{H. illucens} en condiciones controladas \parencite{padmanabha2020comprehensive}. Esta línea base sirve como referencia objetiva para contrastar con las mediciones reales en la Fase III.
+Ecuaciones de tasa respiratoria parametrizadas para BSF. Se fija un umbral conservador de $R^2 > 0{,}70$, acorde al alcance de un prototipo experimental con sensores de bajo costo, frente a los ajustes $R^2 > 0{,}90$ reportados en modelos dinámicos validados para \textit{H. illucens} en condiciones controladas \parencite{padmanabhaComprehensiveDynamicGrowth2020}. Esta línea base sirve como referencia objetiva para contrastar con las mediciones reales en la Fase III.
 \end{alertblock}
 
 \vspace{0.15cm}

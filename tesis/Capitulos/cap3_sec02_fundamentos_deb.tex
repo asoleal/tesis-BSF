@@ -25,7 +25,7 @@ Siguiendo la parametrización de \textcite{eriksenDynamicModellingFeed2022}, se 
     \item \textbf{Dióxido de carbono acumulado} ($C_{\ch{CO2}}$): carbono total emitido como \ch{CO2} por respiración larval y microbiana, expresado en \si{\gram C}. En el reactor batch cerrado, esta variable se vincula directamente con la concentración medida por el sensor NDIR mediante la ecuación de conversión derivada en la Sección~\ref{sec:cap2_conversion_flujo}.
 \end{enumerate}
 
-La elección del carbono como \emph{currency} metabólica ---en lugar de la energía en joules--- responde a dos criterios prácticos. Primero, los sensores NDIR miden directamente la concentración de \ch{CO2}, que es un \emph{proxy} lineal del carbono respirado si se desprecia la fracción disuelta en el sustrato (menor al $2\%$ en condiciones de pH~5.5--6.5, según el equilibrio \ch{CO2}/\ch{HCO3-} a $30^{\circ}$C). Segundo, los balances de masa de carbono permiten validación cruzada con el método de \emph{mass balance} estándar en estudios de BSF \parencite{parodiBioconversionEfficienciesGreenhouse2020,rossiEstimatingDynamicsGreenhouse2024}.
+La elección del carbono como \emph{currency} metabólica ---en lugar de la energía en joules--- responde a dos criterios prácticos. Primero, los sensores NDIR miden directamente la concentración de \ch{CO2}, que es un \emph{proxy} lineal del carbono respirado si se desprecia la fracción disuelta en el sustrato (menor al $2\%$ en condiciones de pH~5.5--6.5, según el equilibrio \ch{CO2}/\ch{HCO3-} a $30^{\circ}$C). Segundo, los balances de masa de carbono permiten validación cruzada con el método de \emph{mass balance} estándar en estudios de BSF \parencite{parodiBioconversionEfficienciesGreenhouse2020,rossiEstimatingDynamicsGreenhouse2024a}.
 
 % ---------------------------------------------------------
 \subsection{Flujos metabólicos y producción de \texorpdfstring{\ch{CO2}}{CO2}}
@@ -35,7 +35,7 @@ La elección del carbono como \emph{currency} metabólica ---en lugar de la ener
 El metabolismo larval se descompone en cinco flujos principales. Salvo indicación explícita, las tasas $\dot{I}, \dot{A}, \dot{M}, \dot{G}_B, \dot{G}_L$ y $\dot{D}$ se expresan como flujos específicos por larva (\si{\gram C \per larva \per \day}), de modo que el balance total del reactor se obtiene multiplicando por $N_{\mathrm{larvas}}$:
 
 \begin{description}
-    \item[Ingesta ($\dot{I}$)] Velocidad a la que el carbono del sustrato pasa al tracto digestivo. Está limitada por la densidad larval, la humedad del sustrato y la disponibilidad física de alimento. \textcite{dienerConversionOrganicMaterial2009} reportan tasas máximas de 100~mg alimento/larva/día en condiciones óptimas.
+    \item[Ingesta ($\dot{I}$)] Velocidad a la que el carbono del sustrato pasa al tracto digestivo. Está limitada por la densidad larval, la humedad del sustrato y la disponibilidad física de alimento. \textcite{dienerConversionOrganicMaterial2011} reportan tasas máximas de 100~mg alimento/larva/día en condiciones óptimas.
 
     \item[Asimilación ($\dot{A}$)] Fracción de la ingesta que cruza la pared intestinal y se incorpora a la reserva $E$. La eficiencia de asimilación $\kappa_A$ depende de la calidad del sustrato; valores entre $0.55$ y $0.80$ son típicos para residuos agroindustriales \parencite{guillaumeAsymptoticEstimatedDigestibility2023}.
 

@@ -27,13 +27,13 @@
 
 \section{Introducci\'{o}n}
 
-El imperativo global de transitar hacia bioeconom\'{i}as circulares ha intensificado la investigaci\'{o}n en sistemas de valorizaci\'{o}n biol\'{o}gica de residuos \citep{gold2020biowaste}. Entre los agentes biol\'{o}gicos, la mosca soldado negra (\textit{Hermetia illucens}, Diptera: Stratiomyidae) ha recibido atenci\'{o}n excepcional debido a su capacidad para convertir diversos sustratos org\'{a}nicos en biomasa rica en prote\'{i}nas y l\'{i}pidos, adecuada para alimentaci\'{o}n animal, biodiesel y fertilizantes org\'{a}nicos \citep{makkar2014insects, li2015simultaneous}.
+El imperativo global de transitar hacia bioeconom\'{i}as circulares ha intensificado la investigaci\'{o}n en sistemas de valorizaci\'{o}n biol\'{o}gica de residuos \citep{goldBiowasteTreatmentBlack2020}. Entre los agentes biol\'{o}gicos, la mosca soldado negra (\textit{Hermetia illucens}, Diptera: Stratiomyidae) ha recibido atenci\'{o}n excepcional debido a su capacidad para convertir diversos sustratos org\'{a}nicos en biomasa rica en prote\'{i}nas y l\'{i}pidos, adecuada para alimentaci\'{o}n animal, biodiesel y fertilizantes org\'{a}nicos \citep{makkarStateoftheartUseInsects2014, liSimultaneousUtilizationGlucose2015}.
 
-A pesar de la r\'{a}pida adopci\'{o}n industrial, la crianza de BSF enfrenta desaf\'{i}os cr\'{i}ticos de control de procesos. La biomasa larvaria -- el principal producto econ\'{o}mico -- se cuantifica tradicionalmente mediante muestreo destructivo, lo que interrumpe los ciclos de crianza, introduce sesgos de muestreo y excluye la toma de decisiones en tiempo real \citep{diener2009conversion}. Las alternativas no destructivas, como la estimaci\'{o}n de biomasa basada en im\'{a}genes, sufren de oclusi\'{o}n por sustrato y requieren calibraci\'{o}n compleja \citep{meneguz2018effect}.
+A pesar de la r\'{a}pida adopci\'{o}n industrial, la crianza de BSF enfrenta desaf\'{i}os cr\'{i}ticos de control de procesos. La biomasa larvaria -- el principal producto econ\'{o}mico -- se cuantifica tradicionalmente mediante muestreo destructivo, lo que interrumpe los ciclos de crianza, introduce sesgos de muestreo y excluye la toma de decisiones en tiempo real \citep{dienerConversionOrganicMaterial2011}. Las alternativas no destructivas, como la estimaci\'{o}n de biomasa basada en im\'{a}genes, sufren de oclusi\'{o}n por sustrato y requieren calibraci\'{o}n compleja \citep{meneguzEffectRearingSubstrate2018}.
 
-Una alternativa emergente aprovecha el acoplamiento metab\'{o}lico fundamental entre crecimiento y respiraci\'{o}n. El crecimiento de insectos est\'{a} intr\'{i}nsecamente ligado a la producci\'{o}n de CO$_2$ a trav\'{e}s del metabolismo de mantenimiento, los costos de bios\'{i}ntesis y la din\'{a}mica de almacenamiento de l\'{i}pidos \citep{arrese2010insect}. \citet{eriksen2022dynamic} demostr\'{o} que un modelo de Presupuesto Energ\'{e}tico Din\'{a}mico (DEB) puede predecir con precisi\'{o}n el crecimiento y las emisiones de CO$_2$ de BSF a trav\'{e}s de diferentes calidades de sustrato. Sin embargo, los modelos DEB requieren par\'{a}metros espec\'{i}ficos de especie que son dif\'{i}ciles de estimar bajo condiciones variables de campo, y su estructura determinista no puede capturar las desviaciones metab\'{o}licas espec\'{i}ficas del sustrato \citep{padmanabha2020comprehensive}.
+Una alternativa emergente aprovecha el acoplamiento metab\'{o}lico fundamental entre crecimiento y respiraci\'{o}n. El crecimiento de insectos est\'{a} intr\'{i}nsecamente ligado a la producci\'{o}n de CO$_2$ a trav\'{e}s del metabolismo de mantenimiento, los costos de bios\'{i}ntesis y la din\'{a}mica de almacenamiento de l\'{i}pidos \citep{arreseInsectFatBody2010}. \citet{eriksenDynamicModellingFeed2022} demostr\'{o} que un modelo de Presupuesto Energ\'{e}tico Din\'{a}mico (DEB) puede predecir con precisi\'{o}n el crecimiento y las emisiones de CO$_2$ de BSF a trav\'{e}s de diferentes calidades de sustrato. Sin embargo, los modelos DEB requieren par\'{a}metros espec\'{i}ficos de especie que son dif\'{i}ciles de estimar bajo condiciones variables de campo, y su estructura determinista no puede capturar las desviaciones metab\'{o}licas espec\'{i}ficas del sustrato \citep{padmanabhaComprehensiveDynamicGrowth2020}.
 
-Concurrentemente, las Redes Neuronales Artificiales (RNA) han demostrado ser efectivas en tareas de predicci\'{o}n agroindustrial, particularmente cuando las relaciones mecanicistas est\'{a}n parcialmente oscurecidas por la variabilidad ambiental \citep{johnson2019deep}. Sin embargo, los enfoques de RNA pura carecen de interpretabilidad fisiol\'{o}gica, requieren datos extensivos de entrenamiento y pueden fallar en generalizar m\'{a}s all\'{a} de las condiciones experimentales observadas \citep{lecun2015deep}.
+Concurrentemente, las Redes Neuronales Artificiales (RNA) han demostrado ser efectivas en tareas de predicci\'{o}n agroindustrial, particularmente cuando las relaciones mecanicistas est\'{a}n parcialmente oscurecidas por la variabilidad ambiental \citep{kamilarisDeepLearningAgriculture2018}. Sin embargo, los enfoques de RNA pura carecen de interpretabilidad fisiol\'{o}gica, requieren datos extensivos de entrenamiento y pueden fallar en generalizar m\'{a}s all\'{a} de las condiciones experimentales observadas \citep{lecunDeepLearning2015}.
 
 Este estudio aborda estas limitaciones a trav\'{e}s de un \textbf{marco de modelado h\'{i}brido} que integra:
 \begin{enumerate}
@@ -49,7 +49,7 @@ El enfoque h\'{i}brido busca combinar la robustez extrapolativa del modelado mec
 
 \subsubsection{Fundamento del Presupuesto Energ\'{e}tico Din\'{a}mico}
 
-Siguiendo a \citet{eriksen2022dynamic}, la biomasa larvaria se compartimenta en biomasa estructural ($B$, mg) y l\'{i}pidos de almacenamiento ($L$, mg), con un pool de asimilados ($A$) en cuasi-estado estacionario. Las ecuaciones gobernantes son:
+Siguiendo a \citet{eriksenDynamicModellingFeed2022}, la biomasa larvaria se compartimenta en biomasa estructural ($B$, mg) y l\'{i}pidos de almacenamiento ($L$, mg), con un pool de asimilados ($A$) en cuasi-estado estacionario. Las ecuaciones gobernantes son:
 
 \begin{align}
     \frac{dA}{dt} &= 0 = r_A - \left(r_B + r_L + r_{CO_2,m} + r_{CO_2,B} + r_{CO_2,L}\right) \label{eq:assimilate}\\
@@ -57,7 +57,7 @@ Siguiendo a \citet{eriksen2022dynamic}, la biomasa larvaria se compartimenta en 
     \frac{dL_{tot}}{dt} &= r_L + \delta_{L,B} \, r_B \label{eq:lipid}
 \end{align}
 
-donde $r_A$ es la tasa de asimilaci\'{o}n, $r_B$ y $r_L$ son las tasas de s\'{i}ntesis de biomasa estructural y l\'{i}pidos, y $r_{CO_2,\{m,B,L\}}$ representan la producci\'{o}n de CO$_2$ por mantenimiento, s\'{i}ntesis estructural y s\'{i}ntesis de l\'{i}pidos, respectivamente. El par\'{a}metro $\delta_{L,B} = 0,1$ denota la fracci\'{o}n de l\'{i}pidos estructurales \citep{eriksen2022dynamic}.
+donde $r_A$ es la tasa de asimilaci\'{o}n, $r_B$ y $r_L$ son las tasas de s\'{i}ntesis de biomasa estructural y l\'{i}pidos, y $r_{CO_2,\{m,B,L\}}$ representan la producci\'{o}n de CO$_2$ por mantenimiento, s\'{i}ntesis estructural y s\'{i}ntesis de l\'{i}pidos, respectivamente. El par\'{a}metro $\delta_{L,B} = 0,1$ denota la fracci\'{o}n de l\'{i}pidos estructurales \citep{eriksenDynamicModellingFeed2022}.
 
 La tasa espec\'{i}fica de crecimiento $\mu_B$ incorpora una regulaci\'{o}n log\'{i}stica:
 
@@ -75,7 +75,7 @@ La producci\'{o}n total de CO$_2$ integra tres flujos metab\'{o}licos:
     r_{CO_2} = \underbrace{m \cdot B}_{\text{mantenimiento}} + \underbrace{Y_B \cdot r_B}_{\text{s\'{i}ntesis estructural}} + \underbrace{Y_L \cdot r_L}_{\text{s\'{i}ntesis de l\'{i}pidos}} \label{eq:co2_total}
 \end{equation}
 
-donde $Y_L = 0,42$ es el costo de s\'{i}ntesis de l\'{i}pidos \citep{kok2021preliminary}. En ambientes controlados con temperatura y humedad constantes, $r_{CO_2}$ se convierte en un proxy directo de la actividad metab\'{o}lica y, por extensi\'{o}n, de la acumulaci\'{o}n de biomasa.
+donde $Y_L = 0,42$ es el costo de s\'{i}ntesis de l\'{i}pidos \citep{kokPreliminaryProjectDesign2021}. En ambientes controlados con temperatura y humedad constantes, $r_{CO_2}$ se convierte en un proxy directo de la actividad metab\'{o}lica y, por extensi\'{o}n, de la acumulaci\'{o}n de biomasa.
 
 \subsubsection{Estructura de Correcci\'{o}n de la Red Neuronal}
 
@@ -150,7 +150,7 @@ Los par\'{a}metros DEB ($a_{max}$, $B_{max,0}$, $\alpha$, $\beta$) se estimaron 
     AME = \frac{1}{n}\sum_{i=1}^{n} |X_{DW,obs,i} - X_{DW,modelo,i}| \label{eq:ame}
 \end{equation}
 
-utilizando el algoritmo Solver de Excel seg\'{u}n describe \citet{eriksen2022dynamic}. La tasa de mantenimiento $m = 0,08$ d\'{i}a$^{-1}$ y el costo de crecimiento $Y_B = 0,44$ se fijaron de valores de literatura \citep{laganaro2021growth}.
+utilizando el algoritmo Solver de Excel seg\'{u}n describe \citet{eriksenDynamicModellingFeed2022}. La tasa de mantenimiento $m = 0,08$ d\'{i}a$^{-1}$ y el costo de crecimiento $Y_B = 0,44$ se fijaron de valores de literatura \citep{laganaroGrowthMetabolicPerformance2021a}.
 
 \subsubsection{Protocolo de Entrenamiento de la RNA-B}
 
@@ -198,7 +198,7 @@ Las m\'{e}tricas de desempe\~{n}o incluyeron AME, Ra\'{i}z del Error Cuadr\'{a}t
 
 \subsection{Interpretabilidad Fisiol\'{o}gica}
 
-El marco h\'{i}brido preserva la transparencia mecanicista del modelado DEB mientras acomoda las desviaciones metab\'{o}licas espec\'{i}ficas del sustrato. El t\'{e}rmino de correcci\'{o}n $\gamma(t) \cdot \hat{B}_{RNA}(t)$ puede interpretarse como un \textit{factor de estr\'{e}s ambiental} no capturado por la formulaci\'{o}n DEB est\'{a}ndar -- an\'{a}logo a los coeficientes de modulaci\'{o}n $\alpha$ y $\beta$ en \citet{eriksen2022dynamic}, pero aprendido adaptativamente de los datos en lugar de ajustado manualmente.
+El marco h\'{i}brido preserva la transparencia mecanicista del modelado DEB mientras acomoda las desviaciones metab\'{o}licas espec\'{i}ficas del sustrato. El t\'{e}rmino de correcci\'{o}n $\gamma(t) \cdot \hat{B}_{RNA}(t)$ puede interpretarse como un \textit{factor de estr\'{e}s ambiental} no capturado por la formulaci\'{o}n DEB est\'{a}ndar -- an\'{a}logo a los coeficientes de modulaci\'{o}n $\alpha$ y $\beta$ en \citet{eriksenDynamicModellingFeed2022}, pero aprendido adaptativamente de los datos en lugar de ajustado manualmente.
 
 \subsection{Escalabilidad Industrial}
 
@@ -230,37 +230,37 @@ Esta investigaci\'{o}n fue financiada por [n\'{u}mero de convocatoria MinCiencia
 
 \begin{thebibliography}{20}
 
-\bibitem[Arrese y Soulages(2010)]{arrese2010insect}
+\bibitem[Arrese y Soulages(2010)]{arreseInsectFatBody2010}
 Arrese, E.L., Soulages, J.L., 2010. Insect fat body: energy, metabolism, and regulation. \textit{Annu. Rev. Entomol.} 55, 207--225.
 
-\bibitem[Diener et al.(2009)]{diener2009conversion}
+\bibitem[Diener et al.(2009)]{dienerConversionOrganicMaterial2011}
 Diener, S., Zurbr\'{u}gg, C., Tockner, K., 2009. Conversion of organic material by black soldier fly larvae: establishing optimal feeding rates. \textit{Waste Manage. Res.} 27, 603--610.
 
-\bibitem[Eriksen(2022)]{eriksen2022dynamic}
+\bibitem[Eriksen(2022)]{eriksenDynamicModellingFeed2022}
 Eriksen, N.T., 2022. Dynamic modelling of feed assimilation, growth, lipid accumulation, and CO$_2$ production in black soldier fly larvae. \textit{PLoS ONE} 17(10), e0276605.
 
-\bibitem[Gold et al.(2020)]{gold2020biowaste}
+\bibitem[Gold et al.(2020)]{goldBiowasteTreatmentBlack2020}
 Gold, M., Cassar, C.M., Zurbr\'{u}gg, C., Kreuzer, M., Boulos, S., Diener, S., et al., 2020. Biowaste treatment with black soldier fly larvae: increasing performance through the formulation of biowastes based on protein and carbohydrates. \textit{Waste Manage.} 102, 319--329.
 
-\bibitem[Kok(2021)]{kok2021preliminary}
+\bibitem[Kok(2021)]{kokPreliminaryProjectDesign2021}
 Kok, R., 2021. Preliminary project design for insect production: part 1 -- overall mass and energy/heat balances. \textit{J. Insects Food Feed} 7, 499--509.
 
-\bibitem[Laganaro et al.(2021)]{laganaro2021growth}
+\bibitem[Laganaro et al.(2021)]{laganaroGrowthMetabolicPerformance2021a}
 Laganaro, M., Bahrndorff, S., Eriksen, N.T., 2021. Growth and metabolic performance of black soldier fly larvae grown on low and high-quality substrates. \textit{Waste Manage.} 121, 198--205.
 
-\bibitem[LeCun et al.(2015)]{lecun2015deep}
+\bibitem[LeCun et al.(2015)]{lecunDeepLearning2015}
 LeCun, Y., Bengio, Y., Hinton, G., 2015. Deep learning. \textit{Nature} 521, 436--444.
 
-\bibitem[Li et al.(2015)]{li2015simultaneous}
+\bibitem[Li et al.(2015)]{liSimultaneousUtilizationGlucose2015}
 Li, W., Li, M., Zheng, L., Liu, Y., Zhang, Y., Yu, Z., et al., 2015. Simultaneous utilization of glucose and xylose for lipid accumulation in black soldier fly. \textit{Biotechnol. Biofuels} 8, 11.
 
-\bibitem[Makkar et al.(2014)]{makkar2014insects}
+\bibitem[Makkar et al.(2014)]{makkarStateoftheartUseInsects2014}
 Makkar, H.P.S., Tran, G., Heuz\'{e}, V., Ankers, P., 2014. State-of-the-art on use of insects as animal feed. \textit{Anim. Feed Sci. Technol.} 197, 1--33.
 
-\bibitem[Meneguz et al.(2018)]{meneguz2018effect}
+\bibitem[Meneguz et al.(2018)]{meneguzEffectRearingSubstrate2018}
 Meneguz, M., Schiavone, A., Gai, F., Dama, A., Lussiana, C., Renna, M., et al., 2018. Effect of rearing substrate on growth performance, waste reduction efficiency and chemical composition of black soldier fly larvae. \textit{J. Sci. Food Agric.} 98, 5776--5784.
 
-\bibitem[Padmanabha et al.(2020)]{padmanabha2020comprehensive}
+\bibitem[Padmanabha et al.(2020)]{padmanabhaComprehensiveDynamicGrowth2020}
 Padmanabha, M., Kobelski, A., Hempel, A.-J., Streif, S., 2020. A comprehensive dynamic growth and development model of \textit{Hermetia illucens} larvae. \textit{PLoS ONE} 15, e0239084.
 
 \bibitem[Prasetya et al.(2021)]{prasetya2021growth}
@@ -269,7 +269,7 @@ Prasetya, A., Darmawan, R., Araujo, T.L.B., Petrus, H.T.B.M., Setiawan, F.A., 20
 \bibitem[Sripontan et al.(2020)]{sripontan2020modeling}
 Sripontan, Y., Chiu, C.-I., Tanansathaporn, S., Leasen, K., Manlong, K., 2020. Modeling the growth of black soldier fly \textit{Hermetia illucens}: an approach to evaluate diet quality. \textit{J. Econ. Entomol.} 113, 742--751.
 
-\bibitem[Johnson et al.(2019)]{johnson2019deep}
+\bibitem[Johnson et al.(2019)]{kamilarisDeepLearningAgriculture2018}
 Johnson, K.B., et al., 2019. Deep learning in agriculture: a survey. \textit{Comput. Electron. Agric.} 163, 104859.
 
 \end{thebibliography}
