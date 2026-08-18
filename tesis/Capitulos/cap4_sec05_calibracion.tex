@@ -5,7 +5,7 @@ La calibración del modelo DEB sigue una secuencia de tres fases que va desde lo
 
 \subsection{Fase A: Semillas de parámetros desde Eriksen (2022)}
 
-Los parámetros semilla se extraen del modelo DEB individual de \textcite{Eriksen2022}, escalados a reactor batch mediante la densidad larval inicial. Estos valores se consideran a priori biofísicamente plausibles y no se alteran durante la calibración local:
+Los parámetros semilla se extraen del modelo DEB individual de \textcite{eriksenDynamicModellingFeed2022}, escalados a reactor batch mediante la densidad larval inicial. Estos valores se consideran a priori biofísicamente plausibles y no se alteran durante la calibración local:
 
 \begin{table}[htbp]
 \centering
@@ -25,7 +25,7 @@ $\kappa$ & $0{,}60$ & adimensional & Prioridad de crecimiento vs.~mantenimiento 
 \end{tabular}
 \end{table}
 
-La fracción $\kappa = 0{,}60$ implica que el $60\%$ de la energía asimilada se destina a mantenimiento y crecimiento somático, mientras que el $40\%$ restante se reserva para acumulación lipídica. La tasa de mantenimiento $m$ refleja el costo metabólico basal por unidad de biomasa estructural, y $a_{\max}$ codifica la capacidad máxima de ingestión por unidad de superficie corporal, asumiendo isometría volumen-superficie típica de insectos \autocite{Eriksen2022}.
+La fracción $\kappa = 0{,}60$ implica que el $60\%$ de la energía asimilada se destina a mantenimiento y crecimiento somático, mientras que el $40\%$ restante se reserva para acumulación lipídica. La tasa de mantenimiento $m$ refleja el costo metabólico basal por unidad de biomasa estructural, y $a_{\max}$ codifica la capacidad máxima de ingestión por unidad de superficie corporal, asumiendo isometría volumen-superficie típica de insectos \autocite{eriksenDynamicModellingFeed2022}.
 
 \subsection{Fase B: Ajuste local con series NDIR}
 
