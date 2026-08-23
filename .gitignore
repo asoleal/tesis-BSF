@@ -95,3 +95,5 @@ articulos/**/bibliografia
 
 # Incluir datos del articulo 00
 !articulos/00-red-neuronal-biomasa/datos/
+*.bak
+.venv/

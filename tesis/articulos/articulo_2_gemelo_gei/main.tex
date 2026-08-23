@@ -1,0 +1,29 @@
+% !TeX program = xelatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{fontspec}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\graphicspath{{figuras/}{../../gemelo/resultados/}}
+\usepackage[backend=biber,style=numeric-comp,sorting=none]{biblatex}
+\addbibresource{refs.bib}
+
+\title{Digital twin for modelling and predicting greenhouse gas
+emissions (CO$_2$, CH$_4$) in bioconversion of organic waste
+with \emph{Hermetia illucens}}
+\author{J. J. Leal et al.}
+\date{\today}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+% TODO: resumen cuando haya resultados
+\end{abstract}
+
+\input{secciones/introduccion}
+\input{secciones/metodologia}
+\input{secciones/resultados}
+\input{secciones/conclusiones}
+
+\printbibliography
+\end{document}
