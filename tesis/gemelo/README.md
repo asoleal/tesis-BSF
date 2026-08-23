@@ -30,6 +30,6 @@ MH-410D (CO2, 0-5000 ppm) y MH-441D (CH4, 0-5 %vol). Camara: panera 11.9 L.
 2. [x] Ventilacion forzada + CH4 en 2D (curva de diseno)
 3. [x] Modelo 0D del batch completo (7 estados acoplados)
 4. [x] Calibracion con datos reales (camara cerrada) + validacion
-5. [ ] Validacion de CH4 (protocolo de interferencias)
+5. [ ] Validacion de CH4: (a) test rapido con etanol en camara vacia, (b) muestras de gas del batch (jeringa hermetica o bolsa Tedlar) al cromatografo en la proxima campana, (c) reportar CH4 o CH4+COV equivalentes segun resultado
 6. [ ] Gemelo completo calibrado en modo continuo (batch de 14 dias)
 7. [ ] Dashboard de visualizacion del gemelo
