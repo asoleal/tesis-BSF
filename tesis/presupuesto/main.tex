@@ -1,6 +1,7 @@
 \documentclass[11pt,a4paper]{article}
 
 \usepackage{fontspec}
+\usepackage{amsmath,amssymb}
 \usepackage[spanish,es-tabla]{babel}
 \usepackage[margin=2.2cm]{geometry}
 \usepackage{booktabs}
@@ -17,11 +18,13 @@
 
 \newcommand{\costo}[1]{\par\smallskip\noindent\textbf{Costo estimado:} #1\par\bigskip}
 \newcommand{\comp}[2]{\medskip\noindent{\large\textbf{#1}}\par\smallskip\noindent #2}
+\newcommand{\paso}[1]{\subsection*{\large Paso #1}}
 
-\title{\textbf{Sistema experimental completo: funcionamiento,\\
-componentes, montaje y presupuesto}\\[4pt]
-\large Reactor controlado para bioconversión con \emph{Hermetia illucens}\\
-\large Versión 3.0}
+\title{\textbf{Manual de construcción, montaje experimental\\
+y presupuesto del reactor controlado}\\[4pt]
+\large Bioconversión de residuos con \emph{Hermetia illucens} --- medición
+continua de GEI (CO$_2$, CH$_4$) por balance de gases\\
+\large Versión 4.0 --- control por aire (sin baño de agua)}
 \author{J.\,J. Leal --- tesis doctoral\\Repositorio: \texttt{github.com/asoleal/tesis-BSF}}
 \date{Agosto 2026}
 
@@ -29,429 +32,453 @@ componentes, montaje y presupuesto}\\[4pt]
 \maketitle
 
 \begin{abstract}
-\noindent Este documento explica \textbf{cómo funciona el sistema completo}
-(ruta del agua, del aire y de las señales), describe cada componente en un
-párrafo claro ---qué es, cómo se instala y para qué sirve--- y presenta el
-\textbf{presupuesto estimado}, incluyendo los costos de \textbf{ingeniería y
-desarrollo de \emph{software}} si se contrata un ingeniero. Moneda de
-referencia: USD; equivalencia aproximada 4\,000--4\,200~COP/USD (verificar al
-comprar). Precios de referencia de mercado (agosto 2026), variación típica
-$\pm$30\,\%.
+\noindent Documento autocontenido para que un estudiante (o técnico)
+\textbf{construya, instale y opere} el reactor experimental sin conocimiento
+previo del proyecto. Incluye: (1)~cómo funciona el sistema, (2)~instrucciones
+de construcción paso a paso, (3)~montaje del experimento y rutina diaria,
+(4)~descripción de cada dispositivo (qué es, dónde va, cómo se conecta) y
+(5)~presupuesto por rubro. El principio de medición es el \textbf{balance de
+gases en cámara abierta} (respirometría de flujo): el gas que producen las
+larvas se calcula como caudal $\times$ (concentración de salida $-$
+concentración de entrada), con una ventana cerrada diaria de 15~minutos para
+CH$_4$ y validación por cromatografía (GC).
 \end{abstract}
 
 \tableofcontents
 \newpage
 
 % ============================================================
-\section{Cómo funciona el sistema (visión de conjunto)}
+\section{Cómo funciona el sistema}
 
 \begin{figure}[h!]
 \centering
 \resizebox{\textwidth}{!}{\input{esquema.tex}}
-\caption{Corte lateral del sistema. \textbf{Agua (celeste):} llena la tina y
-rodea la panera (el tramo de tubería dentro del agua además precalienta el
-aire). \textbf{Aire (flechas rojas, ruta numerada):} \textbf{1}~bomba,
-\textbf{2}~filtro HEPA, \textbf{3}~humidificador de burbuja,
-\textbf{4}~rotámetro, \textbf{5}~válvula solenoide, \textbf{6}~sube a través
-de las bandejas, \textbf{7}~sale por la válvula de tres vías.
-\textbf{Señales (líneas punteadas grises):} van y vienen del ESP32.}
+\caption{Corte lateral del sistema (no a escala). \textbf{Ruta del aire
+(flechas rojas, numerada):} \textbf{1}~bomba, \textbf{2}~filtro HEPA,
+\textbf{3}~resistencia PTC (calienta el aire si hace frío),
+\textbf{4}~humidificador de burbuja, \textbf{5}~rotámetro (lectura del
+caudal), \textbf{6}~válvula solenoide de aireación, \textbf{7}~el aire sube a
+través de las bandejas, \textbf{8}~lazo de medición (una bombecita P
+recircula gas del headspace por la celda, ${\approx}$1~L/min),
+\textbf{9}~válvula de tres vías (selecciona gas del headspace o aire
+ambiente), \textbf{10}~celda de medición con los sensores CO$_2$/CH$_4$/(O$_2$),
+\textbf{11}~válvula de cierre (solo se cierra en la ventana diaria de
+15~min) $\rightarrow$ escape.}
 \label{fig:esquema}
 \end{figure}
 
 \subsection{La idea en una frase}
-Una \textbf{panera plástica} (el reactor) está \emph{sentada sobre pilares
-dentro de una tina con agua caliente} que la abraza por fuera; adentro de la
-panera hay \textbf{tres pisos de bandejas} con las larvas y su alimento; una
-\textbf{bomba empuja aire por debajo} de las bandejas, el aire \emph{atraviesa
-la cama de abajo hacia arriba} y sale por la tapa, donde unos \textbf{sensores}
-miden los gases; una \textbf{tapa de acrílico con empaque} sella todo para que
-ningún gas se escape sin ser medido; y un \textbf{ESP32} (un microcontrolador,
-una pequeña computadora de USD~10) lee los sensores cada 30 segundos y abre o
-cierra la válvula de aire según las reglas del gemelo digital.
+Las larvas viven en \textbf{bandejas apiladas} dentro de una panera sellada
+con tapa de acrílico; una bomba empuja aire \emph{de abajo hacia arriba} a
+través de las bandejas (caudal medido con el rotámetro); el gas de salida se
+analiza en una \textbf{celda de medición externa}; y un \textbf{ESP32} lee
+todos los sensores cada 30~s y comanda válvulas, calefacción y nebulizador
+para mantener las condiciones óptimas.
 
-\subsection{La ruta del agua (control de temperatura)}
-El agua \textbf{no toca a las larvas}: queda \emph{por fuera} de la panera,
-en la tina. Funciona como una ``chaqueta térmica'': como el agua guarda mucho
-calor y cambia de temperatura lentamente, mantiene la panera a una temperatura
-estable aunque la temperatura del cuarto suba o baje.
+\subsection{El balance de gases (corazón de la medición)}
+Con la cámara \textbf{abierta} (flujo continuo), el flujo de cada gas es:
 
-\begin{itemize}
-  \item Un \textbf{calentador de inmersión con termostato} (o controlador
-        STC-1000) mantiene el agua a 30~$^\circ$C de forma automática: el
-        termostato apaga y prende el calentador sin intervención humana. Este
-        es el \textbf{control de temperatura de base} (lento y estable).
-  \item La panera se apoya en \textbf{pilares} para que el agua circule también
-        por debajo, calentando parejo por todas las caras.
-  \item Cuando las larvas comen mucho, \emph{ellas mismas generan calor} y la
-        cama puede pasar de 33~$^\circ$C aunque el agua esté bien. Ahí actúa el
-        \textbf{segundo nivel de control}: el ESP32 ordena más aireación y el
-        aire fresco \emph{saca el calor} de la cama. Es decir: \textbf{el baño
-        fija la base; la aireación quita los picos}.
-\end{itemize}
+\[
+F_{\text{gas}} \;=\; Q \times \left(C_{\text{salida}} - C_{\text{entrada}}\right)
+\]
 
-\subsection{La ruta del aire (el corazón del experimento)}
-El aire recorre un camino de una sola dirección (figura~\ref{fig:esquema}):
+donde $Q$ es el caudal leído en el rotámetro, $C_{\text{salida}}$ la
+concentración que mide la celda en el gas del headspace, y
+$C_{\text{entrada}}$ la del aire ambiente (la válvula~9 conmuta la celda
+entre ambas). \textbf{Un solo juego de sensores mide las dos corrientes.}
+Como el gas no se acumula, el sensor de CO$_2$ existente (0--5\,000~ppm) es
+suficiente --- el control mantiene el headspace en 0,40--0,45\,\%.
 
-\begin{enumerate}
-  \item \textbf{Bomba}: toma aire del cuarto.
-  \item \textbf{Filtro HEPA}: quita polvo y esporas de hongos (para no
-        contaminar el lote).
-  \item \textbf{Humidificador de burbuja}: el aire atraviesa una botella con
-        agua y sale húmedo. \emph{Este es el control de humedad del aire de
-        entrada}: si el aire entrara seco, secaría la cama; entrando húmedo,
-        la humedad del sustrato se mantiene en 65--70\,\%.
-  \item \textbf{Rotámetro}: un tubo graduado con un flotador que muestra
-        cuánto aire está pasando (lectura directa, sin electrónica).
-  \item \textbf{Válvula solenoide}: una ``llave eléctrica'' que el ESP32 abre o
-        cierra. Es la que ejecuta el control automático.
-  \item El aire entra al \textbf{plenum} (cámara vacía bajo una placa
-        perforada en el fondo de la panera) y \textbf{sube parejo a través de
-        las tres bandejas}, llevándose el CO$_2$ y el calor que producen las
-        larvas.
-  \item Llega al \textbf{headspace} (el aire sobre la última bandeja), donde
-        están los sensores, y \textbf{sale por la válvula de tres vías}:
-        normalmente abierta (renovación continua) o cerrada 15 minutos al día
-        (ventana de medición de flujos, protocolo P-05) --- al cerrarla, el
-        gas se acumula y la pendiente de subida de CO$_2$ es la medida
-        científica central de la tesis.
-\end{enumerate}
+Una vez al día se cierran las válvulas 6 y 11 durante \textbf{15 minutos}
+(\emph{ventana cerrada}): el gas se acumula, la pendiente de CO$_2$ da una
+medida de precisión de referencia, y el CH$_4$ (que en modo abierto está bajo
+la resolución del sensor) se vuelve detectable. Al minuto 12 se extrae una
+muestra por el septo para GC.
 
-\subsection{La ruta de las señales (quién manda sobre qué)}
-Todos los sensores reportan al \textbf{ESP32} por cable (líneas punteadas de la
-figura): CO$_2$, CH$_4$ y O$_2$ en la tapa, temperatura del aire y humedad
-(SHT45), tres sondas de temperatura enterradas en la cama, humedad del
-sustrato y el peso total (4 celdas de carga bajo la tina). El ESP32 decide la
-aireación con una regla simple:
-
-\begin{itemize}
-  \item Si el CO$_2$ sube de 0,40\,\% $\rightarrow$ abre más la aireación.
-  \item Si la cama pasa de 33~$^\circ$C $\rightarrow$ aireación al máximo
-        (aunque el CO$_2$ esté bien).
-  \item Si todo está en rango $\rightarrow$ aireación mínima (ahorra energía y
-        no reseca la cama).
-\end{itemize}
-
-\noindent Los datos viajan por Wi-Fi a la \textbf{Raspberry Pi} (o al PC del
-laboratorio), donde se guardan y se muestran en el \emph{dashboard} web.
-
-\subsection{Resumen del control de temperatura y humedad}
+\subsection{Control de temperatura y humedad (sin baño de agua)}
 \begin{center}
-\begin{tabular}{@{}p{2.6cm}p{4.6cm}p{5.6cm}@{}}
+\begin{tabular}{@{}p{2.8cm}p{4.8cm}p{5.6cm}@{}}
 \toprule
-\textbf{Variable} & \textbf{Control de base} & \textbf{Control fino / de emergencia} \\
+\textbf{Variable} & \textbf{Actuador} & \textbf{Lógica de control (ESP32)} \\
 \midrule
-Temperatura & Baño de agua a 30~$^\circ$C (termostato automático) &
-Aireación forzada si la cama $>$ 33~$^\circ$C (ESP32 + solenoide) \\
-Humedad del aire & Humidificador de burbuja en la entrada &
-Bajar aireación mínima / rociar agua en la alimentación diaria (manual, registrado) \\
-Humedad del sustrato & Preparación inicial a 65--70\,\% &
-Sonda capacitiva avisa; ajuste con el agua de alimentación \\
+Temperatura (frío) & Resistencia PTC en la línea de aire &
+Si T cama $<$ 26~$^\circ$C $\rightarrow$ calentar aire de entrada \\
+Temperatura (calor) & Aireación + nebulizador (enfriamiento
+evaporativo) & Si T cama $>$ 33~$^\circ$C $\rightarrow$ aireación máxima y
+pulso de nebulización \\
+Humedad sustrato & Nebulizador sobre la cama &
+Si sonda $<$ 60\,\% $\rightarrow$ nebulizar; nunca por temporizador \\
+Humedad aire entrada & Humidificador de burbuja (pasivo) &
+El aire entra ya húmedo; la resistencia va \emph{antes} del humidificador \\
+CO$_2$ & Válvula 6 (aireación) &
+Si CO$_2$ $>$ 0,40\,\% $\rightarrow$ abrir más; meta 0,40--0,45\,\% \\
 \bottomrule
 \end{tabular}
 \end{center}
 
+\noindent\textbf{Nota técnica:} el aire a 10~L/min solo transporta ${\sim}$2~W
+de calor; el pico metabólico del batch es ${\sim}$8~W. El enfriamiento real en
+el pico lo hace la \textbf{evaporación} (cada 10~g/h de agua evaporada
+${\approx}$ 7~W): por eso el nebulizador es actuador de temperatura, no solo
+de humedad. Si el primer batch muestra T sostenida $>$ 35~$^\circ$C pese a
+todo, se agrega un baño de agua \emph{pasivo} (sin calentador) como sumidero.
+
 \newpage
 % ============================================================
-\section{Instalación del \emph{inlet} (entrada de aire), paso a paso}
+\section{Parte I --- Construcción paso a paso}
+
+\subsection*{Herramientas necesarias}
+Taladro con brocas de 12~mm y 3~mm, pistola de silicona, tijeras de corte de
+lámina o esmeril, destornilladores, cinta métrica, cautín (para pines),
+multímetro, nivel, jabón líquido (prueba de fugas).
+
+\paso{1 --- Fabricar las 6 bandejas (latas hondas)}
+\textbf{Material:} lámina de aluminio o acero inoxidable de 0,5--1~mm;
+geotextil no tejido (tela de jardinería).
 
 \begin{enumerate}
-  \item \textbf{Marcar}: un punto en la pared de la panera a 2~cm del fondo
-        (por debajo de la placa difusora, es decir, \emph{dentro} del plenum).
-        El aire debe entrar al plenum, no a la cama directamente.
-  \item \textbf{Perforar}: orificio de 12~mm en la panera y otro alineado en
-        la pared de la tina (a la misma altura, por encima del nivel del agua
-        \emph{no es necesario}: la manguera puede entrar por arriba y bajar
-        por fuera de la panera; así el agua nunca toca la unión).
-        \textbf{Recomendado}: entrar \emph{por encima} --- la manguera pasa
-        por el borde superior entre panera y tapa, bajando por dentro hasta el
-        plenum; así no hay ninguna perforación bajo el nivel del agua.
-  \item \textbf{Sellar en la panera}: racor pasamuros (\emph{bulkhead}) de
-        6~mm con arandela de goma, o prensaestopa PG7 con silicona. Prueba de
-        fugas P-01 (jabón en las uniones, cámara presurizada).
-  \item \textbf{Conectar afuera, en este orden}: bomba $\rightarrow$ filtro
-        HEPA $\rightarrow$ humidificador $\rightarrow$ rotámetro
-        $\rightarrow$ solenoide $\rightarrow$ panera. Manguera de silicona de
-        6~mm en todas las uniones, con abrazaderas plásticas.
-  \item \textbf{Cablear}: la solenoide al relé del ESP32 (canal 1). El
-        calentador del baño conserva su propio termostato (independiente).
-  \item \textbf{Verificar}: con la tapa cerrada, abrir la bomba y confirmar
-        burbujeo parejo bajo las tres bandejas (con la cama vacía y un poco de
-        agua jabonosa sobre la placa difusora se ven las zonas activas).
+  \item Cortar 6 piezas de lámina de $28\times36$~cm (bandeja final
+        $18\times26$~cm con paredes de 6,5~cm).
+  \item Doblar 90$^\circ$ los cuatro bordes a 6,5~cm formando una lata honda;
+        soldar o remachar las esquinas. Doblar el borde superior 1~cm
+        \emph{hacia adentro} (reborde anti-escape).
+  \item Perforar el fondo: retícula de huecos de 3~mm cada 15~mm.
+  \item Cortar el geotextil a $18\times26$~cm y asentarlo sobre el fondo.
+\end{enumerate}
+
+\noindent\textbf{¿Por qué no se sale la comida ni las larvas?} Las
+\textbf{paredes sólidas} de 6,5~cm retienen todo como lo hacía la sanduchera;
+el \textbf{geotextil} tapa los huecos del fondo: pasa el aire pero no el
+alimento (el geotextil retiene partículas $>$0,1~mm). El reborde doblado hacia
+adentro frena a las larvas que trepan buscando salir (instinto de pupación).
+Las sanducheras sólidas se conservan para los \textbf{controles} sin
+aireación.
+
+\paso{2 --- Placa difusora y plenum}
+\begin{enumerate}
+  \item Con una séptima lámina perforada (mismo patrón) de $26\times36$~cm,
+        fijarla horizontalmente a 3~cm del fondo de la panera sobre 4 topes de
+        ángulo plástico pegados con silicona.
+  \item La cavidad que queda debajo es el plenum: ahí entra el aire (paso 4).
+\end{enumerate}
+
+\paso{3 --- Tapa de acrílico}
+\begin{enumerate}
+  \item Cortar acrílico de 3--4~mm a la boca de la panera
+        (${\approx}45\times35$~cm) y marcar los orificios según la
+        figura~\ref{fig:esquema}: 2 puertos del lazo de medición (12~mm),
+        1 puerto de salida principal (12~mm), 1 orificio para septo (10~mm),
+        1 para el SHT45, 3 para las sondas de cama (6~mm), 1 para el cable del
+        nebulizador.
+  \item Pegar el septo de silicona con epoxi sobre su orificio.
+  \item Pegar el cordón de empaque EPDM en todo el perímetro inferior.
+  \item Atornillar las 4 abrazaderas \emph{toggle} al borde de la panera y
+        verificar que la tapa cierre con presión pareja.
+\end{enumerate}
+
+\paso{4 --- Línea de aire}
+Con manguera de silicona de 6~mm, conectar en este orden exacto:
+\textbf{bomba $\rightarrow$ filtro HEPA $\rightarrow$ resistencia PTC
+$\rightarrow$ humidificador de burbuja $\rightarrow$ rotámetro $\rightarrow$
+válvula solenoide (6) $\rightarrow$ plenum}. La entrada al plenum se hace por
+un racor pasamuros de 6~mm en la pared de la panera, a 1,5~cm del fondo (bajo
+la placa difusora). Todas las uniones con abrazadera plástica.
+
+\paso{5 --- Celda de medición y lazo de recirculación}
+\begin{enumerate}
+  \item La celda es una cajita plástica hermética (${\approx}10\times6\times4$~cm)
+        con los sensores CO$_2$, CH$_4$ (y O$_2$ opcional) montados en su tapa,
+        cabezales hacia adentro, con un puerto de entrada y uno de salida.
+  \item Conectar: puerto A de la tapa del reactor $\rightarrow$ válvula de 3
+        vías (9) $\rightarrow$ entrada de la celda; salida de la celda
+        $\rightarrow$ bombecita de recirculación (P, ${\approx}$1~L/min)
+        $\rightarrow$ puerto B de la tapa. La segunda entrada de la válvula 9
+        queda abierta al aire ambiente.
+  \item Salida principal: puerto de la tapa $\rightarrow$ válvula de cierre
+        (11) $\rightarrow$ escape al ambiente.
+\end{enumerate}
+
+\paso{6 --- Calefacción y nebulización}
+La resistencia PTC (12~V, 100~W) va en un tramo metálico de la línea de aire
+\emph{antes} del humidificador (calentar primero, humidificar después). El
+nebulizador ultrasónico va montado en la tapa, con su membrana hacia la cama y
+su depósito de agua por encima de la tapa. Ambos comandados por relés.
+
+\paso{7 --- Sondas y pesaje}
+\begin{enumerate}
+  \item Enterrar las 3 sondas DS18B20 en la bandeja central del piso del
+        medio, a 1, 2,5 y 4~cm de profundidad; cables por los orificios de la
+        tapa.
+  \item Enterrar una sonda capacitiva de humedad en dos bandejas distintas.
+  \item Apoyar la panera sobre las 4 celdas de carga (una por esquina, sobre
+        base rígida nivelada); el HX711 va en la caja eléctrica.
+\end{enumerate}
+
+\paso{8 --- Electrónica (conexiones ESP32)}
+\begin{center}
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Dispositivo} & \textbf{Bus} & \textbf{Pines ESP32} \\
+\midrule
+MH-410D (CO$_2$) & UART1 & GPIO16 (RX), GPIO17 (TX) \\
+MH-441D (CH$_4$) & UART2 & GPIO25 (RX), GPIO26 (TX) \\
+LuminOx (O$_2$, opcional) & UART0 / USB-serial & GPIO1/3 (o módulo USB) \\
+2$\times$ SHT45 & I$^2$C & GPIO21 (SDA), GPIO22 (SCL) \\
+3$\times$ DS18B20 & 1-Wire & GPIO4 \\
+HX711 (celdas) & digital & GPIO18 (SCK), GPIO19 (DT) \\
+2$\times$ humedad sustrato & ADC & GPIO34, GPIO35 \\
+Relé válvula 6 (aireación) & digital & GPIO32 \\
+Relé válvula 9 (3 vías) & digital & GPIO33 \\
+Relé válvula 11 (cierre) & digital & GPIO27 \\
+Relé PTC (calefacción) & digital & GPIO14 \\
+Relé nebulizador & digital & GPIO13 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent Fuentes: 5~V/5~A para ESP32 y sensores; 12~V/10~A para PTC y
+válvulas. Tierra común entre ambas.
+
+\paso{9 --- Verificación (antes del primer batch)}
+\begin{enumerate}
+  \item \textbf{Fugas (P-01):} tapa cerrada, presurizar suave con la bomba y
+        poner agua jabonosa en todas las uniones y el perímetro; no deben
+        salir burbujas. Alternativa: cerrar todo y verificar que el CO$_2$
+        inyectado decae $<$5\,\%/h.
+  \item \textbf{Distribución:} con la cama vacía, echar agua jabonosa sobre la
+        placa difusora: el burbujeo debe ser parejo en toda el área.
+  \item \textbf{Caudal:} abrir la bomba y registrar rotámetro vs.\ estado de
+        la válvula (curva de calibración ACH real).
+  \item \textbf{Celdas de carga:} tarar con la panera vacía y verificar con
+        pesas conocidas (1, 2, 5 kg).
+  \item \textbf{Conmutación:} accionar la válvula 9 y verificar que la celda
+        pasa de leer headspace a ambiente en $<$2~min.
 \end{enumerate}
 
 \newpage
 % ============================================================
-\section{Componentes (qué es, cómo va, para qué)}
+\section{Parte II --- Montaje del experimento y operación diaria}
 
-\subsection{Reactor}
+\subsection{Configuración del batch}
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parámetro} & \textbf{Valor} \\
+\midrule
+Larvas por batch & 4\,500 (6 bandejas, ${\approx}$1,6 larvas/cm$^2$) \\
+Profundidad de cama & 3--4,5~cm por bandeja \\
+Alimentación & 100~mg/larva/día; cargas los días 0, 3 y 6 \\
+Humedad del sustrato & 65--70\,\% al preparar; mantener con nebulizador \\
+Temperatura de cama & 27--32~$^\circ$C (alarma $>$33~$^\circ$C) \\
+Oscuridad & permanente (cobertura opaca) \\
+Duración & 12--14 días \\
+Modos & abierto (continuo) + ventana cerrada diaria de 15~min \\
+Controles & sanducheras sólidas en panera pequeña (sin aireación) \\
+\bottomrule
+\end{tabular}
+\end{center}
 
-\comp{Panera plástica 34\,L (ya comprada)}
-{Es el cuerpo del reactor: un recipiente rectangular de 38$\times$28~cm de
-base y 26~cm de alto. No lleva modificación estructural: solo se apoya sobre
-los pilares dentro de la tina con agua y recibe las perforaciones del inlet y
-de los prensaestopas para los cables. Adentro van los tres pisos de bandejas
-(${\approx}$4\,500 larvas) y queda el headspace donde se miden los gases.}
-\costo{USD 0 (ya adquirida; referencia USD 8--15).}
+\subsection{Rutina diaria (${\approx}$20 minutos)}
+\begin{enumerate}
+  \item Registrar rotámetro, T ambiente y cualquier evento en bitácora.
+  \item Hora fija: activar \textbf{ventana cerrada} (el ESP32 cierra válvulas
+        6 y 11 por 15~min; el lazo de medición sigue circulando).
+  \item Al minuto 12: extraer muestra de gas por el septo con jeringa
+        $\rightarrow$ GC (2--3 veces por semana).
+  \item Al minuto 15: el ESP32 reabre; registrar pendientes CO$_2$/CH$_4$.
+  \item Alimentar según calendario (días 0, 3, 6); aprovechar para foto de la
+        cama y revisión visual del geotextil.
+  \item Verificar nivel de agua del humidificador y del nebulizador.
+\end{enumerate}
 
-\comp{Bandejas metálicas perforadas + geotextil (6 uds.)}
-{Láminas de aluminio o acero inoxidable de ${\approx}$34$\times$24~cm con
-perforaciones de 3~mm, forradas por encima con tela geotextil. Se apilan en
-tres pisos dentro de la panera (dos bandejas por piso), separadas por topes de
-${\approx}$10~cm. Los huecos dejan pasar el aire que viene del plenum; el
-geotextil tapa los huecos para que el alimento y las larvas no se caigan. Se
-fabrican en un taller local (corte y perforado de lámina).}
-\costo{USD 10--15 por bandeja $\Rightarrow$ \textbf{USD 60--90}; geotextil
-1~m$^2$: USD 5--10.}
+\subsection{Modos de operación}
+\begin{center}
+\begin{tabular}{@{}p{2.6cm}p{5.4cm}p{5.4cm}@{}}
+\toprule
+& \textbf{Modo abierto (23,75 h/día)} & \textbf{Ventana cerrada (15 min/día)} \\
+\midrule
+Válvula 6 & modulada por control & cerrada \\
+Válvula 11 & abierta & cerrada \\
+Válvula 9 & alterna: headspace / ambiente cada 30~min & fija en headspace \\
+Medida & $F = Q \cdot \Delta C$ continuo & pendiente de acumulación + GC \\
+\bottomrule
+\end{tabular}
+\end{center}
 
-\comp{Tapa rígida de acrílico + empaque + abrazaderas}
-{Plancha de acrílico transparente de 45$\times$35~cm y 3--4~mm que cubre la
-boca de la panera. Lleva pegado por debajo un cordón de empaque (goma EPDM o
-silicona vulcanizada \emph{in situ}) y se presiona con 4 abrazaderas de
-palanca (\emph{toggle}) atornilladas al borde de la panera. Sobre la tapa van
-montados los sensores de gas, el septo y la salida. Sella herméticamente
----sin fugas, todo el gas medido proviene de la bioconversión--- y permite
-abrir en segundos para alimentar o muestrear. Reemplaza la tapa rota.}
-\costo{Acrílico USD 15--25; empaque USD 8--12; abrazaderas $\times$4 USD
-10--16 $\Rightarrow$ \textbf{USD 33--53}.}
+\subsection{Señales de cosecha (hipótesis a validar)}
+Cosechar cuando: peso se aplana 2 días consecutivos, \emph{o} el CH$_4$ de la
+ventana cerrada presenta un pico, \emph{o} el CO$_2$ cae $>$30\,\% respecto al
+máximo --- lo que ocurra primero; registrar cuál señal se cumplió.
 
-\comp{Placa difusora (plenum)}
-{Una lámina perforada más (la misma de las bandejas) que se fija a 3~cm del
-fondo de la panera, creando una cámara vacía debajo. El aire de la bomba
-entra a esa cámara y sube uniformemente por todos los orificios: sin ella el
-aire entraría como un chorro puntual y solo ventilaría una esquina.}
-\costo{USD 10--15 (una lámina adicional del mismo pedido).}
+% ============================================================
+\section{Parte III --- Descripción de dispositivos}
 
-\comp{Racores PG7, septo de GC y válvula de tres vías}
-{Los PG7 son prensaestopas plásticos que sellan los cables que atraviesan la
-pared (12~mm). El septo es un tapón de silicona autosellante pegado con epoxi
-sobre un orificio de la tapa: permite meter la aguja de una jeringa y sacar
-muestras de gas para el cromatógrafo sin abrir el reactor. La válvula de tres
-vías en la salida dirige el aire a ``abierto'' (renovación continua) o
-``cerrado'' (ventana de medición de 15 minutos).}
-\costo{USD 15--25 el juego.}
-
-\subsection{Aireación}
-
-\comp{Bomba de aire 10~L/min}
-{Bomba de diafragma tipo acuario, instalada fuera del baño. Empuja el aire
-que atraviesa toda la línea hasta el plenum. Se dimensionó desde los datos
-reales: con 6 bandejas (${\approx}$4\,500 larvas) se necesitan hasta
-${\approx}$3,8~L/min; la bomba de 10~L/min da margen de sobra.}
+\comp{Bomba de aire 10~L/min (1)}
+{Bomba de diafragma tipo acuario (caja plástica de ${\approx}$15$\times$10~cm
+con salida para manguera). Va sobre la mesa, fuera de cualquier contacto con
+agua, conectada al inicio de la línea. Funciona siempre encendida; quien
+regula el paso es la válvula 6. Empuja el aire que atraviesa la cama.}
 \costo{USD 25--35.}
 
-\comp{Filtro HEPA + humidificador de burbuja}
-{El filtro (disco o cartucho HEPA) retiene polvo y esporas del aire que entra.
-El humidificador es una botella con agua por la que el aire burbujea: sale
-casi saturado de humedad y así el flujo continuo no reseca la cama. Van en
-serie justo después de la bomba.}
-\costo{USD 15--30.}
-
-\comp{Rotámetro 0,2--4~L/min}
-{Tubo transparente graduado con un flotador: muestra de un vistazo cuánto
-aire está pasando. Va en serie antes de la entrada a la panera. Sirve para
-fijar el caudal, registrarlo en la bitácora y detectar obstrucciones del
-difusor.}
-\costo{USD 20--40.}
-
-\comp{Válvula solenoide 12~V + mangueras (10~m)}
-{``Llave eléctrica'' del aire: el ESP32 la abre/cierra mediante un relé para
-ejecutar el control automático de aireación. Las mangueras de silicona de
-6~mm unen todos los elementos de la línea.}
-\costo{USD 10--15 + USD 8--12.}
-
-\subsection{Control térmico}
-
-\comp{Tina + calentador de inmersión con termostato}
-{La tina es cualquier caja plástica mayor que la panera; el calentador (tipo
-acuario, 100--200~W, con termostato propio o comandado por un STC-1000)
-mantiene el agua a 30~$^\circ$C automáticamente. La panera flota/apoya sobre
-pilares para que el agua la abrace por debajo y los lados. Es el control de
-temperatura de base del sistema.}
-\costo{USD 25--40; tina USD 0--15 (reutilizable); pilares USD 5.}
-
-\comp{Cobertura oscura}
-{Tela opaca o caja que cubre el conjunto: las larvas requieren oscuridad y
-además estabiliza un poco más la temperatura ambiente alrededor del equipo.}
+\comp{Filtro HEPA (2)}
+{Cartucho o disco de filtro (como los de jeringa de laboratorio pero de
+línea). Va en serie justo después de la bomba. Retiene polvo y esporas para
+no contaminar el lote.}
 \costo{USD 10--20.}
 
-\subsection{Sensores}
+\comp{Resistencia PTC 12~V (3)}
+{Pastilla cerámica que se calienta al pasar corriente (no necesita control
+fino: es on/off por relé). Va montada en un tramo metálico de la línea de
+aire, \emph{antes} del humidificador. Solo se activa si la cama baja de
+26~$^\circ$C (noches frías).}
+\costo{USD 15--25.}
 
-\comp{CO$_2$ NDIR Winsen MH-410D 0--5\,\%vol (compra nueva)}
-{Sensor infrarrojo de dióxido de carbono, la medida central de la tesis. Se
-atornilla a la tapa con el cabezal dentro del headspace y el cable al ESP32
-por un PG7. La versión actual del laboratorio (0--5\,000~ppm) saturaba durante
-los ensayos; esta llega a 50\,000~ppm y elimina el problema de enmascaramiento
-que afectó a los lotes 9--17.}
-\costo{USD 60--120.}
+\comp{Humidificador de burbuja (4)}
+{Frasco con agua por el que el aire entra por un tubo sumergido y sale por la
+tapa. Va entre la PTC y el rotámetro. El aire sale casi saturado de humedad y
+así no reseca la cama.}
+\costo{USD 5--10 (casero).}
 
-\comp{CH$_4$ NDIR Winsen MH-441D (ya comprado)}
-{Sensor infrarrojo de metano, montaje idéntico al de CO$_2$. Mide el metano
-del lote y se evalúa como señal temprana de cosecha. Pendiente la validación
-contra GC con gas real del batch (sensibilidad cruzada a VOCs).}
-\costo{USD 0 (adquirido; referencia USD 50--120).}
+\comp{Rotámetro 0,2--4~L/min (5)}
+{Tubo transparente vertical graduado con un flotador. Va en la línea, a la
+vista. Es \textbf{la medida del caudal} $Q$ del balance de gases: sin él no
+hay dato científico. Registrar su lectura en la bitácora diaria.}
+\costo{USD 20--40.}
 
-\comp{O$_2$ óptico SST LuminOx LOX-02 (compra nueva)}
-{Sensor de oxígeno por fluorescencia: 0--25\,\%, exactitud $<$2\,\% FS, vida
-$>$5 años, no se consume como los electroquímicos. Se monta en la tapa junto a
-los otros dos sensores de gas. Con O$_2$ y CO$_2$ simultáneos se calcula el
-cociente respiratorio (RQ), que separa respiración larvaria de fermentación
-microbiana: información clave para el gemelo y novedad frente a la literatura.}
-\costo{USD 90--150 (el ítem más costoso).}
+\comp{Válvulas solenoide (6, 9, 11)}
+{``Llaves eléctricas'' de 12~V: la 6 (on/off) regula la aireación; la 9 (de
+tres vías) conmuta la celda entre headspace y aire ambiente; la 11 (on/off)
+cierra el escape en la ventana diaria. Van en la línea/celda, cableadas a los
+relés del ESP32.}
+\costo{USD 10--15 c/u $\Rightarrow$ USD 30--45.}
 
-\comp{SHT45 (2 uds.) --- temperatura y humedad del aire}
-{Módulo digital de alta precisión ($\pm$0,1~$^\circ$C, $\pm$1,5\,\%HR). Uno en
-el headspace (condiciones del gas medido) y otro en el ambiente del
-laboratorio. Permiten corregir las lecturas de ppm a condiciones reales.}
-\costo{USD 12--15 c/u $\Rightarrow$ USD 24--30.}
+\comp{Bandejas lata honda + geotextil (6)}
+{Latas metálicas de $18\times26\times6,5$~cm con fondo perforado (huecos de
+3~mm) forrado de geotextil. Van apiladas en 3 pisos dentro de la panera (2
+por piso, sobre topes). Las paredes retienen larvas y alimento; el fondo
+deja pasar el aire. Fabricación en taller local.}
+\costo{USD 60--90 + geotextil USD 5--10.}
 
-\comp{DS18B20 sumergibles (3 uds.) --- temperatura de la cama}
-{Sondas digitales encapsuladas en acero, enterradas a 1, 2,5 y 4~cm en la
-bandeja central. Miden el perfil vertical de temperatura: detectan el
-sobrecalentamiento interno que motivó este rediseño y validan el modelo
-térmico del gemelo.}
-\costo{USD 3--5 c/u $\Rightarrow$ USD 10--15.}
+\comp{Panera 34\,L + tapa acrílica + difusor (ya comprada)}
+{Cuerpo del reactor sobre 4 celdas de carga. La tapa de acrílico con empaque
+EPDM y 4 abrazaderas sella el sistema; la placa difusora a 3~cm del fondo
+crea el plenum que reparte el aire parejo.}
+\costo{Panera USD 0 (adquirida); tapa+empaque+abrazaderas USD 33--53;
+difusor USD 10--15.}
 
-\comp{Humedad de sustrato capacitiva (2 uds.)}
-{Sondas que van enterradas en la cama de dos bandejas y reportan la humedad
-del sustrato (meta: 65--70\,\%). La versión capacitiva no se corroe como las
-resistivas.}
-\costo{USD 3--5 c/u $\Rightarrow$ USD 6--10.}
+\comp{Celda de medición + bombecita P (10, 8)}
+{Cajita hermética que aloja los sensores de gas, con entrada y salida. La
+bombecita (bomba de acuario pequeña o peristáltica, ${\approx}$1~L/min) hace
+circular el gas headspace $\rightarrow$ celda $\rightarrow$ headspace en un
+lazo cerrado, así los sensores miden siempre gas fresco sin importar si el
+reactor está abierto o en ventana cerrada.}
+\costo{USD 8 (caja) + USD 10--15 (bombecita).}
 
-\comp{Celdas de carga 50~kg (4 uds.) + HX711}
-{Cuatro galgas de báscula bajo las esquinas de la tina y un convertidor de 24
-bits. Pesan el lote completo en continuo, sin abrir el reactor: la curva de
-peso es una de las señales de cosecha y calibra el crecimiento larvario del
-gemelo.}
+\comp{Sensores de gas: MH-410D (CO$_2$) y MH-441D (CH$_4$) --- ya comprados}
+{Sensores infrarrojos cilíndricos ($\varnothing$20~mm) con salida UART. Van
+atornillados en la tapa de la celda de medición, cabezal hacia adentro, cable
+al ESP32. El de CO$_2$ (0--5\,000~ppm) es suficiente en modo abierto porque el
+control mantiene el headspace bajo 0,45\,\%; el de CH$_4$ (0--5\,\%vol)
+aprovecha la ventana cerrada para acumular señal. Validación por GC en marcha
+(hoja de ruta, punto 5).}
+\costo{USD 0 (adquiridos). O$_2$ LuminOx opcional: USD 90--150.}
+
+\comp{SHT45 (2) --- temperatura y humedad del aire}
+{Módulos digitales I$^2$C ($\pm$0,1~$^\circ$C, $\pm$1,5\,\%HR). Uno en el
+headspace (tapa) y otro midiendo el aire ambiente cerca de la entrada de la
+bomba. Con la pareja se calcula la \emph{humedad absoluta} de entrada y
+salida: el balance de agua (evaporación) sale gratis.}
+\costo{USD 12--15 c/u.}
+
+\comp{DS18B20 sumergibles (3) --- temperatura de la cama}
+{Sondas en capsulita de acero, enterradas a 1, 2,5 y 4~cm en la bandeja
+central. Perfil vertical de temperatura para el control y el gemelo.}
+\costo{USD 3--5 c/u.}
+
+\comp{Sondas capacitivas de humedad de sustrato (2)}
+{Paletas que van enterradas en dos bandejas; gobiernan el nebulizador (nunca
+por tiempo fijo).}
+\costo{USD 3--5 c/u.}
+
+\comp{Celdas de carga 50~kg (4) + HX711}
+{Galgas de báscula bajo las esquinas de la panera; el convertidor HX711 las
+lee a 24~bits. Peso continuo del lote sin abrir: señal de cosecha y
+calibración del crecimiento.}
 \costo{USD 12--20 el kit.}
 
-\subsection{Adquisición y cómputo}
+\comp{Nebulizador ultrasónico}
+{Membrana cerámica que convierte agua en niebla fría. Va en la tapa apuntando
+a la cama, con depósito propio. Doble función: humedad del sustrato y
+enfriamiento evaporativo en el pico metabólico.}
+\costo{USD 10--15.}
 
-\comp{ESP32 DevKit}
-{Microcontrolador con Wi-Fi (una pequeña computadora de propósito único). Lee
-todos los sensores cada 30~s, guarda los datos (TSV), ejecuta la regla de
-control de aireación y reporta a la Raspberry Pi. Va en una caja eléctrica
-fuera del baño.}
-\costo{USD 8--15.}
+\comp{ESP32 + Raspberry Pi + fuentes y relés}
+{El ESP32 lee todo cada 30~s, ejecuta las reglas de control y reporta por
+Wi-Fi; la Raspberry Pi (o PC del laboratorio) guarda los datos y sirve el
+\emph{dashboard}. Fuentes 5~V/5~A y 12~V/10~A, 5 relés.}
+\costo{ESP32 USD 8--15; RPi USD 60--80 (o USD 0 con PC); fuentes+relés+cableado
+USD 35--50.}
 
-\comp{Raspberry Pi (o PC reutilizado)}
-{Computadora del tamaño de una tarjeta que recibe los datos por Wi-Fi, los
-almacena con respaldo y sirve el \emph{dashboard} web del laboratorio.
-Alternativa de costo cero: usar el PC existente.}
-\costo{USD 60--80 (o USD 0).}
-
-\comp{Fuente 5~V/5~A, relés, cableado, protoboard}
-{Alimentación estable y módulo de relés para comandar la solenoide (y
-opcionalmente el calentador).}
-\costo{USD 30--40.}
+\comp{Racores, septo, mangueras, cobertura, misceláneos}
+{Prensaestopas PG7, septo de silicona para jeringa de GC, 10~m de manguera de
+silicona 6~mm, abrazaderas, tela opaca para oscuridad.}
+\costo{USD 35--45.}
 
 \newpage
 % ============================================================
-\section{Desarrollos de ingeniería y \emph{software}}
+\section{Presupuesto por rubro}
 
-El \emph{software} es libre (sin licencias), pero el desarrollo toma tiempo de
-ingeniería. Dos escenarios: \textbf{(a) desarrollo propio} (usted, como parte
-de la tesis) o \textbf{(b) contratar un ingeniero} (electrónica/
-programación; tarifa de referencia Colombia: USD 8--20/h según experiencia;
-estudiante en práctica o semillero puede bajar al mínimo).
+Valores centrales de mercado (agosto 2026), tasa de referencia
+4\,100~COP/USD. Tope disponible: \textbf{15 millones COP}.
 
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{5.2cm}>{\raggedright\arraybackslash}p{6.2cm}cc@{}}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{7.6cm}rr@{}}
 \toprule
-\textbf{Tarea} & \textbf{Qué incluye} & \textbf{Horas} & \textbf{Costo (USD)} \\
+\textbf{Rubro} & \textbf{USD} & \textbf{COP} \\
 \midrule
 \endhead
-Montaje del reactor y cableado & perforaciones, sellos, línea de aire,
-caja eléctrica, conexión de sensores y relés & 40--60 & 320--1\,200 \\
-Firmware ESP32 & lectura de buses (UART/I$^2$C/1-Wire/ADC/HX711), TSV cada
-30\,s, regla de control ACH, Wi-Fi & 40--80 & 320--1\,600 \\
-\emph{Dashboard} web & Panel/Dash en la Raspberry Pi: gráficas en vivo,
-alarmas, vista gemelo vs.\ medido, señal de cosecha & 60--100 & 480--2\,000 \\
-Puesta en marcha y calibración conjunta & prueba de fugas, calibración de
-celdas, verificación cruzada de sensores, primer batch de prueba & 20--40 & 160--800 \\
+1. Ingeniería: electrónico (montaje+firmware) \$500 +
+dashboard \$500 & 1\,000 & 4,10 M \\
+2. Sensores: 2$\times$SHT45, 3$\times$DS18B20, 2$\times$humedad,
+4 celdas+HX711 (CO$_2$ y CH$_4$ ya comprados) & 65 & 0,27 M \\
+3. Montaje reactor y control: bandejas, tapa, difusor, válvulas
+$\times$3, bomba, celda+bombecita, HEPA, PTC, nebulizador, rotámetro,
+ESP32, RPi, fuentes, relés, misceláneos & 470 & 1,93 M \\
+4. Mediciones de laboratorio: proximal+C/N+pH (4--6 muestras) +
+GC (${\approx}$20 inyecciones) & 700 & 2,87 M \\
+5. Alimentos y larvas de arranque (toda la campaña) & 100 & 0,41 M \\
+6. Gases: patrón de calibración CH$_4$/CO$_2$ & 100 & 0,41 M \\
 \midrule
-\textbf{Total contratado} & & \textbf{160--280} & \textbf{1\,280--5\,600} \\
+\textbf{Subtotal} & \textbf{2\,435} & \textbf{9,99 M} \\
+Imprevistos (15\,\%) & 365 & 1,50 M \\
+\midrule
+\textbf{TOTAL} & \textbf{2\,800} & \textbf{11,48 M} \\
+Opcional recomendado: LuminOx O$_2$ (habilita RQ) & +130 & +0,53 M \\
+\textbf{TOTAL con O$_2$} & \textbf{2\,930} & \textbf{12,01 M} \\
 \bottomrule
 \end{longtable}
 
-\noindent\textbf{Recomendación:} el gemelo digital y la calibración PINN los
-hace usted (son el núcleo de la tesis y ya van avanzados); el montaje y el
-firmware pueden contratarse parcialmente o hacerse con apoyo de un semillero.
-Escenario mixto estimado: \textbf{USD 500--1\,500}.
-
-% ============================================================
-\section{Análisis de laboratorio}
-
-\comp{Caracterización de los alimentos (análisis proximal + C/N + pH)}
-{Se envían muestras de ${\approx}$300~g de cada alimento (sustrato de pollo y
-el segundo tipo, en los días 0, 3 y 6 de fermentación) a un laboratorio de
-análisis de alimentos: humedad, cenizas, proteína, fibra, grasa, relación C/N
-y pH. El gemelo necesita la composición real del sustrato para predecir gases
-según el alimento, y es requisito de reporte en revistas Q1.}
-\costo{Proximal USD 50--100 por muestra + C/N y pH USD 20--40; con 4--6
-muestras: \textbf{USD 280--600} (menos si es laboratorio de la facultad).}
-
-\comp{Validación de gases por cromatografía (GC) + gas patrón}
-{Muestras tomadas con jeringa por el septo (minuto 12 de la ventana cerrada)
-inyectadas al GC, más prueba de interferencia con etanol, y un gas patrón
-certificado para chequeo periódico. El CO$_2$ ya se validó ($\pm$20~ppm); el
-CH$_4$ requiere este paso para confirmar que lo medido es metano y no VOCs.}
-\costo{USD 10--30 por inyección ($\approx$20 muestras: USD 200--400) + gas
-patrón USD 50--150 $\Rightarrow$ \textbf{USD 250--550} (USD 0--150 con
-convenio universitario).}
-
-\newpage
-% ============================================================
-\section{Resumen de presupuesto}
-
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{8.6cm}rr@{}}
-\toprule
-\textbf{Bloque} & \textbf{Mín. (USD)} & \textbf{Máx. (USD)} \\
-\midrule
-\endhead
-Reactor (bandejas, tapa, difusor, racores) & 118 & 183 \\
-Aireación (bomba, filtro, humidif., rotámetro, solenoide) & 78 & 132 \\
-Control térmico (tina, calentador, cobertura) & 40 & 75 \\
-Sensores (compras nuevas) & 212 & 350 \\
-Adquisición y cómputo (ESP32, RPi, fuente, relés) & 98 & 135 \\
-Análisis de laboratorio (alimentos + GC) & 530 & 1\,150 \\
-\midrule
-\textbf{Subtotal materiales y laboratorio} & \textbf{1\,076} & \textbf{2\,025} \\
-Ingeniería y desarrollo \textbf{contratado} & 1\,280 & 5\,600 \\
-\quad (escenario mixto recomendado) & (500) & (1\,500) \\
-\midrule
-\textbf{Total si todo se contrata} & \textbf{2\,356} & \textbf{7\,625} \\
-\textbf{Total escenario mixto (recomendado)} & \textbf{1\,576} & \textbf{3\,525} \\
-\textbf{Total si usted desarrolla todo} & \textbf{1\,076} & \textbf{2\,025} \\
-\bottomrule
-\end{longtable}
-
-\noindent\textbf{Cifra de planeación recomendada: ${\approx}$USD 2\,000--2\,500}
-(${\approx}$COP 8--10 millones a 4\,100~COP/USD), que cubre materiales,
-laboratorio y apoyo parcial de ingeniería, con 15\,\% de imprevistos.
+\noindent\textbf{Holgura frente al tope:} ${\approx}$3,0~M~COP (con O$_2$
+incluido). Si el laboratorio de la facultad cubre proximal y GC (convenio), el
+total baja a ${\approx}$8,6~M~COP.
 
 \medskip
-\noindent\textbf{Compras que bloquean el avance (hacer primero):}
-\begin{enumerate}
-  \item MH-410D 0--5\,\%vol --- sin él, el CO$_2$ satura otra vez.
-  \item Bandejas metálicas + geotextil y tapa de acrílico --- sin ellas no hay
-        reactor hermético ni aireación de fondo.
-  \item Bomba 10~L/min + rotámetro + solenoide --- control de aireación.
-  \item LOX-02 --- puede comprarse en segunda fase, antes de la campaña
-        definitiva.
-\end{enumerate}
-
-\noindent\textbf{Ahorros posibles:} reutilizar PC ($-$USD~80), GC y gas patrón
-por convenio ($-$USD~550), proximal en la facultad ($-$USD~300), desarrollo con
-semillero/práctica ($-$USD~800--4\,000).
+\noindent\textbf{Compras que bloquean el arranque (prioridad 1):} bandejas +
+tapa + bomba + rotámetro + válvulas + ESP32 (${\approx}$USD~200 / 0,8~M~COP).
+Lo demás puede escalonarse.
 
 \section*{Notas}
 \begin{itemize}
-  \item Precios de referencia consultados en agosto 2026: MH-410D
-        USD~55--120 según proveedor; LOX-02 USD~60--145; SHT45 USD~12,5--15;
-        tarifas de ingeniería Colombia USD~8--20/h (junior--medio).
-  \item Los costos de laboratorio son cotizaciones típicas; solicitar
-        cotización formal antes de la campaña.
-  \item Ítems ya adquiridos (paneras, MH-441D, MH-410D 5\,000~ppm) figuran con
-        costo USD~0 y quedan como respaldo o controles.
+  \item Tarifas de ingeniería acordadas: USD~500 (electrónica) + USD~500
+        (dashboard). El gemelo digital y la calibración PINN son desarrollo
+        propio (núcleo de la tesis).
+  \item Precios de referencia agosto 2026; variación típica $\pm$30\,\%.
+        Cotización formal de laboratorio antes de la campaña.
+  \item Ítems adquiridos (paneras, MH-410D, MH-441D) figuran en USD~0.
+        La panera pequeña y las sanducheras quedan para controles.
+  \item El baño de agua quedó como opción de respaldo \emph{pasivo}
+        (${\approx}$USD~25) si el primer batch muestra sobrecalentamiento
+        sostenido $>$35~$^\circ$C.
 \end{itemize}
 
 \end{document}

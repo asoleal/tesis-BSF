@@ -1,107 +1,118 @@
-% Esquemático del sistema completo (vista de corte lateral)
+% Esquemático del sistema completo (vista de corte lateral, no a escala)
 \begin{tikzpicture}[font=\small, >=Stealth, line cap=round]
 
 % ---------- colores ----------
-\colorlet{agua}{cyan!15}
 \colorlet{cama}{orange!25}
 \colorlet{tapa}{gray!45}
 \colorlet{aire}{red!80!black}
 
-% ---------- tina del baño ----------
-\draw[very thick] (0,0) rectangle (13.2,8.2);
-\fill[agua] (0.08,0.08) rectangle (13.12,6.3);
-\draw[blue, dashed] (0.08,6.3) -- (13.12,6.3);
-\node[blue, anchor=west] at (0.15,5.55) {\scriptsize agua 30\,$^\circ$C};
-\node[anchor=south east, gray] at (13.0,0.15) {\scriptsize tina (baño)};
-
-% ---------- pilares ----------
-\fill[gray!70] (2.4,0.25) rectangle (3.0,1.6);
-\fill[gray!70] (10.0,0.25) rectangle (10.6,1.6);
-
-% ---------- calentador ----------
-\draw[fill=red!20] (12.0,0.8) rectangle (12.8,2.1);
-\node[align=center] at (12.4,1.45) {\scriptsize calen-\\\scriptsize tador};
-
 % ---------- celdas de carga ----------
-\draw[fill=gray!50] (1.0,-0.75) rectangle (1.8,-0.1);
-\draw[fill=gray!50] (11.4,-0.75) rectangle (12.2,-0.1);
-\node[gray, align=center] at (6.6,-1.1) {\scriptsize 4 celdas de carga 50\,kg (peso continuo)};
+\draw[fill=gray!50] (2.4,-0.75) rectangle (3.2,-0.05);
+\draw[fill=gray!50] (10.0,-0.75) rectangle (10.8,-0.05);
+\node[gray, align=center] at (6.6,-1.2) {\scriptsize 4 celdas de carga 50\,kg (peso continuo)};
 
 % ---------- panera ----------
-\draw[very thick] (1.6,1.6) rectangle (11.6,7.3);
+\draw[very thick] (1.6,0.0) rectangle (11.6,7.3);
+\node[anchor=north west, gray] at (1.65,7.28) {};
 
 % ---------- plenum ----------
-\fill[gray!20] (1.7,1.7) rectangle (11.5,2.55);
-\node at (6.6,2.1) {\scriptsize PLENUM (cámara de distribución)};
-\draw[very thick, dash dot] (1.7,2.55) -- (11.5,2.55);
-\node[anchor=west, gray] at (8.2,2.85) {\scriptsize placa difusora};
+\fill[gray!20] (1.7,0.1) rectangle (11.5,0.85);
+\node at (6.6,0.45) {\scriptsize PLENUM (distribución de aire)};
+\draw[very thick, dash dot] (1.7,0.85) -- (11.5,0.85);
+\node[anchor=west, gray] at (8.2,1.05) {\scriptsize placa difusora};
 
-% ---------- bandejas (3 pisos) ----------
-\foreach \ya/\yb in {2.85/3.75, 4.25/5.15, 5.65/6.55}{
-  \draw[fill=cama] (2.1,\ya) rectangle (11.1,\yb);
-  \draw[densely dotted, thick, brown] (2.1,\yb) -- (11.1,\yb);}
-\foreach \x/\y in {2.6/3.1,3.5/3.35,4.5/3.05,5.6/3.35,6.7/3.1,7.7/3.3,8.8/3.05,9.8/3.3,10.6/3.1,
-                   2.7/4.5,3.8/4.7,4.9/4.45,6.1/4.7,7.2/4.5,8.3/4.7,9.5/4.45,10.5/4.6,
-                   2.6/5.9,3.6/6.1,4.7/5.85,5.8/6.1,6.9/5.9,8.0/6.15,9.2/5.85,10.3/6.1}{
+% ---------- bandejas (3 pisos, paredes sólidas) ----------
+\foreach \ya/\yb in {1.15/2.25, 2.6/3.7, 4.05/5.15}{
+  \draw[fill=cama, line width=1.6pt, brown!60!black] (2.1,\ya) rectangle (11.1,\yb);
+  \draw[densely dotted, thick, brown] (2.18,\ya+0.1) -- (11.02,\ya+0.1);}
+\foreach \x/\y in {2.6/1.55,3.5/1.75,4.5/1.45,5.6/1.75,6.7/1.5,7.7/1.7,8.8/1.45,9.8/1.7,10.6/1.5,
+                   2.7/2.95,3.8/3.15,4.9/2.9,6.1/3.15,7.2/2.95,8.3/3.15,9.5/2.9,10.5/3.05,
+                   2.6/4.4,3.6/4.6,4.7/4.35,5.8/4.6,6.9/4.4,8.0/4.6,9.2/4.35,10.3/4.55}{
   \fill[brown!80!black] (\x,\y) circle (0.055);}
-\node[brown!70!black, anchor=east] at (1.55,3.3) {\scriptsize bandejas};
-\node[brown, anchor=east] at (11.05,6.78) {\scriptsize geotextil};
+% etiquetas de bandejas
+\draw[gray, thin] (1.5,1.7) -- (2.15,1.7);
+\node[brown!70!black, anchor=east] at (1.45,1.7) {\scriptsize bandejas (6)};
+\draw[gray, thin] (11.15,1.4) -- (11.05,1.25);
+\node[brown, anchor=west] at (11.15,1.4) {\scriptsize fondo perforado + geotextil};
+\node[brown!60!black, anchor=west] at (11.15,4.6) {\scriptsize paredes sólidas 6,5\,cm};
+
+% ---------- sonda humedad ----------
+\draw[fill=teal] (2.55,4.2) rectangle (2.68,4.95);
+\draw[gray, thin] (1.5,4.6) -- (2.5,4.6);
+\node[teal!70!black, anchor=east] at (1.45,4.6) {\scriptsize sonda humedad};
 
 % ---------- headspace ----------
-\node[anchor=west] at (2.2,6.92) {\scriptsize headspace};
+\node[anchor=west] at (2.2,5.35) {\scriptsize headspace};
 
 % ---------- tapa ----------
 \draw[fill=tapa, very thick] (1.3,7.3) rectangle (11.9,7.72);
 \draw[orange, very thick] (1.35,7.28) -- (11.85,7.28);
-\node[anchor=west, gray] at (12.3,8.35) {\scriptsize tapa acrílica + empaque};
+\node[anchor=west, gray] at (12.3,7.5) {\scriptsize tapa acrílica + empaque};
 \draw[fill=black] (1.05,7.2) rectangle (1.35,7.95);
 \draw[fill=black] (11.9,7.2) rectangle (12.2,7.95);
-\node[anchor=west, gray] at (12.3,7.55) {\scriptsize abrazaderas};
+\node[anchor=west, gray] at (12.3,7.0) {\scriptsize abrazaderas};
 
-% ---------- sensores en la tapa (etiquetas escalonadas) ----------
-\foreach \x/\nom/\yl in {3.6/CO$_2$/8.45, 4.6/CH$_4$/8.95, 5.6/O$_2$/8.45, 6.6/T--HR/8.95}{
-  \draw[fill=yellow!40] (\x-0.22,6.55) rectangle (\x+0.22,7.3);
-  \draw[gray, thin] (\x,7.78) -- (\x,\yl-0.18);
-  \node[anchor=south] at (\x,\yl-0.2) {\scriptsize \nom};
-}
-% septo
-\draw[fill=blue!40] (8.6,7.3) rectangle (9.0,7.75);
-\draw[gray, thin] (8.8,7.78) -- (8.8,8.28);
-\node[anchor=south] at (8.8,8.28) {\scriptsize septo GC};
-% válvula de salida
-\draw[fill=magenta!30] (10.1,7.72) rectangle (10.7,8.15);
+% ---------- SHT45, septo, nebulizador en la tapa ----------
+\draw[fill=green!30] (2.78,6.7) rectangle (3.22,7.3);
+\draw[gray, thin] (3.0,7.78) -- (3.0,8.28);
+\node[anchor=south] at (3.0,8.28) {\scriptsize T--HR};
+\draw[fill=blue!40] (9.6,7.3) rectangle (10.0,7.75);
+\draw[gray, thin] (9.8,7.78) -- (9.8,8.28);
+\node[anchor=south] at (9.8,8.28) {\scriptsize septo GC};
+% nebulizador
+\draw[fill=cyan!40] (8.55,6.8) rectangle (9.05,7.3);
+\draw[dotted, cyan!60!black, thick] (8.65,6.8) -- (8.4,5.6);
+\draw[dotted, cyan!60!black, thick] (8.95,6.8) -- (9.2,5.6);
+\node[cyan!50!black, anchor=west] at (9.25,6.5) {\scriptsize nebulizador};
 
 % ---------- sondas T de cama ----------
-\foreach \x/\d in {9.5/4.35, 9.8/4.5, 10.1/4.85}{
+\foreach \x/\d in {9.0/2.75, 9.25/2.95, 9.5/3.35}{
   \draw[thick, purple] (\x,7.3) -- (\x,\d);
   \fill[purple] (\x,\d) circle (0.07);}
-\node[purple, anchor=east] at (9.35,6.88) {\scriptsize T cama $\times$3};
+\node[purple, anchor=west] at (9.6,5.9) {\scriptsize T cama $\times$3};
 
 % ---------- línea de aire de entrada (numerada) ----------
-\foreach \i/\x in {1/-3.7, 2/-2.9, 3/-2.1, 4/-1.3, 5/-0.5}{
-  \node[draw, circle, fill=red!10, inner sep=2.2pt] (c\i) at (\x,2.1) {\i};}
+\foreach \i/\x in {1/-4.5, 2/-3.6, 3/-2.7, 4/-1.8, 5/-0.9, 6/-0.05}{
+  \node[draw, circle, fill=red!10, inner sep=2.2pt] (c\i) at (\x,0.5) {\i};}
 \draw[->, aire, thick] (c1) -- (c2);
 \draw[->, aire, thick] (c2) -- (c3);
 \draw[->, aire, thick] (c3) -- (c4);
 \draw[->, aire, thick] (c4) -- (c5);
-% tubería: atraviesa la pared de la tina y entra al plenum
-\draw[->, aire, very thick] (c5.east) -- (1.78,2.1);
+\draw[->, aire, thick] (c5) -- (c6);
+\draw[->, aire, very thick] (c6.east) -- (1.78,0.5);
 
 % ---------- flechas ascendentes por la cama ----------
-\foreach \x in {3.3, 6.0, 8.4}{
-  \draw[->, aire, very thick] (\x,2.2) -- (\x,6.45);}
-\node[aire] at (3.62,3.05) {6.};
-% salida por el headspace y la válvula
-\draw[->, aire, very thick] (6.95,6.62) -- (10.35,6.62) -- (10.35,7.68);
-\draw[->, aire, very thick] (10.4,8.18) -- (10.4,9.0);
-\node[anchor=south, align=center] at (10.4,9.0) {\scriptsize 7. salida\\\scriptsize (válvula 3 vías)};
+\foreach \x in {3.6, 6.2, 8.0}{
+  \draw[->, aire, very thick] (\x,0.6) -- (\x,5.0);}
+\node[aire] at (3.9,1.5) {7.};
+
+% ---------- lazo de medición ----------
+% salida headspace (puerto A)
+\draw[->, aire, very thick] (4.4,7.72) -- (4.4,8.55) -- (5.35,8.55);
+\node[aire] at (4.75,6.35) {8.};
+% válvula 3 vías (9)
+\node[draw, rectangle, fill=red!10, inner sep=2.2pt] (v9) at (5.7,8.55) {9.};
+\draw[->, aire, thick] (5.7,9.25) -- (v9.north);
+\node[anchor=south] at (5.7,9.25) {\scriptsize aire ambiente};
+% celda de medición (10)
+\draw[->, aire, very thick] (v9.east) -- (8.55,8.55);
+\draw[fill=yellow!25, very thick] (8.6,8.15) rectangle (12.3,9.0);
+\node at (10.45,8.72) {\scriptsize \textbf{10. celda de medición}};
+\node at (10.45,8.4) {\scriptsize CO$_2$ \, $\cdot$ \, CH$_4$ \, $\cdot$ \, (O$_2$)};
+% retorno con bombecita
+\draw[->, aire, very thick] (9.6,8.15) -- (9.6,7.9) -- (7.0,7.9) -- (7.0,7.72);
+\node[draw, circle, fill=red!10, inner sep=1.8pt] at (8.3,7.9) {\tiny P};
+
+% ---------- salida principal y escape ----------
+\draw[->, aire, very thick] (11.3,7.72) -- (11.3,7.95) -- (12.6,7.95) -- (12.6,8.6) -- (13.3,8.6);
+\node[draw, rectangle, fill=red!10, inner sep=2.2pt] (v11) at (13.65,8.6) {11.};
+\draw[->, aire, very thick] (v11.east) -- (14.6,8.6) node[above, pos=0.9]{\scriptsize escape};
 
 % ---------- electrónica ----------
-\node[draw, fill=blue!10, minimum width=2.4cm, minimum height=1.1cm, align=center] (esp) at (15.2,5.2) {\scriptsize ESP32\\\scriptsize (control y\\\scriptsize adquisición)};
-\node[draw, fill=blue!10, minimum width=2.4cm, minimum height=0.95cm, align=center] (rpi) at (15.2,3.4) {\scriptsize Raspberry Pi\\\scriptsize (dashboard / TSV)};
+\node[draw, fill=blue!10, minimum width=2.4cm, minimum height=1.1cm, align=center] (esp) at (15.3,5.2) {\scriptsize ESP32\\\scriptsize (control y\\\scriptsize adquisición)};
+\node[draw, fill=blue!10, minimum width=2.4cm, minimum height=0.95cm, align=center] (rpi) at (15.3,3.4) {\scriptsize Raspberry Pi\\\scriptsize (dashboard / TSV)};
 \draw[<->, thick, blue!60] (esp) -- (rpi);
 \draw[dashed, gray, ->] (esp.west) -- (13.35,5.2);
-\node[gray, align=center] at (14.6,6.25) {\scriptsize cables/Wi-Fi a\\\scriptsize sensores y válvula};
-\draw[dashed, gray, ->] (rpi.south) |- (12.6,-0.5);
+\node[gray, align=center] at (14.7,6.3) {\scriptsize controla: válvulas 6--9--11,\\\scriptsize PTC, nebulizador};
 
 \end{tikzpicture}
