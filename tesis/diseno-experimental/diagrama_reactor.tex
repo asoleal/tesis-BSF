@@ -1,0 +1,65 @@
+\begin{tikzpicture}[font=\footnotesize, >=Stealth]
+
+% --- Bano termico externo ---
+\draw[fill=cyan!8] (0,0) rectangle (12.4,5.6);
+\node[anchor=west, text=teal] at (0.25,5.25) {baño térmico 30 $\pm$ 0.5 °C};
+
+% --- Panera ---
+\draw[thick, fill=white] (1.6,1.1) -- (1.9,4.3) -- (10.7,4.3) -- (11.0,1.1) -- cycle;
+\draw[thick, fill=red!15] (1.75,4.3) rectangle (10.85,4.7); % tapa
+
+% --- Cama de sustrato ---
+\draw[fill=brown!35] (1.73,1.45) rectangle (10.9,2.25);
+\node at (6.3,1.85) {cama: sustrato + larvas (3--4.5 cm)};
+
+% --- Placa difusora / plenum ---
+\draw[fill=gray!45] (1.73,1.1) rectangle (10.9,1.35);
+\node[anchor=west] at (11.15,1.22) {\parbox{3.1cm}{placa difusora\\+ plenum (aireación)}};
+
+% --- Pilares de peso ---
+\draw[fill=black!60] (3.0,0.55) rectangle (3.3,1.1);
+\draw[fill=black!60] (9.3,0.55) rectangle (9.6,1.1);
+\draw[fill=orange!30] (2.7,0.15) rectangle (3.6,0.55);
+\draw[fill=orange!30] (9.0,0.15) rectangle (9.9,0.55);
+\node[anchor=north, align=center] at (3.15,0.12) {celda de carga};
+\node[anchor=north, align=center] at (9.45,0.12) {celda de carga};
+
+% --- Linea de entrada de aire ---
+\node[draw, fill=green!15, rounded corners, align=center] (bomba) at (-2.2,1.1) {bomba\\5 L/min};
+\node[draw, fill=green!15, rounded corners, align=center, right=0.45cm of bomba] (filtro) {filtro};
+\node[draw, fill=green!15, rounded corners, align=center, right=0.45cm of filtro] (hum) {humidif.};
+\node[draw, fill=green!15, rounded corners, align=center, right=0.45cm of hum] (flujo) {caudal\\0.1--5 L/min};
+\draw[->, thick, green!50!black] (bomba) -- (filtro);
+\draw[->, thick, green!50!black] (filtro) -- (hum);
+\draw[->, thick, green!50!black] (flujo.east) -- ++(0.35,0) |- (6.3,1.1);
+\draw[->, thick, green!50!black] (hum) -- (flujo);
+
+% --- Salida con valvula de modo dual ---
+\node[draw, fill=violet!15, rounded corners, align=center] (valv) at (12.6,4.5) {válvula\\modo dual};
+\draw[->, thick, violet] (10.85,4.5) -- (valv.west);
+\draw[->, thick, violet] (valv.east) -- ++(0.9,0) node[midway, above]{salida};
+
+% --- Sensores de cabecera (cuelgan de la tapa) ---
+\foreach \x/\lab in {3.4/{CO$_2$}, 5.0/{CH$_4$}, 6.6/{O$_2$}, 8.2/{T/HR}}{
+  \draw[fill=yellow!25] (\x-0.35,3.55) rectangle (\x+0.35,4.3);
+  \node at (\x,3.92) {\lab};
+}
+\node[anchor=west, align=left] at (11.15,3.1) {sensores cabecera\\(centro, lejos de salida)};
+
+% --- Septo para GC ---
+\draw[fill=magenta!30] (9.4,4.3) rectangle (10.0,4.55);
+\node[anchor=south west, align=left] at (9.2,4.8) {septo (muestreo GC)};
+
+% --- Sondas T en la cama ---
+\foreach \y in {1.6,1.85,2.1}{
+  \draw[fill=red!60] (2.3,\y) circle (0.06);
+}
+\node[anchor=east, align=right] at (2.2,1.85) {3$\times$ T cama\\(1, 2.5, 4 cm)};
+
+% --- Unidad de control ---
+\node[draw, fill=blue!10, rounded corners, align=center] (ctrl) at (-2.2,4.3) {ESP32 / RPi\\control + datos};
+\draw[dashed, blue!60] (ctrl) -- (valv.north west);
+\draw[dashed, blue!60] (ctrl) |- (bomba.north);
+\draw[dashed, blue!60] (ctrl.east) -- ++(0.3,0) |- (5.0,4.75);
+
+\end{tikzpicture}

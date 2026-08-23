@@ -1,0 +1,249 @@
+% !TeX program = xelatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{fontspec}
+\usepackage[spanish, es-noshorthands]{babel}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning}
+\usepackage{caption}
+\usepackage{hyperref}
+
+\title{Diseño experimental del batch instrumentado para la\\
+bioconversión de residuos con \emph{Hermetia illucens}:\\
+reactor, instrumentación, control y protocolos}
+\author{J.~J.~Leal \and Grupo de investigación}
+\date{Versión 1.0 --- \today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Objetivo y alcance}
+
+Construir y operar un batch de bioconversión con \emph{Hermetia illucens}
+totalmente instrumentado, capaz de: (i) medir emisiones de GEI
+(CO$_2$, CH$_4$) con separación de fuentes (larvaria vs.\ microbiana),
+(ii) controlar temperatura, humedad y ventilación de la cama,
+(iii) alimentar y validar el gemelo digital del proceso, y
+(iv) generar los datos del artículo Q1.
+El diseño parte de los resultados ya obtenidos con la cámara
+tipo panera de 11{,}9~L y los modelos 0D/2D del gemelo.
+
+\section{Reactor: panera modificada}
+
+Recipiente plástico tronco-piramidal con tapa (medido):
+base $31\times20$~cm, boca $35\times25$~cm, altura 16~cm;
+$V_\text{total}=11{,}9$~L, $V_\text{aire}\approx11{,}4$~L con cama.
+
+Modificaciones obligatorias:
+\begin{enumerate}
+  \item \textbf{Placa difusora de aireación} bajo la cama
+        (acrílico perforado 3~mm, orificios cada 2~cm, plenum de 1~cm).
+  \item \textbf{Puerto de muestreo con septo} en la tapa
+        (septo de silicona/PTFE, para jeringa hermética).
+  \item \textbf{Válvula de modo dual} en la salida:
+        cerrada (medición de flujo tipo cámara estática) /
+        abierta (operación continua ventilada).
+  \item Pasacables herméticos (prensas PG7 + silicona) para sensorería.
+\end{enumerate}
+
+\textbf{Prueba de fugas (P-01):} inyectar CO$_2$ hasta 3\,000~ppm,
+cerrar, registrar 1~h. Criterio de aceptación: decaimiento $<5$\,\%/h.
+
+\section{Sistema de aireación forzada de fondo}
+
+\textbf{Justificación (resultados propios):} los modelos 2D y 0D
+mostraron que ventilar la cabecera no controla ni el CO$_2$ ni la
+temperatura \emph{dentro} de la cama: la difusión es el cuello de
+botella. La aireación debe entrar \emph{por debajo}.
+
+\subsection{Caudales de diseño (calculados de datos reales)}
+Flujo máximo medido: 294~mL\,CO$_2$/h con 750 larvas (D1, agitadas).
+Escalando al batch nominal (2\,000 larvas): $q_\text{max}\approx0{,}8$~L/h.
+Para mantener CO$_2\leq0{,}45$\,\% bajo el tope del sensor:
+\[
+  \text{ACH} \geq \frac{100\,q_\text{max}}{V_\text{aire}\cdot 0{,}45}
+  \approx 15~\text{recambios/h}.
+\]
+Rango de diseño: \textbf{0{,}5--20 ACH}, es decir
+$Q = 0{,}1$--$3{,}8$~L/min. Componentes:
+\begin{itemize}
+  \item Bomba de diafragma 5~L/min (acuario, 2 salidas).
+  \item Control de caudal: rotámetro 0{,}1--5~L/min con válvula
+        de aguja (básico) o controlador de flujo másico (ideal).
+  \item Humidificador de burbujeo en la entrada (frasco lavador)
+        para no secar la cama.
+  \item Filtro de entrada (HEPA de acuario) contra contaminación biológica.
+\end{itemize}
+\textbf{Ubicación inlet:} plenum bajo la cama (distribución uniforme).
+\textbf{Ubicación outlet:} esquina superior de la tapa, diagonalmente
+opuesta al punto de medición, con válvula solenoide de modo dual.
+
+\section{Control térmico}
+
+Baño termostático: la panera se instala dentro de un contenedor mayor
+con agua a $30{,}0\pm0{,}5$~°C (calentador de acuario de 100~W con
+termostato + minibomba de circulación). La panera se apoya sobre
+pilares sellados que atraviesan el fondo del baño y transmiten su peso
+a las celdas de carga (sección~\ref{sec:instrumentacion}).
+Justificación: óptimo larvario 25--30~°C; el baño fija la frontera
+térmica y la aireación hace el control fino de la cama.
+
+\section{Control de humedad}
+
+\begin{itemize}
+  \item \textbf{Cama:} 60--70\,\% (óptimo literatura). Medición:
+        sensor capacitivo enterrado + celda de carga (balance de agua).
+        Corrección: aspersión medida por jeringa sobre la superficie,
+        nunca por encima de 70\,\% (riesgo anaerobio).
+  \item \textbf{Cabecera:} HR 60--70\,\%, controlada indirectamente
+        por el humidificador de entrada y el caudal.
+\end{itemize}
+
+\section{Instrumentación}
+\label{sec:instrumentacion}
+
+\begin{table}[h]
+\centering\small
+\caption{Instrumentación del batch. Ubicaciones en
+figura~\ref{fig:reactor}.}
+\begin{tabular}{@{}llllll@{}}
+\toprule
+Variable & Sensor & Rango & Exactitud & Ubicación & Frec. \\
+\midrule
+CO$_2$ & Winsen MH-410D (v.~5\,\%vol) & 0--50\,000~ppm & $\pm20$~ppm (validado GC) & cabecera centro & 30~s \\
+CH$_4$ & Winsen MH-441D & 0--5\,\%vol & $\pm3$\,\% FS; validar COVs vs GC & cabecera centro & 30~s \\
+O$_2$  & SST LuminOx LOX-02 (óptico) & 0--25\,\% & $\pm2$\,\% FS; T90$<$30~s & cabecera centro & 30~s \\
+T/HR aire & Sensirion SHT45 & $-40$--125~°C, 0--100\,\% & $\pm0{,}1$~°C, $\pm1{,}5$\,\%HR & cabecera centro & 30~s \\
+T cama & DS18B20 estanco ($\times3$) & $-55$--125~°C & $\pm0{,}5$~°C & prof.\ 1, 2{,}5 y 4~cm & 30~s \\
+Humedad cama & capacitivo v2.0 & 0--100\,\% & calibrar gravimétrico & centro de cama & 30~s \\
+Masa total & 4$\times$ celda 50~kg + HX711 & 0--200~kg & $\pm10$~g & bajo la panera & 30~s \\
+Caudal & rotámetro 0{,}1--5~L/min & --- & $\pm5$\,\% & línea de entrada & manual \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Nota crítica CO$_2$:} la versión de 5\,000~ppm queda
+descartada para el batch (saturó en campaña anterior); se requiere
+la versión 5\,\%vol. El O$_2$ permite calcular el cociente
+respiratorio RQ = CO$_2$/O$_2$, variable metabólica clave.
+
+\section{Diseño de la cama y especificaciones del batch}
+\label{sec:batch}
+
+Basado en la literatura de cría (óptimos: T 25--30~°C, humedad de
+sustrato 60--70\,\%, HR 60--70\,\%, densidad 2{,}5--7
+larvas/cm$^2$, profundidad 1--5~cm, oscuridad):
+
+\begin{table}[h]
+\centering\small
+\caption{Especificaciones del batch nominal.}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Parámetro & Valor nominal & Base \\
+\midrule
+Larvas & 2\,000 (pesadas, $\pm$10) & 2{,}7/cm$^2$ sobre 742~cm$^2$ \\
+Edad siembra & 4--6 días (neonatas tardías) & manejo y viabilidad \\
+Alimento & 100~mg/larva/día (base húmeda) & rango 90--175~mg/larva/día \\
+Cargas & días 0, 3 y 6 (tercios) & evita compactación anaerobia \\
+Profundidad cama & 3--4{,}5~cm & máximo 5~cm \\
+Humedad sustrato & 65--70\,\% & óptimo digestión \\
+Temperatura & $27\pm1$~°C baño; cama $\leq33$~°C & bienestar larvario \\
+HR cabecera & 60--70\,\% & --- \\
+Iluminación & oscuridad & instinto de enterramiento \\
+Duración & 12--14 días o señal de cosecha & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Diseño factorial y controles}
+
+Factores: tipo de alimento (2) $\times$ aireación (sin / cabecera /
+fondo) $\times$ día larvario (D1--D14, medición diaria).
+Controles por batch: (a) alimento solo por tipo (microbiano),
+(b) cámara vacía (fondo de sensores), (c) cámara cerrada con larvas
+sin alimento (ventana corta, separación larvaria pura).
+Réplicas: $n\geq3$ por condición. \textbf{Pesar larvas en siembra y
+cosecha, y cada 2 días en muestreo destructivo paralelo si es viable.}
+
+\section{Protocolos operativos}
+
+\begin{description}
+  \item[P-01 Fugas:] cámara vacía, CO$_2$ a 3\,000~ppm, 1~h;
+        aceptación $<5$\,\%/h.
+  \item[P-02 Validación de sensores:] (i) test de etanol para
+        MH-441D (paño con alcohol junto a entrada, cámara vacía);
+        (ii) cero y span con gas patrón; (iii) registro de deriva.
+  \item[P-03 Arranque:] cama preparada 24~h antes (fermentación
+        controlada), siembra, peso inicial, inicio de registro.
+  \item[P-04 Operación diaria:] ventana de cámara cerrada de
+        15~min (cerrar válvula, aireación en cero) con criterio de
+        parada CO$_2<4\,000$~ppm; en el minuto 12, muestreo por
+        septo para GC (2$\times$20~mL, CH$_4$, CO$_2$, etanol/COVs).
+  \item[P-05 Cosecha:] por señal (sección~\ref{sec:cosecha}) o día
+        14; peso de larvas, frass, supervivencia.
+  \item[P-06 Limpieza:] lavado, calibración de sensores, respaldo
+        de datos al repositorio.
+\end{description}
+
+\section{Señales de cosecha (hipótesis a probar)}
+\label{sec:cosecha}
+
+Tres candidatas, a validar contra biomasa real cosechada:
+(i) pico de CH$_4$/COVs (transición anaerobia del alimento),
+(ii) caída del CO$_2$ tras el pico (metabolismo cayendo por
+agotamiento de alimento), (iii) aplanamiento de la pendiente de masa
+(celda de carga). El diseño mide las tres de forma continua.
+
+\section{Control y gemelo digital}
+
+Variables manipuladas: caudal de aireación, válvula de modo,
+calefactor del baño, eventos de rehidratación.
+Leyes iniciales (ya simuladas en el gemelo): ACH adaptativo para
+CO$_2<0{,}45$\,\%, ACH máximo si $T_\text{cama}>33$~°C.
+Camino siguiente: calibración inversa con PINN y control predictivo
+(MPC) informado por el gemelo.
+
+\section{Adquisición de datos}
+
+ESP32/Raspberry Pi; lectura cada 30~s (mismo formato TSV actual:
+\texttt{hh:mm:ss}, valor); CSV diario con marca de eventos
+(ventana cerrada, muestreo GC, recarga de alimento); respaldo
+automático al repositorio \texttt{tesis-BSF/datos/}.
+
+\section{Diagrama del reactor}
+
+\begin{figure}[h]
+\centering
+\input{diagrama_reactor}
+\caption{Sección transversal esquemática del reactor instrumentado.}
+\label{fig:reactor}
+\end{figure}
+
+\begin{thebibliography}{9}\small
+\bibitem{mertenat2019} Mertenat, A., Diener, S., Zurbrügg, C. (2019).
+Black Soldier Fly biowaste treatment -- assessment of global warming
+potential. \emph{Waste Management} 84, 173--181.
+\bibitem{parodi2020} Parodi, A.\ et al. (2020). Bioconversión de
+residuos orgánicos con H.~illucens y balance de GEI.
+\emph{Journal of Cleaner Production}. [TODO: completar desde Zotero]
+\bibitem{eriksson2022} Eriksson et al. (2022). Respiración y CO$_2$
+en larvas de H.~illucens. [TODO: completar desde Zotero]
+\bibitem{welfare2024} Anon. (2024). Black Soldier Fly Larvae's
+Optimal Feed Intake and Rearing Density: A Welfare Perspective
+(Part~II). \emph{Animals} (MDPI). [TODO: completar desde Zotero]
+\bibitem{feeding2026} Anon. (2026). Feeding Strategies for Optimizing
+BSF Larval Production. \emph{Sustainability} (MDPI). [TODO: completar]
+\bibitem{mh410d} Winsen. Datasheet MH-410D NDIR CO$_2$ sensor.
+\bibitem{mh441d} Winsen. Datasheet MH-441D NDIR CH$_4$ sensor.
+\bibitem{lox02} SST Sensing. LuminOx LOX-02 optical O$_2$ sensor,
+DS-0030.
+\bibitem{sht45} Sensirion. Datasheet SHT4x (SHT45).
+\end{thebibliography}
+
+\end{document}
