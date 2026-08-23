@@ -1,0 +1,456 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{fontspec}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\definecolor{azul}{RGB}{20,60,120}
+
+\setlist{nosep,leftmargin=1.4em}
+
+\newcommand{\itemfull}[4]{%
+  \item[\textbf{#1}]%
+  \par\textbf{Qué es:} #2%
+  \par\textbf{Cómo se instala:} #3%
+  \par\textbf{Para qué sirve:} #4\par\medskip}
+
+\newcommand{\costo}[1]{\par\textbf{Costo estimado:} #1}
+
+\title{\textbf{Lista de componentes, descripción de montaje\\y presupuesto estimado}\\[4pt]
+\large Reactor controlado para bioconversión con \emph{Hermetia illucens}\\
+\large Versión 2.0 --- panera 34\,L, bandejas metálicas perforadas, tapa rígida de acrílico}
+\author{J.\,J. Leal --- tesis doctoral\\Repositorio: \texttt{github.com/asoleal/tesis-BSF}}
+\date{Agosto 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent Este documento lista \textbf{todos} los componentes del sistema
+(reactor, aireación, control térmico, sensores, adquisición de datos,
+\emph{software} y análisis de laboratorio). Cada ítem explica en lenguaje
+sencillo \textbf{qué es}, \textbf{cómo se instala} y \textbf{para qué sirve},
+seguido de su \textbf{costo comercial estimado}. Los precios son valores de
+referencia de mercado (tiendas en línea, distribuidores y cotizaciones
+típicas de laboratorio, agosto 2026) y pueden variar $\pm$30\,\% por
+proveedor, envío e impuestos. Moneda de referencia: dólar estadounidense
+(USD); equivalencia aproximada en pesos colombianos (COP) a una tasa
+supuesta de 4\,000--4\,200~COP/USD --- verificar al momento de comprar.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ============================================================
+\section{Reactor: cámara de bioconversión (panera 34\,L)}
+
+\begin{description}[style=nextline]
+
+\itemfull{Panera plástica grande (34\,L, base $38\times28$~cm, alto 26~cm)}
+{Recipiente plástico rectangular con paredes trapezoidales; es el cuerpo del
+reactor: adentro van las bandejas con las larvas y el alimento.}
+{Se apoya sobre cuatro pilares dentro del baño de agua termorregulado. No
+requiere modificación estructural; solo perforaciones para los racores PG7
+(entradas/salidas de aire y cables).}
+{Contiene la cama de larvas con espacio suficiente para 6 bandejas
+(${\approx}$4\,500 larvas) y un espacio de cabeza (\emph{headspace}) donde se
+acumula el gas que miden los sensores.}
+\costo{USD 8--15 (ya adquirida).}
+
+\itemfull{Bandejas metálicas perforadas (6 uds.) + geotextil}
+{Láminas metálicas (aluminio o acero inoxidable) de ${\approx}34\times24$~cm
+con perforaciones de 3~mm, forradas por encima con tela geotextil no tejida.}
+{Se apilan en pisos dentro de la panera, separadas por topes de ${\approx}$10~cm
+de altura. El geotextil se corta a la medida y se coloca sobre la malla
+perforada antes de echar el alimento.}
+{Los orificios dejan pasar el aire que entra por debajo (aireación forzada en
+el fondo) a través de la cama; el geotextil evita que el alimento y las
+larvas se caigan por los huecos --- problema que descartó la malla como fondo
+único. El metal no se deforma ni retiene humedad como la madera o el
+plástico.}
+\costo{USD 10--15 por bandeja (corte y perforado en taller local) $\Rightarrow$
+\textbf{USD 60--90} el juego de 6; geotextil 1~m$^2$: USD 5--10.}
+
+\itemfull{Tapa rígida de acrílico (45$\times$35~cm, 3--4~mm) + empaque + abrazaderas}
+{Plancha de acrílico transparente cortada a la boca superior de la panera,
+con un cordón de empaque (goma EPDM o cordón de silicona vulcanizada
+\emph{in situ}) pegado en el perímetro, y 4 abrazaderas tipo \emph{toggle}
+(de palanca) en los bordes.}
+{El cordón de empaque se adhiere a la cara inferior del acrílico; las
+abrazaderas se atornillan al borde de la panera y presionan la tapa contra el
+empaque. Sobre la tapa van montados los sensores de gas, el septo y la
+válvula de salida.}
+{Sella herméticamente el reactor (requisito del método de cámara estática:
+sin fugas, toda la variación de gas es atribuible a la bioconversión) y al
+mismo tiempo permite abrir rápido para alimentar y tomar muestras. Reemplaza
+la tapa original rota y la silicona temporal que se usaba antes.}
+\costo{Acrílico: USD 15--25; empaque EPDM (5~m): USD 8--12; abrazaderas
+\emph{toggle} $\times$4: USD 10--16 $\Rightarrow$ \textbf{USD 33--53}.}
+
+\itemfull{Placa difusora / plenum}
+{Lámina perforada (puede ser del mismo material de las bandejas) que divide
+la panera horizontalmente a ${\approx}$3~cm del fondo, creando una cámara
+vacía debajo de las bandejas.}
+{Se fija con soportes pequeños o silicona a 3~cm del fondo; el aire de la
+bomba entra a esa cámara (el plenum) y sube por los orificios.}
+{Distribuye el aire de manera uniforme por toda el área de la cama. Sin
+ella, el aire entraría como un chorro puntual y solo ventilaría una esquina;
+con plenum, todas las bandejas reciben el mismo flujo.}
+\costo{Incluida en el juego de bandejas (una séptima lámina): USD 10--15.}
+
+\itemfull{Racores PG7, septo de GC y válvula de tres vías}
+{PG7: prensaestopas plásticos que sellan los cables que atraviesan la pared.
+Septo: tapón de silicona autosellante (como el de los viales de laboratorio)
+pegado sobre un orificio de la tapa. Válvula de 3 vías: llave que dirige el
+aire de salida a ``abierto'' (renovación continua) o a ``cerrado'' (medición
+de flujo).}
+{Los PG7 se roscan en perforaciones de 12~mm; el septo se pega con epoxi
+sobre un orificio de 10~mm en la tapa; la válvula se conecta con manguera en
+la línea de salida.}
+{Mantienen la hermeticidad donde entran cables y donde se extraen muestras
+de gas con jeringa para llevarlas al cromatógrafo (GC). La válvula permite
+alternar entre modo ventilación y modo cámara cerrada (ventana de medición
+de 15~min del protocolo P-05).}
+\costo{USD 15--25 el juego completo.}
+
+\end{description}
+
+% ============================================================
+\section{Sistema de aireación forzada (fondo)}
+
+\begin{description}[style=nextline]
+
+\itemfull{Bomba de aire de 10~L/min}
+{Bomba de diafragma tipo acuario, de mayor caudal que la anterior (5~L/min).}
+{Se instala fuera del baño, conectada con manguera de silicona a la entrada
+del plenum, atravesando la pared por un racor. Va comandada por la válvula
+solenoide y el ESP32.}
+{Es el corazón de la aireación forzada: empuja aire fresco por debajo de la
+cama para remover el CO$_2$ y el calor que las larvas generan (los dos
+modelos del gemelo digital mostraron que la ventilación pasiva no basta: la
+cama se saturaría de CO$_2$ y superaría 40~$^\circ$C sin este aporte).}
+\costo{USD 25--35.}
+
+\itemfull{Rotámetro 0,2--4~L/min}
+{Tubo transparente graduado con un flotador interno: mide el caudal de aire
+de forma directa, sin electrónica.}
+{Se conecta en serie en la línea de entrada, después de la bomba, con dos
+tramos de manguera.}
+{Permite fijar y registrar el caudal exacto (0,1--3,8~L/min según el control
+adaptativo ACH~0,5--20) y detectar obstrucciones del difusor.}
+\costo{USD 20--40.}
+
+\itemfull{Filtro HEPA + humidificador de burbuja}
+{Filtro de jeringa o disco HEPA (retiene partículas y esporas) y un frasco
+con agua por donde el aire ``burbujea'' antes de entrar.}
+{Ambos en serie en la línea de entrada: bomba $\rightarrow$ filtro
+$\rightarrow$ humidificador $\rightarrow$ rotámetro $\rightarrow$ plenum.}
+{El filtro evita contaminar el lote con hongos aéreos; el humidificador
+satura el aire de humedad para que el flujo continuo no seque la cama (la
+humedad del sustrato debe mantenerse en 65--70\,\%).}
+\costo{USD 15--30 (filtros USD 10--20; frasco y difusor USD 5--10).}
+
+\itemfull{Válvula solenoide 12~V + mangueras de silicona (10~m)}
+{Electroválvula que abre/cierra el paso de aire por señal eléctrica; manguera
+de silicona de 6~mm para todo el tendido.}
+{La válvula se conecta entre la bomba y el plenum, alimentada por un relé del
+ESP32. Las mangueras unen todos los elementos de la línea.}
+{Es el actuador del control automático de aireación: el ESP32 la abre cuando
+el CO$_2$ supera la meta (0,40\,\%) o la temperatura de cama supera
+33~$^\circ$C, según la regla de control del gemelo.}
+\costo{USD 10--15 (válvula) + USD 8--12 (mangueras).}
+
+\end{description}
+
+% ============================================================
+\section{Control térmico y de humedad}
+
+\begin{description}[style=nextline]
+
+\itemfull{Baño de agua termorregulado (calentador de inmersión + controlador)}
+{Una caja/tina mayor donde flota la panera sobre pilares, con agua a
+30~$^\circ$C mantenida por un calentador de inmersión con termostato
+(propagación o controlador tipo STC-1000).}
+{Se llena la tina hasta ${\approx}$2/3 del alto de la panera; el calentador
+va sumergido en una esquina con su sonda de temperatura; la panera descansa
+sobre pilares que la aíslan del fondo y dejan circular el agua.}
+{Mantiene la cama a 27--30~$^\circ$C estables (rango óptimo de la literatura
+para BSFL) pese a los cambios de temperatura ambiente; el agua actúa de
+``colchón térmico''. Las propias celdas de carga apoyan sobre la tina, así el
+baño no interfiere con el pesaje.}
+\costo{USD 25--40 (calentador + controlador); tina: USD 0--15 (puede
+reutilizarse); pilares: USD 5.}
+
+\itemfull{Cobertura oscura + control de humedad ambiental}
+{Tela opaca o caja que cubre todo el montaje; bandeja con esponja húmeda o
+humidificador de ambiente si el laboratorio es seco.}
+{Se cubre el conjunto baño+panera dejando acceso a la línea de gas.}
+{Las larvas requieren oscuridad; la humedad relativa ambiental debe quedar en
+60--70\,\% para no secar ni empapar la cama.}
+\costo{USD 10--20.}
+
+\end{description}
+
+% ============================================================
+\section{Sensores}
+
+\begin{description}[style=nextline]
+
+\itemfull{CO$_2$ NDIR Winsen MH-410D \textbf{0--5\,\%vol} (compra nueva)}
+{Sensor infrarrojo de dióxido de carbono con salida UART (3,3--5~V). La
+versión actual del laboratorio es 0--5\,000~ppm y saturaba durante los
+ensayos (${\approx}$6\,000~ppm); esta versión llega a 50\,000~ppm.}
+{Se atornilla a la tapa de acrílico con su cabezal dentro del
+\emph{headspace} y el cable saliendo por un PG7 al ESP32 (UART).}
+{Es la medida central de la tesis: con ella se calculan los flujos de CO$_2$
+por el método de cámara estática y se gobierna la aireación adaptativa. El
+nuevo rango elimina el enmascaramiento por saturación que afectó a los datos
+de los lotes 9--17.}
+\costo{USD 60--120 por unidad (compra nueva; el de 5\,000~ppm queda de
+respaldo).}
+
+\itemfull{CH$_4$ NDIR Winsen MH-441D (ya adquirido)}
+{Sensor infrarrojo de metano, 0--5\,\%vol (50\,000~ppm), UART.}
+{Montaje idéntico al de CO$_2$, en la tapa.}
+{Mide metano del lote; en esta tesis además se evalúa como señal temprana de
+cosecha. Pendiente: validación con gas del batch en GC (punto 5 de la hoja de
+ruta) por la sensibilidad cruzada a VOCs detectada.}
+\costo{Ya adquirido (USD 0; referencia: USD 50--120).}
+
+\itemfull{O$_2$ óptico SST LuminOx LOX-02 (compra nueva)}
+{Sensor de oxígeno por fluorescencia (luminiscencia): mide 0--25\,\% O$_2$,
+exactitud $<$2\,\% FS, respuesta T90 $<$30~s, vida $>$5 años, salida UART
+3,3~V. A diferencia de los electroquímicos, no se consume ni se envenena.}
+{Se monta en la tapa junto a los sensores de CO$_2$/CH$_4$, cable al ESP32
+(segundo UART). Máximo caudal sobre el cabezal 1~L/min (sin problema en
+cámara estática).}
+{Cierra el balance respiratorio: con O$_2$ y CO$_2$ simultáneos se calcula el
+cociente respiratorio (RQ), que distingue respiración larvaria de fermentación
+microbiana --- información clave para el gemelo digital y novedad frente a la
+literatura.}
+\costo{USD 90--150 (el ítem más costoso de la lista).}
+
+\itemfull{Temperatura/humedad Sensirion SHT45 (2 uds.)}
+{Módulo digital I$^2$C de alta precisión: $\pm$0,1~$^\circ$C y $\pm$1,5\,\%HR.}
+{Uno en el \emph{headspace} (tapa) y otro en el ambiente del laboratorio;
+bus I$^2$C compartido del ESP32.}
+{Registra las condiciones del gas (necesarias para corregir ppm a condiciones
+reales) y del ambiente (variable del gemelo).}
+\costo{USD 12--15 c/u $\Rightarrow$ USD 24--30.}
+
+\itemfull{Temperatura de cama DS18B20 sumergible (3 uds.)}
+{Sondas digitales encapsuladas en acero inoxidable, protocolo 1-Wire (las
+tres comparten un solo pin del ESP32).}
+{Se entierran a tres profundidades (1, 2,5 y 4~cm) en la bandeja central, con
+cable saliendo por PG7.}
+{Perfil vertical de temperatura de la cama: detecta el sobrecalentamiento
+interno (el problema que motivó el rediseño) y valida el modelo térmico del
+gemelo.}
+\costo{USD 3--5 c/u $\Rightarrow$ USD 10--15.}
+
+\itemfull{Humedad de sustrato capacitiva (2 uds.)}
+{Sonda capacitiva de humedad de suelo (resiste corrosión, a diferencia de las
+resistivas).}
+{Enterrada en la cama de dos bandejas distintas; salida analógica al ADC del
+ESP32.}
+{Vigila que la humedad del sustrato se mantenga en 65--70\,\% (parámetro
+crítico de crecimiento larvario).}
+\costo{USD 3--5 c/u $\Rightarrow$ USD 6--10.}
+
+\itemfull{Celdas de carga 50~kg (4 uds.) + HX711}
+{Cuatro galgas extensiométricas (báscula de precisión) y un convertidor
+HX711 de 24~bits.}
+{Una celda bajo cada esquina de la tina/panera (estructura rígida común); el
+HX711 se conecta al ESP32.}
+{Pesa el lote completo en continuo sin abrir el reactor: la curva de peso es
+la señal de cosecha (aplanamiento) y alimenta la calibración del crecimiento
+larvario del gemelo.}
+\costo{USD 12--20 el kit completo.}
+
+\end{description}
+
+% ============================================================
+\section{Adquisición de datos y control}
+
+\begin{description}[style=nextline]
+
+\itemfull{ESP32 DevKit (nodo sensor-actuador)}
+{Microcontrolador con Wi-Fi, varios UART, I$^2$C, ADC y pines para relés.}
+{Se monta en protoboard/PCB fuera del baño; recibe todos los sensores y
+comanda la válvula solenoide y (opcional) el calentador vía relés. Toma datos
+cada 30~s y los envía por Wi-Fi.}
+{Es el ``sistema nervioso'' del reactor: adquisición, registro local (TSV) y
+lazo de control de aireación en tiempo real.}
+\costo{USD 8--15.}
+
+\itemfull{Raspberry Pi (o PC reutilizado) + almacenamiento}
+{Mini computadora Linux que recibe los datos del ESP32, corre la base de
+datos/archivos TSV y aloja el tablero web.}
+{En red local junto al reactor; con resguardo automático (carpeta
+\texttt{datos/} del repositorio).}
+{Servidor del \emph{dashboard} y respaldo de datos; alternativa de costo
+cero: usar el PC del laboratorio.}
+\costo{USD 60--80 (o USD 0 reutilizando PC).}
+
+\itemfull{Fuente 5~V/5~A, módulo de relés 8 canales, cableado y protoboard}
+{Alimentación estable y conmutación eléctrica para válvula y bomba.}
+{Caja eléctrica junto al ESP32.}
+{Todo lo anterior no funciona sin energía limpia y conmutación segura.}
+\costo{USD 30--40.}
+
+\end{description}
+
+% ============================================================
+\section{Caracterización de alimentos (laboratorio)}
+
+\begin{description}[style=nextline]
+
+\itemfull{Análisis proximal de los 2 alimentos}
+{Paquete estándar de laboratorio de nutrición: humedad, cenizas, proteína
+cruda (Kjeldahl), fibra cruda y extracto etéreo (grasa). Se manda a un
+laboratorio de análisis de alimentos (universidad o comercial).}
+{Se recolectan ${\approx}$300~g representativos de cada alimento (sustrato de
+pollo y el segundo tipo) en bolsa sellada, en los tres momentos de uso
+(día~0, 3 y 6 de fermentación si aplica).}
+{El gemelo necesita la composición real del sustrato (carbono disponible,
+proteína) para predecir gases por tipo de alimento; además es requisito de
+reporte en artículos Q1.}
+\costo{USD 50--100 por muestra; con 4--6 muestras: \textbf{USD 200--400}.}
+
+\itemfull{Carbono/nitrógeno elemental (C/N) y pH}
+{Análisis por combustión (analizador elemental) y pH en suspensión 1:5.}
+{Mismas muestras del proximal.}
+{La relación C/N explica cuánto gas metaniza/fermenta cada alimento y es
+parámetro directo del modelo de sustrato.}
+\costo{USD 20--40 por muestra $\Rightarrow$ \textbf{USD 80--200}.}
+
+\end{description}
+
+% ============================================================
+\section{Análisis de gases en cromatógrafo (GC)}
+
+\begin{description}[style=nextline]
+
+\itemfull{Validación de CH$_4$ y CO$_2$ por GC (gas del batch)}
+{Inyección al cromatógrafo de gases de muestras tomadas con jeringa por el
+septo (protocolo P-05, minuto 12 de la ventana cerrada), más prueba de
+interferencia con etanol.}
+{Las muestras se llevan en jeringa sellada o bolsa Tedlar al laboratorio de
+GC de la universidad; ${\approx}$2--3 muestras por lote y controles.}
+{Cruza las lecturas de los Winsen con el método de referencia: CO$_2$ ya
+validado ($\pm$20~ppm); CH$_4$ requiere este paso para descartar que lo
+medido sean VOCs (etanol) y no metano real.}
+\costo{USD 10--30 por inyección; campaña de ${\approx}$20 muestras:
+\textbf{USD 200--400} (USD 0 si hay convenio con el laboratorio).}
+
+\itemfull{Gas patrón de calibración CH$_4$/CO$_2$}
+{Cilindro pequeño o ampolla de mezcla certificada para verificación puntual.}
+{Se conecta a la cámara vacía para chequeo de respuesta antes de cada
+campaña.}
+{Garantiza trazabilidad de las medidas de gas.}
+\costo{USD 50--150 (una sola compra; alternativa: acceso gratuito en el
+laboratorio).}
+
+\end{description}
+
+% ============================================================
+\section{\emph{Software}, gemelo digital y tablero (\emph{dashboard})}
+
+Sin costo de licencias (todo \emph{software} libre: Python, \texttt{py-pde},
+Panel/Plotly Dash, MariaDB/CSV). El ``costo'' aquí es tiempo de desarrollo:
+
+\begin{description}[style=nextline]
+
+\itemfull{Gemelo digital y calibración (ya en desarrollo)}
+{Modelo 0D de 7 estados + 2D (\texttt{py-pde}) ya programados y validados
+con datos reales ($R^2 = 0{,}81$). Falta: recalibrar con peso larvario
+medido (celdas de carga) y la tubería de calibración PINN (estimación inversa
+de parámetros + aprendizaje de residuales).}
+{Código en \texttt{tesis/gemelo/} del repositorio.}
+{Núcleo científico del artículo Q1.}
+\costo{Tiempo estimado restante: 3--4 semanas de trabajo; costo directo:
+\textbf{USD 0}.}
+
+\itemfull{Tablero de monitoreo (\emph{dashboard})}
+{Aplicación web local (Panel o Dash sobre la Raspberry Pi) que muestra en
+vivo: CO$_2$, CH$_4$, O$_2$, T de cama (3 profundidades), HR, humedad de
+sustrato, peso total, estado de la aireación (ACH actual) y alarmas
+(CO$_2>$0,45\,\%, T$>$33~$^\circ$C). Incluye vista del gemelo: curva
+predicha vs.\ medida y señal de cosecha sugerida.}
+{Corre como servicio en la Raspberry Pi/PC, accesible desde el navegador del
+laboratorio; lee los TSV que escribe el ESP32.}
+{Operación diaria del experimento sin hojas de cálculo manuales; evidencia
+visual para la tesis y demostración del ``sistema inteligente''.}
+\costo{Tiempo estimado: 2--3 semanas; costo directo: \textbf{USD 0}.}
+
+\itemfull{Firmware del ESP32 (adquisición y control)}
+{Programa que lee todos los buses (UART $\times$3, I$^2$C, 1-Wire, ADC,
+HX711), escribe TSV cada 30~s, ejecuta la regla de control ACH y reporta por
+Wi-Fi.}
+{Repositorio \texttt{firmware/} (nuevo).}
+{Sin él no hay datos ni control.}
+\costo{Tiempo estimado: 1--2 semanas; costo directo: \textbf{USD 0}.}
+
+\end{description}
+
+% ============================================================
+\section{Resumen de presupuesto}
+
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{9.6cm}rr@{}}
+\toprule
+\textbf{Bloque} & \textbf{Mín. (USD)} & \textbf{Máx. (USD)} \\
+\midrule
+\endhead
+Reactor (bandejas, tapa, difusor, racores) & 118 & 183 \\
+Aireación (bomba, rotámetro, filtro, humidif., válvula) & 78  & 132 \\
+Control térmico y humedad ambiental        & 40  & 75  \\
+Sensores (compras nuevas: CO$_2$ 5\,\%, O$_2$, SHT45$\times$2,
+DS18B20$\times$3, humedad$\times$2, celdas+HX711) & 212 & 350 \\
+Adquisición y control (ESP32, RPi, fuente, relés) & 98 & 135 \\
+Caracterización de alimentos               & 280 & 600 \\
+Análisis GC + gas patrón                   & 250 & 550 \\
+\emph{Software}, gemelo y \emph{dashboard} (desarrollo propio) & 0 & 0 \\
+\midrule
+\textbf{Total estimado} & \textbf{1\,076} & \textbf{2\,025} \\
+\bottomrule
+\end{longtable}
+
+\noindent\textbf{Total central esperado: ${\approx}$USD 1\,300--1\,500}
+(${\approx}$COP 5,4--6,2 millones a 4\,100~COP/USD), incluyendo un margen de
+imprevistos del 15\,\%.
+
+\medskip
+\noindent\textbf{Compras prioritarias (bloquean el avance experimental):}
+\begin{enumerate}
+  \item MH-410D 0--5\,\%vol --- sin él, los datos de CO$_2$ saturan otra vez.
+  \item Bandejas metálicas + geotextil y tapa de acrílico --- sin ellos no
+        hay reactor hermético ni aireación de fondo.
+  \item Bomba 10~L/min + rotámetro + solenoide --- control de aireación.
+  \item LOX-02 --- puede comprarse en la segunda fase, antes de la campaña
+        definitiva.
+\end{enumerate}
+
+\noindent\textbf{Ahorros posibles:} reutilizar PC en vez de Raspberry Pi
+($-$USD~80), GC y gas patrón por convenio universitario ($-$USD~550),
+análisis proximal en laboratorio de la facultad ($-$USD~300).
+
+\section*{Notas}
+\begin{itemize}
+  \item Precios de referencia consultados en agosto 2026: MH-410D
+        USD~55--120/unidad según proveedor (Winsen directo, AliExpress,
+        eBay); LOX-02 USD~60--145 según distribuidor; SHT45
+        USD~12,5--15 (módulo).
+  \item Los costos de laboratorio (proximal, C/N, GC) son cotizaciones
+        típicas de laboratorios universitarios/comerciales en Colombia;
+        solicitar cotización formal antes de la campaña.
+  \item Ítems ya adquiridos (paneras, MH-441D, MH-410D 5\,000~ppm) se
+        listan con costo USD~0 y quedan como respaldo o controles.
+\end{itemize}
+
+\end{document}
