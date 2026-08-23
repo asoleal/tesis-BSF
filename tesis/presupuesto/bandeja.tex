@@ -1,0 +1,87 @@
+% Bandeja (lata honda): vista oblicua con medidas
+\begin{tikzpicture}[font=\small, line cap=round]
+
+% proyección oblicua con vista desde arriba: d = vector profundidad
+\coordinate (A) at (0,0);
+\coordinate (B) at (8.32,0);
+\coordinate (d) at (2.0,4.0);
+\coordinate (C) at ($(B)+(d)$);
+\coordinate (D) at ($(A)+(d)$);
+\coordinate (A') at ($(A)+(0,2.08)$);
+\coordinate (B') at ($(B)+(0,2.08)$);
+\coordinate (C') at ($(C)+(0,2.08)$);
+\coordinate (D') at ($(D)+(0,2.08)$);
+
+% inset por espesor de pared (0.3) y altura de fondo (0.12)
+\coordinate (Ai) at (0.434,0.388);
+\coordinate (Bi) at (8.154,0.388);
+\coordinate (Ci) at (9.886,3.732);
+\coordinate (Di) at (2.166,3.852);
+
+% reborde (inset del tope)
+\coordinate (Ar) at (0.434,2.348);
+\coordinate (Br) at (8.154,2.348);
+\coordinate (Cr) at (9.886,5.812);
+\coordinate (Dr) at (2.166,5.812);
+
+% 1) pared interior izquierda
+\fill[gray!15] (Ar) -- (Dr) -- (Di) -- (Ai) -- cycle;
+% 2) pared interior del fondo
+\fill[gray!20] (Dr) -- (Cr) -- (Ci) -- (Di) -- cycle;
+% 3) fondo perforado
+\fill[gray!35] (Ai) -- (Bi) -- (Ci) -- (Di) -- cycle;
+% huecos (mitad izquierda)
+\foreach \u in {0.05,0.13,...,0.46}{
+  \foreach \v in {0.15,0.35,...,0.95}{
+    \fill[black!70] ($(Ai)!\u!(Bi) + \v*(1.732,3.464)$) circle (0.04);}}
+% geotextil (mitad derecha del fondo)
+\fill[olive!45] ($(Ai)!0.5!(Bi)$) -- (Bi) -- (Ci) -- ($(Di)!0.5!(Ci)$) -- cycle;
+\draw[olive!60!black, densely dashed] ($(Ai)!0.5!(Bi)$) -- ($(Di)!0.5!(Ci)$);
+% 5) pared exterior frente y derecha
+\fill[gray!55] (A) -- (B) -- (B') -- (A') -- cycle;
+\fill[gray!45] (B) -- (C) -- (C') -- (B') -- cycle;
+% 6) reborde doblado (banda superior)
+\fill[gray!65] (A') -- (B') -- (Br) -- (Ar) -- cycle;
+\fill[gray!55] (B') -- (C') -- (Cr) -- (Br) -- cycle;
+\fill[gray!50] (D') -- (C') -- (Cr) -- (Dr) -- cycle;
+\fill[gray!60] (A') -- (D') -- (Dr) -- (Ar) -- cycle;
+
+% contornos
+\draw[thick] (A) -- (B) -- (C);
+\draw[thick] (A') -- (B') -- (C') -- (D') -- cycle;
+\draw[thick] (A) -- (A') (B) -- (B') (C) -- (C');
+\draw[thin, gray] (Ar) -- (Br) (Br) -- (Cr);
+\draw[dashed, gray] (A) -- (D) (D) -- (D') (D) -- (C);
+
+% ---------- cotas ----------
+\draw[<->, >={Stealth}] ($(A)+(0,-0.35)$) -- ($(B)+(0,-0.35)$)
+  node[midway, below] {ancho 26 cm};
+\draw[<->, >={Stealth}] ($(A)+(-0.45,0)$) -- ($(A')+(-0.45,0)$)
+  node[midway, left] {6,5 cm};
+\draw[<->, >={Stealth}] ($(B)+(0.36,-0.18)$) -- ($(C)+(0.36,-0.18)$)
+  node[midway, below right] {profundidad 18 cm};
+
+% ---------- llamadas ----------
+\draw[gray, thin] (3.1,2.64) -- (1.6,-1.15);
+\node[anchor=north, align=center] at (1.6,-1.2)
+  {\textbf{fondo perforado}\\huecos 3 mm cada 15 mm (pasa el aire)};
+
+\draw[gray, thin] (6.6,2.7) -- (7.8,-1.15);
+\node[anchor=north, align=center] at (7.8,-1.2)
+  {\textbf{geotextil} sobre el fondo\\pasa aire, retiene el alimento};
+
+\draw[gray, thin] (9.17,4.08) -- (11.0,5.9);
+\node[anchor=west, align=left] at (11.0,5.9)
+  {\textbf{reborde 1 cm} doblado hacia\\adentro (anti-escape de larvas)};
+
+\draw[gray, thin] (1.5,1.2) -- (-1.4,0.2);
+\node[anchor=east, align=right] at (-1.45,0.2)
+  {\textbf{paredes sólidas} de lámina\\retienen larvas y alimento\\(como la sanduchera)};
+
+\node[anchor=north west, align=left] at (11.2,0.6)
+  {\textbf{Bandeja (lata honda)}\\[2pt]
+   lámina Al/inox 0,5--1 mm\\
+   6 unidades: $18\times26\times6,5$ cm\\
+   2 por piso, 3 pisos en la panera};
+
+\end{tikzpicture}
