@@ -1,87 +1,93 @@
-% Bandeja (lata honda): vista oblicua con medidas
+% Bandeja desechable tipo lasaña: vista oblicua con corte frontal (sin calc)
 \begin{tikzpicture}[font=\small, line cap=round]
 
-% proyección oblicua con vista desde arriba: d = vector profundidad
-\coordinate (A) at (0,0);
-\coordinate (B) at (8.32,0);
-\coordinate (d) at (2.0,4.0);
-\coordinate (C) at ($(B)+(d)$);
-\coordinate (D) at ($(A)+(d)$);
-\coordinate (A') at ($(A)+(0,2.08)$);
-\coordinate (B') at ($(B)+(0,2.08)$);
-\coordinate (C') at ($(C)+(0,2.08)$);
-\coordinate (D') at ($(D)+(0,2.08)$);
+% proyección oblicua, profundidad hacia atrás-izquierda; paredes cónicas
+\coordinate (A) at (0.4,0);     \coordinate (B) at (7.92,0);
+\coordinate (D) at (-2.0,2.0);  \coordinate (C) at (5.52,2.0);
+\coordinate (A') at (0,1.9);    \coordinate (B') at (8.32,1.9);
+\coordinate (D') at (-2.4,3.9); \coordinate (C') at (5.92,3.9);
+% fondo interior (inset 0.3 + altura 0.12)
+\coordinate (Ai) at (0.47,0.31); \coordinate (Bi) at (7.39,0.31);
+\coordinate (Ci) at (5.45,1.93); \coordinate (Di) at (-1.47,1.93);
+% borde interior de la boca
+\coordinate (Bi') at (7.79,2.09);
+\coordinate (Ci') at (5.85,3.71);\coordinate (Di') at (-1.87,3.71);
 
-% inset por espesor de pared (0.3) y altura de fondo (0.12)
-\coordinate (Ai) at (0.434,0.388);
-\coordinate (Bi) at (8.154,0.388);
-\coordinate (Ci) at (9.886,3.732);
-\coordinate (Di) at (2.166,3.852);
-
-% reborde (inset del tope)
-\coordinate (Ar) at (0.434,2.348);
-\coordinate (Br) at (8.154,2.348);
-\coordinate (Cr) at (9.886,5.812);
-\coordinate (Dr) at (2.166,5.812);
-
-% 1) pared interior izquierda
-\fill[gray!15] (Ar) -- (Dr) -- (Di) -- (Ai) -- cycle;
-% 2) pared interior del fondo
-\fill[gray!20] (Dr) -- (Cr) -- (Ci) -- (Di) -- cycle;
+% 0) pared exterior derecha
+\fill[gray!45] (B) -- (C) -- (C') -- (B') -- cycle;
+% 1) pared interior del fondo
+\fill[gray!20] (Di') -- (Ci') -- (Ci) -- (Di) -- cycle;
+% 2) pared interior derecha
+\fill[gray!10] (Bi') -- (Ci') -- (Ci) -- (Bi) -- cycle;
 % 3) fondo perforado
 \fill[gray!35] (Ai) -- (Bi) -- (Ci) -- (Di) -- cycle;
-% huecos (mitad izquierda)
-\foreach \u in {0.05,0.13,...,0.46}{
-  \foreach \v in {0.15,0.35,...,0.95}{
-    \fill[black!70] ($(Ai)!\u!(Bi) + \v*(1.732,3.464)$) circle (0.04);}}
-% geotextil (mitad derecha del fondo)
-\fill[olive!45] ($(Ai)!0.5!(Bi)$) -- (Bi) -- (Ci) -- ($(Di)!0.5!(Ci)$) -- cycle;
-\draw[olive!60!black, densely dashed] ($(Ai)!0.5!(Bi)$) -- ($(Di)!0.5!(Ci)$);
-% 5) pared exterior frente y derecha
-\fill[gray!55] (A) -- (B) -- (B') -- (A') -- cycle;
-\fill[gray!45] (B) -- (C) -- (C') -- (B') -- cycle;
-% 6) reborde doblado (banda superior)
-\fill[gray!65] (A') -- (B') -- (Br) -- (Ar) -- cycle;
-\fill[gray!55] (B') -- (C') -- (Cr) -- (Br) -- cycle;
-\fill[gray!50] (D') -- (C') -- (Cr) -- (Dr) -- cycle;
-\fill[gray!60] (A') -- (D') -- (Dr) -- (Ar) -- cycle;
+\foreach \u in {0.06,0.14,...,0.95}{
+  \foreach \v in {0.10,0.25,0.40}{
+    \fill[black!70] ({0.47+6.92*\u-1.94*\v},{0.31+1.62*\v}) circle (0.04);}}
+% geotextil (franja trasera del fondo)
+\fill[olive!45] (-0.40,1.04) -- (6.52,1.04) -- (Ci) -- (Di) -- cycle;
+\draw[olive!60!black, densely dashed] (-0.40,1.04) -- (6.52,1.04);
+% 4) pared exterior izquierda
+\fill[gray!45] (A) -- (D) -- (D') -- (A') -- cycle;
+% 5) frente: tramo completo + muñón de corte (cónico)
+\fill[gray!55] (A) -- (3.4,0) -- (3.19,1.9) -- (A') -- cycle;
+\fill[gray!55] (3.4,0) -- (B) -- (7.96,0.35) -- (3.36,0.35) -- cycle;
+\draw[thick] (3.36,0.35) -- (3.19,1.9);
+\draw[thick] (3.36,0.35) -- (7.96,0.35);
+
+% 6) borde enrollado (línea gruesa alrededor de la boca)
+\draw[gray!80, line width=2.6pt] (A') -- (B') -- (C') -- (D') -- cycle;
+
+% 7) espaciadores sobre el borde (3 visibles al frente)
+\fill[gray!70] (1.5,1.86) rectangle (1.75,2.14);
+\fill[gray!70] (4.3,1.86) rectangle (4.55,2.14);
+\fill[gray!70] (7.1,1.86) rectangle (7.35,2.14);
+
+% 8) tapa de malla (flotando sobre la boca, sin relleno)
+\draw[gray, densely dashed, thick] (0,2.75) -- (8.32,2.75) -- (5.92,4.75) -- (-2.4,4.75) -- cycle;
+\draw[gray!70, dashed] (A') -- (0,2.75) (B') -- (8.32,2.75) (C') -- (5.92,4.75) (D') -- (-2.4,4.75);
+\draw[gray, thin] (7.12,3.75) -- (9.7,5.85);
+\node[anchor=west, align=left] at (9.7,5.85)
+  {\textbf{tapa de malla} (${\approx}$2~mm):\\pasa aire, no deja salir larvas};
 
 % contornos
-\draw[thick] (A) -- (B) -- (C);
-\draw[thick] (A') -- (B') -- (C') -- (D') -- cycle;
-\draw[thick] (A) -- (A') (B) -- (B') (C) -- (C');
-\draw[thin, gray] (Ar) -- (Br) (Br) -- (Cr);
-\draw[dashed, gray] (A) -- (D) (D) -- (D') (D) -- (C);
+\draw[thick] (A) -- (B) (A) -- (A') (B) -- (B');
+\draw[thick, gray] (B) -- (C) (C) -- (C');
+\draw[thick, gray] (A) -- (D) (D) -- (D');
 
 % ---------- cotas ----------
-\draw[<->, >={Stealth}] ($(A)+(0,-0.35)$) -- ($(B)+(0,-0.35)$)
-  node[midway, below] {ancho 26 cm};
-\draw[<->, >={Stealth}] ($(A)+(-0.45,0)$) -- ($(A')+(-0.45,0)$)
-  node[midway, left] {6,5 cm};
-\draw[<->, >={Stealth}] ($(B)+(0.36,-0.18)$) -- ($(C)+(0.36,-0.18)$)
-  node[midway, below right] {profundidad 18 cm};
+\draw[<->, >={Stealth}] (0.4,-0.35) -- (7.92,-0.35)
+  node[midway, below] {boca ${\approx}$32 cm (fondo algo menor)};
+\draw[<->, >={Stealth}] (-0.15,-0.4) -- (-2.55,1.6)
+  node[midway, left] {profundidad 26 cm};
+\draw[<->, >={Stealth}] (8.75,0) -- (8.75,1.9)
+  node[midway, right] {6 cm};
 
 % ---------- llamadas ----------
-\draw[gray, thin] (3.1,2.64) -- (1.6,-1.15);
-\node[anchor=north, align=center] at (1.6,-1.2)
-  {\textbf{fondo perforado}\\huecos 3 mm cada 15 mm (pasa el aire)};
+\draw[gray, thin] (5.3,0.5) -- (2.1,-1.55);
+\node[anchor=north, align=center] at (2.1,-1.6)
+  {\textbf{fondo perforado}\\huecos 3 mm cada 15 mm\\(pasa el aire)};
 
-\draw[gray, thin] (6.6,2.7) -- (7.8,-1.15);
-\node[anchor=north, align=center] at (7.8,-1.2)
-  {\textbf{geotextil} sobre el fondo\\pasa aire, retiene el alimento};
+\draw[gray, thin] (5.6,1.4) -- (8.7,-1.55);
+\node[anchor=north, align=center] at (8.7,-1.6)
+  {\textbf{geotextil} sobre el fondo\\(recogido aquí para\\mostrar los huecos)};
 
-\draw[gray, thin] (9.17,4.08) -- (11.0,5.9);
-\node[anchor=west, align=left] at (11.0,5.9)
-  {\textbf{reborde 1 cm} doblado hacia\\adentro (anti-escape de larvas)};
+\draw[gray, thin] (4.55,2.0) -- (9.7,4.3);
+\node[anchor=west, align=left] at (9.7,4.3)
+  {\textbf{borde enrollado} + \textbf{espaciadores} 1,5 cm\\(la bandeja de arriba no anida:\\queda cámara de aire entre pisos)};
 
-\draw[gray, thin] (1.5,1.2) -- (-1.4,0.2);
-\node[anchor=east, align=right] at (-1.45,0.2)
-  {\textbf{paredes sólidas} de lámina\\retienen larvas y alimento\\(como la sanduchera)};
+\draw[gray, thin] (-1.0,1.0) -- (-3.4,-1.55);
+\node[anchor=north, align=center] at (-3.4,-1.6)
+  {\textbf{paredes lisas} de aluminio\\retienen larvas y alimento\\(como la sanduchera)};
 
-\node[anchor=north west, align=left] at (11.2,0.6)
-  {\textbf{Bandeja (lata honda)}\\[2pt]
-   lámina Al/inox 0,5--1 mm\\
-   6 unidades: $18\times26\times6,5$ cm\\
-   2 por piso, 3 pisos en la panera};
+\draw[gray, thin] (3.35,1.0) -- (4.3,1.55);
+\node[anchor=west, text=black!70] at (4.3,1.55)
+  {\scriptsize\itshape (corte para ver el interior)};
+
+\node[anchor=north west, align=left] at (10.35,1.4)
+  {\textbf{Bandeja desechable tipo lasaña}\\[2pt]
+   aluminio 0,1 mm (1 batch de uso)\\
+   4 por batch: 2 pilas de 2\\
+   con tapa de malla en la superior};
 
 \end{tikzpicture}

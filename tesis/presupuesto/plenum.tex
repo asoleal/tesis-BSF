@@ -1,0 +1,84 @@
+% ============================================================
+%  PLENUM Y PLACA DIFUSORA — corte frontal + vista superior
+%  Sin librería calc: solo coordenadas explícitas.
+% ============================================================
+\begin{tikzpicture}[font=\scriptsize, line cap=round, line join=round]
+\colorlet{aire}{red!80!black}
+
+% ================= CORTE FRONTAL (y base = 3.6) =================
+% panera: piso y paredes
+\draw[line width=1.2pt] (0,3.6) -- (10,3.6);
+\draw[line width=1.2pt] (0,3.6) -- (0,6.1);
+\draw[line width=1.2pt] (10,3.6) -- (10,6.1);
+\node[anchor=west, font=\tiny, text=gray!60] at (0.15,6.0) {corte frontal};
+
+% tacos de soporte
+\foreach \x in {2,4,6,8} \fill[gray!50] (\x-0.15,3.64) rectangle (\x+0.15,4.6);
+
+% placa difusora
+\draw[gray!60, line width=2.2pt] (0.12,4.6) -- (9.88,4.6);
+\foreach \x in {0.7,1.2,1.7,2.3,2.8,3.3,3.8,4.3,4.8,5.3,5.8,6.3,6.8,7.3,7.8,8.3,8.8,9.3}
+  \draw (\x,4.52) -- (\x,4.68);
+\fill[orange!80!black] (0.14,4.6) circle (0.055);
+\fill[orange!80!black] (9.86,4.6) circle (0.055);
+
+% bandejas (contexto)
+\draw[fill=orange!35] (1.0,4.6) rectangle (4.6,5.35);
+\draw[fill=orange!35] (5.4,4.6) rectangle (9.0,5.35);
+\node[font=\tiny] at (2.8,4.98) {pila 1};
+\node[font=\tiny] at (7.2,4.98) {pila 2};
+
+% entrada de aire
+\draw[aire, line width=1.4pt, -{Stealth[length=3mm]}] (-1.5,4.1) -- (0,4.1);
+\node[anchor=east, text=aire] at (-1.6,4.1) {desde válvula 6};
+\node[circle, fill=red, text=white, font=\scriptsize\bfseries, inner sep=1.5pt] at (-0.75,4.65) {6};
+
+% deflector
+\draw[line width=1.2pt] (1.0,3.68) -- (1.0,4.35);
+
+% reparto en el plenum
+\draw[-{Stealth[length=2mm]}, red!55] (0.55,4.02) -- (2.2,4.02);
+\draw[-{Stealth[length=2mm]}, red!55] (2.9,4.02) -- (5.5,4.02);
+\draw[-{Stealth[length=2mm]}, red!55] (6.1,4.02) -- (8.75,4.02);
+
+% subida por los orificios
+\foreach \x in {1.5,2.3,3.1,3.9,5.9,6.7,7.5,8.3}
+  \draw[-{Stealth[length=2mm]}, red!60] (\x,4.7) -- (\x,5.9);
+
+% etiquetas del corte
+\draw[gray!60] (9.3,4.66) -- (10.1,5.55);
+\node[anchor=west] at (10.15,5.6) {orificios 3 mm c/5 cm};
+\draw[gray!60] (9.85,4.62) -- (10.1,5.0);
+\node[anchor=west] at (10.15,5.05) {placa difusora $58\times33$ cm};
+\draw[gray!60] (7.2,4.12) -- (10.1,4.45);
+\node[anchor=west] at (10.15,4.5) {plenum (cámara de 2,5--3 cm)};
+\draw[gray!60] (8.15,4.2) -- (10.1,3.9);
+\node[anchor=west] at (10.15,3.95) {tacos c/15 cm};
+\draw[gray!60] (1.02,4.4) -- (-0.25,5.3);
+\node[anchor=east] at (-0.3,5.4) {deflector};
+
+% ================= VISTA SUPERIOR DE LA PLACA =================
+\draw[line width=1.1pt] (0,-1.0) rectangle (5.8,2.3);
+\foreach \y in {-0.7,0.3,1.3}
+  \foreach \x in {0.35,0.85,1.35,1.85,2.35,2.85,3.35,3.85,4.35,4.85,5.35}
+    \fill[gray!80] (\x,\y) circle (0.045);
+\foreach \y in {-0.2,0.8,1.8}
+  \foreach \x in {0.6,1.1,1.6,2.1,2.6,3.1,3.6,4.1,4.6,5.1,5.6}
+    \fill[gray!80] (\x,\y) circle (0.045);
+\draw[aire, line width=1.2pt, -{Stealth[length=2.5mm]}] (-0.6,-0.2) -- (0,-0.2);
+\draw[orange!80!black, dashed] (0.15,-0.85) rectangle (2.85,1.95);
+\draw[orange!80!black, dashed] (2.95,-0.85) rectangle (5.65,1.95);
+\node[anchor=north, align=center] at (2.9,-1.15)
+  {vista superior de la placa: retícula 3 mm c/5 cm (${\approx}$66 orificios)\\
+   líneas naranjas: huella de las 2 pilas};
+
+% ================= NOTAS DE MATERIAL =================
+\node[anchor=north west, align=left] at (6.6,2.3)
+  {\textbf{Materiales y condiciones:}\\
+   placa: polipropileno o acrílico 2--3 mm\\
+   (rígida, lavable; no madera)\\
+   tacos de 2,5--3 cm con silicona, c/${\approx}$15 cm\\
+   perímetro sellado con silicona:\\
+   el aire solo sube por los orificios};
+
+\end{tikzpicture}

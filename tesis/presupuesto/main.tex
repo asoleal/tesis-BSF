@@ -24,7 +24,7 @@
 y presupuesto del reactor controlado}\\[4pt]
 \large Bioconversión de residuos con \emph{Hermetia illucens} --- medición
 continua de GEI (CO$_2$, CH$_4$) por balance de gases\\
-\large Versión 4.0 --- control por aire (sin baño de agua)}
+\large Versión 4.4 --- bandejas desechables, O$_2$ integrado (RQ), datos al PC del laboratorio}
 \author{J.\,J. Leal --- tesis doctoral\\Repositorio: \texttt{github.com/asoleal/tesis-BSF}}
 \date{Agosto 2026}
 
@@ -53,27 +53,29 @@ CH$_4$ y validación por cromatografía (GC).
 \begin{figure}[h!]
 \centering
 \resizebox{\textwidth}{!}{\input{esquema.tex}}
-\caption{Corte lateral del sistema (no a escala). \textbf{Ruta del aire
+\caption{Corte frontal del sistema (no a escala): las dos pilas de dos
+bandejas reposan sobre el plenum común. \textbf{Ruta del aire
 (flechas rojas, numerada):} \textbf{1}~bomba, \textbf{2}~filtro HEPA,
 \textbf{3}~resistencia PTC (calienta el aire si hace frío),
 \textbf{4}~humidificador de burbuja, \textbf{5}~rotámetro (lectura del
-caudal), \textbf{6}~válvula solenoide de aireación, \textbf{7}~el aire sube a
-través de las bandejas, \textbf{8}~lazo de medición (una bombecita P
-recircula gas del headspace por la celda, ${\approx}$1~L/min),
-\textbf{9}~válvula de tres vías (selecciona gas del headspace o aire
-ambiente), \textbf{10}~celda de medición con los sensores CO$_2$/CH$_4$/(O$_2$),
-\textbf{11}~válvula de cierre (solo se cierra en la ventana diaria de
-15~min) $\rightarrow$ escape.}
+caudal), \textbf{6}~válvula solenoide de aireación, \textbf{7}~el aire sube
+del plenum a través de las dos pilas de bandejas, \textbf{8}~lazo de
+medición (una bombecita P recircula gas del headspace por la celda,
+${\approx}$1~L/min), \textbf{9}~válvula de tres vías (selecciona gas del
+headspace o aire ambiente), \textbf{10}~celda de medición con los sensores
+CO$_2$/CH$_4$/O$_2$, \textbf{11}~válvula de cierre (solo se cierra en la
+ventana diaria de 15~min) $\rightarrow$ escape.}
 \label{fig:esquema}
 \end{figure}
 
 \subsection{La idea en una frase}
-Las larvas viven en \textbf{bandejas apiladas} dentro de una panera sellada
-con tapa de acrílico; una bomba empuja aire \emph{de abajo hacia arriba} a
-través de las bandejas (caudal medido con el rotámetro); el gas de salida se
-analiza en una \textbf{celda de medición externa}; y un \textbf{ESP32} lee
-todos los sensores cada 30~s y comanda válvulas, calefacción y nebulizador
-para mantener las condiciones óptimas.
+Las larvas viven en \textbf{cuatro bandejas desechables} (dos pilas de dos,
+con espaciadores que dejan una cámara de aire entre pisos) dentro de una
+panera baja y ancha, sellada con tapa de acrílico; una bomba empuja aire
+\emph{de abajo hacia arriba} desde un plenum común (caudal medido con el
+rotámetro); el gas de salida se analiza en una \textbf{celda de medición
+externa}; y un \textbf{ESP32} lee todos los sensores cada 30~s y comanda
+válvulas, calefacción y nebulizador para mantener las condiciones óptimas.
 
 \subsection{El balance de gases (corazón de la medición)}
 Con la cámara \textbf{abierta} (flujo continuo), el flujo de cada gas es:
@@ -94,6 +96,11 @@ Una vez al día se cierran las válvulas 6 y 11 durante \textbf{15 minutos}
 medida de precisión de referencia, y el CH$_4$ (que en modo abierto está bajo
 la resolución del sensor) se vuelve detectable. Al minuto 12 se extrae una
 muestra por el septo para GC.
+
+Con el O$_2$ en la celda se calcula además el \textbf{cociente
+respiratorio} (RQ $=$ CO$_2$ producido / O$_2$ consumido) y la eficiencia de
+bioconversión: el RQ indica qué fracción del sustrato (carbohidratos,
+proteínas o grasas) están degradando las larvas en cada momento.
 
 \subsection{Control de temperatura y humedad (sin baño de agua)}
 \begin{center}
@@ -117,11 +124,12 @@ Si CO$_2$ $>$ 0,40\,\% $\rightarrow$ abrir más; meta 0,40--0,45\,\% \\
 \end{center}
 
 \noindent\textbf{Nota técnica:} el aire a 10~L/min solo transporta ${\sim}$2~W
-de calor; el pico metabólico del batch es ${\sim}$8~W. El enfriamiento real en
-el pico lo hace la \textbf{evaporación} (cada 10~g/h de agua evaporada
-${\approx}$ 7~W): por eso el nebulizador es actuador de temperatura, no solo
-de humedad. Si el primer batch muestra T sostenida $>$ 35~$^\circ$C pese a
-todo, se agrega un baño de agua \emph{pasivo} (sin calentador) como sumidero.
+de calor; el pico metabólico del batch es ${\sim}$8~W (4\,500 larvas). El
+enfriamiento real en el pico lo hace la \textbf{evaporación} (cada 10~g/h de
+agua evaporada ${\approx}$ 7~W): por eso el nebulizador es actuador de
+temperatura, no solo de humedad. Si el primer batch muestra T sostenida
+$>$ 35~$^\circ$C pese a todo, se agrega un baño de agua \emph{pasivo} (sin
+calentador) como sumidero.
 
 \newpage
 % ============================================================
@@ -132,51 +140,112 @@ Taladro con brocas de 12~mm y 3~mm, pistola de silicona, tijeras de corte de
 lámina o esmeril, destornilladores, cinta métrica, cautín (para pines),
 multímetro, nivel, jabón líquido (prueba de fugas).
 
-\paso{1 --- Fabricar las 6 bandejas (latas hondas)}
-\textbf{Material:} lámina de aluminio o acero inoxidable de 0,5--1~mm;
-geotextil no tejido (tela de jardinería).
+\paso{1 --- Preparar las 4 bandejas desechables (tipo lasaña)}
+\textbf{Material:} bandejas desechables de aluminio para lasaña
+(${\approx}32\times26\times6$~cm; comprar 8--12: se usan 4 por batch);
+geotextil no tejido (tela de jardinería); malla tipo mosquitero de abertura
+${\approx}$2~mm; trocitos de varilla o ángulo de 1,5~cm (espaciadores).
 
 \begin{enumerate}
-  \item Cortar 6 piezas de lámina de $28\times36$~cm (bandeja final
-        $18\times26$~cm con paredes de 6,5~cm).
-  \item Doblar 90$^\circ$ los cuatro bordes a 6,5~cm formando una lata honda;
-        soldar o remachar las esquinas. Doblar el borde superior 1~cm
-        \emph{hacia adentro} (reborde anti-escape).
-  \item Perforar el fondo: retícula de huecos de 3~mm cada 15~mm.
-  \item Cortar el geotextil a $18\times26$~cm y asentarlo sobre el fondo.
+  \item Perforar el fondo de cada bandeja: retícula de huecos de 3~mm cada
+        15~mm (puntera o taladro sobre tabla; el aluminio es delgado y se
+        perfora a mano).
+  \item Cortar el geotextil al tamaño del fondo y asentarlo.
+  \item Tapas de malla: marco de varilla de ${\approx}32\times26$~cm con la
+        malla tensada (o malla recortada, fija con broches al borde
+        enrollado). Obligatoria en la bandeja \textbf{superior} de cada pila;
+        las inferiores quedan tapadas por la bandeja de arriba.
+  \item Para sacar una bandeja cargada: deslizar una tabla rígida debajo y
+        levantar el conjunto --- el aluminio de 0,1~mm no resiste levantarla
+        por el borde con 2--3~kg adentro.
 \end{enumerate}
 
 \noindent\textbf{¿Por qué no se sale la comida ni las larvas?} Las
-\textbf{paredes sólidas} de 6,5~cm retienen todo como lo hacía la sanduchera;
-el \textbf{geotextil} tapa los huecos del fondo: pasa el aire pero no el
-alimento (el geotextil retiene partículas $>$0,1~mm). El reborde doblado hacia
-adentro frena a las larvas que trepan buscando salir (instinto de pupación).
-Las sanducheras sólidas se conservan para los \textbf{controles} sin
-aireación.
+\textbf{paredes sólidas} de ${\approx}$6~cm retienen todo como lo hacía la
+sanduchera; el \textbf{geotextil} tapa los huecos del fondo: pasa el aire
+pero no el alimento (el geotextil retiene partículas $>$0,1~mm). La
+\textbf{tapa de malla} es la barrera principal (el borde enrollado de estas
+bandejas va hacia afuera y no detiene larvas). Ojo: las larvas solo intentan
+salir en masa al volverse \textbf{prepupas} (buscan sitio seco para pupar
+--- esa es la señal de cosecha) o si el sustrato se deteriora (exceso de
+humedad, calor o falta de alimento), que es justo lo que el control evita.
+Barrera opcional extra: banda de vaselina o cinta de teflón de 2~cm en la
+pared interior superior. Las sanducheras sólidas se conservan para los
+\textbf{controles} sin aireación.
 
 \begin{figure}[h!]
 \centering
 \resizebox{0.95\textwidth}{!}{\input{bandeja.tex}}
-\caption{Bandeja de cultivo (lata honda). Paredes sólidas que retienen larvas
-y alimento; fondo perforado forrado con geotextil que deja pasar el aire del
-plenum pero no el alimento; reborde superior doblado hacia adentro como
-barrera anti-escape. En la figura el geotextil se muestra a medias solo con
-fin didáctico: en la bandeja real cubre todo el fondo.}
+\caption{Bandeja desechable tipo lasaña: fondo perforado con geotextil,
+tapa de malla y espaciadores sobre el borde enrollado.}
 \label{fig:bandeja}
 \end{figure}
 
-\paso{2 --- Placa difusora y plenum}
+\paso{2 --- Plenum y pilas de bandejas con espaciadores}
+\textbf{Panera nueva:} baja y ancha, interior mínimo
+$60\times35\times20$~cm (${\approx}$45~L, tipo caja organizadora baja):
+caben \textbf{2 pilas} de bandejas de 26~cm de ancho, una junto a la otra.
+La panera de 34~L ya adquirida queda para los controles.
+
+\begin{figure}[h!]
+\centering
+\resizebox{0.95\textwidth}{!}{\input{apilado.tex}}
+\caption{Interior de la panera: dos pilas de dos bandejas desechables (una
+junto a la otra), con espaciadores de 1,5~cm que dejan una cámara de aire
+entre pisos; abajo el plenum común alimenta ambas pilas; las flechas rojas
+muestran el aire que sube por las camas y por los costados; arriba el
+headspace y la tapa acrílica. La panera reposa sobre las celdas de carga.
+Rotación diaria de posición de bandejas.}
+\label{fig:apilado}
+\end{figure}
+
 \begin{enumerate}
-  \item Con una séptima lámina perforada (mismo patrón) de $26\times36$~cm,
-        fijarla horizontalmente a 3~cm del fondo de la panera sobre 4 topes de
-        ángulo plástico pegados con silicona.
-  \item La cavidad que queda debajo es el plenum: ahí entra el aire (paso 4).
+  \item \textbf{Placa difusora} (base del plenum): lámina de
+        $58\times33$~cm de \textbf{polipropileno o acrílico de 2--3~mm}
+        (rígida, lavable, no se pudre; no usar madera), apoyada sobre
+        8--12 tacos de 2,5--3~cm pegados al fondo con silicona cada
+        ${\approx}$15~cm, de modo que soporte el peso de las 4 bandejas
+        (${\approx}$8--10~kg) sin hundirse. El \textbf{perímetro se sella
+        con silicona}: el aire solo puede subir por los orificios.
+  \item \textbf{Orificios de la placa:} 3~mm cada 5~cm, en retícula
+        corrida (${\approx}$66 orificios), con la misma densidad bajo las
+        dos pilas (fig.~\ref{fig:plenum}).
+  \item \textbf{Entrada de aire:} racor lateral a la altura del plenum,
+        con un \textbf{deflector vertical} frente al chorro, para que no
+        suba directo por los primeros orificios. La cavidad bajo la placa
+        es el \textbf{plenum} (cámara de 2,5--3~cm): ahí entra el aire
+        (paso 4) y se reparte a \textbf{ambas pilas}.
+  \item \textbf{Uniformidad:} la resistencia de la cama (geotextil +
+        sustrato + fondo perforado) es mucho mayor que la de los
+        orificios, así que el flujo se reparte parejo; se verifica en la
+        prueba de aireación (paso 9) con el rotámetro e hilos de papel
+        sobre las camas ($\pm$10--15\,\%).
+  \item Armar 2 pilas, cada una: bandeja inferior $\rightarrow$ 4--6
+        espaciadores de 1,5~cm apoyados sobre su borde enrollado
+        $\rightarrow$ bandeja superior (con tapa de malla). Los espaciadores
+        dejan una \textbf{cámara de aire} entre pisos, que se alimenta del
+        aire que sube por los costados de la pila: reparto semi-paralelo sin
+        ductos.
+  \item \textbf{Rotación diaria:} intercambiar las bandejas de posición
+        (arriba $\leftrightarrow$ abajo y de pila); así el gradiente de
+        posición se promedia entre las réplicas (práctica estándar en racks
+        de BSF). Anotar la rotación en la bitácora.
+  \item Alturas resultantes: plenum 2,5--3~cm; piso 1 hasta ${\approx}$9~cm;
+        piso 2 hasta ${\approx}$16~cm; headspace de ${\approx}$4~cm bajo la
+        tapa.
 \end{enumerate}
+
+\begin{figure}[h!]
+\centering
+\resizebox{0.98\textwidth}{!}{\input{plenum.tex}}
+\caption{Plenum y placa difusora. Corte frontal: el aire de la válvula 6 entra a la cámara baja (2,5--3~cm), el deflector reparte el chorro y el aire sube parejo por los orificios hacia las dos pilas; los tacos soportan la placa y el peso de las bandejas. Vista superior: retícula de orificios de 3~mm cada 5~cm (${\approx}$66), con la huella de las dos pilas en naranja; el perímetro va sellado con silicona.}
+\label{fig:plenum}
+\end{figure}
 
 \paso{3 --- Tapa de acrílico}
 \begin{enumerate}
   \item Cortar acrílico de 3--4~mm a la boca de la panera
-        (${\approx}45\times35$~cm) y marcar los orificios según la
+        (${\approx}60\times35$~cm) y marcar los orificios según la
         figura~\ref{fig:esquema}: 2 puertos del lazo de medición (12~mm),
         1 puerto de salida principal (12~mm), 1 orificio para septo (10~mm),
         1 para el SHT45, 3 para las sondas de cama (6~mm), 1 para el cable del
@@ -195,10 +264,17 @@ válvula solenoide (6) $\rightarrow$ plenum}. La entrada al plenum se hace por
 un racor pasamuros de 6~mm en la pared de la panera, a 1,5~cm del fondo (bajo
 la placa difusora). Todas las uniones con abrazadera plástica.
 
+\begin{figure}[htb]
+\centering
+\resizebox{\textwidth}{!}{\input{linea.tex}}
+\caption{Línea de aire de entrada, en orden de conexión (1--6): el aire ambiente pasa por la bomba, el filtro HEPA, la resistencia PTC y el humidificador de burbuja; luego se mide en el rotámetro y se modula con la válvula 6 antes de entrar al plenum. El aire llega a la cama ya filtrado, tibio y húmedo. Ojo: el rotámetro debe quedar vertical para que el flotador funcione.}
+\label{fig:linea}
+\end{figure}
+
 \paso{5 --- Celda de medición y lazo de recirculación}
 \begin{enumerate}
   \item La celda es una cajita plástica hermética (${\approx}10\times6\times4$~cm)
-        con los sensores CO$_2$, CH$_4$ (y O$_2$ opcional) montados en su tapa,
+        con los sensores CO$_2$, CH$_4$ y O$_2$ montados en su tapa,
         cabezales hacia adentro, con un puerto de entrada y uno de salida.
   \item Conectar: puerto A de la tapa del reactor $\rightarrow$ válvula de 3
         vías (9) $\rightarrow$ entrada de la celda; salida de la celda
@@ -209,6 +285,27 @@ la placa difusora). Todas las uniones con abrazadera plástica.
         (11) $\rightarrow$ escape al ambiente.
 \end{enumerate}
 
+
+\noindent\textbf{Para que mida bien:} (1)~\textbf{volumen interno pequeño}
+(${\approx}$60--100~mL: a 1~L/min se renueva en segundos y la respuesta es
+rápida); (2)~\textbf{entrada abajo en un extremo y salida arriba en el
+opuesto} (barrido diagonal, sin zonas muertas ni cortocircuito de flujo);
+(3)~\textbf{cabezales hacia adentro \emph{y hacia abajo}}: el condensado cae
+al fondo y no sobre la ventana óptica --- mangueras del lazo lo más cortas
+posible; (4)~\textbf{hermética}: empaque en la tapa y sensores roscados o
+pegados (debe pasar la prueba P-01).
+
+\begin{figure}[h!]
+\centering
+\resizebox{0.95\textwidth}{!}{\input{celda.tex}}
+\caption{Celda de medición (corte lateral, ${\approx}10\times6\times4$~cm).
+Los sensores van en la tapa con los cabezales hacia adentro y hacia abajo;
+la entrada y la salida están en extremos opuestos para que el gas barra todo
+el volumen interno (${\approx}$60~mL, renovado en ${\approx}$4~s a
+1~L/min). El condensado cae al fondo, lejos de las ventanas ópticas.}
+\label{fig:celda}
+\end{figure}
+
 \paso{6 --- Calefacción y nebulización}
 La resistencia PTC (12~V, 100~W) va en un tramo metálico de la línea de aire
 \emph{antes} del humidificador (calentar primero, humidificar después). El
@@ -217,10 +314,10 @@ su depósito de agua por encima de la tapa. Ambos comandados por relés.
 
 \paso{7 --- Sondas y pesaje}
 \begin{enumerate}
-  \item Enterrar las 3 sondas DS18B20 en la bandeja central del piso del
-        medio, a 1, 2,5 y 4~cm de profundidad; cables por los orificios de la
-        tapa.
-  \item Enterrar una sonda capacitiva de humedad en dos bandejas distintas.
+  \item Enterrar las 3 sondas DS18B20 en una bandeja del piso superior, a 1,
+        2,5 y 4~cm de profundidad; cables por los orificios de la tapa.
+  \item Enterrar una sonda capacitiva de humedad en dos bandejas distintas
+        (una por pila).
   \item Apoyar la panera sobre las 4 celdas de carga (una por esquina, sobre
         base rígida nivelada); el HX711 va en la caja eléctrica.
 \end{enumerate}
@@ -234,7 +331,7 @@ su depósito de agua por encima de la tapa. Ambos comandados por relés.
 \midrule
 MH-410D (CO$_2$) & UART1 & GPIO16 (RX), GPIO17 (TX) \\
 MH-441D (CH$_4$) & UART2 & GPIO25 (RX), GPIO26 (TX) \\
-LuminOx (O$_2$, opcional) & UART0 / USB-serial & GPIO1/3 (o módulo USB) \\
+LuminOx (O$_2$) & UART0 / USB-serial & GPIO1/3 (o módulo USB) \\
 2$\times$ SHT45 & I$^2$C & GPIO21 (SDA), GPIO22 (SCL) \\
 3$\times$ DS18B20 & 1-Wire & GPIO4 \\
 HX711 (celdas) & digital & GPIO18 (SCK), GPIO19 (DT) \\
@@ -250,6 +347,13 @@ Relé nebulizador & digital & GPIO13 \\
 
 \noindent Fuentes: 5~V/5~A para ESP32 y sensores; 12~V/10~A para PTC y
 válvulas. Tierra común entre ambas.
+
+\begin{figure}[h!]
+\centering
+\resizebox{0.98\textwidth}{!}{\input{electronica.tex}}
+\caption{Esquemático de conexiones (paso 8). Los sensores de gas llegan desde la celda por tres puertos UART; los ambientales por I$^2$C (SHT45), 1-Wire (DS18B20) y ADC (humedad de sustrato); el pesaje entra por el HX711 (4 celdas en puente Wheatstone); los cinco actuadores salen por el módulo de relés; el PC del laboratorio recibe los datos por Wi-Fi (o USB-serial) y sirve el dashboard. Alimentación separada: 5~V para la lógica y 12~V para PTC y válvulas, con tierra común.}
+\label{fig:electronica}
+\end{figure}
 
 \paso{9 --- Verificación (antes del primer batch)}
 \begin{enumerate}
@@ -277,7 +381,8 @@ válvulas. Tierra común entre ambas.
 \toprule
 \textbf{Parámetro} & \textbf{Valor} \\
 \midrule
-Larvas por batch & 4\,500 (6 bandejas, ${\approx}$1,6 larvas/cm$^2$) \\
+Larvas por batch & 4\,500 (4 bandejas: 2 pilas $\times$ 2,
+${\approx}$1,6 larvas/cm$^2$) \\
 Profundidad de cama & 3--4,5~cm por bandeja \\
 Alimentación & 100~mg/larva/día; cargas los días 0, 3 y 6 \\
 Humedad del sustrato & 65--70\,\% al preparar; mantener con nebulizador \\
@@ -300,6 +405,8 @@ Controles & sanducheras sólidas en panera pequeña (sin aireación) \\
   \item Al minuto 15: el ESP32 reabre; registrar pendientes CO$_2$/CH$_4$.
   \item Alimentar según calendario (días 0, 3, 6); aprovechar para foto de la
         cama y revisión visual del geotextil.
+  \item \textbf{Rotación:} intercambiar las bandejas de posición (arriba
+        $\leftrightarrow$ abajo y de pila); anotar en bitácora.
   \item Verificar nivel de agua del humidificador y del nebulizador.
 \end{enumerate}
 
@@ -364,18 +471,20 @@ cierra el escape en la ventana diaria. Van en la línea/celda, cableadas a los
 relés del ESP32.}
 \costo{USD 10--15 c/u $\Rightarrow$ USD 30--45.}
 
-\comp{Bandejas lata honda + geotextil (6)}
-{Latas metálicas de $18\times26\times6,5$~cm con fondo perforado (huecos de
-3~mm) forrado de geotextil. Van apiladas en 3 pisos dentro de la panera (2
-por piso, sobre topes). Las paredes retienen larvas y alimento; el fondo
-deja pasar el aire. Fabricación en taller local.}
-\costo{USD 60--90 + geotextil USD 5--10.}
+\comp{Bandejas desechables tipo lasaña + tapas de malla + geotextil (4)}
+{Bandejas de aluminio desechables (${\approx}32\times26\times6$~cm) con fondo
+perforado (huecos de 3~mm) forrado de geotextil; van en 2 pilas de 2 con
+espaciadores de 1,5~cm entre pisos; tapa de malla en las superiores. Se
+reemplazan cada batch (comprar 8--12).}
+\costo{USD 10--15 (paquete) + geotextil y malla USD 10--15.}
 
-\comp{Panera 34\,L + tapa acrílica + difusor (ya comprada)}
-{Cuerpo del reactor sobre 4 celdas de carga. La tapa de acrílico con empaque
-EPDM y 4 abrazaderas sella el sistema; la placa difusora a 3~cm del fondo
-crea el plenum que reparte el aire parejo.}
-\costo{Panera USD 0 (adquirida); tapa+empaque+abrazaderas USD 33--53;
+\comp{Panera nueva baja y ancha ${\approx}$45~L + tapa acrílica + difusor}
+{Cuerpo del reactor (interior mín. $60\times35\times20$~cm: 2 pilas de
+bandejas de 26~cm de ancho) sobre 4 celdas de carga. La tapa de acrílico con
+empaque EPDM y 4 abrazaderas sella el sistema; la placa difusora a 2,5--3~cm
+del fondo crea el plenum común. La panera de 34~L ya adquirida queda para los
+controles con sanducheras.}
+\costo{Panera USD 15--25 (compra nueva); tapa+empaque+abrazaderas USD 33--53;
 difusor USD 10--15.}
 
 \comp{Celda de medición + bombecita P (10, 8)}
@@ -386,14 +495,17 @@ lazo cerrado, así los sensores miden siempre gas fresco sin importar si el
 reactor está abierto o en ventana cerrada.}
 \costo{USD 8 (caja) + USD 10--15 (bombecita).}
 
-\comp{Sensores de gas: MH-410D (CO$_2$) y MH-441D (CH$_4$) --- ya comprados}
+\comp{Sensores de gas: MH-410D (CO$_2$), MH-441D (CH$_4$) y LuminOx (O$_2$)}
 {Sensores infrarrojos cilíndricos ($\varnothing$20~mm) con salida UART. Van
 atornillados en la tapa de la celda de medición, cabezal hacia adentro, cable
 al ESP32. El de CO$_2$ (0--5\,000~ppm) es suficiente en modo abierto porque el
 control mantiene el headspace bajo 0,45\,\%; el de CH$_4$ (0--5\,\%vol)
-aprovecha la ventana cerrada para acumular señal. Validación por GC en marcha
-(hoja de ruta, punto 5).}
-\costo{USD 0 (adquiridos). O$_2$ LuminOx opcional: USD 90--150.}
+aprovecha la ventana cerrada para acumular señal. El \textbf{LuminOx} cierra
+el balance: con O$_2$, CO$_2$ y CH$_4$ se calcula el \textbf{cociente
+respiratorio (RQ)} y la eficiencia de bioconversión. Validación por GC en
+marcha (hoja de ruta, punto 5).}
+\costo{MH-410D/441D: USD 0 (adquiridos). LuminOx: USD 90--150 (compra
+nueva, rubro 2).}
 
 \comp{SHT45 (2) --- temperatura y humedad del aire}
 {Módulos digitales I$^2$C ($\pm$0,1~$^\circ$C, $\pm$1,5\,\%HR). Uno en el
@@ -424,11 +536,11 @@ a la cama, con depósito propio. Doble función: humedad del sustrato y
 enfriamiento evaporativo en el pico metabólico.}
 \costo{USD 10--15.}
 
-\comp{ESP32 + Raspberry Pi + fuentes y relés}
+\comp{ESP32 + PC del laboratorio + fuentes y relés}
 {El ESP32 lee todo cada 30~s, ejecuta las reglas de control y reporta por
-Wi-Fi; la Raspberry Pi (o PC del laboratorio) guarda los datos y sirve el
-\emph{dashboard}. Fuentes 5~V/5~A y 12~V/10~A, 5 relés.}
-\costo{ESP32 USD 8--15; RPi USD 60--80 (o USD 0 con PC); fuentes+relés+cableado
+Wi-Fi; el \textbf{PC del laboratorio} (ya existente) guarda los datos y sirve
+el \emph{dashboard}. Fuentes 5~V/5~A y 12~V/10~A, 5 relés.}
+\costo{ESP32 USD 8--15; PC USD 0 (ya existe); fuentes+relés+cableado
 USD 35--50.}
 
 \comp{Racores, septo, mangueras, cobertura, misceláneos}
@@ -450,28 +562,27 @@ Valores centrales de mercado (agosto 2026), tasa de referencia
 \endhead
 1. Ingeniería: electrónico (montaje+firmware) \$500 +
 dashboard \$500 & 1\,000 & 4,10 M \\
-2. Sensores: 2$\times$SHT45, 3$\times$DS18B20, 2$\times$humedad,
-4 celdas+HX711 (CO$_2$ y CH$_4$ ya comprados) & 65 & 0,27 M \\
-3. Montaje reactor y control: bandejas, tapa, difusor, válvulas
-$\times$3, bomba, celda+bombecita, HEPA, PTC, nebulizador, rotámetro,
-ESP32, RPi, fuentes, relés, misceláneos & 470 & 1,93 M \\
+2. Sensores: LuminOx O$_2$, 2$\times$SHT45, 3$\times$DS18B20,
+2$\times$humedad, 4 celdas+HX711 (CO$_2$ y CH$_4$ ya comprados) & 195 & 0,80 M \\
+3. Montaje reactor y control: panera baja ${\approx}$45~L, bandejas
+desechables, tapa, difusor, espaciadores, válvulas $\times$3, bomba,
+celda+bombecita, HEPA, PTC, nebulizador, rotámetro, ESP32, fuentes,
+relés, misceláneos (PC del laboratorio ya existe) & 360 & 1,48 M \\
 4. Mediciones de laboratorio: proximal+C/N+pH (4--6 muestras) +
 GC (${\approx}$20 inyecciones) & 700 & 2,87 M \\
 5. Alimentos y larvas de arranque (toda la campaña) & 100 & 0,41 M \\
 6. Gases: patrón de calibración CH$_4$/CO$_2$ & 100 & 0,41 M \\
 \midrule
-\textbf{Subtotal} & \textbf{2\,435} & \textbf{9,99 M} \\
-Imprevistos (15\,\%) & 365 & 1,50 M \\
+\textbf{Subtotal} & \textbf{2\,455} & \textbf{10,07 M} \\
+Imprevistos (15\,\%) & 368 & 1,51 M \\
 \midrule
-\textbf{TOTAL} & \textbf{2\,800} & \textbf{11,48 M} \\
-Opcional recomendado: LuminOx O$_2$ (habilita RQ) & +130 & +0,53 M \\
-\textbf{TOTAL con O$_2$} & \textbf{2\,930} & \textbf{12,01 M} \\
+\textbf{TOTAL} & \textbf{2\,823} & \textbf{11,57 M} \\
 \bottomrule
 \end{longtable}
 
-\noindent\textbf{Holgura frente al tope:} ${\approx}$3,0~M~COP (con O$_2$
-incluido). Si el laboratorio de la facultad cubre proximal y GC (convenio), el
-total baja a ${\approx}$8,6~M~COP.
+\noindent\textbf{Holgura frente al tope:} ${\approx}$3,4~M~COP. Si el
+laboratorio de la facultad cubre proximal y GC (convenio), el total baja a
+${\approx}$8,7~M~COP.
 
 \medskip
 \noindent\textbf{Compras que bloquean el arranque (prioridad 1):} bandejas +
@@ -485,8 +596,10 @@ Lo demás puede escalonarse.
         propio (núcleo de la tesis).
   \item Precios de referencia agosto 2026; variación típica $\pm$30\,\%.
         Cotización formal de laboratorio antes de la campaña.
-  \item Ítems adquiridos (paneras, MH-410D, MH-441D) figuran en USD~0.
-        La panera pequeña y las sanducheras quedan para controles.
+  \item Ítems adquiridos (panera de 34~L, MH-410D, MH-441D) figuran en
+        USD~0; la panera pequeña y las sanducheras quedan para controles.
+        La panera grande del reactor (${\approx}$45~L) es compra nueva
+        dentro del rubro 3.
   \item El baño de agua quedó como opción de respaldo \emph{pasivo}
         (${\approx}$USD~25) si el primer batch muestra sobrecalentamiento
         sostenido $>$35~$^\circ$C.
