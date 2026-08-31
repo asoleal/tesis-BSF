@@ -52,7 +52,7 @@
 # PDFs y artefactos
 # =========================
 # Si NO quieres versionar PDFs generados, deja esto activo:
-*.pdf
+#*.pdf
 
 # Si SÍ quieres versionar algunos PDFs finales, puedes “des-ignorar” así:
 #!tesis/tesis.pdf
