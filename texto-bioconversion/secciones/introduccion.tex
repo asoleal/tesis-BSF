@@ -1,0 +1,320 @@
+\section{Preliminares matemáticos}
+
+\subsection{Sistemas dinámicos y balances conservativos}
+
+\begin{definition}[Sistema dinámico en tiempo continuo]\label{def11}
+Sea $\mathbf{x}(t) \in \mathbb{R}^n$ el vector de \emph{variables de estado},
+$\mathbf{u}(t) \in \mathbb{R}^m$ el vector de \emph{entradas} (forzamientos externos)
+y $\mathbf{y}(t) \in \mathbb{R}^p$ el vector de \emph{mediciones}. Un sistema dinámico
+es el par de ecuaciones
+\begin{equation}
+\dot{\mathbf{x}}(t) = f\bigl(\mathbf{x}(t), \mathbf{u}(t); \boldsymbol{\theta}\bigr),
+\qquad
+\mathbf{y}(t) = g\bigl(\mathbf{x}(t); \boldsymbol{\theta}\bigr),
+\label{eq:sistema-general}
+\end{equation}
+donde $f$ describe la dinámica interna, $g$ el mapa de observación y
+$\boldsymbol{\theta} \in \mathbb{R}^q$ el vector de parámetros.
+\end{definition}
+
+\begin{definition}[Balance conservativo]\label{def12}
+Sea $x(t)$ una variable de estado que representa una cantidad extensiva
+(masa, energía, moles) contenida en un volumen de control. Su dinámica
+obedece el balance
+\begin{equation}
+\dot{x}(t) = \underbrace{J_{\mathrm{in}}(t)}_{\text{entradas}}
+- \underbrace{J_{\mathrm{out}}(t)}_{\text{salidas}}
++ \underbrace{P(t)}_{\text{producción}}
+- \underbrace{C(t)}_{\text{consumo}},
+\label{eq:balance}
+\end{equation}
+donde los flujos $J$ cruzan la frontera del volumen de control, mientras que
+$P$ y $C$ representan transformaciones \emph{internas} de una forma de materia
+o energía a otra.
+\end{definition}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  vol/.style={draw, thick, rounded corners=8pt, minimum width=5.2cm,
+              minimum height=3.6cm, fill=blue!6},
+  flujo/.style={-{Stealth[length=3mm]}, very thick},
+  trans/.style={-{Stealth[length=2.5mm]}, thick}
+]
+
+% Volumen de control
+\node[vol] (vc) {};
+\node at ([yshift=1.15cm]vc.center) {\textbf{Volumen de control}};
+\node at ([yshift=0.35cm]vc.center) {$x(t)$};
+\node at ([yshift=-0.15cm]vc.center) {\footnotesize (masa o energía acumulada)};
+
+% Frontera
+\draw[dashed, thick] ([xshift=6pt,yshift=6pt]vc.north west)
+  rectangle ([xshift=-6pt,yshift=-6pt]vc.south east);
+
+% Transformaciones internas: ciclo P y C
+\draw[trans, orange!85!black] ([xshift=-1.0cm,yshift=-0.85cm]vc.center)
+  to[bend left=25] node[above, pos=0.5]{$P$}
+  ([xshift=1.0cm,yshift=-0.85cm]vc.center);
+\draw[trans, orange!85!black] ([xshift=1.0cm,yshift=-1.25cm]vc.center)
+  to[bend left=25] node[below, pos=0.5]{$C$}
+  ([xshift=-1.0cm,yshift=-1.25cm]vc.center);
+
+% Flujos que cruzan la frontera
+\draw[flujo, green!50!black] (-5.4,0.35) -- node[above, midway]{$J_{\mathrm{in}}$}
+  ([yshift=0.35cm]vc.west);
+\draw[flujo, red!70!black] ([yshift=0.35cm]vc.east) -- node[above, midway]{$J_{\mathrm{out}}$}
+  (5.4,0.35);
+
+\end{tikzpicture}
+\caption{Esquema del balance conservativo de la Definición~1.2. La cantidad
+acumulada $x(t)$ dentro del volumen de control cambia por dos mecanismos:
+flujos que \emph{cruzan la frontera} ($J_{\mathrm{in}}$, $J_{\mathrm{out}}$)
+y transformaciones \emph{internas} ($P$: producción, $C$: consumo) que
+convierten una forma de materia o energía en otra sin cruzar la frontera.}
+\label{fig:balance}
+\end{figure}
+
+\begin{remark}
+La ecuación \eqref{eq:balance} es la estructura común de todos los modelos de
+este documento. El modelo de Eriksen \cite{eriksen2022} es una red de balances
+de masa entre compartimentos ($A$, $B$, $L$) sin términos $J$ (sistema cerrado
+a nivel de larva); el modelo del contenedor que desarrollaremos añade los
+términos de entrada y salida asociados al flujo de aire (\emph{inlet/outlet})
+y a la alimentación.
+\end{remark}
+
+\begin{definition}[Compartimento]\label{def13}
+Un \emph{compartimento} es una variable de estado $x_i(t)$ que representa la
+cantidad total de una entidad homogénea (masa estructural, reserva lipídica,
+gas en un volumen de aire) dentro del volumen de control, bajo el supuesto de
+\emph{mezcla homogénea}: la entidad está uniformemente distribuida, de modo
+que un único valor escalar describe su estado en todo el volumen.
+\end{definition}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  vol/.style={draw, thick, rounded corners=8pt, minimum width=4.4cm,
+              minimum height=3.4cm, fill=blue!6},
+  sensor/.style={draw, thick, fill=red!15, rounded corners=2pt}
+]
+
+% Volumen de control con mezcla homogénea
+\node[vol] (vc) {};
+\node at ([yshift=1.25cm]vc.center) {\textbf{Compartimento}};
+
+% Partículas uniformemente distribuidas (mezcla homogénea)
+\foreach \p in {(-1.5,0.6),(-0.9,0.1),(-0.3,0.7),(0.3,0.2),(0.9,0.8),(1.5,0.3),
+                (-1.4,-0.5),(-0.7,-0.9),(0.0,-0.4),(0.7,-1.0),(1.4,-0.6),(-1.0,-1.2),(0.4,-0.9)}
+  \fill[blue!55!black] \p circle (1.6pt);
+
+% Estado escalar
+\node at ([yshift=-1.5cm]vc.center) {$x_i(t)$};
+
+% Sensor puntual
+\node[sensor, minimum width=0.5cm, minimum height=0.35cm] (s) at (vc.east) {};
+\node[right=0.15cm of s] {$y_i(t)$};
+\draw[-{Stealth[length=2mm]}, thick, red!70!black] (s.west) -- ++(-0.45,0);
+
+% Anotación del supuesto
+\node[below=0.35cm of vc, text width=5.2cm, align=center]
+  {\footnotesize Supuesto de mezcla homogénea: cualquier punto del volumen
+   representa al todo.};
+
+\end{tikzpicture}
+\caption{Interpretación del supuesto de mezcla homogénea (Definición~1.3).
+La entidad acumulada se supone uniformemente distribuida en el volumen, de
+modo que el estado escalar $x_i(t)$ la describe por completo y una medición
+puntual $y_i(t)$ (por ejemplo, un sensor de CO$_2$ o de temperatura) es
+representativa de todo el compartimento.}
+\label{fig:compartimento}
+\end{figure}
+
+La Figura~\ref{fig:compartimento} ilustra el contenido del supuesto de mezcla
+homogénea. Los puntos distribuidos uniformemente en el volumen representan la
+entidad acumulada ---gas, biomasa o humedad--- y sintetizan el supuesto sin
+necesidad de ecuaciones: al no existir gradientes internos, un único escalar
+$x_i(t)$ describe el estado de todo el compartimento. El elemento de medición
+puntual $y_i(t)$ representa la conexión con el sistema experimental: la
+lectura de un sensor (de temperatura, humedad relativa o concentración de
+CO$_2$) ubicado en una posición fija del contenedor se toma como
+representativa del volumen completo. Este es precisamente el supuesto que
+deberá vigilarse con mayor cuidado en la etapa de validación, pues en el
+sistema real cabe esperar gradientes locales de temperatura y gases en la
+vecindad de la masa larval, donde la actividad metabólica es intensa.
+
+\begin{definition}[Red de compartimentos]\label{def14}
+Una \emph{red de compartimentos} es un conjunto $\{x_1, \dots, x_n\}$ acoplado
+por flujos de transferencia $J_{ij}(t) \geq 0$ del compartimento $j$ al
+compartimento $i$, de modo que
+\begin{equation}
+\dot{x}_i = \sum_{j \neq i} \bigl( J_{ij} - J_{ji} \bigr)
++ J_{i,\mathrm{in}} - J_{i,\mathrm{out}} + P_i - C_i,
+\qquad i = 1, \dots, n.
+\label{eq:red}
+\end{equation}
+Las transferencias internas satisfacen conservación global: si $P_i = C_i = 0$
+y no hay flujos externos, entonces $\sum_i \dot{x}_i = 0$.
+\end{definition}
+
+\begin{remark}
+El modelo de Eriksen es una red de tres compartimentos ---asimilados $A$,
+biomasa estructural $B$ y lípidos $L$--- con transferencias internas
+$J_{AB}, J_{AL}, J_{LB}$ (asimilación, síntesis y reciclaje). El sistema
+completo alimento--larvas--ambiente extiende esta red con compartimentos
+externos: masa de sustrato, y moles de CO$_2$, CH$_4$ y vapor de agua en el
+volumen de aire del contenedor.
+\end{remark}
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  comp/.style={draw, thick, circle, minimum size=1.15cm, fill=blue!8},
+  ext/.style={draw, thick, rounded corners=3pt, fill=green!10,
+              minimum width=1.5cm, minimum height=0.85cm},
+  flujo/.style={-{Stealth[length=2.6mm]}, thick},
+  interno/.style={-{Stealth[length=2.6mm]}, thick, orange!85!black},
+  resp/.style={-{Stealth[length=2.6mm]}, thick, red!70!black}
+]
+
+% Compartimentos internos (modelo de Eriksen)
+\node[comp] (A) at (0,2.6) {$A$};
+\node[comp] (B) at (-1.9,0) {$B$};
+\node[comp] (L) at (1.9,0) {$L$};
+
+% Nodo externo: sustrato (forzamiento)
+\node[ext] (S) at (0,5.0) {Sustrato};
+
+% Flujo externo de entrada
+\draw[flujo, green!50!black] (S) -- node[right, pos=0.45]{$r_A = aB$
+  \footnotesize (asimilación)} (A);
+
+% Transferencias internas
+\draw[interno] (A) to[bend right=18] node[left, pos=0.45]{$r_B$} (B);
+\draw[interno] (A) to[bend left=18] node[right, pos=0.45]{$r_L$} (L);
+\draw[interno] (L) to[bend left=15] node[right, pos=0.4]
+  {\footnotesize reciclaje ($r_L < 0$)} (A);
+
+% Tres fuentes de CO2
+\draw[resp] (B.south) -- ++(0,-1.0)
+  node[below]{$r_{\mathrm{CO_2},m} = mB$};
+\draw[resp] (-1.35,1.35) -- ++(-0.85,0.85)
+  node[above left=-2pt]{$r_{\mathrm{CO_2},B} = Y_B r_B$};
+\draw[resp] (1.35,1.35) -- ++(0.85,0.85)
+  node[above right=-2pt]{$r_{\mathrm{CO_2},L} = Y_L r_L$};
+
+% Etiquetas de los compartimentos
+\node[left=0.35cm of A, align=right] {\footnotesize asimilados};
+\node[left=0.35cm of B, align=right] {\footnotesize biomasa\\[-1pt]\footnotesize estructural};
+\node[right=0.35cm of L, align=left] {\footnotesize lípidos\\[-1pt]\footnotesize de reserva};
+
+\end{tikzpicture}
+\caption{El modelo de Eriksen \cite{eriksen2022} como red de compartimentos
+(Definición~1.3). El sustrato es un forzamiento externo que alimenta el
+compartimento de asimilados $A$ a tasa $r_A = aB$; las flechas internas
+representan síntesis de biomasa estructural ($r_B$), acumulación de lípidos
+($r_L$) y reciclaje de reservas hacia el pool de asimilados cuando
+$r_L < 0$. Las tres flechas rojas son las fuentes de producción de CO$_2$:
+mantenimiento (proporcional a $B$), costo de síntesis estructural y costo de
+síntesis de lípidos, cuya suma es la producción total
+(Ec.~\eqref{eq:rco2total}).}
+\label{fig:red-eriksen}
+\end{figure}
+
+En el modelo de Eriksen, la producción total de CO$_2$ se descompone en tres
+procesos metabólicos distintos \cite{eriksen2022}. El primero es el
+\emph{mantenimiento}: la energía que la larva requiere para sostener los
+procesos vitales que no producen crecimiento neto, modelada como proporcional
+a la biomasa estructural,
+\begin{equation}
+r_{\mathrm{CO_2},m} = m\,B,
+\label{eq:rco2m}
+\end{equation}
+donde $m$ es la tasa específica de mantenimiento (en el artículo,
+$m = 0.08$~día$^{-1}$). El segundo es el \emph{costo de síntesis de la
+biomasa estructural}: construir tejido a partir de asimilados es un proceso
+energéticamente costoso, y esa energía se obtiene respirando asimilados,
+\begin{equation}
+r_{\mathrm{CO_2},B} = Y_B\,r_B,
+\label{eq:rco2b}
+\end{equation}
+con $Y_B = 0.44$ el costo (adimensional) de crecimiento estructural y $r_B$
+la tasa de síntesis de biomasa. El tercero es el \emph{costo de síntesis de
+lípidos de reserva},
+\begin{equation}
+r_{\mathrm{CO_2},L} = Y_L\,r_L,
+\label{eq:rco2l}
+\end{equation}
+con $Y_L = 0.42$ y $r_L$ la tasa de acumulación de lípidos; este término se
+anula cuando la asimilación no cubre el mantenimiento y los lípidos se
+reciclan en lugar de sintetizarse ($r_L < 0$). La producción total es la suma
+de los tres procesos:
+\begin{equation}
+r_{\mathrm{CO_2}} = r_{\mathrm{CO_2},m} + r_{\mathrm{CO_2},B} + r_{\mathrm{CO_2},L}.
+\label{eq:rco2total}
+\end{equation}
+En la Figura~\ref{fig:red-eriksen}, las flechas de salida de CO$_2$
+corresponden a estos tres términos. Esta descomposición es la conexión directa
+con el sistema instrumentado: la señal de CO$_2$ medida en el \emph{outlet}
+del contenedor contiene, superpuestas, las tres fuentes, de modo que un modelo
+como el anterior permite inferir qué fracción de la señal corresponde a
+mantenimiento, a crecimiento estructural o a acumulación de lípidos.
+
+\subsection{El modelo de Eriksen como sistema dinámico}
+
+El modelo de Eriksen \cite{eriksen2022} se obtiene al particularizar la
+Definición~1.1 con el vector de estado, las entradas y las mediciones
+\begin{equation}
+\mathbf{x} = \begin{bmatrix} A \\ B \\ L \end{bmatrix},
+\qquad
+\mathbf{u} = \begin{bmatrix} s \\ T \end{bmatrix},
+\qquad
+\mathbf{y} = r_{\mathrm{CO_2}},
+\label{eq:eriksen-sistema}
+\end{equation}
+donde $s(t)$ representa el suministro de alimento y $T(t)$ la temperatura de
+cría. La función de dinámica $f$ está dada por los balances de cada
+compartimento,
+\begin{equation}
+\dot{A} = r_A - r_B - r_L - r_{\mathrm{CO_2}},
+\qquad
+\dot{B} = r_B,
+\qquad
+\dot{L} = r_L,
+\label{eq:eriksen-edos}
+\end{equation}
+donde las tasas $r_A$, $r_B$, $r_L$ y $r_{\mathrm{CO_2}}$ son funciones del
+estado y de los parámetros
+$\boldsymbol{\theta} = (a, m, Y_B, Y_L, B_{\max}, \beta, \dots)$.
+El mapa de observación $g$ es la Ec.~\eqref{eq:rco2total}: la producción
+total de CO$_2$ es una medición indirecta de la actividad metabólica de los
+tres compartimentos, ninguno de los cuales es medible directamente de forma
+no destructiva.
+
+\begin{remark}[Cierre: del sistema general al modelo de Eriksen]
+La formulación \eqref{eq:eriksen-sistema}--\eqref{eq:eriksen-edos} pone de
+manifiesto dos extensiones que motivan el presente documento. Primero, en el
+modelo original la temperatura $T$ y el suministro $s$ son forzamientos
+exógenos; en un contenedor cerrado e instrumentado, la temperatura es un
+estado más del sistema, acoplado al calor metabólico que las propias larvas
+generan. Segundo, el mapa de observación $g$ puede enriquecerse con las
+mediciones de humedad relativa y CH$_4$, lo que plantea el problema de
+estimación de estados y parámetros que abordaremos con redes neuronales
+informadas por física. En síntesis, esta sección ha establecido el lenguaje
+formal sobre el que se construye el resto del documento: un sistema dinámico
+(Definición~\ref{def11}) cuyas ecuaciones son balances conservativos
+(Definición~\ref{def12}) organizados en una red de compartimentos
+(Definiciones~\ref{def13} y~\ref{def14}), bajo el supuesto de mezcla
+homogénea ilustrado en la Figura~\ref{fig:compartimento}. El modelo de
+Eriksen \cite{eriksen2022} emerge así como un caso particular de esta
+estructura ---una red de tres compartimentos con tres fuentes de producción
+de CO$_2$--- y su reformulación en términos de estados, entradas y
+mediciones delimita con precisión el punto de partida de la extensión que se
+desarrolla en las secciones siguientes: acoplar la dinámica larval con la
+del ambiente del contenedor y con un mapa de observación enriquecido por
+instrumentación en tiempo real.
+\end{remark}
+

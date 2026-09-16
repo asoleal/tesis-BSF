@@ -1,0 +1,346 @@
+\section{Modelo matemático}
+
+% 5.1 Balance de masa del sustrato/alimento
+% 5.2 Crecimiento larval
+% 5.3 Balance de masa del aire (inlet-outlet)
+% 5.4 Balance de energía / temperatura
+% 5.5 Balance de humedad
+% 5.6 Balances de gases: CO2 y CH4
+% 5.7 Sistema acoplado en forma de estado
+
+Esta sección formula el modelo general del sistema, con todas las
+dependencias explícitas. Las simplificaciones que se adoptarán para la
+simulación y la estimación se enuncian al final de la sección
+(Sección~5.7), sobre el modelo ya construido.
+
+\subsection{Dinámica larval: forma general}
+
+La dinámica de la larva promedio sigue la estructura de compartimentos del
+modelo de Eriksen (Ecs.~\eqref{eq:eriksen-edos}), pero con las dependencias
+del sistema controlado hechas explícitas. En su forma general, las tasas
+son funciones
+\begin{align}
+r_A &= r_A\bigl(B, S, T, w; \boldsymbol{\theta}\bigr)
+&& \text{(asimilación)}, \label{eq:ra-general}\\
+r_B &= r_B\bigl(A, B, T; \boldsymbol{\theta}\bigr)
+&& \text{(síntesis estructural)}, \label{eq:rb-general}\\
+r_L &= r_L\bigl(A, B, L, T; \boldsymbol{\theta}\bigr)
+&& \text{(acumulación/reciclaje de lípidos)}, \label{eq:rl-general}\\
+r_{\mathrm{CO_2}} &= m(T)\,B + Y_B\,r_B + Y_L\,r_L
+&& \text{(respiración total)}, \label{eq:rco2-general}
+\end{align}
+y el consumo de oxígeno se vincula a la respiración mediante el cociente
+respiratorio,
+\begin{equation}
+r_{\mathrm{O_2}} = \frac{r_{\mathrm{CO_2}}}{RQ},
+\qquad
+RQ = RQ\bigl(A, B, L; \boldsymbol{\theta}\bigr),
+\label{eq:ro2-general}
+\end{equation}
+donde $RQ$ depende del sustrato metabólico que se oxida: próximo a $1.0$
+cuando dominan carbohidratos de la dieta, y decreciente hacia $\approx 0.7$
+cuando el reciclaje de lípidos ($r_L < 0$) sostiene el metabolismo.
+
+\begin{remark}\label{rem:dependencias}
+Las dependencias escritas en
+\eqref{eq:ra-general}--\eqref{eq:ro2-general} son deliberadamente generales.
+La asimilación depende del sustrato disponible $S$ (a sustrato agotado, no
+hay asimilación), de la temperatura $T$ (la fisiología es térmicamente
+sensible) y de la humedad $w$ (la actividad en el lecho depende del agua
+disponible). Nótese que $T$ y $w$ no son forzamientos exógenos como en el
+modelo original, sino \emph{estados del propio sistema}
+(Definición~\ref{def32}): la dinámica larval queda así acoplada
+bidireccionalmente con el ambiente del contenedor ---las larvas responden
+al ambiente y, a la vez, lo modifican con su calor, su respiración y su
+actividad.
+\end{remark}
+
+\subsection{Balance del sustrato}
+
+El sustrato es un compartimento activo (Observación~\ref{rem:microbiano}):
+lo consume la población larval y lo transforma la microbiota. Su balance
+general de masa es
+\begin{equation}
+\dot{S} = \underbrace{-\frac{N\,r_A}{\eta_A}}_{\text{consumo larval}}
+\;\underbrace{-\;k_{\mathrm{mic}}(T, w)\,S}_{\text{degradación microbiana}},
+\label{eq:sustrato-general}
+\end{equation}
+donde $\eta_A \in (0,1]$ es la fracción del sustrato ingerido que
+efectivamente se asimila (el resto pasa al residuo o frass, que permanece
+en el lote), $r_A$ es la tasa de asimilación por larva de la
+Ec.~\eqref{eq:ra-general} y $k_{\mathrm{mic}}(T, w)$ es una tasa específica
+de degradación microbiana, dependiente de la temperatura y la humedad del
+lecho.
+
+Los procesos microbianos asociados son, en forma general,
+\begin{align}
+r_{\mathrm{CO_2}}^{\mathrm{mic}} &= r_{\mathrm{CO_2}}^{\mathrm{mic}}\bigl(S, T, w; \boldsymbol{\theta}\bigr)
+&& \text{(respiración microbiana)}, \label{eq:co2mic-general}\\
+r_{\mathrm{O_2}}^{\mathrm{mic}} &= r_{\mathrm{O_2}}^{\mathrm{mic}}\bigl(S, T, w; \boldsymbol{\theta}\bigr)
+&& \text{(consumo microbiano de O$_2$)}, \label{eq:o2mic-general}\\
+r_{\mathrm{CH_4}} &= r_{\mathrm{CH_4}}\bigl(S, T, w, \xi; \boldsymbol{\theta}\bigr)
+&& \text{(metanogénesis)}, \label{eq:ch4-general}
+\end{align}
+donde $\xi(t) \in [0,1]$ denota la fracción anaerobia del lecho: la
+metanogénesis solo ocurre en micrositios sin oxígeno, y su intensidad
+depende de qué tan desarrollada esté esa fracción.
+
+\begin{remark}[La fracción anaerobia como variable latente]\label{rem:xi}
+La variable $\xi$ no es medible directamente ni es un estado con dinámica
+propia en este nivel de descripción: es una \emph{variable latente} que
+crece con la humedad del lecho, la compactación y el consumo local de
+O$_2$, y decrece con la bioturbación larval. Esta lectura cualitativa tiene
+una consecuencia experimental ya anunciada
+(Observación~\ref{rem:tf}): al llegar la prepupa, cesa la bioturbación,
+$\xi$ aumenta y el CH$_4$ del \emph{outlet} debería revelarlo. En la
+formulación simplificada (Sección~5.7) se decidirá si $\xi$ se parametriza
+como función de $(w, N, r_A)$ o se absorbe en los parámetros de
+\eqref{eq:ch4-general}.
+\end{remark}
+
+\begin{remark}[El frass dentro del balance]\label{rem:frass}
+El residuo (frass) no aparece como compartimento: la fracción no asimilada
+del sustrato permanece en el lote y sigue siendo parcialmente degradable
+por la microbiota, de modo que la distinción operativa entre ``sustrato'' y
+``frass'' es de calidad más que de ubicación. En la forma general,
+\eqref{eq:sustrato-general} debe leerse como el balance de la
+\emph{materia orgánica degradable} del lecho; la partición
+sustrato--frass es una simplificación pendiente (Sección~5.7).
+\end{remark}
+
+\subsection{Balances de gases en modo ventilado}
+
+Bajo el supuesto de mezcla homogénea del aire interno (A1), cada gas
+$i \in \{\mathrm{CO_2}, \mathrm{O_2}, \mathrm{CH_4}\}$ obedece un balance de
+moles en el volumen de aire $V_{\mathrm{aire}}$ del contenedor. En modo
+ventilado ($Q > 0$):
+\begin{align}
+V_{\mathrm{aire}}\,\dot{c}_{\mathrm{CO_2}} &=
+Q\,\bigl(c_{\mathrm{CO_2,in}} - c_{\mathrm{CO_2}}\bigr)
++ N\,r_{\mathrm{CO_2}} + r_{\mathrm{CO_2}}^{\mathrm{mic}},
+\label{eq:co2-ventilado}\\
+V_{\mathrm{aire}}\,\dot{c}_{\mathrm{O_2}} &=
+Q\,\bigl(c_{\mathrm{O_2,in}} - c_{\mathrm{O_2}}\bigr)
+- N\,r_{\mathrm{O_2}} - r_{\mathrm{O_2}}^{\mathrm{mic}},
+\label{eq:o2-ventilado}\\
+V_{\mathrm{aire}}\,\dot{c}_{\mathrm{CH_4}} &=
+Q\,\bigl(c_{\mathrm{CH_4,in}} - c_{\mathrm{CH_4}}\bigr)
++ r_{\mathrm{CH_4}},
+\label{eq:ch4-ventilado}
+\end{align}
+donde $c_i$ es la concentración del gas $i$ en el aire interno (igual a la
+del \emph{outlet} por mezcla homogénea), $c_{i,\mathrm{in}}$ su
+concentración en el aire de entrada, y las tasas $r$ corresponden a las
+formas generales de las Ecs.~\eqref{eq:rco2-general},
+\eqref{eq:ro2-general} y \eqref{eq:co2mic-general}--\eqref{eq:ch4-general}.
+Nótese el signo del término larval y microbiano en cada ecuación:
+producción en CO$_2$ y CH$_4$, consumo en O$_2$; y nótese que el CH$_4$
+carece de término larval (B4 de la Sección~4: metanogénesis solo en el
+sustrato).
+
+\begin{remark}[Estructura común de los balances]\label{rem:estructura-gas}
+Las Ecs.~\eqref{eq:co2-ventilado}--\eqref{eq:ch4-ventilado} son instancias
+del balance conservativo (Definición~\ref{def12}): el término en $Q$ es el
+flujo que cruza la frontera y los términos en $r$ son la producción o
+consumo interno. Dividiendo por $V_{\mathrm{aire}}$ se aprecia la constante
+de tiempo del sistema de aire,
+\begin{equation}
+\tau_{\mathrm{aire}} = \frac{V_{\mathrm{aire}}}{Q},
+\label{eq:tau-aire}
+\end{equation}
+que es el tiempo de residencia del aire en el contenedor. La separación de
+escalas $\tau_{\mathrm{aire}} \ll t_f$ (minutos frente a días) implica que
+en modo ventilado las concentraciones siguen casi instantáneamente a las
+tasas de producción: en estado cuasi-estacionario,
+\begin{equation}
+c_i \approx c_{i,\mathrm{in}} \pm \frac{R_i}{Q},
+\label{eq:cuasi-estacionario}
+\end{equation}
+con signo según producción o consumo. Esta aproximación es la que permite
+estimar tasas a partir de mediciones de \emph{outlet} en operación normal,
+y es complementaria del método de cámara estática
+(Ec.~\eqref{eq:modo-cerrado}).
+\end{remark}
+
+\begin{remark}[El caudal como entrada manipulada compartida]\label{rem:q-compartida}
+$Q(t)$ aparece en las tres ecuaciones simultáneamente
+(cf.~Observación~\ref{rem:jerarquia}): cualquier acción de control sobre
+gases afecta también los balances de humedad y energía que siguen. En
+\eqref{eq:cuasi-estacionario} se ve además el conflicto de diseño del lazo:
+ventilar más diluye los gases (seguridad) pero reduce la señal $c_i -
+c_{i,\mathrm{in}}$ disponible para estimar las tasas $R_i$ en operación
+continua ---razón adicional para los cierres programados.
+\end{remark}
+
+\subsection{Modo cerrado y forma unificada}
+
+En modo cerrado ($Q = 0$ durante $[t_k^{c},\, t_k^{c}+\Delta]$,
+Definición~\ref{def42}), los términos de flujo de las
+Ecs.~\eqref{eq:co2-ventilado}--\eqref{eq:ch4-ventilado} se anulan y cada
+concentración evoluciona solo por producción interna:
+\begin{align}
+V_{\mathrm{aire}}\,\dot{c}_{\mathrm{CO_2}} &=
+N\,r_{\mathrm{CO_2}} + r_{\mathrm{CO_2}}^{\mathrm{mic}},
+\label{eq:co2-cerrado}\\
+V_{\mathrm{aire}}\,\dot{c}_{\mathrm{O_2}} &=
+-\,N\,r_{\mathrm{O_2}} - r_{\mathrm{O_2}}^{\mathrm{mic}},
+\label{eq:o2-cerrado}\\
+V_{\mathrm{aire}}\,\dot{c}_{\mathrm{CH_4}} &= r_{\mathrm{CH_4}}.
+\label{eq:ch4-cerrado}
+\end{align}
+
+Ambos modos se escriben de manera unificada usando la entrada conmutada
+$Q(t)$ de la Ec.~\eqref{eq:q-conmutada}:
+\begin{equation}
+V_{\mathrm{aire}}\,\dot{c}_i =
+Q(t)\,\bigl(c_{i,\mathrm{in}} - c_i\bigr) + \sigma_i\,R_i(t),
+\qquad i \in \{\mathrm{CO_2}, \mathrm{O_2}, \mathrm{CH_4}\},
+\label{eq:gas-unificado}
+\end{equation}
+donde $R_i$ es la tasa total (larval más microbiana cuando aplica) y
+$\sigma_i = +1$ para gases producidos ($\mathrm{CO_2}$, $\mathrm{CH_4}$) y
+$\sigma_i = -1$ para el consumido ($\mathrm{O_2}$).
+
+\begin{remark}[Los dos modos como instrumentos de medición complementarios]
+\label{rem:modos-complementarios}
+La Ec.~\eqref{eq:gas-unificado} muestra que el sistema dispone de dos
+regímenes de lectura de la misma cantidad $R_i(t)$. En modo ventilado,
+cuasi-estacionario (Ec.~\eqref{eq:cuasi-estacionario}), $R_i$ se estima del
+nivel: $R_i \approx Q\,(c_i - c_{i,\mathrm{in}})/\sigma_i$, con error
+proporcional a la incertidumbre de $Q$ y de la diferencia de
+concentraciones. En modo cerrado, $R_i$ se estima de la pendiente:
+$R_i \approx V_{\mathrm{aire}}\,\dot{c}_i/\sigma_i$, independiente de $Q$ y
+con señal creciente durante el cierre. La concordancia de ambas estimaciones
+en los instantes previos y posteriores a cada cierre es una prueba de
+consistencia interna del conjunto de sensores, análoga a la que aporta la
+celda de carga (Ec.~\eqref{eq:celda-carga}) pero a nivel de gases
+individuales.
+\end{remark}
+
+\begin{remark}[Transitorio de reapertura]\label{rem:reapertura}
+Al finalizar un cierre, la reapertura de la ventilación restaura el modo
+ventilado con condición inicial $c_i(t_k^{c}+\Delta)$ elevada (o deprimida,
+en el caso del O$_2$), y la concentración relaja hacia el valor
+cuasi-estacionario con la constante de tiempo $\tau_{\mathrm{aire}}$ de la
+Ec.~\eqref{eq:tau-aire}. Este transitorio de relajación, típicamente de
+pocos $\tau_{\mathrm{aire}}$, contiene información adicional sobre
+$V_{\mathrm{aire}}$ efectivo y sobre la dinámica de mezcla, y no debe
+descartarse como dato: forma parte del registro que el estimador puede
+explotar (Sección~6).
+\end{remark}
+
+\subsection{Balance de humedad}
+
+Sea $w(t)$ la humedad absoluta del aire interno (masa de vapor por unidad de
+masa de aire seco, o concentración molar de vapor, según la convención de
+unidades que se fije en la Sección~2). Su balance en forma unificada es
+\begin{equation}
+V_{\mathrm{aire}}\,\dot{w} =
+Q(t)\,\bigl(w_{\mathrm{in}} - w\bigr)
++ E_{\mathrm{lecho}} + E_{\mathrm{met}} + J_{\mathrm{hum}}(t)
+- C_{\mathrm{cond}},
+\label{eq:humedad-general}
+\end{equation}
+donde los cuatro términos internos son, en forma general:
+\begin{align}
+E_{\mathrm{lecho}} &= E_{\mathrm{lecho}}\bigl(S, T, w, \theta_s; \boldsymbol{\theta}\bigr)
+&& \text{(evaporación del lecho)}, \label{eq:evap-lecho}\\
+E_{\mathrm{met}} &= \gamma_w\bigl(N\,r_{\mathrm{CO_2}} + r_{\mathrm{CO_2}}^{\mathrm{mic}}\bigr)
+&& \text{(agua metabólica)}, \label{eq:agua-metabolica}\\
+J_{\mathrm{hum}}(t) & && \text{(humidificación activa)}, \label{eq:humidificador}\\
+C_{\mathrm{cond}} &= C_{\mathrm{cond}}\bigl(T, T_{\mathrm{pared}}, w\bigr)
+&& \text{(condensación en paredes)}. \label{eq:condensacion}
+\end{align}
+En \eqref{eq:agua-metabolica}, $\gamma_w$ es el agua producida por unidad de
+CO$_2$ respirado, fijada por la estequiometría de la oxidación del sustrato
+metabólico; su dependencia del tipo de sustrato oxidado es la misma que la
+del cociente respiratorio (Ec.~\eqref{eq:ro2-general}), pues carbohidratos,
+proteínas y lípidos rinden distinta cantidad de agua por mol de CO$_2$. El
+término \eqref{eq:humidificador} es la entrada manipulada del lazo de
+humedad (Definición~\ref{def41}), y \eqref{eq:condensacion} representa la
+remoción de vapor por condensación cuando la temperatura de las paredes cae
+bajo el punto de rocío del aire interno.
+
+\begin{remark}[La humedad como variable de doble acoplamiento]\label{rem:humedad-doble}
+$w$ es la variable ambiental con más interacciones del modelo: aparece en
+la asimilación larval y en la actividad microbiana
+(Ecs.~\eqref{eq:ra-general},
+\eqref{eq:co2mic-general}--\eqref{eq:ch4-general}), recibe aporte de la
+respiración que ella misma modula, y su punto de rocío vincula
+\eqref{eq:humedad-general} con el balance de energía a través de
+$T_{\mathrm{pared}}$. Además, la evaporación del lecho
+\eqref{eq:evap-lecho} acopla $w$ con el balance térmico por el calor
+latente asociado. Estas interacciones son las que justifican el lazo de
+control de humedad como lazo independiente del de temperatura
+(Observación~\ref{rem:jerarquia}).
+\end{remark}
+
+\begin{remark}[Medición: humedad relativa vs.\ absoluta]\label{rem:hr-ha}
+El sensor del sistema mide humedad \emph{relativa} $H$, mientras que el
+balance \eqref{eq:humedad-general} se escribe en humedad \emph{absoluta}
+$w$, que es la variable extensiva (Definición~\ref{def12}). La relación
+entre ambas pasa por la presión de vapor de saturación, función fuertemente
+no lineal de $T$ (ecuación de Clausius--Clapeyron o aproximaciones tipo
+Antoine/Magnus): $H = p_v(w)/p_v^{\mathrm{sat}}(T)$. El mapa de observación
+$g$ de la Sección~6 incluirá esta conversión de forma explícita ---un punto
+donde el modelo y la instrumentación deben hablar con cuidado, pues una
+lectura de $H$ constante no implica $w$ constante si $T$ varía.
+\end{remark}
+
+\subsection{Balance de energía y temperatura}
+
+La temperatura del aire interno $T$ no es una variable extensiva; su
+dinámica se deriva del balance de energía sobre el contenido del
+contenedor. Sea $C_{\mathrm{th}}$ la capacidad térmica efectiva del sistema
+(aire + lecho + larvas + estructura interna, en J/K). En forma general,
+\begin{equation}
+C_{\mathrm{th}}\,\dot{T} =
+\underbrace{\dot{Q}_{\mathrm{met}}}_{\text{calor metabólico}}
++ \underbrace{P_{\mathrm{cal}}(t)}_{\text{calefactor}}
+- \underbrace{\dot{Q}_{\mathrm{vent}}}_{\text{ventilación}}
+- \underbrace{\dot{Q}_{\mathrm{pared}}}_{\text{pérdidas}}
+- \underbrace{\dot{Q}_{\mathrm{lat}}}_{\text{calor latente}},
+\label{eq:energia-general}
+\end{equation}
+con los términos dados por
+\begin{align}
+\dot{Q}_{\mathrm{met}} &= \gamma_q\bigl(N\,r_{\mathrm{CO_2}} + r_{\mathrm{CO_2}}^{\mathrm{mic}}\bigr)
+&& \text{(calor por respiración)}, \label{eq:calor-metabolico}\\
+\dot{Q}_{\mathrm{vent}} &= Q(t)\,\rho_{\mathrm{aire}}\, c_{p,\mathrm{aire}}\,\bigl(T - T_{\mathrm{in}}\bigr)
+&& \text{(arrastre sensible)}, \label{eq:calor-vent}\\
+\dot{Q}_{\mathrm{pared}} &= U\,A_{\mathrm{pared}}\,\bigl(T - T_{\mathrm{amb}}\bigr)
+&& \text{(conducción por paredes)}, \label{eq:calor-pared}\\
+\dot{Q}_{\mathrm{lat}} &= \lambda\,\bigl(E_{\mathrm{lecho}} - C_{\mathrm{cond}}\bigr)
+&& \text{(evaporación/condensación)}, \label{eq:calor-latente}
+\end{align}
+donde $\gamma_q$ es el calor liberado por unidad de CO$_2$ producido
+(equivalente energético de la respiración, del orden de
+$27$~kJ por mol de CO$_2$ para oxidación de carbohidratos, y variable con
+el sustrato metabólico, al igual que $RQ$ y $\gamma_w$),
+$\rho_{\mathrm{aire}} c_{p,\mathrm{aire}}$ la capacidad calorífica
+volumétrica del aire, $U A_{\mathrm{pared}}$ el coeficiente global de
+transferencia por las paredes hacia el ambiente exterior a
+$T_{\mathrm{amb}}$, y $\lambda$ el calor latente de vaporización del agua.
+
+\begin{remark}[El calor metabólico como firma térmica del crecimiento]\label{rem:calor-firma}
+La Ec.~\eqref{eq:calor-metabolico} liga directamente la dinámica térmica
+con la fisiología: toda la entalpía de los asimilados que no se almacena en
+biomasa se disipa como calor, y en la práctica la potencia metabólica es
+proporcional a la tasa respiratoria. En consecuencia, el exceso de
+temperatura del contenedor sobre el ambiente, $T - T_{\mathrm{amb}}$, es
+una medición indirecta de la actividad metabólica total ---complementaria
+del CO$_2$ y con distinta constante de tiempo (térmica, no de mezcla). El
+pico de $T$ sobre $T_{\mathrm{ref}}$ que el controlador debe remover es, a
+la vez, una estimación en línea del pico de crecimiento del lote.
+\end{remark}
+
+\begin{remark}[La capacidad térmica efectiva]\label{rem:cth}
+$C_{\mathrm{th}}$ no es constante durante el ciclo: la masa del lecho
+decrece (celda de carga) y su humedad varía, y ambas modifican la capacidad
+calorífica del conjunto. En la forma general se admite
+$C_{\mathrm{th}} = C_{\mathrm{th}}(m_{\mathrm{LC}}, \theta_s)$; la decisión
+de tomarla constante o dependiente del estado queda para la sección de
+simplificaciones (Sección~5.7). Nótese que $C_{\mathrm{th}}$ es estimable
+experimentalmente de los transitorios térmicos ante cambios de consigna del
+calefactor, sin intervenir el lote.
+\end{remark}

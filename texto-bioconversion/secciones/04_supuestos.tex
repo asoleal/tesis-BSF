@@ -1,0 +1,164 @@
+\section{Supuestos del modelo}
+
+\subsection{El sistema en lazo cerrado}
+
+Hasta aquí, las entradas $\mathbf{u}(t)$ se han tratado como forzamientos
+exógenos. El sistema real, sin embargo, opera en \emph{lazo cerrado}: los
+actuadores responden a las mediciones. Esta subsección formaliza esa
+estructura antes de enunciar los supuestos del modelo.
+
+\begin{definition}[Ley de control y consignas]\label{def41}
+Sea $\mathbf{u}(t) = \bigl(Q(t), P_{\mathrm{cal}}(t), P_{\mathrm{hum}}(t)\bigr)$
+el vector de entradas manipuladas ---caudal de ventilación, potencia de
+calefacción y potencia de humidificación--- y
+$\mathbf{r} = (T_{\mathrm{ref}}, H_{\mathrm{ref}}, \bar{c}_{\mathrm{CO_2}},
+\bar{c}_{\mathrm{CH_4}})$ el vector de \emph{consignas} (valores de
+referencia y límites de seguridad). Una \emph{ley de control} es un mapa
+\begin{equation}
+\mathbf{u}(t) = \pi\bigl(\mathbf{y}(t), \mathbf{x}_c(t); \mathbf{r}\bigr),
+\label{eq:ley-control}
+\end{equation}
+donde $\mathbf{x}_c$ es el estado interno del controlador (por ejemplo, los
+integradores de acciones PID). El \emph{sistema en lazo cerrado} es la
+composición planta--controlador,
+\begin{equation}
+\dot{\mathbf{x}} = f\bigl(\mathbf{x}, \pi(g(\mathbf{x}), \mathbf{x}_c;
+\mathbf{r}); \boldsymbol{\theta}\bigr),
+\qquad
+\dot{\mathbf{x}}_c = f_c\bigl(\mathbf{x}_c, g(\mathbf{x});
+\mathbf{r}\bigr),
+\label{eq:lazo-cerrado}
+\end{equation}
+con estado aumentado $(\mathbf{x}, \mathbf{x}_c)$ y exógenos reducidos a
+las consignas $\mathbf{r}$ y las condiciones del \emph{inlet}.
+\end{definition}
+
+\begin{remark}[Estructura jerárquica del control]\label{rem:jerarquia}
+El actuador $Q$ es compartido por todos los balances de gas: aumentar la
+ventilación reduce CO$_2$ y CH$_4$ pero arrastra calor y humedad, en
+conflicto con los lazos de $T$ y $H$. Se adopta por tanto una arquitectura
+de dos niveles: lazos regulatorios de temperatura y humedad en el nivel
+inferior, y una capa supervisora en el nivel superior que impone los
+límites de seguridad de gases (incluidos H$_2$S y NH$_3$ como variables de
+supervisión) y puede modificar las consignas o forzar ventilación máxima.
+\end{remark}
+
+\begin{remark}[Identificación en lazo cerrado]\label{rem:id-lazo}
+En \eqref{eq:lazo-cerrado}, las entradas $\mathbf{u}$ están correlacionadas
+con las perturbaciones por construcción: el controlador reacciona a ellas.
+Es la dificultad clásica de la identificación en lazo cerrado: un estimador
+entrenado solo con datos de operación regulada puede aprender la ley
+$\pi$ en lugar de la fisiología. En consecuencia, los datos de los cierres
+de ventilación (Remark~\ref{rem:cierres}) y de las ventanas con consignas
+en escalón desempeñarán el rol de datos de \emph{identificación}, mientras
+que la operación regulada normal se reserva para validación
+(cf.~Sección~6).
+\end{remark}
+
+\subsection{Conmutación de la ventilación}
+
+\begin{definition}[Entrada de ventilación conmutada]\label{def42}
+Sea $\{t_k^{c}\}_{k \geq 1}$ el calendario de cierres programados
+(Remark~\ref{rem:cierres}) y $\Delta$ la duración de cada cierre. La
+ventilación opera en dos \emph{modos}:
+\begin{equation}
+Q(t) = \begin{cases}
+Q_{\mathrm{op}}(t), & \text{modo ventilado: }
+t \notin \bigcup_k [t_k^{c},\, t_k^{c} + \Delta],\\[4pt]
+0, & \text{modo cerrado: }
+t \in [t_k^{c},\, t_k^{c} + \Delta],\; k = 1, 2, \dots
+\end{cases}
+\label{eq:q-conmutada}
+\end{equation}
+donde en modo ventilado $Q_{\mathrm{op}}(t)$ está determinado por la ley de
+control \eqref{eq:ley-control}, y en modo cerrado la ventilación se anula
+por decisión del protocolo, suspendiéndose temporalmente la regulación.
+\end{definition}
+
+\begin{remark}[La conmutación no altera el estado]\label{rem:conmutacion}
+A diferencia de un sistema híbrido con eventos de salto, en
+\eqref{eq:q-conmutada} el estado $\mathbf{x}(t)$ es continuo en los
+instantes de conmutación: lo que cambia es qué términos de los balances
+están activos. En modo ventilado, los balances de gases y humedad incluyen
+los flujos $J_{\mathrm{in}}$, $J_{\mathrm{out}}$ asociados a $Q$; en modo
+cerrado esos términos se anulan y las concentraciones evolucionan solo por
+producción interna,
+\begin{equation}
+\dot{c}_i = \frac{R_i(t)}{V_{\mathrm{aire}}},
+\qquad t \in [t_k^{c},\, t_k^{c} + \Delta],
+\label{eq:modo-cerrado}
+\end{equation}
+con $V_{\mathrm{aire}}$ el volumen de aire del contenedor. La
+Ec.~\eqref{eq:modo-cerrado} es la base del método de cámara estática: las
+pendientes de acumulación miden directamente las tasas $R_i$
+(Sección~6).
+\end{remark}
+
+\begin{remark}[Duración del cierre]\label{rem:delta}
+La duración $\Delta$ resuelve un compromiso entre detectabilidad y
+seguridad. Por abajo, la acumulación debe superar con holgura la resolución
+$\sigma_i$ de cada sensor:
+\begin{equation}
+\Delta \;\geq\; \max_i \frac{10\,\sigma_i\, V_{\mathrm{aire}}}{R_i^{\min}},
+\label{eq:delta-min}
+\end{equation}
+evaluada en el período de menor actividad metabólica (inicio del ciclo).
+Por arriba, el O$_2$ no debe caer por debajo de un piso seguro
+$\underline{c}_{\mathrm{O_2}}$:
+\begin{equation}
+\Delta \;\leq\; \frac{\bigl(c_{\mathrm{O_2}}(t_k^{c})
+- \underline{c}_{\mathrm{O_2}}\bigr)\, V_{\mathrm{aire}}}{R_{\mathrm{O_2}}^{\max}}.
+\label{eq:delta-max}
+\end{equation}
+Ambas cotas son calculables \emph{antes} del experimento a partir del
+modelo, y ajustables día a día por el gemelo digital conforme $R_i$
+evoluciona (Sección~6).
+\end{remark}
+
+\subsection{Supuestos de compartimentación}
+
+\begin{description}
+\item[A1. Mezcla homogénea.] Cada compartimento está uniformemente
+distribuido en su volumen (Definición~\ref{def13}): un escalar describe su
+estado y una medición puntual es representativa. Los gradientes locales en
+la vecindad de la masa larval se aceptan como fuente de error de medición,
+a vigilar en la validación.
+
+\item[A2. Población homogénea.] Las $N(t)$ larvas comparten el estado
+$(A, B, L)$ de una larva promedio (Definición~\ref{def31}); la mortalidad,
+si ocurre, se admite mediante $N(t)$ decreciente.
+
+\item[A3. Operación por lote.] Sin recargas de alimento ni de larvas en
+$[0, t_f]$ (Observación~\ref{rem:batch}); el estado es continuo y las
+únicas conmutaciones son las de ventilación (Definición~\ref{def42}).
+\end{description}
+
+\subsection{Supuestos fisiológicos}
+
+\begin{description}
+\item[B1. Asimilación limitante.] La asimilación de alimento es el proceso
+metabólico limitante, $r_A = aB$ \citep{eriksen2022}, con $a$ modulada por
+funciones logísticas del peso según el modelo de referencia.
+
+\item[B2. Mantenimiento y costos de síntesis.] El mantenimiento es
+proporcional a la biomasa estructural, $r_{\mathrm{CO_2},m} = mB$, y los
+costos de síntesis $Y_B$, $Y_L$ son fracciones constantes de los flujos
+respectivos (Ecs.~\eqref{eq:rco2m}--\eqref{eq:rco2l}).
+
+\item[B3. Estado estacionario de asimilados.] El compartimento $A$
+equilibra sus flujos en escalas rápidas frente a la dinámica de $B$ y $L$
+(Ec.~1 de \citet{eriksen2022}), de modo que $\dot{A} \approx 0$ en
+\eqref{eq:eriksen-edos}.
+
+\item[B4. Parámetros constantes.] Se adoptan los parámetros fisiológicos
+$(a, m, Y_B, Y_L, B_{\max}, \beta)$ como constantes durante el ciclo. Esta
+es la práctica establecida en la literatura de referencia: el modelo de
+\citet{eriksen2022} fue formulado y ajustado con parámetros constantes a
+temperatura de cría controlada, con buen desempeño frente a datos de
+distintos sustratos y humedades \citep{eriksen2022,eriksen2024}. Dado que
+el presente sistema mantiene $T$ regulada en la zona de confort larval
+(Definición~\ref{def41}), la aproximación es razonable; la dependencia
+explícita de los parámetros con $T$ (por ejemplo, factores de tipo
+$Q_{10}$ o Arrhenius) queda planteada como extensión para el caso de
+operación fuera de la zona regulada.
+\end{description}

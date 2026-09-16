@@ -1,0 +1,49 @@
+\documentclass[11pt,a4paper]{article}
+
+% --- XeLaTeX: fuentes e idioma en Unicode ---
+\usepackage{fontspec}
+\usepackage[spanish]{babel}
+\defaultfontfeatures{Ligatures=TeX}
+% --- Matemáticas: primero lo clásico ---
+\usepackage{amsmath,amssymb}
+\usepackage{amsthm}
+\theoremstyle{definition}
+\newtheorem{definition}{Definición}[section]
+\newtheorem{theorem}{Teorema}[section]
+\newtheorem{remark}{Observación}[section]
+
+% --- unicode-math SIEMPRE al final de los paquetes de math ---
+\usepackage{unicode-math}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{natbib}
+\usepackage{hyperref}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+
+\title{Modelo matemático del sistema de bioconversión con \textit{Hermetia illucens}\\
+\large Alimento -- Larvas -- Ambiente controlado: balances de masa, energía y gases}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\input{secciones/01_introduccion}
+\input{secciones/02_notacion}
+\input{secciones/03_sistema}
+\input{secciones/04_supuestos}
+\input{secciones/05_modelo}
+\input{secciones/06_mediciones}
+\input{secciones/07_discusion}
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\end{document}
