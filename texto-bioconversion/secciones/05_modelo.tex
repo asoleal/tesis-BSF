@@ -1,114 +1,105 @@
 \section{Modelo matemático}
 
-% 5.1 Balance de masa del sustrato/alimento
-% 5.2 Crecimiento larval
-% 5.3 Balance de masa del aire (inlet-outlet)
-% 5.4 Balance de energía / temperatura
-% 5.5 Balance de humedad
-% 5.6 Balances de gases: CO2 y CH4
-% 5.7 Sistema acoplado en forma de estado
+% 5.1 Din\'amica larval: forma general
+% 5.2 Balance del sustrato
+% 5.3 Din\'amica del lecho
+% 5.4 Balances de gases en modo ventilado
+% 5.5 Modo cerrado y forma unificada
+% 5.6 Balance de humedad
+% 5.7 Balance de energ\'ia y temperatura
+% 5.8 Simplificaciones del modelo
 
 Esta sección formula el modelo general del sistema, con todas las
 dependencias explícitas. Las simplificaciones que se adoptarán para la
 simulación y la estimación se enuncian al final de la sección
-(Sección~5.7), sobre el modelo ya construido.
+(Sección~\ref{sec:simplificaciones}), sobre el modelo ya construido.
 
-\subsection{Dinámica larval: forma general}
+\subsection{Din\'amica larval: forma general}
+\label{sec:larval-general}
 
-La dinámica de la larva promedio sigue la estructura de compartimentos del
-modelo de Eriksen (Ecs.~\eqref{eq:eriksen-edos}), pero con las dependencias
-del sistema controlado hechas explícitas. En su forma general, las tasas
-son funciones
+La din\'amica de la larva promedio sigue la estructura de compartimentos del modelo de Eriksen (Ecs.~\eqref{eq:eriksen-edos}), pero con las dependencias del sistema controlado hechas expl\'icitas. Como la larva vive y se alimenta dentro del lecho, las variables ambientales que modulan su fisiolog\'ia son las del lecho ---su temperatura $T_s$ y su contenido de agua $\theta_s$--- y no las del aire interno directamente. En su forma general, las tasas son funciones de
 \begin{align}
-r_A &= r_A\bigl(B, S, T, w; \boldsymbol{\theta}\bigr)
-&& \text{(asimilación)}, \label{eq:ra-general}\\
-r_B &= r_B\bigl(A, B, T; \boldsymbol{\theta}\bigr)
-&& \text{(síntesis estructural)}, \label{eq:rb-general}\\
-r_L &= r_L\bigl(A, B, L, T; \boldsymbol{\theta}\bigr)
-&& \text{(acumulación/reciclaje de lípidos)}, \label{eq:rl-general}\\
-r_{\mathrm{CO_2}} &= m(T)\,B + Y_B\,r_B + Y_L\,r_L
-&& \text{(respiración total)}, \label{eq:rco2-general}
+r_A &= r_A(B, S, T_s, \theta_s; \theta) && \text{(asimilaci\'on)}, \label{eq:ra-general}\\
+r_B &= r_B(A, B, T_s; \theta) && \text{(s\'intesis estructural)}, \label{eq:rb-general}\\
+r_L &= r_L(A, B, L, T_s; \theta) && \text{(acumulaci\'on/reciclaje de l\'ipidos)}, \label{eq:rl-general}\\
+r_{\mathrm{CO_2}} &= m(T_s)\,B + Y_B\,r_B + Y_L\,r_L && \text{(respiraci\'on total)}, \label{eq:rco2-general}
 \end{align}
-y el consumo de oxígeno se vincula a la respiración mediante el cociente
-respiratorio,
+y el consumo de ox\'igeno se vincula a la respiraci\'on mediante el cociente respiratorio,
 \begin{equation}
-r_{\mathrm{O_2}} = \frac{r_{\mathrm{CO_2}}}{RQ},
-\qquad
-RQ = RQ\bigl(A, B, L; \boldsymbol{\theta}\bigr),
+r_{\mathrm{O_2}} = \frac{r_{\mathrm{CO_2}}}{RQ}, \qquad RQ = RQ(A, B, L; \theta),
 \label{eq:ro2-general}
 \end{equation}
-donde $RQ$ depende del sustrato metabólico que se oxida: próximo a $1.0$
-cuando dominan carbohidratos de la dieta, y decreciente hacia $\approx 0.7$
-cuando el reciclaje de lípidos ($r_L < 0$) sostiene el metabolismo.
+donde $RQ$ depende del sustrato metab\'olico que se oxida: pr\'oximo a $1.0$ cuando dominan carbohidratos de la dieta, y decreciente hacia $\approx 0.7$ cuando el reciclaje de l\'ipidos ($r_L < 0$) sostiene el metabolismo.
 
-\begin{remark}\label{rem:dependencias}
-Las dependencias escritas en
-\eqref{eq:ra-general}--\eqref{eq:ro2-general} son deliberadamente generales.
-La asimilación depende del sustrato disponible $S$ (a sustrato agotado, no
-hay asimilación), de la temperatura $T$ (la fisiología es térmicamente
-sensible) y de la humedad $w$ (la actividad en el lecho depende del agua
-disponible). Nótese que $T$ y $w$ no son forzamientos exógenos como en el
-modelo original, sino \emph{estados del propio sistema}
-(Definición~\ref{def32}): la dinámica larval queda así acoplada
-bidireccionalmente con el ambiente del contenedor ---las larvas responden
-al ambiente y, a la vez, lo modifican con su calor, su respiración y su
-actividad.
+\begin{remark}[Acoplamiento a trav\'es del lecho]
+\label{rem:dependencias}
+Las dependencias escritas en~\eqref{eq:ra-general}--\eqref{eq:ro2-general} son deliberadamente generales. La asimilaci\'on depende del sustrato disponible $S$ (a sustrato agotado no hay asimilaci\'on), de la temperatura del lecho $T_s$ (la fisiolog\'ia es t\'ermicamente sensible) y de su contenido de agua $\theta_s$ (la actividad de las larvas en el lecho depende del agua disponible). N\'otese que $T_s$ y $\theta_s$ no son forzamientos ex\'ogenos como en el modelo original, sino estados del propio sistema (Definici\'on~\ref{def32}): el aire interno afecta a las larvas solo de manera indirecta, a trav\'es de la din\'amica t\'ermica e h\'idrica del lecho (Secci\'on~\ref{sec:lecho}), mientras que las larvas modifican el lecho con su calor, su respiraci\'on y su actividad, y el lecho, a su vez, intercambia con el aire. La din\'amica larval queda as\'i acoplada bidireccionalmente con el ambiente del contenedor, mediada por el lecho.
 \end{remark}
 
 \subsection{Balance del sustrato}
+\label{sec:sustrato}
 
-El sustrato es un compartimento activo (Observación~\ref{rem:microbiano}):
-lo consume la población larval y lo transforma la microbiota. Su balance
-general de masa es
+El sustrato es un compartimento activo (Observaci\'on~\ref{rem:microbiano}): lo consume la poblaci\'on larval y lo transforma la microbiota. Su balance general de masa es
 \begin{equation}
-\dot{S} = \underbrace{-\frac{N\,r_A}{\eta_A}}_{\text{consumo larval}}
-\;\underbrace{-\;k_{\mathrm{mic}}(T, w)\,S}_{\text{degradación microbiana}},
+\dot S = \underbrace{-\frac{N\,r_A}{\eta_A}}_{\text{consumo larval}} \;\underbrace{-\;k_{\mathrm{mic}}(T_s, \theta_s)\,S}_{\text{degradaci\'on microbiana}},
 \label{eq:sustrato-general}
 \end{equation}
-donde $\eta_A \in (0,1]$ es la fracción del sustrato ingerido que
-efectivamente se asimila (el resto pasa al residuo o frass, que permanece
-en el lote), $r_A$ es la tasa de asimilación por larva de la
-Ec.~\eqref{eq:ra-general} y $k_{\mathrm{mic}}(T, w)$ es una tasa específica
-de degradación microbiana, dependiente de la temperatura y la humedad del
-lecho.
+donde $\eta_A \in (0,1]$ es la fracci\'on del sustrato ingerido que efectivamente se asimila (el resto pasa al residuo o frass, que permanece en el lote), $r_A$ es la tasa de asimilaci\'on por larva de la Ec.~\eqref{eq:ra-general} y $k_{\mathrm{mic}}(T_s, \theta_s)$ es una tasa espec\'ifica de degradaci\'on microbiana, dependiente de la temperatura y el contenido de agua del lecho.
 
 Los procesos microbianos asociados son, en forma general,
 \begin{align}
-r_{\mathrm{CO_2}}^{\mathrm{mic}} &= r_{\mathrm{CO_2}}^{\mathrm{mic}}\bigl(S, T, w; \boldsymbol{\theta}\bigr)
-&& \text{(respiración microbiana)}, \label{eq:co2mic-general}\\
-r_{\mathrm{O_2}}^{\mathrm{mic}} &= r_{\mathrm{O_2}}^{\mathrm{mic}}\bigl(S, T, w; \boldsymbol{\theta}\bigr)
-&& \text{(consumo microbiano de O$_2$)}, \label{eq:o2mic-general}\\
-r_{\mathrm{CH_4}} &= r_{\mathrm{CH_4}}\bigl(S, T, w, \xi; \boldsymbol{\theta}\bigr)
-&& \text{(metanogénesis)}, \label{eq:ch4-general}
+r^{\mathrm{mic}}_{\mathrm{CO_2}} &= r^{\mathrm{mic}}_{\mathrm{CO_2}}(S, T_s, \theta_s; \theta) && \text{(respiraci\'on microbiana)}, \label{eq:co2mic}\\
+r^{\mathrm{mic}}_{\mathrm{O_2}} &= r^{\mathrm{mic}}_{\mathrm{O_2}}(S, T_s, \theta_s; \theta) && \text{(consumo microbiano de O$_2$)}, \label{eq:o2mic}\\
+r_{\mathrm{CH_4}} &= r_{\mathrm{CH_4}}(S, T_s, \theta_s, \xi; \theta) && \text{(metanog\'enesis)}, \label{eq:ch4-general}
 \end{align}
-donde $\xi(t) \in [0,1]$ denota la fracción anaerobia del lecho: la
-metanogénesis solo ocurre en micrositios sin oxígeno, y su intensidad
-depende de qué tan desarrollada esté esa fracción.
+donde $\xi(t) \in [0,1]$ denota la fracci\'on anaerobia del lecho: la metanog\'enesis solo ocurre en micrositios sin ox\'igeno, y su intensidad depende de qu\'e tan desarrollada est\'e esa fracci\'on.
 
-\begin{remark}[La fracción anaerobia como variable latente]\label{rem:xi}
-La variable $\xi$ no es medible directamente ni es un estado con dinámica
-propia en este nivel de descripción: es una \emph{variable latente} que
-crece con la humedad del lecho, la compactación y el consumo local de
-O$_2$, y decrece con la bioturbación larval. Esta lectura cualitativa tiene
-una consecuencia experimental ya anunciada
-(Observación~\ref{rem:tf}): al llegar la prepupa, cesa la bioturbación,
-$\xi$ aumenta y el CH$_4$ del \emph{outlet} debería revelarlo. En la
-formulación simplificada (Sección~5.7) se decidirá si $\xi$ se parametriza
-como función de $(w, N, r_A)$ o se absorbe en los parámetros de
-\eqref{eq:ch4-general}.
+\begin{remark}[La fracci\'on anaerobia como variable latente]
+\label{rem:xi}
+La variable $\xi$ no es medible directamente ni es un estado con din\'amica propia en este nivel de descripci\'on: es una variable latente que crece con el contenido de agua del lecho $\theta_s$, la compactaci\'on y el consumo local de O$_2$, y decrece con la bioturbaci\'on larval. Esta lectura cualitativa tiene una consecuencia experimental ya anunciada (Observaci\'on~\ref{rem:tf}): al llegar la prepupa, cesa la bioturbaci\'on, $\xi$ aumenta y el CH$_4$ del outlet deber\'ia revelarlo. En la formulaci\'on simplificada (Secci\'on~\ref{sec:simplificaciones}) se decidir\'a si $\xi$ se parametriza como funci\'on de $(\theta_s, N, r_A)$ o se absorbe en los par\'ametros de~\eqref{eq:ch4-general}.
 \end{remark}
 
-\begin{remark}[El frass dentro del balance]\label{rem:frass}
-El residuo (frass) no aparece como compartimento: la fracción no asimilada
-del sustrato permanece en el lote y sigue siendo parcialmente degradable
-por la microbiota, de modo que la distinción operativa entre ``sustrato'' y
-``frass'' es de calidad más que de ubicación. En la forma general,
-\eqref{eq:sustrato-general} debe leerse como el balance de la
-\emph{materia orgánica degradable} del lecho; la partición
-sustrato--frass es una simplificación pendiente (Sección~5.7).
+\begin{remark}[El frass dentro del balance]
+\label{rem:frass}
+El residuo (frass) no aparece como compartimento: la fracci\'on no asimilada del sustrato permanece en el lote y sigue siendo parcialmente degradable por la microbiota, de modo que la distinci\'on operativa entre ``sustrato'' y ``frass'' es de calidad m\'as que de ubicaci\'on. En la forma general, \eqref{eq:sustrato-general} debe leerse como el balance de la materia org\'anica degradable del lecho; la partici\'on sustrato--frass es una simplificaci\'on pendiente (Secci\'on~\ref{sec:simplificaciones}).
+\end{remark}
+
+\subsection{Din\'amica del lecho}
+\label{sec:lecho}
+
+El lecho es la fase s\'olida del sistema: la mezcla de sustrato, larvas y frass que ocupa la base del contenedor. Su estado queda descrito por dos variables, el contenido de agua $\theta_s$ y la temperatura $T_s$, que gobiernan tanto la actividad microbiana del sustrato como, en gran parte, la actividad larval.
+
+\paragraph{Balance de agua del lecho.} Sea $\theta_s$ el contenido gravim\'etrico de agua en base h\'umeda, de modo que la masa de agua del lecho es $M_{\mathrm{agua}} = \theta_s \cdot S$. En operaci\'on batch no hay entradas de agua al lecho, y adoptamos la forma m\'as simple del balance: la \'unica salida expl\'icita es la evaporaci\'on hacia el aire interno, $E_{\mathrm{lecho}}(\theta_s, T_s, w; \theta)$, en la que queda absorbido el consumo h\'idrico larval. La conservaci\'on de la masa de agua da
+\begin{equation}
+\frac{d}{dt}\left(\theta_s \cdot S\right) = -E_{\mathrm{lecho}}(\theta_s, T_s, w; \theta),
+\label{eq:agua-lecho}
+\end{equation}
+y expandiendo la derivada, con $\dot S$ dado por~\eqref{eq:sustrato-general},
+\begin{equation}
+\dot\theta_s = -\frac{E_{\mathrm{lecho}}(\theta_s, T_s, w; \theta) + \theta_s \cdot \dot S}{S}.
+\label{eq:theta-lecho}
+\end{equation}
+La condici\'on inicial $\theta_s(0) = \theta_{s,0}$ se determina gravim\'etricamente al momento de la carga (Secci\'on~6).
+
+\paragraph{Nodo t\'ermico del lecho.} Toda la actividad metab\'olica del sistema ---larval y microbiana--- ocurre dentro del lecho, de modo que el calor metab\'olico se genera en este nodo y no en el aire. Con $C_{\mathrm{th},s}$ la capacidad t\'ermica del lecho, $h_s$ el coeficiente de intercambio lecho--aire a trav\'es del \'area efectiva $A_s$, y $\lambda$ el calor latente de vaporizaci\'on del agua,
+\begin{equation}
+C_{\mathrm{th},s}\,\dot T_s = \underbrace{\dot Q_{\mathrm{met}}}_{\text{calor metab\'olico}} \;-\; \underbrace{h_s A_s\,(T_s - T)}_{\text{intercambio con el aire}} \;-\; \underbrace{\lambda\,E_{\mathrm{lecho}}}_{\text{enfriamiento evaporativo}},
+\label{eq:termica-lecho}
+\end{equation}
+donde la potencia metab\'olica es
+\begin{equation}
+\dot Q_{\mathrm{met}} = \gamma_q\left(N\,r_{\mathrm{CO_2}} + r^{\mathrm{mic}}_{\mathrm{CO_2}}\right),
+\label{eq:calor-metabolico}
+\end{equation}
+con $\gamma_q$ el calor liberado por unidad de CO$_2$ producido (equivalente energ\'etico de la respiraci\'on, del orden de $27$~kJ por mol de CO$_2$ para oxidaci\'on de carbohidratos, y variable con el sustrato metab\'olico, al igual que $RQ$ y $\gamma_w$). El t\'ermino latente $-\lambda E_{\mathrm{lecho}}$ contabiliza el enfriamiento evaporativo del lecho, que ocurre en este nodo; el calor de condensaci\'on, en cambio, se deposita en las paredes y se contabiliza en el nodo de aire (Secci\'on~\ref{sec:energia}).
+
+\begin{remark}[Consistencia de la localizaci\'on de las fuentes]
+\label{rem:lecho-consistencia}
+El modelo de dos nodos corrige una inconsistencia de la formulaci\'on agregada: el calor, el CO$_2$ microbiano y la mayor parte del vapor de agua se generan en el lecho y llegan al aire por intercambio, no por generaci\'on directa en la fase gaseosa. Adem\'as, ambos estados del lecho son observables con el sensor capacitivo de suelo (con calibraci\'on gravim\'etrica para $\theta_s$), de modo que la extensi\'on del vector de estado de $10$ a $12$ variables no introduce estados inaccesibles.
 \end{remark}
 
 \subsection{Balances de gases en modo ventilado}
+\label{sec:gases-ventilado}
 
 Bajo el supuesto de mezcla homogénea del aire interno (A1), cada gas
 $i \in \{\mathrm{CO_2}, \mathrm{O_2}, \mathrm{CH_4}\}$ obedece un balance de
@@ -132,7 +123,7 @@ donde $c_i$ es la concentración del gas $i$ en el aire interno (igual a la
 del \emph{outlet} por mezcla homogénea), $c_{i,\mathrm{in}}$ su
 concentración en el aire de entrada, y las tasas $r$ corresponden a las
 formas generales de las Ecs.~\eqref{eq:rco2-general},
-\eqref{eq:ro2-general} y \eqref{eq:co2mic-general}--\eqref{eq:ch4-general}.
+\eqref{eq:ro2-general} y \eqref{eq:co2mic}--\eqref{eq:ch4-general}.
 Nótese el signo del término larval y microbiano en cada ecuación:
 producción en CO$_2$ y CH$_4$, consumo en O$_2$; y nótese que el CH$_4$
 carece de término larval (B4 de la Sección~4: metanogénesis solo en el
@@ -173,6 +164,7 @@ continua ---razón adicional para los cierres programados.
 \end{remark}
 
 \subsection{Modo cerrado y forma unificada}
+\label{sec:modo-cerrado}
 
 En modo cerrado ($Q = 0$ durante $[t_k^{c},\, t_k^{c}+\Delta]$,
 Definición~\ref{def42}), los términos de flujo de las
@@ -230,117 +222,108 @@ explotar (Sección~6).
 \end{remark}
 
 \subsection{Balance de humedad}
+\label{sec:humedad}
 
-Sea $w(t)$ la humedad absoluta del aire interno (masa de vapor por unidad de
-masa de aire seco, o concentración molar de vapor, según la convención de
-unidades que se fije en la Sección~2). Su balance en forma unificada es
+Sea $w(t)$ la humedad absoluta del aire interno (masa de vapor por unidad de masa de aire seco, o concentraci\'on molar de vapor, seg\'un la convenci\'on de unidades que se fije en la Secci\'on~2). Su balance en forma unificada es
 \begin{equation}
-V_{\mathrm{aire}}\,\dot{w} =
-Q(t)\,\bigl(w_{\mathrm{in}} - w\bigr)
-+ E_{\mathrm{lecho}} + E_{\mathrm{met}} + J_{\mathrm{hum}}(t)
-- C_{\mathrm{cond}},
+V_{\mathrm{aire}}\,\dot w = Q(t)\,(w_{\mathrm{in}} - w) + E_{\mathrm{lecho}} + E_{\mathrm{met}} + J_{\mathrm{hum}}(t) - C_{\mathrm{cond}},
 \label{eq:humedad-general}
 \end{equation}
-donde los cuatro términos internos son, en forma general:
+donde los cuatro t\'erminos internos son, en forma general:
 \begin{align}
-E_{\mathrm{lecho}} &= E_{\mathrm{lecho}}\bigl(S, T, w, \theta_s; \boldsymbol{\theta}\bigr)
-&& \text{(evaporación del lecho)}, \label{eq:evap-lecho}\\
-E_{\mathrm{met}} &= \gamma_w\bigl(N\,r_{\mathrm{CO_2}} + r_{\mathrm{CO_2}}^{\mathrm{mic}}\bigr)
-&& \text{(agua metabólica)}, \label{eq:agua-metabolica}\\
-J_{\mathrm{hum}}(t) & && \text{(humidificación activa)}, \label{eq:humidificador}\\
-C_{\mathrm{cond}} &= C_{\mathrm{cond}}\bigl(T, T_{\mathrm{pared}}, w\bigr)
-&& \text{(condensación en paredes)}. \label{eq:condensacion}
+E_{\mathrm{lecho}} &= E_{\mathrm{lecho}}(\theta_s, T_s, w; \theta) && \text{(evaporaci\'on del lecho)}, \label{eq:evap-lecho}\\
+E_{\mathrm{met}} &= \gamma_w\left(N\,r_{\mathrm{CO_2}} + r^{\mathrm{mic}}_{\mathrm{CO_2}}\right) && \text{(agua metab\'olica)}, \label{eq:agua-metabolica}\\
+J_{\mathrm{hum}}(t) & && \text{(humidificaci\'on activa)}, \label{eq:humidificador}\\
+C_{\mathrm{cond}} &= C_{\mathrm{cond}}(T, T_{\mathrm{pared}}, w) && \text{(condensaci\'on en paredes)}. \label{eq:condensacion}
 \end{align}
-En \eqref{eq:agua-metabolica}, $\gamma_w$ es el agua producida por unidad de
-CO$_2$ respirado, fijada por la estequiometría de la oxidación del sustrato
-metabólico; su dependencia del tipo de sustrato oxidado es la misma que la
-del cociente respiratorio (Ec.~\eqref{eq:ro2-general}), pues carbohidratos,
-proteínas y lípidos rinden distinta cantidad de agua por mol de CO$_2$. El
-término \eqref{eq:humidificador} es la entrada manipulada del lazo de
-humedad (Definición~\ref{def41}), y \eqref{eq:condensacion} representa la
-remoción de vapor por condensación cuando la temperatura de las paredes cae
-bajo el punto de rocío del aire interno.
+En~\eqref{eq:agua-metabolica}, $\gamma_w$ es el agua producida por unidad de CO$_2$ respirado, fijada por la estequiometr\'ia de la oxidaci\'on del sustrato metab\'olico; su dependencia del tipo de sustrato oxidado es la misma que la del cociente respiratorio (Ec.~\eqref{eq:ro2-general}), pues carbohidratos, prote\'inas y l\'ipidos rinden distinta cantidad de agua por mol de CO$_2$. N\'otese que el agua metab\'olica es agua de \emph{nueva producci\'on}: no descuenta del stock h\'idrico del lecho en~\eqref{eq:agua-lecho}, sino que se libera al aire como producto de la respiraci\'on. El t\'ermino~\eqref{eq:humidificador} es la entrada manipulada del lazo de humedad (Definici\'on~\ref{def41}), y~\eqref{eq:condensacion} representa la remoci\'on de vapor por condensaci\'on cuando la temperatura de las paredes cae bajo el punto de roc\'io del aire interno.
 
-\begin{remark}[La humedad como variable de doble acoplamiento]\label{rem:humedad-doble}
-$w$ es la variable ambiental con más interacciones del modelo: aparece en
-la asimilación larval y en la actividad microbiana
-(Ecs.~\eqref{eq:ra-general},
-\eqref{eq:co2mic-general}--\eqref{eq:ch4-general}), recibe aporte de la
-respiración que ella misma modula, y su punto de rocío vincula
-\eqref{eq:humedad-general} con el balance de energía a través de
-$T_{\mathrm{pared}}$. Además, la evaporación del lecho
-\eqref{eq:evap-lecho} acopla $w$ con el balance térmico por el calor
-latente asociado. Estas interacciones son las que justifican el lazo de
-control de humedad como lazo independiente del de temperatura
-(Observación~\ref{rem:jerarquia}).
+\begin{remark}[La humedad como variable de acoplamiento indirecto]
+\label{rem:humedad-doble}
+$w$ es la variable del aire con m\'as interacciones del modelo: recibe la evaporaci\'on del lecho ---que ella misma modula a trav\'es de la demanda evaporativa $E_{\mathrm{lecho}}(\theta_s, T_s, w; \theta)$---, el agua metab\'olica y la humidificaci\'on activa, y su punto de roc\'io vincula~\eqref{eq:humedad-general} con el balance de energ\'ia a trav\'es de $T_{\mathrm{pared}}$. N\'otese, sin embargo, que la modulaci\'on de la actividad biol\'ogica por el agua ya no corre por cuenta de $w$ sino de $\theta_s$ (Ecs.~\eqref{eq:ra-general}, \eqref{eq:co2mic}--\eqref{eq:ch4-general}): el aire h\'umedo o seco afecta la fisiolog\'ia solo de manera indirecta, controlando la evaporaci\'on que seca o conserva el lecho. Estas interacciones son las que justifican el lazo de control de humedad como lazo independiente del de temperatura (Observaci\'on~\ref{rem:jerarquia}).
 \end{remark}
 
-\begin{remark}[Medición: humedad relativa vs.\ absoluta]\label{rem:hr-ha}
-El sensor del sistema mide humedad \emph{relativa} $H$, mientras que el
-balance \eqref{eq:humedad-general} se escribe en humedad \emph{absoluta}
-$w$, que es la variable extensiva (Definición~\ref{def12}). La relación
-entre ambas pasa por la presión de vapor de saturación, función fuertemente
-no lineal de $T$ (ecuación de Clausius--Clapeyron o aproximaciones tipo
-Antoine/Magnus): $H = p_v(w)/p_v^{\mathrm{sat}}(T)$. El mapa de observación
-$g$ de la Sección~6 incluirá esta conversión de forma explícita ---un punto
-donde el modelo y la instrumentación deben hablar con cuidado, pues una
-lectura de $H$ constante no implica $w$ constante si $T$ varía.
+\begin{remark}[Medici\'on: humedad relativa vs.\ absoluta]
+\label{rem:hr-ha}
+El sensor del sistema mide humedad relativa $H$, mientras que el balance~\eqref{eq:humedad-general} se escribe en humedad absoluta $w$, que es la variable extensiva (Definici\'on~\ref{def12}). La relaci\'on entre ambas pasa por la presi\'on de vapor de saturaci\'on, funci\'on fuertemente no lineal de $T$ (ecuaci\'on de Clausius--Clapeyron o aproximaciones tipo Antoine/Magnus): $H = p_v(w)\,/\,p_v^{\mathrm{sat}}(T)$. El mapa de observaci\'on $g$ de la Secci\'on~6 incluir\'a esta conversi\'on de forma expl\'icita ---un punto donde el modelo y la instrumentaci\'on deben hablar con cuidado, pues una lectura de $H$ constante no implica $w$ constante si $T$ var\'ia.
 \end{remark}
 
-\subsection{Balance de energía y temperatura}
+\subsection{Balance de energ\'ia y temperatura}
+\label{sec:energia}
 
-La temperatura del aire interno $T$ no es una variable extensiva; su
-dinámica se deriva del balance de energía sobre el contenido del
-contenedor. Sea $C_{\mathrm{th}}$ la capacidad térmica efectiva del sistema
-(aire + lecho + larvas + estructura interna, en J/K). En forma general,
+La temperatura del aire interno $T$ no es una variable extensiva; su din\'amica se deriva del balance de energ\'ia sobre el aire del contenedor. Con el modelo de dos nodos de la Secci\'on~\ref{sec:lecho}, el calor metab\'olico se genera en el lecho (Ec.~\eqref{eq:calor-metabolico}) y llega al aire por intercambio; las p\'erdidas por paredes y la condensaci\'on se contabilizan contra el nodo de aire, que es la fase en contacto con ellas. Sea $C_{\mathrm{th}}$ la capacidad t\'ermica efectiva del aire interno (incluida la cara interna de las paredes, en J/K). En forma general,
 \begin{equation}
-C_{\mathrm{th}}\,\dot{T} =
-\underbrace{\dot{Q}_{\mathrm{met}}}_{\text{calor metabólico}}
-+ \underbrace{P_{\mathrm{cal}}(t)}_{\text{calefactor}}
-- \underbrace{\dot{Q}_{\mathrm{vent}}}_{\text{ventilación}}
-- \underbrace{\dot{Q}_{\mathrm{pared}}}_{\text{pérdidas}}
-- \underbrace{\dot{Q}_{\mathrm{lat}}}_{\text{calor latente}},
+C_{\mathrm{th}}\,\dot T = \underbrace{h_s A_s\,(T_s - T)}_{\text{intercambio con el lecho}} + \underbrace{P_{\mathrm{cal}}(t)}_{\text{calefactor}} - \underbrace{\dot Q_{\mathrm{vent}}}_{\text{ventilaci\'on}} - \underbrace{\dot Q_{\mathrm{pared}}}_{\text{p\'erdidas}} + \underbrace{\dot Q_{\mathrm{cond}}}_{\text{condensaci\'on}},
 \label{eq:energia-general}
 \end{equation}
-con los términos dados por
+con los t\'erminos dados por
 \begin{align}
-\dot{Q}_{\mathrm{met}} &= \gamma_q\bigl(N\,r_{\mathrm{CO_2}} + r_{\mathrm{CO_2}}^{\mathrm{mic}}\bigr)
-&& \text{(calor por respiración)}, \label{eq:calor-metabolico}\\
-\dot{Q}_{\mathrm{vent}} &= Q(t)\,\rho_{\mathrm{aire}}\, c_{p,\mathrm{aire}}\,\bigl(T - T_{\mathrm{in}}\bigr)
-&& \text{(arrastre sensible)}, \label{eq:calor-vent}\\
-\dot{Q}_{\mathrm{pared}} &= U\,A_{\mathrm{pared}}\,\bigl(T - T_{\mathrm{amb}}\bigr)
-&& \text{(conducción por paredes)}, \label{eq:calor-pared}\\
-\dot{Q}_{\mathrm{lat}} &= \lambda\,\bigl(E_{\mathrm{lecho}} - C_{\mathrm{cond}}\bigr)
-&& \text{(evaporación/condensación)}, \label{eq:calor-latente}
+\dot Q_{\mathrm{vent}} &= Q(t)\,\rho_{\mathrm{aire}}\,c_{p,\mathrm{aire}}\,(T - T_{\mathrm{in}}) && \text{(arrastre sensible)}, \label{eq:calor-vent}\\
+\dot Q_{\mathrm{pared}} &= U A_{\mathrm{pared}}\,(T - T_{\mathrm{amb}}) && \text{(conducci\'on por paredes)}, \label{eq:calor-pared}\\
+\dot Q_{\mathrm{cond}} &= \lambda\,C_{\mathrm{cond}} && \text{(calor latente de condensaci\'on)}, \label{eq:calor-cond}
 \end{align}
-donde $\gamma_q$ es el calor liberado por unidad de CO$_2$ producido
-(equivalente energético de la respiración, del orden de
-$27$~kJ por mol de CO$_2$ para oxidación de carbohidratos, y variable con
-el sustrato metabólico, al igual que $RQ$ y $\gamma_w$),
-$\rho_{\mathrm{aire}} c_{p,\mathrm{aire}}$ la capacidad calorífica
-volumétrica del aire, $U A_{\mathrm{pared}}$ el coeficiente global de
-transferencia por las paredes hacia el ambiente exterior a
-$T_{\mathrm{amb}}$, y $\lambda$ el calor latente de vaporización del agua.
+donde $\rho_{\mathrm{aire}} c_{p,\mathrm{aire}}$ es la capacidad calor\'ifica volum\'etrica del aire, $U A_{\mathrm{pared}}$ el coeficiente global de transferencia por las paredes hacia el ambiente exterior a $T_{\mathrm{amb}}$, y $\lambda$ el calor latente de vaporizaci\'on del agua. N\'otese la partici\'on de los t\'erminos latentes entre los dos nodos: el costo de evaporaci\'on $-\lambda E_{\mathrm{lecho}}$ lo paga el lecho (Ec.~\eqref{eq:termica-lecho}), donde ocurre la evaporaci\'on, y el calor de condensaci\'on $+\lambda C_{\mathrm{cond}}$ lo recibe el aire, donde se deposita el condensado; sumados sobre ambos nodos reproducen el t\'ermino neto $-\lambda\,(E_{\mathrm{lecho}} - C_{\mathrm{cond}})$ del balance agregado.
 
-\begin{remark}[El calor metabólico como firma térmica del crecimiento]\label{rem:calor-firma}
-La Ec.~\eqref{eq:calor-metabolico} liga directamente la dinámica térmica
-con la fisiología: toda la entalpía de los asimilados que no se almacena en
-biomasa se disipa como calor, y en la práctica la potencia metabólica es
-proporcional a la tasa respiratoria. En consecuencia, el exceso de
-temperatura del contenedor sobre el ambiente, $T - T_{\mathrm{amb}}$, es
-una medición indirecta de la actividad metabólica total ---complementaria
-del CO$_2$ y con distinta constante de tiempo (térmica, no de mezcla). El
-pico de $T$ sobre $T_{\mathrm{ref}}$ que el controlador debe remover es, a
-la vez, una estimación en línea del pico de crecimiento del lote.
+\begin{remark}[El calor metab\'olico como firma t\'ermica del crecimiento]
+\label{rem:calor-firma}
+La Ec.~\eqref{eq:calor-metabolico} liga directamente la din\'amica t\'ermica con la fisiolog\'ia: toda la entalp\'ia de los asimilados que no se almacena en biomasa se disipa como calor, y en la pr\'actica la potencia metab\'olica es proporcional a la tasa respiratoria. En el modelo de dos nodos, esa firma se lee primero en el lecho: el exceso $T_s - T$ es una medici\'on indirecta de la actividad metab\'olica total ---complementaria del CO$_2$ y con distinta constante de tiempo (t\'ermica, no de mezcla)--- y el sensor de temperatura del lecho la registra sin intervenir el lote. El pico de $T$ sobre $T_{\mathrm{ref}}$ que el controlador debe remover es, a su vez, la sombra en el aire de ese pico de crecimiento.
 \end{remark}
 
-\begin{remark}[La capacidad térmica efectiva]\label{rem:cth}
-$C_{\mathrm{th}}$ no es constante durante el ciclo: la masa del lecho
-decrece (celda de carga) y su humedad varía, y ambas modifican la capacidad
-calorífica del conjunto. En la forma general se admite
-$C_{\mathrm{th}} = C_{\mathrm{th}}(m_{\mathrm{LC}}, \theta_s)$; la decisión
-de tomarla constante o dependiente del estado queda para la sección de
-simplificaciones (Sección~5.7). Nótese que $C_{\mathrm{th}}$ es estimable
-experimentalmente de los transitorios térmicos ante cambios de consigna del
-calefactor, sin intervenir el lote.
+\begin{remark}[Las dos capacidades t\'ermicas]
+\label{rem:cth}
+El modelo de dos nodos reparte la capacidad t\'ermica del sistema en dos: la del lecho, $C_{\mathrm{th},s}$, y la del aire, $C_{\mathrm{th}}$. Ninguna es estrictamente constante durante el ciclo: la masa del lecho decrece (celda de carga) y su humedad var\'ia, de modo que en la forma general se admite $C_{\mathrm{th},s} = C_{\mathrm{th},s}(m_{\mathrm{LC}}, \theta_s)$; la del aire es mucho menor y m\'as estable. La decisi\'on de tomarlas constantes o dependientes del estado queda para la secci\'on de simplificaciones (Secci\'on~\ref{sec:simplificaciones}). Ambas son estimables experimentalmente de los transitorios t\'ermicos ante cambios de consigna del calefactor, sin intervenir el lote.
+\end{remark}
+
+\subsection{Simplificaciones del modelo}
+\label{sec:simplificaciones}
+
+\paragraph{El sistema acoplado en forma de estado.} Reuniendo los balances de las Secciones~\ref{sec:larval-general}--\ref{sec:energia}, el modelo general queda cerrado como un sistema din\'amico en el sentido de la Definici\'on~\ref{def11}.
+
+\begin{definition}[Modelo general del sistema de bioconversi\'on]
+\label{def:modelo-general}
+El modelo general es el sistema $\dot x = f(x, u; \theta)$, $y = g(x; \theta)$, con estado
+\begin{equation}
+x = (A, B, L, N, S, \theta_s, T_s, T, w, c_{\mathrm{CO_2}}, c_{\mathrm{O_2}}, c_{\mathrm{CH_4}}) \in \mathbb{R}^{12},
+\label{eq:estado-12}
+\end{equation}
+entradas manipuladas $u = (Q, P_{\mathrm{cal}}, P_{\mathrm{hum}})$ m\'as las condiciones del inlet $(T_{\mathrm{in}}, w_{\mathrm{in}}, c_{i,\mathrm{in}})$, y din\'amica $f$ dada componente a componente por: los balances larvales~\eqref{eq:eriksen-edos} con las tasas generales~\eqref{eq:ra-general}--\eqref{eq:ro2-general}; el balance de sustrato~\eqref{eq:sustrato-general}; los balances del lecho~\eqref{eq:theta-lecho} y~\eqref{eq:termica-lecho}; el balance unificado de gases~\eqref{eq:gas-unificado}; el balance de humedad~\eqref{eq:humedad-general}; y el balance de energ\'ia del aire~\eqref{eq:energia-general}. El mapa de observaci\'on $g$ se desarrolla en la Secci\'on~6.
+\end{definition}
+
+Las formas funcionales de las tasas y los valores de los par\'ametros requieren decisiones de modelado que el sistema real debe justificar. Se adoptan las siguientes simplificaciones, todas ellas verificables o refinables con los datos del sistema instrumentado.
+
+\paragraph{S1. Tasas larvales expl\'icitas con par\'ametros constantes.} Las tasas~\eqref{eq:ra-general}--\eqref{eq:rco2-general} toman las formas expl\'icitas del modelo de \citet{eriksen2022}: asimilaci\'on $r_A = a\,B$ con $a$ modulada por funciones log\'isticas del peso (estructura de estadios, $B_{\mathrm{m\'ax}}$, $\beta$), y costos $Y_B$, $Y_L$ constantes. La dependencia t\'ermica se congela: $m(T_s) = m$ constante, pues el control mantiene $T_s$ en la zona de confort larval (supuesto B4 de la Secci\'on~4). La dependencia con $\theta_s$ se admite como factor de disponibilidad del alimento solo si los datos lo exigen.
+
+\paragraph{S2. Cin\'etica microbiana separable de primer orden.} La degradaci\'on microbiana se toma de primer orden en el sustrato, con tasa espec\'ifica separable,
+\begin{equation}
+k_{\mathrm{mic}}(T_s, \theta_s) = k_{\mathrm{mic}}^{\mathrm{ref}}\, f_T(T_s)\, f_\theta(\theta_s),
+\label{eq:kmic-simplificada}
+\end{equation}
+con $f_T$ un factor t\'ermico tipo $Q_{10}$ o Arrhenius y $f_\theta$ un factor de humedad creciente y saturante (tipo Monod en el contenido de agua). Las tasas de gases microbianos se ligan a la degradaci\'on por coeficientes de rendimiento constantes: $r^{\mathrm{mic}}_{\mathrm{CO_2}} = Y^{\mathrm{mic}}_{\mathrm{CO_2}}\, k_{\mathrm{mic}}\, S$ y $r^{\mathrm{mic}}_{\mathrm{O_2}} = r^{\mathrm{mic}}_{\mathrm{CO_2}} / RQ_{\mathrm{mic}}$. La alternativa Monod en $S$ (saturaci\'on por sustrato) queda como refinamiento: con una sola carga batch y $S$ abundante durante la mayor parte del ciclo, el primer orden es la hip\'otesis parsimoniosa.
+
+\paragraph{S3. Parametrizaci\'on de la fracci\'on anaerobia.} La variable latente $\xi$ de~\eqref{eq:ch4-general} se parametriza como funci\'on est\'atica de los estados que la gobiernan,
+\begin{equation}
+\xi(\theta_s, N r_A) = \xi_{\mathrm{m\'ax}}\; \sigma\!\left(\frac{\theta_s - \theta_s^{c}}{s_\theta}\right) \frac{1}{1 + \alpha_{\mathrm{biot}}\, N r_A},
+\label{eq:xi-param}
+\end{equation}
+con $\sigma$ la funci\'on log\'istica, $\theta_s^{c}$ el umbral de humedad para anaerobiosis, y $\alpha_{\mathrm{biot}}$ el efecto de aireaci\'on por bioturbaci\'on larval, proporcional a la actividad de alimentaci\'on $N r_A$. La metanog\'enesis resulta $r_{\mathrm{CH_4}} = Y_{\mathrm{CH_4}}\, \xi\, k_{\mathrm{mic}}\, S$. Esta forma reproduce cualitativamente la firma de terminaci\'on de la Observaci\'on~\ref{rem:tf}: al caer $r_A$ hacia la prepupa, $\xi$ sube y el CH$_4$ se dispara.
+
+\paragraph{S4. Evaporaci\'on del lecho por demanda atmosf\'erica.} La evaporaci\'on se modela como flujo proporcional al d\'eficit de humedad del aire, limitado por la disponibilidad de agua en el lecho,
+\begin{equation}
+E_{\mathrm{lecho}} = k_e\, A_s \left( \varphi(\theta_s)\, w_{\mathrm{sat}}(T_s) - w \right)_+,
+\label{eq:evap-simplificada}
+\end{equation}
+con $k_e$ un coeficiente de transferencia de masa, $w_{\mathrm{sat}}(T_s)$ la humedad de saturaci\'on a la temperatura del lecho (Clausius--Clapeyron/Magnus, cf.~Observaci\'on~\ref{rem:hr-ha}), $\varphi(\theta_s) \in [0,1]$ el factor de disponibilidad de agua, y $(\cdot)_+$ la parte positiva (no hay condensaci\'on sobre el lecho en este nivel de descripci\'on).
+
+\paragraph{S5. Capacidades t\'ermicas constantes.} Se toman $C_{\mathrm{th}}$ y $C_{\mathrm{th},s}$ constantes durante el ciclo (cf.~Observaci\'on~\ref{rem:cth}), con $C_{\mathrm{th},s}$ estimada de la composici\'on inicial del lecho. La dependencia $C_{\mathrm{th},s}(m_{\mathrm{LC}}, \theta_s)$ queda como refinamiento si los transitorios t\'ermicos de calibraci\'on muestran deriva sistem\'atica.
+
+\paragraph{S6. Coeficientes estequiom\'etricos constantes.} Se fijan $RQ$, $\gamma_q$ y $\gamma_w$ en valores constantes representativos de la dieta (mezcla carbohidratos--prote\'inas: $RQ \approx 0.9$--$1.0$), y $\gamma_q \approx 27$~kJ/mol CO$_2$. La variaci\'on de $RQ$ con el sustrato metab\'olico (Ec.~\eqref{eq:ro2-general}) se usar\'a solo como diagn\'ostico sobre los datos, no dentro de la din\'amica simulada.
+
+\begin{remark}[El caso degenerado de un solo nodo t\'ermico]
+\label{rem:un-nodo}
+Si el intercambio lecho--aire es r\'apido frente a las dem\'as din\'amicas ($h_s A_s \to \infty$), las Ecs.~\eqref{eq:termica-lecho} y~\eqref{eq:energia-general} colapsan a $T_s = T$ y el sistema se reduce a diez estados, con un \'unico balance t\'ermico agregado. No se adopta esa reducci\'on aqu\'i por dos razones: el sensor de suelo mide $T_s$ y $\theta_s$ directamente, de modo que ambos estados son observables sin costo adicional, y la diferencia $T_s - T$ es precisamente la firma t\'ermica de la actividad metab\'olica (Observaci\'on~\ref{rem:calor-firma}). El caso de un nodo queda, sin embargo, disponible como hip\'otesis nula en la validaci\'on: si los datos muestran $T_s \approx T$ en todo el ciclo, el modelo se simplifica solo.
+\end{remark}
+
+\begin{remark}[Econom\'ia del modelo resultante]
+\label{rem:economia-modelo}
+Las simplificaciones S1--S6 reducen el modelo general a un sistema r\'igido pero tractable: doce estados, tres entradas manipuladas y un vector de par\'ametros $\theta$ que agrupa los fisiol\'ogicos de Eriksen $(a, m, Y_B, Y_L, B_{\mathrm{m\'ax}}, \beta)$, los microbianos $(k_{\mathrm{mic}}^{\mathrm{ref}}, Y^{\mathrm{mic}}_{\mathrm{CO_2}}, RQ_{\mathrm{mic}}, Y_{\mathrm{CH_4}}, \xi_{\mathrm{m\'ax}}, \theta_s^c, s_\theta, \alpha_{\mathrm{biot}})$, y los f\'isicos $(k_e, h_s A_s, U A_{\mathrm{pared}}, C_{\mathrm{th}}, C_{\mathrm{th},s}, V_{\mathrm{aire}})$. La estimabilidad de cada grupo se discute en la Secci\'on~6: los cierres de ventilaci\'on identifican las tasas de gases, los transitorios de consigna los par\'ametros t\'ermicos, y el lote testigo sin larvas separa el bloque microbiano del larval.
 \end{remark}

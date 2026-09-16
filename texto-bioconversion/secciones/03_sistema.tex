@@ -41,16 +41,13 @@ de aire ---\emph{inlet} y \emph{outlet}--- y en $t = 0$ por la carga inicial
 del lote (larvas neonatas y sustrato). Su vector de estado se organiza en
 tres grupos:
 \begin{equation}
-\mathbf{x} =
-\underbrace{(A,\, B,\, L)}_{\text{larva promedio}}
-\;\cup\;
-\underbrace{(N,\, S)}_{\text{población y sustrato}}
-\;\cup\;
-\underbrace{(T,\, w,\, c_{\mathrm{CO_2}},\, c_{\mathrm{CH_4}},\, c_{\mathrm{O_2}})}_{\text{ambiente del aire}},
+x(t) = \underbrace{(A,B,L)}_{\text{larva}} \;\cup\; \underbrace{(N,S)}_{\text{poblaci\'on y sustrato}} \;\cup\; \underbrace{(\theta_s, T_s)}_{\text{lecho}} \;\cup\; \underbrace{(T, w, c_{\mathrm{CO_2}}, c_{\mathrm{CH_4}}, c_{\mathrm{O_2}})}_{\text{aire interno}},
 \label{eq:estado-completo}
 \end{equation}
 donde $S$ es la masa de sustrato disponible, $T$ la temperatura del aire,
 $w$ la humedad absoluta y $c_i$ las concentraciones de los gases medidos.
+
+El par $(\theta_s, T_s)$ describe el estado hidrot\'ermico del lecho, donde $\theta_s \in [0,1]$ es el contenido gravim\'etrico de agua (fracci\'on m\'asica en base h\'umeda, no confundir con el vector de par\'ametros $\theta$) y $T_s$ su temperatura. El vector de estado tiene as\'i dimensi\'on $12$.
 \end{definition}
 
 \begin{remark}\label{rem:frontera}
@@ -65,6 +62,8 @@ controladas $(T_{\mathrm{in}}, w_{\mathrm{in}})$; el \emph{outlet} remueve
 aire empobrecido en O$_2$ y enriquecido en CO$_2$, CH$_4$ y vapor, y es
 precisamente en esa corriente de salida donde se instalan las mediciones
 $\mathbf{y} = (T, H, \mathrm{CO_2}, \mathrm{CH_4}, \mathrm{O_2})$.
+
+Adem\'as, el sensor capacitivo insertado en el lecho aporta las mediciones $(\theta_s^{\mathrm{sen}}, T_s^{\mathrm{sen}})$, cuya relaci\'on con el estado se formaliza en el mapa de observaci\'on (secci\'on~6).
 \end{remark}
 
 \begin{remark}[Operación por lote]\label{rem:batch}
@@ -96,37 +95,21 @@ Ec.~\eqref{eq:celda-carga} es una restricción de consistencia global que
 servirá de validación independiente de los balances de gases.
 \end{remark}
 
-\begin{remark}[Actividad microbiana del sustrato]\label{rem:microbiano}
-El sustrato no es un almacén pasivo de alimento: alberga una microbiota que
-respira ---consume O$_2$ y excreta CO$_2$---, genera calor y, en zonas
-anaerobias del lecho húmedo, produce CH$_4$ por metanogénesis. En
-consecuencia, las señales medidas en el \emph{outlet} son superposiciones de
-la actividad larval y la microbiana,
+\begin{remark}[Actividad microbiana del sustrato]
+\label{rem:microbiano}
+El sustrato no es un almac\'en pasivo de alimento: alberga una microbiota que respira ---consume O$_2$ y excreta CO$_2$---, genera calor y, en zonas anaerobias del lecho h\'umedo, produce CH$_4$ por metanog\'enesis. En consecuencia, las se\~nales medidas en el outlet son superposiciones de la actividad larval y la microbiana,
 \begin{equation}
-r_{\mathrm{CO_2}}^{\mathrm{medido}} = N\,r_{\mathrm{CO_2}}
-+ r_{\mathrm{CO_2}}^{\mathrm{mic}}(S, T, w),
+r^{\mathrm{medido}}_{\mathrm{CO_2}} = N\,r_{\mathrm{CO_2}} + r^{\mathrm{mic}}_{\mathrm{CO_2}}(S, T_s, \theta_s),
 \qquad
-r_{\mathrm{O_2}}^{\mathrm{medido}} = N\,r_{\mathrm{O_2}}
-+ r_{\mathrm{O_2}}^{\mathrm{mic}}(S, T, w),
+r^{\mathrm{medido}}_{\mathrm{O_2}} = N\,r_{\mathrm{O_2}} + r^{\mathrm{mic}}_{\mathrm{O_2}}(S, T_s, \theta_s),
 \label{eq:co2-superpuesto}
 \end{equation}
-donde $r_{\mathrm{O_2}}^{\mathrm{medido}}$ denota la tasa total de consumo
-de oxígeno (cf.~Ec.~\eqref{eq:rq}). El CH$_4$ proviene casi exclusivamente
-del segundo proceso, lo que lo convierte en un indicador indirecto de la
-anaerobiosis del sustrato. Nótese, además, que el cociente respiratorio
-medido en el \emph{outlet} no es el cociente larval puro, sino
+donde $r^{\mathrm{medido}}_{\mathrm{O_2}}$ denota la tasa total de consumo de ox\'igeno (cf.~Ec.~\eqref{eq:rq}) y las dependencias de la actividad microbiana con el estado del lecho se formalizan en la Secci\'on~\ref{sec:sustrato}. El CH$_4$ proviene casi exclusivamente del segundo proceso, lo que lo convierte en un indicador indirecto de la anaerobiosis del sustrato. N\'otese, adem\'as, que el cociente respiratorio medido en el outlet no es el cociente larval puro, sino
 \begin{equation}
-RQ_{\mathrm{medido}} \;=\;
-\frac{N\,r_{\mathrm{CO_2}} + r_{\mathrm{CO_2}}^{\mathrm{mic}}}
-     {N\,r_{\mathrm{O_2}} + r_{\mathrm{O_2}}^{\mathrm{mic}}},
+RQ_{\mathrm{medido}} = \frac{N\,r_{\mathrm{CO_2}} + r^{\mathrm{mic}}_{\mathrm{CO_2}}}{N\,r_{\mathrm{O_2}} + r^{\mathrm{mic}}_{\mathrm{O_2}}},
 \label{eq:rq-medido}
 \end{equation}
-de modo que la separación de ambas contribuciones ---un problema de
-identificabilidad que se abordará en la sección de mediciones--- es
-necesaria para interpretar $RQ$ en términos fisiológicos. Una vía
-experimental directa es un lote testigo sin larvas, que mide
-$r_{\mathrm{CO_2}}^{\mathrm{mic}}$ y $r_{\mathrm{O_2}}^{\mathrm{mic}}$ de
-forma independiente.
+de modo que la separaci\'on de ambas contribuciones ---un problema de identificabilidad que se abordar\'a en la secci\'on de mediciones--- es necesaria para interpretar $RQ$ en t\'erminos fisiol\'ogicos. Una v\'ia experimental directa es un lote testigo sin larvas, que mide $r^{\mathrm{mic}}_{\mathrm{CO_2}}$ y $r^{\mathrm{mic}}_{\mathrm{O_2}}$ de forma independiente.
 \end{remark}
 
 \begin{figure}[htbp]
@@ -151,7 +134,7 @@ forma independiente.
 
 % Compartimentos internos (más arriba)
 \node[comp] (sus) at ([xshift=-3.6cm,yshift=-0.4cm]box.center)
-  {Sustrato\\[2pt] $S$};
+  {Lecho\\[2pt] $S$\\ $\theta_s,\; T_s$};
 \node[comp, fill=orange!12] (lar) at ([xshift=0cm,yshift=-0.4cm]box.center)
   {Población larval\\[2pt] $N$\\ $(A,B,L)$};
 \node[comp, fill=green!8] (air) at ([xshift=3.6cm,yshift=-0.4cm]box.center)
@@ -159,11 +142,11 @@ forma independiente.
 
 % Intercambios internos: sustrato <-> larvas
 \draw[{Stealth[length=2.2mm]}-{Stealth[length=2.2mm]}, thick, orange!85!black]
-  (sus) -- node[lbl, above=6pt, midway]{consumo} (lar);
+  (sus) -- node[lbl, above=25pt, midway]{consumo} (lar);
 
 % Larvas -> aire: CO2, calor, vapor (flecha superior)
 \draw[-{Stealth[length=2.2mm]}, thick, orange!85!black]
-  (lar.15) -- node[lbl, above=6pt, midway]{CO$_2$, calor, vapor} (air.165);
+  (lar.15) -- node[lbl, above=15pt, midway]{CO$_2$, calor, vapor} (air.165);
 % Aire -> larvas: O2 (flecha inferior)
 \draw[-{Stealth[length=2.2mm]}, thick, orange!85!black]
   (air.195) -- node[lbl, below=6pt, midway]{O$_2$} (lar.345);
@@ -194,100 +177,37 @@ forma independiente.
   {$T,\ H,\ \mathrm{O_2}$\\ $\mathrm{CO_2},\ \mathrm{CH_4}$};
 
 \end{tikzpicture}
-\caption{El sistema completo de bioconversión instrumentado
-(Definición~\ref{def32}). Dentro del volumen de control interactúan tres
-grupos de compartimentos: sustrato, población larval y aire interno; las
-flechas indican el sentido de cada intercambio (el O$_2$ fluye del aire
-hacia larvas y microbiota; el CO$_2$, el calor, el vapor y el CH$_4$, hacia
-el aire). La frontera es atravesada únicamente por los flujos de ventilación
-(\emph{inlet/outlet}, caudal $Q$); las mediciones $\mathbf{y}$ se toman en
-la corriente de salida y una celda de carga registra la masa total del
-lote.}
+\caption{El sistema completo de bioconversi\'on instrumentado (Definici\'on~\ref{def32}). Dentro del volumen de control interact\'uan tres grupos de compartimentos: lecho (sustrato, larvas y frass, con estado $(S, \theta_s, T_s)$), poblaci\'on larval y aire interno; las flechas indican el sentido de cada intercambio (el O$_2$ fluye del aire hacia larvas y microbiota; el CO$_2$, el calor, el vapor y el CH$_4$, hacia el aire). La frontera es atravesada \'unicamente por los flujos de ventilaci\'on (inlet/outlet, caudal $Q$); las mediciones $y$ se toman en la corriente de salida y una celda de carga registra la masa total del lote.}
 \label{fig:sistema-completo}
 \end{figure}
 
 \subsection{Condiciones iniciales y horizonte del ciclo}
 
-\begin{definition}[Ciclo de bioconversión]\label{def33}
-Un \emph{ciclo de bioconversión} es la trayectoria del sistema
-\eqref{eq:estado-completo} en el horizonte $[0, t_f]$, con condiciones
-iniciales
+\begin{definition}[Ciclo de bioconversi\'on]
+\label{def33}
+Un ciclo de bioconversi\'on es la trayectoria del sistema~\eqref{eq:estado-completo} en el horizonte $[0, t_f]$, con condiciones iniciales
 \begin{equation}
-N(0) = N_0, \quad S(0) = S_0, \quad
-A(0) = A_0, \quad B(0) = B_0, \quad L(0) = L_0,
+N(0) = N_0, \quad S(0) = S_0, \quad A(0) = A_0, \quad B(0) = B_0, \quad L(0) = L_0,
 \label{eq:cond-iniciales}
 \end{equation}
-y ambiente en equilibrio con el \emph{inlet},
-$T(0) = T_{\mathrm{in}}$, $w(0) = w_{\mathrm{in}}$,
-$c_i(0) = c_{i,\mathrm{in}}$. El ciclo termina en $t_f$, definido como el
-instante en que la fracción de prepupas en la población supera un umbral
-$\pi_f$ convenido (típicamente $\pi_f \approx 0.5$), o equivalentemente
-cuando la tasa agregada de asimilación cae por debajo del umbral de
-mantenimiento de la población,
+lecho en las condiciones de carga, $\theta_s(0) = \theta_{s,0}$ y $T_s(0) = T_{s,0}$, y aire en equilibrio con el inlet, $T(0) = T_{\mathrm{in}}$, $w(0) = w_{\mathrm{in}}$, $c_i(0) = c_{i,\mathrm{in}}$. El ciclo termina en $t_f$, definido como el instante en que la fracci\'on de prepupas en la poblaci\'on supera un umbral $\pi_f$ convenido (t\'ipicamente $\pi_f \approx 0.5$), o equivalentemente cuando la tasa agregada de asimilaci\'on cae por debajo del umbral de mantenimiento de la poblaci\'on,
 \begin{equation}
-t_f \;=\; \inf\bigl\{ t > 0 \;:\; R_A(t) \;\leq\; N(t)\,m\,B(t) \bigr\}.
+t_f = \inf\{ t > 0 : R_A(t) \le N(t)\,m\,B(t) \}.
 \label{eq:tf}
 \end{equation}
-En las condiciones de cría previstas, $t_f$ se espera dentro de la ventana
-de $14$ a $16$ días. Cada ciclo se replica $n_{\mathrm{rep}} = 3$ veces en
-condiciones nominales idénticas, lo que permitirá estimar la variabilidad
-entre lotes de los parámetros del modelo (Sección~6).
+En las condiciones de cr\'ia previstas, $t_f$ se espera dentro de la ventana de $14$ a $16$ d\'ias. Cada ciclo se replica $n_{\mathrm{rep}} = 3$ veces en condiciones nominales id\'enticas, lo que permitir\'a estimar la variabilidad entre lotes de los par\'ametros del modelo (Secci\'on~6).
 \end{definition}
 
-\begin{remark}[Calendario de cierres de ventilación]\label{rem:cierres}
-El protocolo experimental incluye cierres del \emph{inlet} cada dos días,
-en los instantes $t_k^{c} = 2k$ días, $k = 1, 2, \dots$, cada uno de
-duración $\Delta$ por estimar (Sección~6). Durante un cierre, $Q = 0$ y las
-concentraciones del aire interno evolucionan únicamente por la producción
-interna, de modo que las pendientes $\Delta c_i / \Delta t$ miden
-directamente las tasas $R_i$. El calendario $\{t_k^{c}\}$ y la duración
-$\Delta$ son parte del protocolo: se conocen con exactitud y se registran
-junto con las mediciones.
+\begin{remark}[Calendario de cierres de ventilaci\'on]
+\label{rem:cierres}
+El protocolo experimental incluye cierres del inlet cada dos d\'ias, en los instantes $t_k^c = 2k$ d\'ias, $k = 1, 2, \ldots$, cada uno de duraci\'on $\Delta$ por estimar (Secci\'on~6). Durante un cierre, $Q = 0$ y las concentraciones del aire interno evolucionan \'unicamente por la producci\'on interna, de modo que las pendientes $\Delta c_i / \Delta t$ miden directamente las tasas $R_i$. El calendario $\{t_k^c\}$ y la duraci\'on $\Delta$ son parte del protocolo: se conocen con exactitud y se registran junto con las mediciones.
 \end{remark}
 
-\begin{remark}[Criterios de terminación y su medición]\label{rem:tf}
-Los dos criterios de \eqref{eq:tf} no son equivalentes operativamente: la
-fracción de prepupas requiere inspección visual o muestreo, mientras que el
-criterio metabólico es \emph{observable en línea} ---con la salvedad de la
-contribución microbiana al CO$_2$ (Observación~\ref{rem:microbiano}), que no
-cesa al final del ciclo. Una firma de terminación más robusta es el cambio
-de régimen del cociente CH$_4$/CO$_2$: al llegar la prepupa, las larvas
-dejan de alimentarse y de remover el sustrato, cesa la bioturbación que
-aireaba el lecho, se expanden las zonas anaerobias y el CH$_4$ aumenta
-mientras el CO$_2$ larval cae a su componente de mantenimiento. Esta firma
-es la que el gemelo digital puede evaluar en tiempo real sin intervenir el
-lote. Para larvas neonatas de cría sincronizada, los valores iniciales
-$A_0, B_0, L_0$ corresponden al peso seco promedio de una larva de un día,
-repartido entre compartimentos según su composición bioquímica medida.
+\begin{remark}[Criterios de terminaci\'on y su medici\'on]
+\label{rem:tf}
+Los dos criterios de~\eqref{eq:tf} no son equivalentes operativamente: la fracci\'on de prepupas requiere inspecci\'on visual o muestreo, mientras que el criterio metab\'olico es observable en l\'inea ---con la salvedad de la contribuci\'on microbiana al CO$_2$ (Observaci\'on~\ref{rem:microbiano}), que no cesa al final del ciclo. Una firma de terminaci\'on m\'as robusta es el cambio de r\'egimen del cociente CH$_4$/CO$_2$: al llegar la prepupa, las larvas dejan de alimentarse y de remover el sustrato, cesa la bioturbaci\'on que aireaba el lecho, se expanden las zonas anaerobias y el CH$_4$ aumenta mientras el CO$_2$ larval cae a su componente de mantenimiento. Esta firma es la que el gemelo digital puede evaluar en tiempo real sin intervenir el lote. Para larvas neonatas de cr\'ia sincronizada, los valores iniciales $A_0, B_0, L_0$ corresponden al peso seco promedio de una larva de un d\'ia, repartido entre compartimentos seg\'un su composici\'on bioqu\'imica medida; $\theta_{s,0}$ se determina gravim\'etricamente en una muestra del sustrato al momento de la carga, y $T_{s,0}$ es la temperatura del sustrato alimentado, medida al sellar el contenedor.
 \end{remark}
 
-\paragraph{Variables monitoreadas fuera del vector de estado.}
-El mapa de observación $\mathbf{y}$ definido hasta aquí se restringe a las
-variables que participan directamente en los balances del modelo:
-$T$, $H$, CO$_2$, CH$_4$ y O$_2$. La instrumentación del sistema puede,
-sin embargo, incluir sensores adicionales ---notablemente H$_2$S y NH$_3$---
-cuyas señales no se incorporan como variables de estado. La razón es de
-economía de modelado: incluir el H$_2$S exigiría abrir el balance de azufre
-del sustrato, y el NH$_3$, el balance de nitrógeno con su equilibrio
-amonio--amoníaco dependiente de pH; en ambos casos el costo en compartimentos
-y parámetros adicionales es desproporcionado frente al valor que aportan al
-objetivo central, que es describir la bioconversión de materia y energía.
-Estos gases se clasifican entonces como \emph{variables de supervisión}:
-mediciones en tiempo real que informan sobre la salud del proceso sin
-alimentar las ecuaciones de estado.
+\paragraph{Variables monitoreadas fuera del vector de estado.} El mapa de observaci\'on definido hasta aqu\'i se restringe a las variables que participan directamente en los balances del modelo: $T$, $H$, CO$_2$, CH$_4$ y O$_2$. La instrumentaci\'on del sistema puede, sin embargo, incluir sensores adicionales ---notablemente H$_2$S y NH$_3$--- cuyas se\~nales no se incorporan como variables de estado. La raz\'on es de econom\'ia de modelado: incluir el H$_2$S exigir\'ia abrir el balance de azufre del sustrato, y el NH$_3$, el balance de nitr\'ogeno con su equilibrio amonio--amon\'iaco dependiente de pH; en ambos casos el costo en compartimentos y par\'ametros adicionales es desproporcionado frente al valor que aportan al objetivo central, que es describir la bioconversi\'on de materia y energ\'ia. Estos gases se clasifican entonces como variables de supervisi\'on: mediciones en tiempo real que informan sobre la salud del proceso sin alimentar las ecuaciones de estado.
 
-\paragraph{Su rol en la capa de supervisión del gemelo digital.}
-Aunque fuera del modelo dinámico, estas señales tienen una función bien
-definida en el sistema monitoreado. El H$_2$S es un indicador de
-putrefacción anaerobia de la fracción proteica del sustrato: su aparición
-señala condiciones de falla ---exceso de humedad, compactación del lecho o
-sustrato proteico sin consumir--- y opera como alarma temprana sobre el lote.
-El NH$_3$, por su parte, es la vía gaseosa de pérdida de nitrógeno del
-sistema: su concentración informa sobre la volatilización de amonio y,
-por tanto, sobre la calidad final del frass como fertilizante. La distinción
-introducida aquí ---variables de \emph{estado} que el modelo explica versus
-variables de \emph{supervisión} que el sistema vigila--- es un principio
-general del diseño: la frontera del modelo no la define lo que se puede
-medir, sino lo que el modelo se propone explicar. Las extensiones a los
-balances de nitrógeno y azufar quedan planteadas como trabajo futuro, una
-vez validado el núcleo materia--energía del sistema.
+\paragraph{Su rol en la capa de supervisi\'on del gemelo digital.} Aunque fuera del modelo din\'amico, estas se\~nales tienen una funci\'on bien definida en el sistema monitoreado. El H$_2$S es un indicador de putrefacci\'on anaerobia de la fracci\'on proteica del sustrato: su aparici\'on se\~nala condiciones de falla ---exceso de humedad, compactaci\'on del lecho o sustrato proteico sin consumir--- y opera como alarma temprana sobre el lote. El NH$_3$, por su parte, es la v\'ia gaseosa de p\'erdida de nitr\'ogeno del sistema: su concentraci\'on informa sobre la volatilizaci\'on de amonio y, por tanto, sobre la calidad final del frass como fertilizante. La distinci\'on introducida aqu\'i ---variables de estado que el modelo explica versus variables de supervisi\'on que el sistema vigila--- es un principio general del dise\~no: la frontera del modelo no la define lo que se puede medir, sino lo que el modelo se propone explicar. Las extensiones a los balances de nitr\'ogeno y azufre quedan planteadas como trabajo futuro, una vez validado el n\'ucleo materia--energ\'ia del sistema.

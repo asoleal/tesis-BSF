@@ -43,36 +43,24 @@ límites de seguridad de gases (incluidos H$_2$S y NH$_3$ como variables de
 supervisión) y puede modificar las consignas o forzar ventilación máxima.
 \end{remark}
 
-\begin{remark}[Identificación en lazo cerrado]\label{rem:id-lazo}
-En \eqref{eq:lazo-cerrado}, las entradas $\mathbf{u}$ están correlacionadas
-con las perturbaciones por construcción: el controlador reacciona a ellas.
-Es la dificultad clásica de la identificación en lazo cerrado: un estimador
-entrenado solo con datos de operación regulada puede aprender la ley
-$\pi$ en lugar de la fisiología. En consecuencia, los datos de los cierres
-de ventilación (Remark~\ref{rem:cierres}) y de las ventanas con consignas
-en escalón desempeñarán el rol de datos de \emph{identificación}, mientras
-que la operación regulada normal se reserva para validación
-(cf.~Sección~6).
+\begin{remark}[Identificaci\'on en lazo cerrado]
+\label{rem:id-lazo}
+En~\eqref{eq:lazo-cerrado}, las entradas $u$ est\'an correlacionadas con las perturbaciones por construcci\'on: el controlador reacciona a ellas. Es la dificultad cl\'asica de la identificaci\'on en lazo cerrado: un estimador entrenado solo con datos de operaci\'on regulada puede aprender la ley $\pi$ en lugar de la fisiolog\'ia. En consecuencia, los datos de los cierres de ventilaci\'on (Observaci\'on~\ref{rem:cierres}) y de las ventanas con consignas en escal\'on desempe\~nar\'an el rol de datos de identificaci\'on, mientras que la operaci\'on regulada normal se reserva para validaci\'on (cf.~Secci\'on~6).
 \end{remark}
 
-\subsection{Conmutación de la ventilación}
 
-\begin{definition}[Entrada de ventilación conmutada]\label{def42}
-Sea $\{t_k^{c}\}_{k \geq 1}$ el calendario de cierres programados
-(Remark~\ref{rem:cierres}) y $\Delta$ la duración de cada cierre. La
-ventilación opera en dos \emph{modos}:
+\begin{definition}[Entrada de ventilaci\'on conmutada]
+\label{def42}
+Sea $\{t_k^c\}_{k \geq 1}$ el calendario de cierres programados (Observaci\'on~\ref{rem:cierres}) y $\Delta$ la duraci\'on de cada cierre. La ventilaci\'on opera en dos modos:
 \begin{equation}
-Q(t) = \begin{cases}
-Q_{\mathrm{op}}(t), & \text{modo ventilado: }
-t \notin \bigcup_k [t_k^{c},\, t_k^{c} + \Delta],\\[4pt]
-0, & \text{modo cerrado: }
-t \in [t_k^{c},\, t_k^{c} + \Delta],\; k = 1, 2, \dots
+Q(t) =
+\begin{cases}
+Q_{\mathrm{op}}(t), & \text{modo ventilado: } t \notin \bigcup_k [t_k^c,\; t_k^c + \Delta],\\[4pt]
+0, & \text{modo cerrado: } t \in [t_k^c,\; t_k^c + \Delta], \quad k = 1, 2, \ldots
 \end{cases}
 \label{eq:q-conmutada}
 \end{equation}
-donde en modo ventilado $Q_{\mathrm{op}}(t)$ está determinado por la ley de
-control \eqref{eq:ley-control}, y en modo cerrado la ventilación se anula
-por decisión del protocolo, suspendiéndose temporalmente la regulación.
+donde en modo ventilado $Q_{\mathrm{op}}(t)$ est\'a determinado por la ley de control~\eqref{eq:ley-control}, y en modo cerrado la ventilaci\'on se anula por decisi\'on del protocolo, suspendi\'endose temporalmente la regulaci\'on.
 \end{definition}
 
 \begin{remark}[La conmutación no altera el estado]\label{rem:conmutacion}
