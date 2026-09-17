@@ -78,7 +78,7 @@ convierten una forma de materia o energía en otra sin cruzar la frontera.}
 
 \begin{remark}
 La ecuación \eqref{eq:balance} es la estructura común de todos los modelos de
-este documento. El modelo de Eriksen \cite{eriksen2022} es una red de balances
+este documento. El modelo de Eriksen \cite{eriksenDynamicModellingFeed2022} es una red de balances
 de masa entre compartimentos ($A$, $B$, $L$) sin términos $J$ (sistema cerrado
 a nivel de larva); el modelo del contenedor que desarrollaremos añade los
 términos de entrada y salida asociados al flujo de aire (\emph{inlet/outlet})
@@ -212,7 +212,7 @@ volumen de aire del contenedor.
 \node[right=0.35cm of L, align=left] {\footnotesize lípidos\\[-1pt]\footnotesize de reserva};
 
 \end{tikzpicture}
-\caption{El modelo de Eriksen \cite{eriksen2022} como red de compartimentos
+\caption{El modelo de Eriksen \cite{eriksenDynamicModellingFeed2022} como red de compartimentos
 (Definición~1.3). El sustrato es un forzamiento externo que alimenta el
 compartimento de asimilados $A$ a tasa $r_A = aB$; las flechas internas
 representan síntesis de biomasa estructural ($r_B$), acumulación de lípidos
@@ -225,7 +225,7 @@ síntesis de lípidos, cuya suma es la producción total
 \end{figure}
 
 En el modelo de Eriksen, la producción total de CO$_2$ se descompone en tres
-procesos metabólicos distintos \cite{eriksen2022}. El primero es el
+procesos metabólicos distintos \cite{eriksenDynamicModellingFeed2022}. El primero es el
 \emph{mantenimiento}: la energía que la larva requiere para sostener los
 procesos vitales que no producen crecimiento neto, modelada como proporcional
 a la biomasa estructural,
@@ -265,7 +265,7 @@ mantenimiento, a crecimiento estructural o a acumulación de lípidos.
 
 \subsection{El modelo de Eriksen como sistema dinámico}
 
-El modelo de Eriksen \cite{eriksen2022} se obtiene al particularizar la
+El modelo de Eriksen \cite{eriksenDynamicModellingFeed2022} se obtiene al particularizar la
 Definición~1.1 con el vector de estado, las entradas y las mediciones
 \begin{equation}
 \mathbf{x} = \begin{bmatrix} A \\ B \\ L \end{bmatrix},
@@ -309,7 +309,7 @@ formal sobre el que se construye el resto del documento: un sistema dinámico
 (Definición~\ref{def12}) organizados en una red de compartimentos
 (Definiciones~\ref{def13} y~\ref{def14}), bajo el supuesto de mezcla
 homogénea ilustrado en la Figura~\ref{fig:compartimento}. El modelo de
-Eriksen \cite{eriksen2022} emerge así como un caso particular de esta
+Eriksen \cite{eriksenDynamicModellingFeed2022} emerge así como un caso particular de esta
 estructura ---una red de tres compartimentos con tres fuentes de producción
 de CO$_2$--- y su reformulación en términos de estados, entradas y
 mediciones delimita con precisión el punto de partida de la extensión que se

@@ -91,7 +91,7 @@ donde la potencia metab\'olica es
 \dot Q_{\mathrm{met}} = \gamma_q\left(N\,r_{\mathrm{CO_2}} + r^{\mathrm{mic}}_{\mathrm{CO_2}}\right),
 \label{eq:calor-metabolico}
 \end{equation}
-con $\gamma_q$ el calor liberado por unidad de CO$_2$ producido (equivalente energ\'etico de la respiraci\'on, del orden de $27$~kJ por mol de CO$_2$ para oxidaci\'on de carbohidratos, y variable con el sustrato metab\'olico, al igual que $RQ$ y $\gamma_w$). El t\'ermino latente $-\lambda E_{\mathrm{lecho}}$ contabiliza el enfriamiento evaporativo del lecho, que ocurre en este nodo; el calor de condensaci\'on, en cambio, se deposita en las paredes y se contabiliza en el nodo de aire (Secci\'on~\ref{sec:energia}).
+con $\gamma_q$ el calor liberado por unidad de CO$_2$ producido (equivalente energ\'etico de la respiraci\'on, la regla de Thornton fija el calor por mol de O$_2$ consumido en $430$--$480$~kJ/mol~O$_2$~\citep{thorntonRelationOxygenHeat1917,hansenUseCalorespirometricRatios2004}; el calor por mol de CO$_2$ producido es ese valor dividido entre $RQ$, de modo que para oxidaci\'on de carbohidratos ($RQ=1$) $\gamma_q \approx 460$--$480$~kJ/mol~CO$_2$~\citep{lightonMeasuringMetabolicRates2008}, variable con el sustrato metab\'olico al igual que $RQ$ y $\gamma_w$. El t\'ermino latente $-\lambda E_{\mathrm{lecho}}$ contabiliza el enfriamiento evaporativo del lecho, que ocurre en este nodo; el calor de condensaci\'on, en cambio, se deposita en las paredes y se contabiliza en el nodo de aire (Secci\'on~\ref{sec:energia}).
 
 \begin{remark}[Consistencia de la localizaci\'on de las fuentes]
 \label{rem:lecho-consistencia}
@@ -149,7 +149,7 @@ c_i \approx c_{i,\mathrm{in}} \pm \frac{R_i}{Q},
 \end{equation}
 con signo según producción o consumo. Esta aproximación es la que permite
 estimar tasas a partir de mediciones de \emph{outlet} en operación normal,
-y es complementaria del método de cámara estática
+y es complementaria del método de cámara estática~\citep{hutchinsonImprovedSoilCover1981,ermolaevGreenhouseGasEmissions2019}
 (Ec.~\eqref{eq:modo-cerrado}).
 \end{remark}
 
@@ -291,14 +291,14 @@ entradas manipuladas $u = (Q, P_{\mathrm{cal}}, P_{\mathrm{hum}})$ m\'as las con
 
 Las formas funcionales de las tasas y los valores de los par\'ametros requieren decisiones de modelado que el sistema real debe justificar. Se adoptan las siguientes simplificaciones, todas ellas verificables o refinables con los datos del sistema instrumentado.
 
-\paragraph{S1. Tasas larvales expl\'icitas con par\'ametros constantes.} Las tasas~\eqref{eq:ra-general}--\eqref{eq:rco2-general} toman las formas expl\'icitas del modelo de \citet{eriksen2022}: asimilaci\'on $r_A = a\,B$ con $a$ modulada por funciones log\'isticas del peso (estructura de estadios, $B_{\mathrm{m\'ax}}$, $\beta$), y costos $Y_B$, $Y_L$ constantes. La dependencia t\'ermica se congela: $m(T_s) = m$ constante, pues el control mantiene $T_s$ en la zona de confort larval (supuesto B4 de la Secci\'on~4). La dependencia con $\theta_s$ se admite como factor de disponibilidad del alimento solo si los datos lo exigen.
+\paragraph{S1. Tasas larvales expl\'icitas con par\'ametros constantes.} Las tasas~\eqref{eq:ra-general}--\eqref{eq:rco2-general} toman las formas expl\'icitas del modelo de \citet{eriksenDynamicModellingFeed2022}: asimilaci\'on $r_A = a\,B$ con $a$ modulada por funciones log\'isticas del peso (estructura de estadios, $B_{\mathrm{m\'ax}}$, $\beta$), y costos $Y_B$, $Y_L$ constantes. La dependencia t\'ermica se congela: $m(T_s) = m$ constante, pues el control mantiene $T_s$ en la zona de confort larval (supuesto B4 de la Secci\'on~4). La dependencia con $\theta_s$ se admite como factor de disponibilidad del alimento solo si los datos lo exigen.
 
 \paragraph{S2. Cin\'etica microbiana separable de primer orden.} La degradaci\'on microbiana se toma de primer orden en el sustrato, con tasa espec\'ifica separable,
 \begin{equation}
 k_{\mathrm{mic}}(T_s, \theta_s) = k_{\mathrm{mic}}^{\mathrm{ref}}\, f_T(T_s)\, f_\theta(\theta_s),
 \label{eq:kmic-simplificada}
 \end{equation}
-con $f_T$ un factor t\'ermico tipo $Q_{10}$ o Arrhenius y $f_\theta$ un factor de humedad creciente y saturante (tipo Monod en el contenido de agua). Las tasas de gases microbianos se ligan a la degradaci\'on por coeficientes de rendimiento constantes: $r^{\mathrm{mic}}_{\mathrm{CO_2}} = Y^{\mathrm{mic}}_{\mathrm{CO_2}}\, k_{\mathrm{mic}}\, S$ y $r^{\mathrm{mic}}_{\mathrm{O_2}} = r^{\mathrm{mic}}_{\mathrm{CO_2}} / RQ_{\mathrm{mic}}$. La alternativa Monod en $S$ (saturaci\'on por sustrato) queda como refinamiento: con una sola carga batch y $S$ abundante durante la mayor parte del ciclo, el primer orden es la hip\'otesis parsimoniosa.
+con $f_T$ un factor t\'ermico tipo $Q_{10}$ o Arrhenius y $f_\theta$ un factor de humedad creciente y saturante (tipo Monod en el contenido de agua~\citep{monodGrowthBacterialCultures1949}). Las tasas de gases microbianos se ligan a la degradaci\'on por coeficientes de rendimiento constantes: $r^{\mathrm{mic}}_{\mathrm{CO_2}} = Y^{\mathrm{mic}}_{\mathrm{CO_2}}\, k_{\mathrm{mic}}\, S$ y $r^{\mathrm{mic}}_{\mathrm{O_2}} = r^{\mathrm{mic}}_{\mathrm{CO_2}} / RQ_{\mathrm{mic}}$. La alternativa Monod en $S$ (saturaci\'on por sustrato) queda como refinamiento: con una sola carga batch y $S$ abundante durante la mayor parte del ciclo, el primer orden es la hip\'otesis parsimoniosa.
 
 \paragraph{S3. Parametrizaci\'on de la fracci\'on anaerobia.} La variable latente $\xi$ de~\eqref{eq:ch4-general} se parametriza como funci\'on est\'atica de los estados que la gobiernan,
 \begin{equation}
@@ -316,7 +316,7 @@ con $k_e$ un coeficiente de transferencia de masa, $w_{\mathrm{sat}}(T_s)$ la hu
 
 \paragraph{S5. Capacidades t\'ermicas constantes.} Se toman $C_{\mathrm{th}}$ y $C_{\mathrm{th},s}$ constantes durante el ciclo (cf.~Observaci\'on~\ref{rem:cth}), con $C_{\mathrm{th},s}$ estimada de la composici\'on inicial del lecho. La dependencia $C_{\mathrm{th},s}(m_{\mathrm{LC}}, \theta_s)$ queda como refinamiento si los transitorios t\'ermicos de calibraci\'on muestran deriva sistem\'atica.
 
-\paragraph{S6. Coeficientes estequiom\'etricos constantes.} Se fijan $RQ$, $\gamma_q$ y $\gamma_w$ en valores constantes representativos de la dieta (mezcla carbohidratos--prote\'inas: $RQ \approx 0.9$--$1.0$), y $\gamma_q \approx 27$~kJ/mol CO$_2$. La variaci\'on de $RQ$ con el sustrato metab\'olico (Ec.~\eqref{eq:ro2-general}) se usar\'a solo como diagn\'ostico sobre los datos, no dentro de la din\'amica simulada.
+\paragraph{S6. Coeficientes estequiom\'etricos constantes.} Se fijan $RQ$, $\gamma_q$ y $\gamma_w$ en valores constantes representativos de la dieta (mezcla carbohidratos--prote\'inas: $RQ \approx 0.9$--$1.0$), y $\gamma_q \approx 470$~kJ/mol CO$_2$~\citep{hansenUseCalorespirometricRatios2004,lightonMeasuringMetabolicRates2008}. La variaci\'on de $RQ$ con el sustrato metab\'olico (Ec.~\eqref{eq:ro2-general}) se usar\'a solo como diagn\'ostico sobre los datos, no dentro de la din\'amica simulada.
 
 \begin{remark}[El caso degenerado de un solo nodo t\'ermico]
 \label{rem:un-nodo}

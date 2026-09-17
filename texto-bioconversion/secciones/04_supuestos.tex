@@ -77,7 +77,7 @@ producción interna,
 \label{eq:modo-cerrado}
 \end{equation}
 con $V_{\mathrm{aire}}$ el volumen de aire del contenedor. La
-Ec.~\eqref{eq:modo-cerrado} es la base del método de cámara estática: las
+Ec.~\eqref{eq:modo-cerrado} es la base del método de cámara estática~\citep{hutchinsonImprovedSoilCover1981,ermolaevGreenhouseGasEmissions2019}: las
 pendientes de acumulación miden directamente las tasas $R_i$
 (Sección~6).
 \end{remark}
@@ -125,7 +125,7 @@ $[0, t_f]$ (Observación~\ref{rem:batch}); el estado es continuo y las
 
 \begin{description}
 \item[B1. Asimilación limitante.] La asimilación de alimento es el proceso
-metabólico limitante, $r_A = aB$ \citep{eriksen2022}, con $a$ modulada por
+metabólico limitante, $r_A = aB$ \citep{eriksenDynamicModellingFeed2022}, con $a$ modulada por
 funciones logísticas del peso según el modelo de referencia.
 
 \item[B2. Mantenimiento y costos de síntesis.] El mantenimiento es
@@ -135,15 +135,15 @@ respectivos (Ecs.~\eqref{eq:rco2m}--\eqref{eq:rco2l}).
 
 \item[B3. Estado estacionario de asimilados.] El compartimento $A$
 equilibra sus flujos en escalas rápidas frente a la dinámica de $B$ y $L$
-(Ec.~1 de \citet{eriksen2022}), de modo que $\dot{A} \approx 0$ en
+(Ec.~1 de \citet{eriksenDynamicModellingFeed2022}), de modo que $\dot{A} \approx 0$ en
 \eqref{eq:eriksen-edos}.
 
 \item[B4. Parámetros constantes.] Se adoptan los parámetros fisiológicos
 $(a, m, Y_B, Y_L, B_{\max}, \beta)$ como constantes durante el ciclo. Esta
 es la práctica establecida en la literatura de referencia: el modelo de
-\citet{eriksen2022} fue formulado y ajustado con parámetros constantes a
+\citet{eriksenDynamicModellingFeed2022} fue formulado y ajustado con parámetros constantes a
 temperatura de cría controlada, con buen desempeño frente a datos de
-distintos sustratos y humedades \citep{eriksen2022,eriksen2024}. Dado que
+distintos sustratos y humedades \citep{eriksenDynamicModellingFeed2022,eriksenMetabolicPerformanceFeed2024}. Dado que
 el presente sistema mantiene $T$ regulada en la zona de confort larval
 (Definición~\ref{def41}), la aproximación es razonable; la dependencia
 explícita de los parámetros con $T$ (por ejemplo, factores de tipo
