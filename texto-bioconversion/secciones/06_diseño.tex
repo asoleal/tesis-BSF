@@ -1,0 +1,167 @@
+\section{Diseño del ambiente controlado}\label{sec:diseno}
+
+Esta sección especifica el montaje físico del sistema experimental: la cámara,
+la línea neumática de ventilación, los sensores, los actuadores y la cadena de
+adquisición. El objetivo es que cada término del modelo de la
+Sección~\ref{sec:modelo-general} tenga un elemento de hardware asociado: cada
+entrada $u$ un actuador, cada componente de $y = g(x)$ un sensor, y cada
+supuesto estructural (Sección~\ref{sec:supuestos}) una decisión de diseño
+verificable.
+
+\subsection{Elementos generales del diseño}\label{sec:elementos-generales}
+
+\subsubsection{Arquitectura}
+
+El montaje se organiza en seis subsistemas:
+
+\begin{description}
+  \item[Cámara.] Hielera rígida de polietileno de $5$~L de capacidad nominal
+  (Truper HIEL-5, $26 \times 19 \times 18$~cm; volumen interior
+  $\approx 4{,}5$~L), que combina aislamiento térmico, cierre hermético y bajo
+  costo. En su interior se aloja el lecho de bioconversión.
+  \item[Línea neumática.] Circuito de ventilación con entrada (\emph{inlet}) y
+  salida (\emph{outlet}) independientes en la tapa, que impone el flujo $Q(t)$
+  del balance de gases y permite conmutar entre ventilación y cierre estático
+  (método de cámara cerrada).
+  \item[Sensores.] Instrumentación de gases, temperatura, humedad y masa
+  (Sección~\ref{sec:sensores}).
+  \item[Actuadores.] Celda Peltier con disipador, humidificador ultrasónico y
+  ventilación (Sección~\ref{sec:actuadores}).
+    \item[Adquisición y control.] Microcontroladores ESP32 dedicados al
+  monitoreo y al control: muestrean los sensores, ejecutan los lazos sobre
+  los actuadores y transmiten las mediciones en línea a una base de datos
+  en la nube (Sección~\ref{sec:dashboard}).
+  \item[Dashboard.] Tablero web definido en la Sección~\ref{sec:dashboard},
+  donde se especifican sus componentes mínimos; despliega las series en
+  tiempo real y alimenta el gemelo digital del modelo de la
+  Sección~\ref{sec:modelo-general}.  
+  \item[Gemelo digital.] Instancia en línea del modelo de la
+  Sección~\ref{sec:modelo-general}, alimentada por las mediciones.
+\end{description}
+
+\begin{remark}[Calefacción y enfriamiento unificados]\label{rem:peltier}
+Una celda Peltier es un dispositivo termoeléctrico reversible: el signo de la
+corriente determina si bombea calor hacia adentro o hacia afuera de la cámara.
+El vector de entradas del modelo queda entonces
+\[
+  u = \big(Q,\; P_{\mathrm{pel}},\; P_{\mathrm{hum}}\big),
+  \qquad
+  P_{\mathrm{pel}} \in [-P_{\max},\, +P_{\max}],
+\]
+donde $P_{\mathrm{pel}}$ con signo reemplaza a la potencia de calefacción
+$P_{\mathrm{cal}}$: un solo actuador cubre ambos modos, lo que simplifica el
+hardware y el modelo.
+\end{remark}
+
+% fig:unidad-controlada se mantiene aquí (no la borres)
+
+\subsubsection{Dimensionamiento del lote y del volumen de aire}
+
+El experimento consiste en un único ciclo de bioconversión de duración
+$t_f \in [14, 20]$~días, con una carga inicial de $N_0 \in [200, 700]$ larvas
+y alimento en proporción $1{,}4$~g por larva. La densidad superficial de
+cría es de $\approx 2{,}1$ larvas/cm$^2$.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Escenarios de carga del lote (área del lecho $A_s \approx 330$~cm$^2$).}
+  \label{tab:carga-lote}
+  \begin{tabular}{cccc}
+    \hline
+    $N_0$ (larvas) & $S_0$ (g) & Espesor del lecho & $V_{\mathrm{aire}}$ \\
+    \hline
+    200 & 280  & $\approx 1{,}7$~cm & $\approx 3{,}0$~L \\
+    400 & 560  & $\approx 3{,}5$~cm & $\approx 2{,}8$~L \\
+    700 & 980  & $\approx 6{,}0$~cm & $\approx 2{,}5$~L \\
+    \hline
+  \end{tabular}
+\end{table}
+
+El volumen de aire determina la duración de los cierres estáticos: con las
+tasas de CO$_2$ por larva de la Sección~\ref{sec:caracterizacion}, la ventana
+$\Delta$ admisible por fase es la de la Tabla~\ref{tab:delta-adaptativo}.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Ventana de cierre $\Delta$ por fase fisiológica
+  ($N = 400$, $V_{\mathrm{aire}} \approx 3$~L; a $N = 700$ los tiempos se
+  reducen en el factor $4/7$).}
+  \label{tab:delta-adaptativo}
+  \begin{tabular}{lcc}
+    \hline
+    Fase & Pendiente esperada (ppm/min) & $\Delta$ sugerida \\
+    \hline
+    Neonatos      & $\sim 10^2$  & $60$--$120$~min \\
+    Crecimiento   & $10^2$--$10^3$ & $6$--$30$~min \\
+    Pico metabólico & $\gtrsim 2 \times 10^3$ & $1{,}5$--$5$~min \\
+    Prepupa       & $\sim 10^3$  & $9$--$18$~min \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\begin{remark}[$\Delta$ operativo]\label{rem:delta-operativo}
+$\Delta$ se acota por abajo por la resolución de los sensores
+(ecuación~\eqref{eq:delta-min}) y por arriba por el piso de O$_2$ tolerable por
+las larvas (ecuación~\eqref{eq:delta-max}). En el pico metabólico con
+$N = 700$, $\Delta$ baja a $\approx 1{,}5$~min, cierres muy cortos que exigen
+muestreo rápido; se acepta este régimen porque dura pocos días.
+\end{remark}
+
+\subsubsection{Línea neumática: \emph{inlet} y \emph{outlet}}
+
+La línea conecta con la cámara mediante dos racores pasamuros herméticos
+(conectores \emph{push-to-connect} de $1/8''$): el \emph{inlet} se ubica en
+la parte inferior de una cara lateral y el \emph{outlet} en la tapa o en la
+parte superior de una cara lateral. La posición definitiva de ambos puertos
+se definirá mediante una simulación CFD del flujo en el volumen de aire
+(Ansys o FEniCS/\texttt{dolfinx}), con el fin de garantizar el supuesto de
+mezclado homogéneo de la Sección~\ref{sec:supuestos} y evitar zonas muertas
+sobre el lecho. El diámetro de toda la línea queda fijado por estos racores:
+
+\begin{description}
+  \item[Tubería.] Poliuretano $6 \times 4$~mm (exterior $\times$ interior),
+  tramos de longitud total menor a $1$~m. Con el flujo máximo de diseño
+  $Q_{\max} \approx 1{,}7$~L/min la velocidad en el tubo es
+  $v = Q/A \approx 2{,}3$~m/s y la caída de presión es despreciable.
+  \item[Bomba de entrada.] Microbomba de diafragma de $12$~V DC, caudal
+  nominal $2$~L/min, accionada por PWM desde el ESP32; es el actuador que
+  impone $Q(t)$.
+  \item[Bomba de salida.] Segunda bomba idéntica, operada con el mismo duty
+  cycle. Usar bombas gemelas en entrada y salida mantiene la presión interior
+  cercana a la ambiente: la cámara es rígida y una sola bomba la
+  sobrepresurizaría o despresurizaría, sesgando la lectura del BMP390 y la
+  estimación de concentraciones. Como respaldo, el \emph{outlet} lleva un
+  filtro hidrofóbico de $0{,}2$~$\mu$m que evita escapes de aerosoles durante
+  la ventilación.
+  \item[Estrategia de cierre.] Ambas bombas se detienen simultáneamente y el
+  circuito queda sellado por las propias bombas de diafragma (válvulas de
+  retención internas); no se requieren electroválvulas adicionales.
+\end{description}
+
+El caudal se dimensiona para renovar el volumen de aire en el régimen más
+exigente (pico metabólico, $\Delta \approx 1{,}5$~min):
+\begin{equation}\label{eq:q-dimensionamiento}
+  Q_{\mathrm{dis}}
+  \;\geq\; \frac{V_{\mathrm{aire}}}{3\,\Delta_{\min}}
+  \;\approx\; \frac{2{,}5~\mathrm{L}}{3 \times 1{,}5~\mathrm{min}}
+  \;\approx\; 0{,}6~\mathrm{L/min},
+\end{equation}
+y se elige $Q_{\mathrm{dis}} = 1$~L/min nominal (bomba de $2$~L/min al
+$50\%$), con margen hasta $1{,}7$~L/min para el escenario $N = 700$. El
+tiempo característico de renovación es
+$\tau_{\mathrm{aire}} = V_{\mathrm{aire}}/Q \approx 2{,}5$~min, coherente con
+la ventilación conmutada de la ecuación~\eqref{eq:q-conmutada}.
+
+\begin{remark}[Muestreo durante los cierres]\label{rem:muestreo-cierres}
+Con bombas detenidas el NDIR y el SHT35 muestrean cada $10$~s; un cierre de
+$\Delta = 1{,}5$~min aporta $\sim 9$ puntos por tramo, suficiente para ajustar
+la pendiente por mínimos cuadrados.
+\end{remark}
+
+\begin{remark}[Escalado y réplicas]\label{rem:escalado}
+El diseño se valida con un único experimento de $14$ a $20$~días; las réplicas
+se ejecutan de forma secuencial al finalizar el primer ciclo, reutilizando el
+mismo montaje tras la limpieza y recalibración en vacío
+(Sección~\ref{sec:caracterizacion}). No se requiere hardware adicional: la
+replicación es un problema de calendario, no de equipamiento.
+\end{remark}

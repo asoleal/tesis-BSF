@@ -41,7 +41,7 @@ de aire ---\emph{inlet} y \emph{outlet}--- y en $t = 0$ por la carga inicial
 del lote (larvas neonatas y sustrato). Su vector de estado se organiza en
 tres grupos:
 \begin{equation}
-x(t) = \underbrace{(A,B,L)}_{\text{larva}} \;\cup\; \underbrace{(N,S)}_{\text{poblaci\'on y sustrato}} \;\cup\; \underbrace{(\theta_s, T_s)}_{\text{lecho}} \;\cup\; \underbrace{(T, w, c_{\mathrm{CO_2}}, c_{\mathrm{CH_4}}, c_{\mathrm{O_2}})}_{\text{aire interno}},
+\mathbf{x}(t) = \underbrace{(A,B,L)}_{\text{larva}} \;\cup\; \underbrace{(N,S)}_{\text{poblaci\'on y sustrato}} \;\cup\; \underbrace{(\theta_s, T_s)}_{\text{lecho}} \;\cup\; \underbrace{(T, w, c_{\mathrm{CO_2}}, c_{\mathrm{CH_4}}, c_{\mathrm{O_2}})}_{\text{aire interno}},
 \label{eq:estado-completo}
 \end{equation}
 donde $S$ es la masa de sustrato disponible, $T$ la temperatura del aire,
@@ -89,15 +89,15 @@ del lote obedece al flujo neto a través de la frontera:
 \label{eq:celda-carga}
 \end{equation}
 es decir, la masa de CO$_2$, CH$_4$ y vapor de agua que sale por el
-\emph{outlet}, menos la masa de O$_2$ (y demás componentes) que el aire del
-\emph{inlet} aporta y queda incorporada en esos productos. La
+\emph{outlet}, menos la masa de O$_2$ que el aire del
+\emph{inlet} aporta y queda incorporada en esos productos (el N$_2$ es inerte: entra y sale sin contribuir al balance neto). La
 Ec.~\eqref{eq:celda-carga} es una restricción de consistencia global que
 servirá de validación independiente de los balances de gases.
 \end{remark}
 
 \begin{remark}[Actividad microbiana del sustrato]
 \label{rem:microbiano}
-El sustrato no es un almac\'en pasivo de alimento: alberga una microbiota que respira ---consume O$_2$ y excreta CO$_2$---, genera calor y, en zonas anaerobias del lecho h\'umedo, produce CH$_4$ por metanog\'enesis. En consecuencia, las se\~nales medidas en el outlet son superposiciones de la actividad larval y la microbiana,
+El sustrato no es un almac\'en pasivo de alimento: alberga una microbiota que respira ---consume O$_2$ y excreta CO$_2$---, genera calor y, en zonas anaerobias del lecho h\'umedo, produce CH$_4$ por metanog\'enesis~\citep{ermolaevGreenhouseGasEmissions2019,parodiBioconversionEfficienciesGreenhouse2020a}. En consecuencia, las se\~nales medidas en el outlet son superposiciones de la actividad larval y la microbiana,
 \begin{equation}
 r^{\mathrm{medido}}_{\mathrm{CO_2}} = N\,r_{\mathrm{CO_2}} + r^{\mathrm{mic}}_{\mathrm{CO_2}}(S, T_s, \theta_s),
 \qquad
@@ -177,7 +177,7 @@ de modo que la separaci\'on de ambas contribuciones ---un problema de identifica
   {$T,\ H,\ \mathrm{O_2}$\\ $\mathrm{CO_2},\ \mathrm{CH_4}$};
 
 \end{tikzpicture}
-\caption{El sistema completo de bioconversi\'on instrumentado (Definici\'on~\ref{def32}). Dentro del volumen de control interact\'uan tres grupos de compartimentos: lecho (sustrato, larvas y frass, con estado $(S, \theta_s, T_s)$), poblaci\'on larval y aire interno; las flechas indican el sentido de cada intercambio (el O$_2$ fluye del aire hacia larvas y microbiota; el CO$_2$, el calor, el vapor y el CH$_4$, hacia el aire). La frontera es atravesada \'unicamente por los flujos de ventilaci\'on (inlet/outlet, caudal $Q$); las mediciones $y$ se toman en la corriente de salida y una celda de carga registra la masa total del lote.}
+\caption{El sistema completo de bioconversi\'on instrumentado (Definici\'on~\ref{def32}). Dentro del volumen de control interact\'uan tres grupos de compartimentos: lecho (sustrato, larvas y frass, con estado $(S, \theta_s, T_s)$), poblaci\'on larval y aire interno; las flechas indican el sentido de cada intercambio (el O$_2$ fluye del aire hacia larvas y microbiota; el CO$_2$, el calor, el vapor y el CH$_4$, hacia el aire). La frontera es atravesada \'unicamente por los flujos de ventilaci\'on (inlet/outlet, caudal $Q$); las mediciones $\mathbf{y}$ se toman en la corriente de salida y una celda de carga registra la masa total del lote.}
 \label{fig:sistema-completo}
 \end{figure}
 
@@ -195,7 +195,7 @@ lecho en las condiciones de carga, $\theta_s(0) = \theta_{s,0}$ y $T_s(0) = T_{s
 t_f = \inf\{ t > 0 : R_A(t) \le N(t)\,m\,B(t) \}.
 \label{eq:tf}
 \end{equation}
-En las condiciones de cr\'ia previstas, $t_f$ se espera dentro de la ventana de $14$ a $16$ d\'ias. Cada ciclo se replica $n_{\mathrm{rep}} = 3$ veces en condiciones nominales id\'enticas, lo que permitir\'a estimar la variabilidad entre lotes de los par\'ametros del modelo (Secci\'on~6).
+En las condiciones de cr\'ia previstas, $t_f$ se espera dentro de la ventana de $14$ a $16$ d\'ias~\citep{eriksenDynamicModellingFeed2022}. Cada ciclo se replica $n_{\mathrm{rep}} = 3$ veces en condiciones nominales id\'enticas, lo que permitir\'a estimar la variabilidad entre lotes de los par\'ametros del modelo (Secci\'on~6).
 \end{definition}
 
 \begin{remark}[Calendario de cierres de ventilaci\'on]
@@ -210,4 +210,4 @@ Los dos criterios de~\eqref{eq:tf} no son equivalentes operativamente: la fracci
 
 \paragraph{Variables monitoreadas fuera del vector de estado.} El mapa de observaci\'on definido hasta aqu\'i se restringe a las variables que participan directamente en los balances del modelo: $T$, $H$, CO$_2$, CH$_4$ y O$_2$. La instrumentaci\'on del sistema puede, sin embargo, incluir sensores adicionales ---notablemente H$_2$S y NH$_3$--- cuyas se\~nales no se incorporan como variables de estado. La raz\'on es de econom\'ia de modelado: incluir el H$_2$S exigir\'ia abrir el balance de azufre del sustrato, y el NH$_3$, el balance de nitr\'ogeno con su equilibrio amonio--amon\'iaco dependiente de pH; en ambos casos el costo en compartimentos y par\'ametros adicionales es desproporcionado frente al valor que aportan al objetivo central, que es describir la bioconversi\'on de materia y energ\'ia. Estos gases se clasifican entonces como variables de supervisi\'on: mediciones en tiempo real que informan sobre la salud del proceso sin alimentar las ecuaciones de estado.
 
-\paragraph{Su rol en la capa de supervisi\'on del gemelo digital.} Aunque fuera del modelo din\'amico, estas se\~nales tienen una funci\'on bien definida en el sistema monitoreado. El H$_2$S es un indicador de putrefacci\'on anaerobia de la fracci\'on proteica del sustrato: su aparici\'on se\~nala condiciones de falla ---exceso de humedad, compactaci\'on del lecho o sustrato proteico sin consumir--- y opera como alarma temprana sobre el lote. El NH$_3$, por su parte, es la v\'ia gaseosa de p\'erdida de nitr\'ogeno del sistema: su concentraci\'on informa sobre la volatilizaci\'on de amonio y, por tanto, sobre la calidad final del frass como fertilizante. La distinci\'on introducida aqu\'i ---variables de estado que el modelo explica versus variables de supervisi\'on que el sistema vigila--- es un principio general del dise\~no: la frontera del modelo no la define lo que se puede medir, sino lo que el modelo se propone explicar. Las extensiones a los balances de nitr\'ogeno y azufre quedan planteadas como trabajo futuro, una vez validado el n\'ucleo materia--energ\'ia del sistema.
+\paragraph{Su rol en la capa de supervisi\'on del gemelo digital.} Aunque fuera del modelo din\'amico, estas se\~nales tienen una funci\'on bien definida en el sistema monitoreado. El H$_2$S es un indicador de putrefacci\'on anaerobia de la fracci\'on proteica del sustrato: su aparici\'on se\~nala condiciones de falla ---exceso de humedad, compactaci\'on del lecho o sustrato proteico sin consumir--- y opera como alarma temprana sobre el lote. El NH$_3$, por su parte, es la v\'ia gaseosa de p\'erdida de nitr\'ogeno del sistema: su concentraci\'on informa sobre la volatilizaci\'on de amonio y, por tanto, sobre la calidad final del frass como fertilizante~\citep{parodiBioconversionEfficienciesGreenhouse2020a}. La distinci\'on introducida aqu\'i ---variables de estado que el modelo explica versus variables de supervisi\'on que el sistema vigila--- es un principio general del dise\~no: la frontera del modelo no la define lo que se puede medir, sino lo que el modelo se propone explicar. Las extensiones a los balances de nitr\'ogeno y azufre quedan planteadas como trabajo futuro, una vez validado el n\'ucleo materia--energ\'ia del sistema.

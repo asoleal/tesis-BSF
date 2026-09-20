@@ -1,4 +1,4 @@
-\section{Modelo matemático}
+\section{Modelo matemático}\label{sec:modelo-general}
 
 % 5.1 Din\'amica larval: forma general
 % 5.2 Balance del sustrato
@@ -266,7 +266,7 @@ donde $\rho_{\mathrm{aire}} c_{p,\mathrm{aire}}$ es la capacidad calor\'ifica vo
 
 \begin{remark}[El calor metab\'olico como firma t\'ermica del crecimiento]
 \label{rem:calor-firma}
-La Ec.~\eqref{eq:calor-metabolico} liga directamente la din\'amica t\'ermica con la fisiolog\'ia: toda la entalp\'ia de los asimilados que no se almacena en biomasa se disipa como calor, y en la pr\'actica la potencia metab\'olica es proporcional a la tasa respiratoria. En el modelo de dos nodos, esa firma se lee primero en el lecho: el exceso $T_s - T$ es una medici\'on indirecta de la actividad metab\'olica total ---complementaria del CO$_2$ y con distinta constante de tiempo (t\'ermica, no de mezcla)--- y el sensor de temperatura del lecho la registra sin intervenir el lote. El pico de $T$ sobre $T_{\mathrm{ref}}$ que el controlador debe remover es, a su vez, la sombra en el aire de ese pico de crecimiento.
+La Ec.~\eqref{eq:calor-metabolico} liga directamente la din\'amica t\'ermica con la fisiolog\'ia: toda la entalp\'ia de los asimilados que no se almacena en biomasa se disipa como calor, y en la pr\'actica la potencia metab\'olica es proporcional a la tasa respiratoria~\citep{hansenUseCalorespirometricRatios2004}. En el modelo de dos nodos, esa firma se lee primero en el lecho: el exceso $T_s - T$ es una medici\'on indirecta de la actividad metab\'olica total ---complementaria del CO$_2$ y con distinta constante de tiempo (t\'ermica, no de mezcla)--- y el sensor de temperatura del lecho la registra sin intervenir el lote. El pico de $T$ sobre $T_{\mathrm{ref}}$ que el controlador debe remover es, a su vez, la sombra en el aire de ese pico de crecimiento.
 \end{remark}
 
 \begin{remark}[Las dos capacidades t\'ermicas]
@@ -283,7 +283,7 @@ El modelo de dos nodos reparte la capacidad t\'ermica del sistema en dos: la del
 \label{def:modelo-general}
 El modelo general es el sistema $\dot x = f(x, u; \theta)$, $y = g(x; \theta)$, con estado
 \begin{equation}
-x = (A, B, L, N, S, \theta_s, T_s, T, w, c_{\mathrm{CO_2}}, c_{\mathrm{O_2}}, c_{\mathrm{CH_4}}) \in \mathbb{R}^{12},
+\mathbf{x} = (A, B, L, N, S, \theta_s, T_s, T, w, c_{\mathrm{CO_2}}, c_{\mathrm{O_2}}, c_{\mathrm{CH_4}}) \in \mathbb{R}^{12},
 \label{eq:estado-12}
 \end{equation}
 entradas manipuladas $u = (Q, P_{\mathrm{cal}}, P_{\mathrm{hum}})$ m\'as las condiciones del inlet $(T_{\mathrm{in}}, w_{\mathrm{in}}, c_{i,\mathrm{in}})$, y din\'amica $f$ dada componente a componente por: los balances larvales~\eqref{eq:eriksen-edos} con las tasas generales~\eqref{eq:ra-general}--\eqref{eq:ro2-general}; el balance de sustrato~\eqref{eq:sustrato-general}; los balances del lecho~\eqref{eq:theta-lecho} y~\eqref{eq:termica-lecho}; el balance unificado de gases~\eqref{eq:gas-unificado}; el balance de humedad~\eqref{eq:humedad-general}; y el balance de energ\'ia del aire~\eqref{eq:energia-general}. El mapa de observaci\'on $g$ se desarrolla en la Secci\'on~6.
@@ -302,10 +302,10 @@ con $f_T$ un factor t\'ermico tipo $Q_{10}$ o Arrhenius y $f_\theta$ un factor d
 
 \paragraph{S3. Parametrizaci\'on de la fracci\'on anaerobia.} La variable latente $\xi$ de~\eqref{eq:ch4-general} se parametriza como funci\'on est\'atica de los estados que la gobiernan,
 \begin{equation}
-\xi(\theta_s, N r_A) = \xi_{\mathrm{m\'ax}}\; \sigma\!\left(\frac{\theta_s - \theta_s^{c}}{s_\theta}\right) \frac{1}{1 + \alpha_{\mathrm{biot}}\, N r_A},
+\xi(\theta_s, N r_A) = \xi_{\mathrm{m\'ax}}\; \Lambda\!\left(\frac{\theta_s - \theta_s^{c}}{s_\theta}\right) \frac{1}{1 + \alpha_{\mathrm{biot}}\, N r_A},
 \label{eq:xi-param}
 \end{equation}
-con $\sigma$ la funci\'on log\'istica, $\theta_s^{c}$ el umbral de humedad para anaerobiosis, y $\alpha_{\mathrm{biot}}$ el efecto de aireaci\'on por bioturbaci\'on larval, proporcional a la actividad de alimentaci\'on $N r_A$. La metanog\'enesis resulta $r_{\mathrm{CH_4}} = Y_{\mathrm{CH_4}}\, \xi\, k_{\mathrm{mic}}\, S$. Esta forma reproduce cualitativamente la firma de terminaci\'on de la Observaci\'on~\ref{rem:tf}: al caer $r_A$ hacia la prepupa, $\xi$ sube y el CH$_4$ se dispara.
+con $\sigma$ la funci\'on log\'istica, $\theta_s^{c}$ el umbral de humedad para anaerobiosis, y $\alpha_{\mathrm{biot}}$ el efecto de aireaci\'on por bioturbaci\'on larval, proporcional a la actividad de alimentaci\'on $N r_A$. La metanog\'enesis resulta $r_{\mathrm{CH_4}} = Y_{\mathrm{CH_4}}\, \xi\, k_{\mathrm{mic}}\, S$~\citep{batstoneIWAAnaerobicDigestion2002}. Esta forma reproduce cualitativamente la firma de terminaci\'on de la Observaci\'on~\ref{rem:tf}: al caer $r_A$ hacia la prepupa, $\xi$ sube y el CH$_4$ se dispara.
 
 \paragraph{S4. Evaporaci\'on del lecho por demanda atmosf\'erica.} La evaporaci\'on se modela como flujo proporcional al d\'eficit de humedad del aire, limitado por la disponibilidad de agua en el lecho,
 \begin{equation}
@@ -325,5 +325,5 @@ Si el intercambio lecho--aire es r\'apido frente a las dem\'as din\'amicas ($h_s
 
 \begin{remark}[Econom\'ia del modelo resultante]
 \label{rem:economia-modelo}
-Las simplificaciones S1--S6 reducen el modelo general a un sistema r\'igido pero tractable: doce estados, tres entradas manipuladas y un vector de par\'ametros $\theta$ que agrupa los fisiol\'ogicos de Eriksen $(a, m, Y_B, Y_L, B_{\mathrm{m\'ax}}, \beta)$, los microbianos $(k_{\mathrm{mic}}^{\mathrm{ref}}, Y^{\mathrm{mic}}_{\mathrm{CO_2}}, RQ_{\mathrm{mic}}, Y_{\mathrm{CH_4}}, \xi_{\mathrm{m\'ax}}, \theta_s^c, s_\theta, \alpha_{\mathrm{biot}})$, y los f\'isicos $(k_e, h_s A_s, U A_{\mathrm{pared}}, C_{\mathrm{th}}, C_{\mathrm{th},s}, V_{\mathrm{aire}})$. La estimabilidad de cada grupo se discute en la Secci\'on~6: los cierres de ventilaci\'on identifican las tasas de gases, los transitorios de consigna los par\'ametros t\'ermicos, y el lote testigo sin larvas separa el bloque microbiano del larval.
+Las simplificaciones S1--S6 reducen el modelo general a un sistema r\'igido pero tractable: doce estados, tres entradas manipuladas y un vector de par\'ametros $\theta$ que agrupa los fisiol\'ogicos de Eriksen $(a, m, Y_B, Y_L, B_{\mathrm{m\'ax}}, \beta, \eta_A)$, los microbianos $(k_{\mathrm{mic}}^{\mathrm{ref}}, Y^{\mathrm{mic}}_{\mathrm{CO_2}}, RQ_{\mathrm{mic}}, Y_{\mathrm{CH_4}}, \xi_{\mathrm{m\'ax}}, \theta_s^c, s_\theta, \alpha_{\mathrm{biot}})$, y los f\'isicos $(k_e, h_s A_s, U A_{\mathrm{pared}}, C_{\mathrm{th}}, C_{\mathrm{th},s}, V_{\mathrm{aire}})$. La estimabilidad de cada grupo se discute en la Secci\'on~6: los cierres de ventilaci\'on identifican las tasas de gases, los transitorios de consigna los par\'ametros t\'ermicos, y el lote testigo sin larvas separa el bloque microbiano del larval.
 \end{remark}

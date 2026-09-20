@@ -68,8 +68,7 @@ o energía a otra.
   (5.4,0.35);
 
 \end{tikzpicture}
-\caption{Esquema del balance conservativo de la Definición~1.2. La cantidad
-acumulada $x(t)$ dentro del volumen de control cambia por dos mecanismos:
+\caption{Esquema del balance conservativo de la Definición~\ref{def12}. La cantidad $x(t)$ dentro del volumen de control cambia por dos mecanismos:
 flujos que \emph{cruzan la frontera} ($J_{\mathrm{in}}$, $J_{\mathrm{out}}$)
 y transformaciones \emph{internas} ($P$: producción, $C$: consumo) que
 convierten una forma de materia o energía en otra sin cruzar la frontera.}
@@ -125,7 +124,7 @@ que un único valor escalar describe su estado en todo el volumen.
    representa al todo.};
 
 \end{tikzpicture}
-\caption{Interpretación del supuesto de mezcla homogénea (Definición~1.3).
+\caption{Interpretación del supuesto de mezcla homogénea (Definición~\ref{def13}).
 La entidad acumulada se supone uniformemente distribuida en el volumen, de
 modo que el estado escalar $x_i(t)$ la describe por completo y una medición
 puntual $y_i(t)$ (por ejemplo, un sensor de CO$_2$ o de temperatura) es
@@ -259,7 +258,7 @@ mantenimiento, a crecimiento estructural o a acumulación de lípidos.
 \subsection{El modelo de Eriksen como sistema dinámico}
 
 El modelo de \citet{eriksenDynamicModellingFeed2022} se obtiene al particularizar la
-Definición~1.1 con el vector de estado, las entradas y las mediciones
+Definición~\ref{def11} con el vector de estado, las entradas y las mediciones
 \begin{equation}
 \mathbf{x} = \begin{bmatrix} A \\ B \\ L \end{bmatrix},
 \qquad
@@ -304,9 +303,10 @@ donde $r_{\mathrm{O_2}} > 0$ denota la tasa de \emph{consumo} de oxígeno
 ---símbolo propio de este documento, pues el modelo de Eriksen no incluye el
 oxígeno---, como verificación independiente del metabolismo: valores de
 $RQ$ cercanos a $1.0$ indican oxidación de carbohidratos, cercanos a $0.7$,
-oxidación de lípidos. Lo anterior plantea el problema de estimación de
+oxidación de lípidos~\citep{lightonMeasuringMetabolicRates2008}. Lo anterior
+ anterior plantea el problema de estimación de
 estados y parámetros que abordaremos con redes neuronales informadas por
-física. En síntesis, esta sección ha establecido el lenguaje formal sobre el
+físicafísica~\citep{raissiPhysicsinformedNeuralNetworks2019a}. En síntesis, esta sección ha establecido el lenguaje formal sobre el
 que se construye el resto del documento: un sistema dinámico
 (Definición~\ref{def11}) cuyas ecuaciones son balances conservativos
 (Definición~\ref{def12}) organizados en una red de compartimentos

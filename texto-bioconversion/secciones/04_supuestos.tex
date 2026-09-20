@@ -1,4 +1,4 @@
-\section{Supuestos del modelo}
+\section{Supuestos del modelo}\label{sec:supuestos}
 
 \subsection{El sistema en lazo cerrado}
 
@@ -45,7 +45,7 @@ supervisión) y puede modificar las consignas o forzar ventilación máxima.
 
 \begin{remark}[Identificaci\'on en lazo cerrado]
 \label{rem:id-lazo}
-En~\eqref{eq:lazo-cerrado}, las entradas $u$ est\'an correlacionadas con las perturbaciones por construcci\'on: el controlador reacciona a ellas. Es la dificultad cl\'asica de la identificaci\'on en lazo cerrado: un estimador entrenado solo con datos de operaci\'on regulada puede aprender la ley $\pi$ en lugar de la fisiolog\'ia. En consecuencia, los datos de los cierres de ventilaci\'on (Observaci\'on~\ref{rem:cierres}) y de las ventanas con consignas en escal\'on desempe\~nar\'an el rol de datos de identificaci\'on, mientras que la operaci\'on regulada normal se reserva para validaci\'on (cf.~Secci\'on~6).
+En~\eqref{eq:lazo-cerrado}, las entradas $u$ est\'an correlacionadas con las perturbaciones por construcci\'on: el controlador reacciona a ellas. Es la dificultad cl\'asica de la identificaci\'on en lazo cerrado~\citep{ljungSystemIdentification1999}: un estimador entrenado solo con datos de operaci\'on regulada puede aprender la ley $\pi$ en lugar de la fisiolog\'ia. En consecuencia, los datos de los cierres de ventilaci\'on (Observaci\'on~\ref{rem:cierres}) y de las ventanas con consignas en escal\'on desempe\~nar\'an el rol de datos de identificaci\'on, mientras que la operaci\'on regulada normal se reserva para validaci\'on (cf.~Secci\'on~6).
 \end{remark}
 
 
