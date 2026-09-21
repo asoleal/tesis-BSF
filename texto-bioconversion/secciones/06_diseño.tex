@@ -165,3 +165,223 @@ mismo montaje tras la limpieza y recalibración en vacío
 (Sección~\ref{sec:caracterizacion}). No se requiere hardware adicional: la
 replicación es un problema de calendario, no de equipamiento.
 \end{remark}
+
+\subsection{Cámara y lecho}\label{sec:camara-lecho}
+
+\subsubsection{Cámara}
+
+La cámara es una hielera rígida de polietileno de $5$~L nominales (Truper
+HIEL-5, $26 \times 19 \times 18$~cm; volumen interior $\approx 4{,}5$~L). Tres
+propiedades la hacen adecuada para el experimento:
+
+\begin{enumerate}
+  \item \textbf{Aislamiento térmico.} Las paredes de polietileno con núcleo de
+  espuma reducen el intercambio con el ambiente, de modo que la temperatura
+  interior $T$ queda dominada por el actuador (celda Peltier) y por la
+  producción metabólica de calor del lecho, tal como supone el balance
+  térmico del modelo.
+  \item \textbf{Cierre hermético.} La tapa con empaque permite los cierres
+  estáticos del método de cámara cerrada (duración $\Delta$,
+  Tabla~\ref{tab:delta-adaptativo}).
+  \item \textbf{Volumen reducido.} Con $V_{\mathrm{aire}} \approx 2{,}5$--$3$~L,
+  las tasas metabólicas del lote generan pendientes de CO$_2$ medibles en
+  minutos (ecuación~\eqref{eq:delta-min}).
+\end{enumerate}
+
+La tapa concentra los pasos herméticos: los racores del \emph{inlet} y del
+\emph{outlet} (posición por definir con la simulación CFD), los prensaestopas
+de los cables de sensores y la base de la celda Peltier. Un puerto lateral de
+mayor diámetro, normalmente sellado, permite introducir y retirar el lecho sin
+desmontar la instrumentación.
+
+\begin{remark}[Prueba de hermeticidad]\label{rem:fugas}
+Antes de cargar el lote, la cámara vacía se somete a una prueba de fuga: se
+inyecta CO$_2$ hasta $\sim 5000$~ppm, se sella y se registra el decaimiento de
+concentración durante $30$~min. La constante de fuga $k_{\mathrm{fuga}}$
+medida debe satisfacer $k_{\mathrm{fuga}} \ll Q_{\min}/V_{\mathrm{aire}}$; de
+lo contrario, el término de fuga debe incorporarse al balance de gases como
+corrección (Sección~\ref{sec:caracterizacion}).
+\end{remark}
+
+\subsubsection{Lecho de bioconversión}
+
+El lecho se instrumenta con un único sensor capacitivo Zigbee de temperatura
+y humedad de suelo, encapsulado en resina epóxica e instalado en el fondo de
+la bandeja. El encapsulado protege la electrónica de la humedad y de los
+ácidos del lecho sin aislar térmicamente la sonda, y la red Zigbee reporta
+las lecturas a la base de datos en la nube (Sección~\ref{sec:dashboard}).
+Con este sensor se miden en línea dos estados del modelo: $T_s$ directamente
+y $\theta_s$ a través de la calibración gravimétrica de la sonda capacitiva
+(Sección~\ref{sec:caracterizacion}).
+
+\begin{remark}[Lectura puntual en un lecho con gradientes]\label{rem:lecho-profundo}
+El modelo es de parámetros concentrados: supone $\theta_s$ y $T_s$ uniformes
+en el lecho. Con un único sensor en el fondo no es posible verificar el
+gradiente vertical; en el escenario $N = 700$ (espesor $\approx 6$~cm) la
+temperatura cerca de la superficie puede superar la del fondo por el calor
+metabólico. Se adopta la lectura del fondo como valor de $T_s$ y la
+discrepancia potencial se reporta como incertidumbre del supuesto.
+\end{remark}
+
+Fuera de la cámara, un sensor de temperatura y humedad registra las
+condiciones del ambiente ($T_{\mathrm{in}}$, $w_{\mathrm{in}}$ del balance),
+que sirven de condición de borde del \emph{inlet} y de referencia para el
+balance térmico de la celda Peltier.
+
+\subsection{Sensores}\label{sec:sensores}
+
+Cada componente de la salida $y = g(x)$ del modelo requiere un sensor; esta
+subsección los especifica uno a uno (principio, rango, exactitud, ubicación y
+frecuencia de muestreo) y cierra con la tabla de correspondencia
+sensor--variable. La adquisición corre por los ESP32, salvo el sensor de
+lecho, que reporta por Zigbee.
+
+\subsubsection{CO$_2$: NDIR Senseair S8 (o K30)}
+
+Dióxido de carbono por infrarrojo no dispersivo. Rango $0$--$5000$~ppm (la
+variante K30 llega a $10\,000$~ppm), exactitud $\pm 30$~ppm $\pm 3\%$ de la
+lectura. Montado en la tapa, con la óptica expuesta al volumen de aire. Es el
+sensor crítico del experimento: las pendientes de los cierres estáticos se
+ajustan sobre sus lecturas cada $10$~s (Observación~\ref{rem:muestreo-cierres}).
+La exactitud de $\pm 30$~ppm es la que fija la cota inferior de $\Delta$ en la
+ecuación~\eqref{eq:delta-min}. Se desactiva la autocalibración ABC de fábrica
+(supone retorno periódico a 400~ppm, que no ocurre en la cámara) y se calibra
+con aire exterior y gas de referencia antes del lote.
+
+\subsubsection{O$_2$: Figaro KE-25}
+
+Celda galvánica, rango $0$--$25\%$~vol, resolución $\sim 0{,}1\%$. Su función
+es de supervisión: verificar que la fracción de O$_2$ no cae bajo el piso de
+la ecuación~\eqref{eq:delta-max} durante los cierres y validar el coeficiente
+respiratorio estimado. No exige la resolución de un cierre (la variación por
+cierre es $\sim 0{,}01\%$, invisible para este sensor); la dinámica fina de
+$c_{O_2}$ la aporta el modelo vía RQ.
+
+\subsubsection{CH$_4$: Figaro TGS2611 (supervisión)}
+
+Sensor MOS de $500$ a $10\,000$~ppm. El CH$_4$ esperado por cierre es del
+orden de $0{,}4$~ppm, muy por debajo de su umbral; por tanto \emph{no} sirve
+para estimar tasas, sino como alarma de eventos anaerobios severos (firma de
+terminación del ciclo, cambio de régimen CH$_4$/CO$_2$). La estimación
+cuantitativa de $c_{CH_4}$ queda a cargo del modelo.
+
+\subsubsection{Temperatura y humedad del aire: Sensirion SHT35}
+
+CMOSens, exactitud $\pm 0{,}1\,^\circ$C y $\pm 1{,}5\%$~HR. En la tapa, lejos
+del flujo directo del \emph{inlet} para no sesgar $w$. Muestreo cada $10$~s,
+sincronizado con el NDIR. Mide $T$ y $w$ (vía HR + presión + temperatura).
+
+\subsubsection{Presión barométrica: Bosch BMP390}
+
+$\pm 0{,}5$~hPa, resolución $0{,}01$~hPa. Necesaria para convertir ppm a
+concentraciones molares en los balances de la Sección~\ref{sec:sistema} y para
+detectar sobrepresión por desbalance de las bombas (línea neumática).
+
+\subsubsection{Lecho: sensor capacitivo Zigbee}
+
+Temperatura y humedad de suelo, encapsulado en resina epóxica, instalado en el
+fondo de la bandeja (Sección~\ref{sec:camara-lecho}). Reporta cada $\sim 1$~min
+a la base de datos en la nube. Mide $T_s$ directamente y $\theta_s$ mediante
+la calibración gravimétrica de la Sección~\ref{sec:caracterizacion}.
+
+\subsubsection{Ambiente: temperatura y humedad exterior}
+
+Sensor gemelo del SHT35 (o Zigbee equivalente) fuera de la cámara. Registra
+$T_{\mathrm{in}}$ y $w_{\mathrm{in}}$, condiciones de borde del \emph{inlet}
+y referencia del balance térmico del Peltier.
+
+\subsubsection{Masa: celda de carga + HX711}
+
+Celda de $2$~kg con conversor HX711 de 24 bits bajo la bandeja del lecho.
+Tras tara y calibración con pesas patrón, resolución $\sim 0{,}1$~g.
+Registra la pérdida de masa total del sistema lecho--larvas (consumo +
+respiración + evaporación), observable agregado que ancla los balances de
+carbono y agua del modelo. Muestreo a $1$~Hz con promedios de $10$~s.
+
+\subsubsection{Tabla sensor--variable}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Correspondencia entre componentes de $y = g(x)$ y sensores.}
+  \label{tab:sensores}
+  \begin{tabular}{llllc}
+    \hline
+    Variable & Sensor & Principio & Exactitud & Muestreo \\
+    \hline
+    $c_{CO_2}$ & Senseair S8 & NDIR & $\pm 30$~ppm $+3\%$ & $10$~s \\
+    $c_{O_2}$ & Figaro KE-25 & Galvánico & $0{,}1\%$~vol & $1$~min \\
+    $c_{CH_4}$ & TGS2611 & MOS & (alarma) & $1$~min \\
+    $T$, $w$ & SHT35 & CMOSens & $0{,}1\,^\circ$C, $1{,}5\%$ & $10$~s \\
+    $p$ & BMP390 & Piezorresistivo & $0{,}5$~hPa & $10$~s \\
+    $T_s$, $\theta_s$ & Capacitivo Zigbee & Capacitivo & calibración & $1$~min \\
+    $T_{\mathrm{in}}$, $w_{\mathrm{in}}$ & SHT35 externo & CMOSens & $0{,}1\,^\circ$C & $1$~min \\
+    Masa del lecho & Celda + HX711 & Galga & $0{,}1$~g & $10$~s \\
+    \hline
+  \end{tabular}
+\end{table}
+
+Las variables no medibles en línea ($A$, $B$, $L$, $N$, $S$) se estiman con el
+modelo a partir de estos observables, con los muestreos destructivos de la
+Sección~\ref{sec:mediciones} como validación puntual.
+\subsection{Actuadores y control}\label{sec:actuadores}
+
+Las tres entradas del modelo, $u = (Q, P_{\mathrm{pel}}, P_{\mathrm{hum}})$,
+tienen cada una un actuador físico; esta subsección los especifica y define
+los lazos de control que los gobiernan, ejecutados en los ESP32 con consignas
+recibidas desde el dashboard (Sección~\ref{sec:dashboard}).
+
+\subsubsection{Celda Peltier}
+
+Módulo termoeléctrico TEC1-12706 ($12$~V, $60$~W nominales) montado en la
+tapa, con disipador y ventilador en cada cara: el disipador interno intercambia
+con el aire de la cámara y el externo con el ambiente. Un puente H controla la
+corriente en magnitud (PWM) y sentido, de modo que un mismo dispositivo
+calienta o enfría: es la realización física de la entrada con signo
+$P_{\mathrm{pel}} \in [-P_{\max}, +P_{\max}]$
+(Observación~\ref{rem:peltier}).
+
+La potencia instalada es deliberadamente sobrada. Las cargas térmicas son:
+(i) las pérdidas a través de las paredes aisladas, del orden de $1$--$3$~W
+para $\Delta T \sim 5\,^\circ$C; (ii) el calor metabólico del lecho, con pico
+de $\sim 1$--$2{,}5$~W según el lote (Sección~\ref{sec:modelo-general}); y
+(iii) los transitorios de apertura y carga del lote. En régimen la celda
+trabajará cerca de cero, commutando alrededor de la consigna; el sobredimensionamiento
+se justifica por los transitorios (iii) y porque el COP de la celda es mayor a
+baja carga. La dinámica del lazo (ganancia y tiempo característico
+$\tau_T$) se identifica con pruebas escalón en la caracterización en vacío
+(Sección~\ref{sec:caracterizacion}).
+
+\subsubsection{Humidificador ultrasónico}
+
+Módulo de membrana piezoeléctrica alimentado por $P_{\mathrm{hum}}$, instalado
+de modo que la niebla no incida directamente sobre el SHT35 ni sobre la óptica
+del NDIR. Aporta vapor de agua al balance de $w$; su efecto colateral de
+enfriamiento evaporativo queda absorbido en el balance térmico del modelo.
+
+\subsubsection{Ventilación}
+
+El actuador de $Q$ es la pareja de bombas de diafragma de la línea neumática
+(Sección~\ref{sec:elementos-generales}), gobernadas por PWM: detenidas durante
+los cierres estáticos y activas durante la ventilación, según la política
+conmutada de la ecuación~\eqref{eq:q-conmutada}.
+
+\subsubsection{Lazos de control}
+
+\begin{description}
+  \item[Temperatura ($T \to P_{\mathrm{pel}}$).] Lazo PI con PWM y
+  conmutación de sentido del puente H; consigna según la fase del ciclo
+  ($27$--$30\,^\circ$C, rango óptimo de \emph{H.~illucens}).
+  \item[Humedad ($w \to P_{\mathrm{hum}}$).] Control por histéresis alrededor
+  de la consigna de HR; el humidificador es esencialmente todo/nada.
+  \item[Supervisor de gases ($Q$).] Máquina de estados que programa los
+  cierres con la $\Delta$ adaptativa de la Tabla~\ref{tab:delta-adaptativo} y
+  fuerza ventilación si $c_{O_2}$ se acerca al piso de la
+  ecuación~\eqref{eq:delta-max} o si $T$ excede el límite de seguridad.
+  \item[Protecciones.] Límites duros de $T$ y $c_{O_2}$ independientes del
+  lazo principal, y \emph{watchdog} que lleva el sistema a estado seguro
+  (ventilación permanente, Peltier apagada) ante pérdida de comunicación con
+  la nube.
+\end{description}
+
+Los lazos locales son autónomos: el ESP32 mantiene el control aunque caiga la
+conexión; la nube solo envía consignas y registra datos.
