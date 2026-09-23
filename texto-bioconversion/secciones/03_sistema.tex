@@ -72,8 +72,9 @@ $N_0$ larvas neonatas sobre una masa inicial $S_0$ de sustrato, se cierra el
 contenedor y el ciclo transcurre sin recargas hasta que las larvas alcanzan
 el estado de prepupa. No hay eventos discretos de \emph{carga}: el estado
 $\mathbf{x}(t)$ evoluciona continuamente en todo el horizonte $[0, t_f]$.
-La única conmutación programada es la de la ventilación: cada dos días el
-\emph{inlet} se cierra durante un intervalo $[t_k^{c},\, t_k^{c}+\Delta]$
+La única conmutación programada es la de la ventilación, cuyo
+\emph{inlet} se cierra periódicamente según el calendario de la
+Observación~\ref{rem:cierres}, durante un intervalo $[t_k^{c},\, t_k^{c}+\Delta]$
 para estimar las tasas de producción de gases por acumulación (método de
 cámara estática~\citep{hutchinsonImprovedSoilCover1981,ermolaevGreenhouseGasEmissions2019}, Sección~\ref{sec:mediciones}). Estas conmutaciones no alteran el estado, solo
 activan o desactivan los términos de flujo de los balances
@@ -200,7 +201,7 @@ En las condiciones de cr\'ia previstas, $t_f$ se espera dentro de la ventana de 
 
 \begin{remark}[Calendario de cierres de ventilaci\'on]
 \label{rem:cierres}
-El protocolo experimental incluye cierres del inlet cada dos d\'ias, en los instantes $t_k^c = 2k$ d\'ias, $k = 1, 2, \ldots$, cada uno de duraci\'on $\Delta$ por estimar (Secci\'on~6). Durante un cierre, $Q = 0$ y las concentraciones del aire interno evolucionan \'unicamente por la producci\'on interna, de modo que las pendientes $\Delta c_i / \Delta t$ miden directamente las tasas $R_i$. El calendario $\{t_k^c\}$ y la duraci\'on $\Delta$ son parte del protocolo: se conocen con exactitud y se registran junto con las mediciones.
+El protocolo experimental incluye cierres del inlet con un calendario base de un cierre cada $48$~h, intensificado a uno cada $24$~h durante el pico de actividad (d\'ias 3--10, Secci\'on~\ref{sec:adquisicion}), cada uno de duraci\'on $\Delta$ ajustada seg\'un las cotas de la Secci\'on~\ref{sec:supuestos}. Durante un cierre, $Q = 0$ y las concentraciones del aire interno evolucionan \'unicamente por la producci\'on interna, de modo que las pendientes $\Delta c_i / \Delta t$ miden directamente las tasas $R_i$. El calendario $\{t_k^c\}$ y la duraci\'on $\Delta$ son parte del protocolo: se conocen con exactitud y se registran junto con las mediciones.
 \end{remark}
 
 \begin{remark}[Criterios de terminaci\'on y su medici\'on]

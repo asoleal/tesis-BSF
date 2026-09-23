@@ -1,9 +1,97 @@
-\section{Notación y convenciones}
+\section{Notación y convenciones}\label{sec:notacion}
 
-% 2.1 Notación base de Eriksen (2022): A, B, L, rA, rB, rL,
-%     rCO2m, rCO2B, rCO2L, a, m, YB, YL, Bmax, beta, instars
-% 2.2 Notación adicional propia: N, S, T, w, c_CO2, c_CH4, c_O2, Q,
-%     m_LC, R (agregadas), r_O2 (consumo de oxígeno, convención: positivo),
-%     RQ, términos microbianos r^mic_CO2, r^mic_O2
-% 2.3 Tabla de símbolos, unidades y dominios (escribir al final,
-%     cuando todas las variables del modelo estén definidas)
+\subsection{Convenciones generales}
+
+\begin{itemize}
+  \item El tiempo $t$ se mide en días desde la carga del lote; el punto
+  denota derivada temporal, $\dot x = dx/dt$.
+  \item Las tasas en minúscula ($r_A$, $r_B$, $r_L$, $r_{\mathrm{CO_2}}$,
+  $r_{\mathrm{O_2}}$) son \emph{por larva}; las mayúsculas ($R_A$, $R_i$) son
+  tasas \emph{agregadas} de la población (Definición~\ref{def31}).
+  \item El superíndice $\mathrm{mic}$ denota procesos microbianos del
+  sustrato; el subíndice $\mathrm{in}$, las condiciones del aire de entrada;
+  el subíndice $s$, las variables del lecho.
+  \item $\sigma_i$ es el signo del gas $i$ en los balances unificados:
+  $+1$ para gases producidos (CO$_2$, CH$_4$), $-1$ para el consumido
+  (O$_2$).
+  \item $\theta_s \in [0,1]$ es el contenido gravimétrico de agua del lecho;
+  no confundir con el vector de parámetros $\boldsymbol{\theta}$.
+  \item Las concentraciones de gas $c_i$ se expresan en moles por unidad de
+  volumen en los balances; la conversión desde las lecturas en ppm o \%~vol
+  de los sensores usa la presión del BMP390 (Sección~\ref{sec:diseno}).
+\end{itemize}
+
+
+\subsection{Tabla de símbolos}
+\begin{table}[H]
+  \centering
+  \caption{Estados, entradas y mediciones del modelo.}
+  \label{tab:simbolos-estados}
+  \begin{tabular}{lll}
+    \hline
+    Símbolo & Descripción & Unidades \\
+    \hline
+    \multicolumn{3}{l}{\emph{Larva promedio y población}} \\
+    $A$ & Pool de asimilados & g MS \\
+    $B$ & Biomasa estructural & g \\
+    $L$ & Lípidos de reserva & g \\
+    $N$ & Número de larvas vivas & --- \\
+    \multicolumn{3}{l}{\emph{Sustrato y lecho}} \\
+    $S$ & Materia orgánica degradable del lecho & g \\
+    $\theta_s$ & Contenido gravimétrico de agua del lecho & --- \\
+    $T_s$ & Temperatura del lecho & $^\circ$C \\
+    \multicolumn{3}{l}{\emph{Aire interno}} \\
+    $T$ & Temperatura del aire & $^\circ$C \\
+    $w$ & Humedad absoluta & kg kg$^{-1}$ \\
+    $c_{\mathrm{CO_2}}, c_{\mathrm{CH_4}}, c_{\mathrm{O_2}}$ & Concentraciones de gases & mol m$^{-3}$ \\
+    \multicolumn{3}{l}{\emph{Entradas y forzamientos}} \\
+    $Q$ & Caudal de ventilación (conmutado) & L min$^{-1}$ \\
+    $P_{\mathrm{pel}}$ & Potencia de la celda Peltier (con signo) & W \\
+    $P_{\mathrm{hum}}$ & Potencia del humidificador & W \\
+    $T_{\mathrm{in}}, w_{\mathrm{in}}, c_{i,\mathrm{in}}$ & Condiciones de entrada & --- \\
+    \multicolumn{3}{l}{\emph{Mediciones}} \\
+    $\mathbf{y}_{\mathrm{gas}}$ & $(T,H,c_{\mathrm{CO_2}})$ continuas en el outlet; $c_{\mathrm{CH_4}}$ por GC; $c_{\mathrm{O_2}}$ de supervisión & --- \\
+    $\theta_s^{\mathrm{sen}}, T_s^{\mathrm{sen}}$ & Lecturas del sensor capacitivo de lecho & --- \\
+    $m_{\mathrm{LC}}$ & Masa total del lote (celda de carga) & g \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Tasas, parámetros y símbolos del protocolo.}
+  \label{tab:simbolos-parametros}
+  \begin{tabular}{lll}
+    \hline
+    Símbolo & Descripción & Unidades \\
+    \hline
+    \multicolumn{3}{l}{\emph{Tasas larvales y agregadas}} \\
+    $r_A, r_B, r_L$ & Asimilación, síntesis estructural, lípidos (por larva) & g/día \\
+    $r_{\mathrm{CO_2}}, r_{\mathrm{O_2}}$ & Producción de CO$_2$, consumo de O$_2$ (por larva) & mol/día \\
+    $R_i$ & Tasa agregada del gas $i$ & mol/día \\
+    $RQ$ & Cociente respiratorio $r_{\mathrm{CO_2}}/r_{\mathrm{O_2}}$ & --- \\
+    \multicolumn{3}{l}{\emph{Parámetros fisiológicos (fijados)}} \\
+    $a$ & Tasa específica de asimilación & día$^{-1}$ \\
+    $m$ & Tasa específica de mantenimiento & día$^{-1}$ \\
+    $Y_B, Y_L$ & Costos de síntesis estructural y lipídica & --- \\
+    $B_{\max}, \beta$ & Peso máximo y parámetro de estadios & g, --- \\
+    $\eta_A$ & Fracción asimilada del sustrato ingerido & --- \\
+    \multicolumn{3}{l}{\emph{Parámetros microbianos (estimados)}} \\
+    $k_{\mathrm{mic}}^{\mathrm{ref}}$ & Tasa de degradación microbiana de referencia & día$^{-1}$ \\
+    $Y_{\mathrm{CO_2}}^{\mathrm{mic}}, Y_{\mathrm{CH_4}}$ & Rendimientos de gases microbianos & --- \\
+    $\xi, \xi_{\max}, \theta_{cs}, s_\theta, \alpha_{\mathrm{biot}}$ & Fracción anaerobia y su parametrización & --- \\
+    \multicolumn{3}{l}{\emph{Parámetros físicos}} \\
+    $V_{\mathrm{aire}}$ & Volumen efectivo de aire (por dilución) & L \\
+    $k_{\mathrm{fuga}}$ & Constante de fuga de la cámara & min$^{-1}$ \\
+    $k_e$ & Coeficiente de transferencia de vapor del lecho & --- \\
+    $h_s A_s$ & Intercambio térmico lecho--aire & W/K \\
+    $UA_{\mathrm{pared}}$ & Pérdidas por las paredes & W/K \\
+    $C_{\mathrm{th}}, C_{\mathrm{th},s}$ & Capacidades térmicas de aire y lecho & J/K \\
+    $\gamma_q, \gamma_w, \lambda$ & Equivalentes energético e hídrico; calor latente & --- \\
+    \multicolumn{3}{l}{\emph{Protocolo}} \\
+    $\{t_k^c\}, \Delta$ & Calendario y duración de los cierres & días, min \\
+    $t_f, \pi_f$ & Fin del ciclo y umbral de prepupas & días, --- \\
+    $N_0, S_0, \theta_{s,0}$ & Condiciones iniciales del lote & ---, g, --- \\
+    \hline
+  \end{tabular}
+\end{table}

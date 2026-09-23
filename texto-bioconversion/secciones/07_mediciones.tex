@@ -15,7 +15,7 @@ y registradas con marca temporal común:
 
 \begin{description}
   \item[Gases y aire interno (outlet).] Temperatura $T$ y humedad relativa
-  $H$ (SHT35), CO$_2$ (NDIR), CH$_4$ y O$_2$ en la corriente de salida:
+  $H$ (SHT35), CO$_2$ (NDIR) y O$_2$ (celda galvánica) en la corriente de salida, más el CH$_4$ del sensor MOS como señal de supervisión; la cuantificación de CH$_4$ es por cromatografía en los cierres (Sección~\ref{sec:caracterizacion}):
   \[
     \mathbf{y}_{\mathrm{gas}}(t) =
     \bigl(T,\; H,\; c_{\mathrm{CO_2}},\; c_{\mathrm{CH_4}},\;
@@ -40,6 +40,16 @@ y registradas con marca temporal común:
   igualar el flujo neto de masa por el \emph{outlet}.
 \end{description}
 
+\begin{remark}[El O$_2$ como supervisión, no como tasa]\label{rem:o2-supervision}
+La celda galvánica KE-25 tiene resolución $\sim 0{,}1\%$, mientras que la
+variación de O$_2$ durante un cierre es del orden de $0{,}01\%$: la
+pendiente de O$_2$ no es medible en línea. El sensor cumple entonces una
+función de supervisión ---verificar el piso de seguridad de la
+Ec.~\eqref{eq:delta-max}--- y la tasa de consumo $R_{\mathrm{O_2}}$ se
+obtiene del modelo con $RQ$ fijo (S6) o de los muestreos GC de cada cierre,
+que sí resuelven la diferencia.
+\end{remark}
+
 Además, las variables de supervisión (H$_2$S, NH$_3$) se registran con
 fines de alarma sin entrar al mapa de observación del modelo
 (Sección~\ref{sec:sistema}), y las condiciones del \emph{inlet}
@@ -54,8 +64,9 @@ grupos de compartimentos:
 
 \begin{description}
   \item[Aire interno $(T, w, c_{\mathrm{CO_2}}, c_{\mathrm{CH_4}}, c_{\mathrm{O_2}})$.]
-  Observable directamente: cinco estados medidos por identidad, con $w$
-  obtenido de $H$ y $T$ vía psicrometría.
+  Observable directamente: $T$, $w$, $c_{\mathrm{CO_2}}$ y $c_{\mathrm{O_2}}$ medidos por identidad en línea, con $w$
+  obtenido de $H$ y $T$ vía psicrometría; $c_{\mathrm{CH_4}}$ queda observada de
+  forma discreta en los muestreos GC de cada cierre.
   \item[Lecho $(\theta_s, T_s)$.] Observable con el sensor capacitivo
   calibrado y el balance de agua~\eqref{eq:agua-lecho} como verificación
   cruzada.
@@ -67,9 +78,11 @@ grupos de compartimentos:
   ningún sensor los lee. Su única vía de observación son las tasas
   agregadas $R_i$ medidas en los cierres
   (Observación~\ref{rem:cierres}), que por~\eqref{eq:rco2-general}
-  combinan $mB$, $Y_B r_B$ y $Y_L r_L$. El par $(\mathrm{CO_2}, \mathrm{O_2})$
-  aporta además el cociente respiratorio medido~\eqref{eq:rq-medido},
-  que discrimina el sustrato metabólico oxidado.
+  combinan $mB$, $Y_B r_B$ y $Y_L r_L$. Los muestreos GC
+  aportan además el cociente respiratorio~\eqref{eq:rq-medido} en los
+  instantes de cierre, que discrimina el sustrato metabólico oxidado (el
+  sensor de O$_2$ en línea no resuelve la pendiente,
+  Observación~\ref{rem:o2-supervision}).
 \end{description}
 
 En síntesis: siete estados son medibles de forma directa o semidirecta,
@@ -157,9 +170,11 @@ mínimos cuadrados sobre los $\sim 9$ puntos disponibles
 \[
   R_i(t_k) = \sigma_i\, V_{\mathrm{aire}}\,
   \widehat{\left.\dot c_i\right|_{[t_k^c,\, t_k^c + \Delta]}},
-  \qquad i \in \{\mathrm{CO_2}, \mathrm{O_2}, \mathrm{CH_4}\},
+  \qquad i \in \{\mathrm{CO_2}, \mathrm{CH_4}\},
 \]
-independientes de $Q$ y sin modelado fisiológico. La ventana $\Delta$ se
+independientes de $Q$ y sin modelado fisiológico: la pendiente de
+CO$_2$ se ajusta en línea, la de CH$_4$ sobre los tres puntos GC del
+cierre, y la de O$_2$ se obtiene vía $RQ$ (Observación~\ref{rem:o2-supervision}). La ventana $\Delta$ se
 ajusta día a día según las cotas~\eqref{eq:delta-min}
 y~\eqref{eq:delta-max}, evaluadas con las tasas del día anterior: es la
 primera función del gemelo digital.
@@ -198,8 +213,9 @@ mínimo, cuatro componentes:
   con la predicción del modelo ajustado (Nivel 2): la brecha entre
   ambas es el diagnóstico en línea del gemelo.
   \item \textbf{Indicadores fisiológicos derivados:}
-  $RQ_{\mathrm{medido}}$ y la razón CH$_4$/CO$_2$, con la firma de
-  terminación de la Observación~\ref{rem:tf} evaluada en tiempo real.
+  el $RQ$ de cada cierre (vía GC) y la razón CH$_4$/CO$_2$ de la alarma
+  MOS, con la firma de terminación de la Observación~\ref{rem:tf} evaluada
+  en línea.
   \item \textbf{Supervisión y alarmas}: H$_2$S y NH$_3$ contra umbrales,
   estado de los actuadores $(Q, P_{\mathrm{pel}}, P_{\mathrm{hum}})$ y
   cumplimiento de las cotas de seguridad de O$_2$ durante los cierres.

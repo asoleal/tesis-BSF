@@ -137,9 +137,9 @@ cromatografía se toman por el septum al inicio, mitad y fin de cada cierre
     \hline
     $T$ aire & SHT35 & $0{,}1$~Hz & $20$--$35$~°C & $T$ \\
     $H$ aire & SHT35 & $0{,}1$~Hz & $40$--$95$~\% & $w$ \\
-    $c_{\mathrm{CO_2}}$ & NDIR & $0{,}1$~Hz & $420$--$15\,000$~ppm & $c_{\mathrm{CO_2}}$ \\
-    $c_{\mathrm{O_2}}$ & electroquímico & $0{,}1$~Hz & $15$--$21$~\% & $c_{\mathrm{O_2}}$ \\
-    $c_{\mathrm{CH_4}}$ & NDIR & $0{,}1$~Hz & $0$--$500$~ppm & $c_{\mathrm{CH_4}}$ \\
+    $c_{\mathrm{CO_2}}$ & NDIR (K30) & $0{,}1$~Hz & $420$--$10\,000$~ppm & $c_{\mathrm{CO_2}}$ \\
+    $c_{\mathrm{O_2}}$ & KE-25 (galvánico) & $0{,}1$~Hz & $15$--$21$~\% & supervisión (piso) \\
+    $c_{\mathrm{CH_4}}$ (supervisión) & TGS2611 (MOS) & $0{,}1$~Hz & alarma anaerobia & fuera del mapa \\
     $(\theta_s^{\mathrm{sen}}, T_s^{\mathrm{sen}})$ & capacitivo & $0{,}1$~Hz & operación del lecho & $\theta_s$, $T_s$ \\
     $m_{\mathrm{LC}}$ & celda de carga & $0{,}1$~Hz & decreciente & restricción~\eqref{eq:celda-carga} \\
     CO$_2$, CH$_4$ & GC (septum) & $3$ por cierre & --- & validación metrológica \\
@@ -149,11 +149,82 @@ cromatografía se toman por el septum al inicio, mitad y fin de cada cierre
 \end{table}
 
 Los rangos de CO$_2$ y O$_2$ cubren el pico metabólico de la
-Tabla~\ref{tab:delta-adaptativo}; el de CH$_4$ se fija bajo a propósito: en
-condiciones aireadas la metanogénesis es marginal
-\citep{rossiEstimatingDynamicsGreenhouse2024a}, y cualquier superación del
-rango es en sí misma una señal de anaerobiosis
+Tabla~\ref{tab:delta-adaptativo}. La cuantificación de CH$_4$ queda a cargo
+del GC: en condiciones aireadas la metanogénesis es marginal
+\citep{rossiEstimatingDynamicsGreenhouse2024a}, y cualquier alarma del
+sensor MOS es en sí misma una señal de anaerobiosis severa
 (Observación~\ref{rem:microbiano}).
+
+\subsection{Protocolo de adquisición de datos}\label{sec:adquisicion}
+
+La adquisición combina dos modos de operación, coherentes con la forma
+unificada ventilado--cerrado del modelo y con las dos tradiciones de medición
+de la literatura: la cámara de circuito abierto con ventilación continua
+\citep{parodiBioconversionEfficienciesGreenhouse2020a} y la cámara estática
+cerrada \citep{ermolaevGreenhouseGasEmissions2019}.
+
+\paragraph{Modo A: ventilado continuo (estado por defecto).}
+La cámara opera con $Q = Q_{\mathrm{op}}$ y todas las variables de la
+Tabla~\ref{tab:salidas} se registran a $0{,}1$~Hz. En este modo las tasas de
+gas se estiman por la diferencia \emph{inlet--outlet} de los balances en modo
+ventilado (Sección~\ref{sec:gases-ventilado}); con el caudal de diseño la
+señal es débil frente al ruido, por lo que este modo se usa para la dinámica
+térmica e hídrica, la supervisión (H$_2$S, NH$_3$) y el dashboard, no como
+fuente principal de tasas. Dos cuidados instrumentales adoptados de
+\citet{parodiBioconversionEfficienciesGreenhouse2020a}: el filtro hidrofóbico
+del \emph{outlet} protege los analizadores del vapor del lecho ---la fuente
+principal de deriva del NDIR a humedad alta--- y el $RQ$ medido permite la
+verificación cruzada del calor metabólico mediante la ecuación de Brouwer.
+
+\paragraph{Modo B: cierres programados (medición de tasas).}
+En los instantes del calendario $\{t_k^c\}$ la ventilación se anula
+(Ec.~\eqref{eq:q-conmutada}) y las concentraciones evolucionan por
+acumulación (Ec.~\eqref{eq:modo-cerrado}); las pendientes ajustadas por
+mínimos cuadrados entregan las tasas $R_i(t_k)$ del Nivel~1
+(Sección~\ref{sec:estimacion}).
+
+\begin{remark}[El criterio de cierre no es la saturación]\label{rem:no-saturacion}
+Las pruebas preliminares con el lote muestran que el sensor de CO$_2$ se
+satura tras $15$--$25$~minutos de cierre, dependiendo de la fase fisiológica.
+La saturación es el límite del instrumento, no el criterio metodológico: con
+muestreo cada $10$~s, una ventana de $2$--$5$~minutos ya aporta $12$--$30$
+puntos, suficientes para el ajuste lineal de la pendiente. Cada cierre se
+detiene por el primero de tres criterios: (i) pendiente bien definida
+(mínimo $30$ puntos y coeficiente de determinación del ajuste superior a
+$0{,}98$); (ii) la cota de seguridad de O$_2$ (Ec.~\eqref{eq:delta-max}); o
+(iii) el tiempo máximo de la Tabla~\ref{tab:delta-adaptativo} para la fase
+actual. Cerrar más allá solo añade riesgo ---estrés por hipoxia del lote y
+no-linealidad de la acumulación--- sin añadir precisión.
+\end{remark}
+
+\paragraph{Calendario de cierres.}
+La literatura muestra que el muestreo una vez al día subestima las emisiones
+al perder los picos de actividad
+\citep{parodiBioconversionEfficienciesGreenhouse2020a}. El calendario se
+adapta por tanto a la fase: cierres cada $48$~h en las fases temprana
+(días 0--2) y tardía (día 11 en adelante), y cada $24$~h durante el pico de
+actividad (días 3--10). La duración $\Delta$ de cada cierre se fija día a día
+por el gemelo digital según las cotas~\eqref{eq:delta-min}
+y~\eqref{eq:delta-max}, evaluadas con las tasas del cierre anterior
+(Observación~\ref{rem:delta-operativo}).
+
+\paragraph{Validación cromatográfica.}
+En cada cierre se toman tres muestras por el septum ---inicio, mitad y
+fin--- para análisis por cromatografía de gases
+(Sección~\ref{sec:caracterizacion}). La comparación GC--NDIR cuantifica el
+sesgo y la deriva del sensor en línea y respalda metrológicamente las tasas
+reportadas.
+
+\paragraph{Flujo de datos hacia la estimación.}
+La PINN no se alimenta de datos crudos: cada corrida produce (i) las series
+continuas de la Tabla~\ref{tab:salidas} con marca temporal común, (ii) las
+tasas $R_i(t_k)$ con sus intervalos de confianza, calculadas en línea al
+final de cada cierre, y (iii) las condiciones iniciales y eventos del lote
+(carga, aspersiones, cierres, muestreos GC) como registro estructurado. Las
+tasas entran como observaciones duras en $\mathcal{L}_{\mathrm{datos}}$ de la
+Ec.~\eqref{eq:pinn-loss}; las series continuas definen las trayectorias de
+estado medidas; y la operación regulada entre cierres queda reservada para
+validación (Observación~\ref{rem:id-lazo}).
 
 \subsection{Clasificación de parámetros}\label{sec:clasificacion-parametros}
 
@@ -165,8 +236,7 @@ estimación: solo el tercer grupo se ajusta con los datos del experimento.
   \centering
   \caption{Origen de los parámetros del modelo.}
   \label{tab:parametros}
-  \begin{tabular}{lll}
-    \hline
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.14\textwidth}>{\raggedright\arraybackslash}p{0.38\textwidth}>{\raggedright\arraybackslash}X@{}}
     Grupo & Parámetros & Fuente \\
     \hline
     Fijados & $a$, $m$, $Y_B$, $Y_L$, $B_{\max}$, $\beta$, $\eta_A$ &
@@ -178,7 +248,7 @@ estimación: solo el tercer grupo se ajusta con los datos del experimento.
     Estimados & $k_{\mathrm{mic}}$, $h_s A_s$, $C_{\mathrm{th}}$, $C_{\mathrm{th},s}$,
     coef.\ de $E_{\mathrm{lecho}}$ & ajuste con E1--E4 \\
     \hline
-  \end{tabular}
+  \end{tabularx}
 \end{table}
 
 \begin{remark}[Reajuste fino de parámetros fisiológicos]

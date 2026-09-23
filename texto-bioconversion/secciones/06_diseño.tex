@@ -263,7 +263,8 @@ Sensor MOS de $500$ a $10\,000$~ppm. El CH$_4$ esperado por cierre es del
 orden de $0{,}4$~ppm, muy por debajo de su umbral; por tanto \emph{no} sirve
 para estimar tasas, sino como alarma de eventos anaerobios severos (firma de
 terminación del ciclo, cambio de régimen CH$_4$/CO$_2$). La estimación
-cuantitativa de $c_{CH_4}$ queda a cargo del modelo.
+cuantitativa de $c_{CH_4}$ queda a cargo del GC
+(Sección~\ref{sec:caracterizacion}).
 
 \subsubsection{Temperatura y humedad del aire: Sensirion SHT35}
 
@@ -308,7 +309,7 @@ carbono y agua del modelo. Muestreo a $1$~Hz con promedios de $10$~s.
     \hline
     Variable & Sensor & Principio & Exactitud & Muestreo \\
     \hline
-    $c_{CO_2}$ & Senseair S8 & NDIR & $\pm 30$~ppm $+3\%$ & $10$~s \\
+    $c_{CO_2}$ & Senseair S8/K30 & NDIR & $\pm 30$~ppm $+3\%$ & $10$~s \\
     $c_{O_2}$ & Figaro KE-25 & Galvánico & $0{,}1\%$~vol & $1$~min \\
     $c_{CH_4}$ & TGS2611 & MOS & (alarma) & $1$~min \\
     $T$, $w$ & SHT35 & CMOSens & $0{,}1\,^\circ$C, $1{,}5\%$ & $10$~s \\

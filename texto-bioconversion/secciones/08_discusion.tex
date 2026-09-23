@@ -1,5 +1,107 @@
-\section{Discusión}
+\section{Discusión}\label{sec:discusion}
 
-% 7.1 Límites del modelo y validación pendiente
-% 7.2 Conexión con la simulación / gemelo digital
+\subsection{Contribuciones del trabajo}
 
+El documento aporta cuatro resultados que, en conjunto, no existen en la
+literatura de bioconversión con \textit{H.~illucens}:
+
+\begin{enumerate}
+  \item \textbf{Un modelo unificado alimento--larvas--ambiente.} El modelo
+  de \citet{eriksenDynamicModellingFeed2022} describe la larva en un ambiente
+  exógeno; aquí la temperatura, la humedad y los gases del contenedor pasan
+  a ser estados acoplados (Ec.~\eqref{eq:estado-completo}), con el lecho como nodo hidrotérmico
+  intermedio y la forma unificada ventilado--cerrado de la
+  Ec.~\eqref{eq:gas-unificado} como instrumento de medición.
+  \item \textbf{Un método de medición híbrido con ventana adaptativa.}
+  Los cierres de ventilación se dimensionan desde el propio modelo
+  (Ecs.~\eqref{eq:delta-min}--\eqref{eq:delta-max},
+  Tabla~\ref{tab:delta-adaptativo}): la literatura usa cierres fijos
+  \citep{ermolaevGreenhouseGasEmissions2019} o muestreo continuo sin
+  acumulación \citep{parodiBioconversionEfficienciesGreenhouse2020a}.
+  \item \textbf{Un diseño experimental que resuelve la identificabilidad
+  larva--microbiota.} El testigo sin larvas, la línea base temprana y el
+  cierre post-cosecha (Sección~\ref{sec:identificabilidad}) separan las dos
+  fuentes de CO$_2$ por diseño, no por suposición; la celda de carga añade
+  una restricción de consistencia global independiente
+  (Ec.~\eqref{eq:celda-carga}).
+  \item \textbf{Un gemelo digital con estimación en línea.} La firma de
+  terminación CH$_4$/CO$_2$ (Observación~\ref{rem:tf}), el ajuste adaptativo
+  de $\Delta$ y la reconstrucción de estados latentes por PINN
+  (Sección~\ref{sec:pinn}) convierten el montaje en un sistema de estimación,
+  no solo de registro.
+\end{enumerate}
+
+\subsection{Posición frente a la literatura}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Posición del trabajo frente a los estudios de referencia.}
+  \label{tab:posicion}
+  \begin{tabular}{llll}
+    \hline
+    Estudio & Medición & Modelo & Estimación en línea \\
+    \hline
+    Eriksen (2022) & respirometría de larvas & larva, ambiente exógeno & no \\
+    Ermolaev (2019) & cámara cerrada + GC puntual & no & no \\
+    Parodi (2020) & cámara abierta continua & balance de masa estático & no \\
+    Rossi (2024) & 4 cámaras abiertas, 12 h & interpolación empírica & no \\
+    Este trabajo & conmutada, $\Delta$ adaptativo, GC & compartimental acoplado & sí (PINN) \\
+    \hline
+  \end{tabular}
+\end{table}
+
+La Tabla~\ref{tab:posicion} resume la posición: cada estudio aporta una
+pieza ---el modelo fisiológico, la validación cromatográfica, el balance de
+masa, la dinámica temporal--- y el presente trabajo los integra en un solo
+marco donde el modelo y la medición se diseñan uno para el otro.
+
+\subsection{Limitaciones}
+
+\begin{description}
+  \item[Réplicas secuenciales.] La confusión corrida--tiempo es inherente al
+  equipamiento único (Observación~\ref{rem:paralelizacion}); la variabilidad
+  entre lotes queda confundida con la variabilidad temporal del laboratorio,
+  y solo se mitiga con metadatos, recalibración y el testigo común.
+  \item[Ceguera parcial entre cierres.] La delegación del CH$_4$ al GC y del
+  O$_2$ fino al modelo (Observación~\ref{rem:o2-supervision}) implica que
+  entre cierres esas dos variables no se observan: un evento anaerobio
+  breve entre cierres solo lo vería la alarma MOS.
+  \item[Mezcla homogénea y gradientes del lecho.] El supuesto A1 se degrada
+  en el escenario $N_0 = 700$ (lecho de $\approx 6$~cm), donde la lectura
+  puntual del fondo puede subestimar la temperatura de la zona activa
+  (Observación sobre lectura puntual, Sección~\ref{sec:camara-lecho}).
+  \item[Población homogénea.] El supuesto A2 ignora el ensanchamiento de la
+  distribución de pesos (Observación~\ref{rem:homogeneidad}); las réplicas
+  acotan su efecto, pero no lo eliminan.
+  \item[Una sola condición.] E5 prueba extrapolación en densidad, no en
+  sustrato ni en temperatura: la generalización del modelo a otros residuos
+  queda por verificar.
+\end{description}
+
+\subsection{Una lección de verificación de fuentes}
+
+Durante la elaboración de este documento se detectó que un estudio antes
+citado como respaldo metodológico en este campo ---sobre el efecto de la
+humedad en las emisiones durante la bioconversión--- fue retractado por su
+editorial. La referencia fue sustituida por un estudio equivalente del grupo
+de SLU \citep{lindbergProcessEfficiencyGreenhouse2022}. El episodio deja
+una regla metodológica que se adopta en lo sucesivo: toda referencia que
+sustente una decisión experimental se verifica antes de citarse (estado de
+retracción, existencia de los datos reportados), práctica especialmente
+necesaria cuando la bibliografía se gestiona en bases sincronizadas que
+pueden conservar entradas retractadas.
+
+\subsection{Trabajo futuro}
+
+Cuatro extensiones quedan planteadas sobre el marco construido: (i) cerrar
+los balances de nitrógeno y azufre, que convertirían NH$_3$ y H$_2$S de
+variables de supervisión en estados del modelo; (ii) reemplazar el supuesto
+de población homogénea por una ecuación de estructura poblacional
+(Observación~\ref{rem:homogeneidad}); (iii) la paralelización por
+multiplexación de gases (Observación~\ref{rem:paralelizacion}), que
+convertiría las réplicas secuenciales en simultáneas; y (iv) la dependencia
+térmica explícita de los parámetros fisiológicos (factores $Q_{10}$ o
+Arrhenius, supuesto B4), necesaria para operar el gemelo fuera de la zona
+de confort. La simulación CFD de la línea neumática, anunciada en la
+Sección~\ref{sec:diseno}, es el complemento experimental inmediato para
+verificar el supuesto A1.
