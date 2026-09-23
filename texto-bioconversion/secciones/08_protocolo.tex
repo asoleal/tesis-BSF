@@ -68,6 +68,24 @@ NDIR, esquema análogo al de las cuatro cámaras de
 \citet{rossiEstimatingDynamicsGreenhouse2024a}.
 \end{remark}
 
+\begin{remark}[Muestreo destructivo en cajas paralelas]\label{rem:sacrificio}
+La biomasa larval no puede medirse por muestreo sobre el lote instrumentado:
+extraer larvas reduce $N(t)$ en un evento discreto, viola el supuesto de
+operación por lote (A3), altera la bioturbación y la fracción anaerobia del
+lecho, y registra en la celda de carga una pérdida de masa que no es
+respiración ---la medición destruiría el sistema medido. Se adopta entonces
+muestreo destructivo en cajas paralelas: tres cajas sin instrumentación de
+gases, con la misma carga ($N_0$, $S_0$, $\theta_{s,0}$) y dentro de la misma
+cámara climática, sacrificadas en los días 5, 10 y 14. En cada una se
+registra peso fresco y seco de larvas, supervivencia y $\theta_s$
+gravimétrico. Cada caja aporta una observación \emph{terminal} del estado
+larval ---una lectura transversal, no longitudinal, de la curva de
+crecimiento--- que sirve de verdad terrenal para validar la reconstrucción
+de $(A, B, L)$ por la PINN y para calibrar el estimador de biomasa por
+imagen. Al no pertenecer al lote instrumentado, su sacrificio no entra en
+los balances del modelo.
+\end{remark}
+
 \subsection{Valores de entrada}\label{sec:entradas}
 
 Las entradas del sistema son las consignas de la ley de control
