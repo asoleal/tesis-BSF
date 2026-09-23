@@ -1,5 +1,212 @@
-\section{Mediciones y estimación}
+\section{Mediciones y estimación}\label{sec:mediciones}
 
-% 6.1 Vector de mediciones y su relación con los estados
-% 6.2 Observabilidad con T, H, CO2, CH4
+El modelo de la Sección~\ref{sec:modelo-general} solo es útil si sus
+estados y parámetros pueden recuperarse de las mediciones disponibles.
+Esta sección define el mapa de observación del sistema instrumentado
+(Sección~\ref{sec:diseno}), analiza qué es observable e identificable
+con esa instrumentación, y establece el protocolo de caracterización
+previa y la estrategia de estimación que alimenta el gemelo digital.
 
+\subsection{Vector de mediciones y mapa de observación}\label{sec:mapa-obs}
+
+La instrumentación del diseño aporta tres grupos de señales, muestreadas
+a $0{,}1$~Hz ($10$~s entre muestras, Observación~\ref{rem:muestreo-cierres})
+y registradas con marca temporal común:
+
+\begin{description}
+  \item[Gases y aire interno (outlet).] Temperatura $T$ y humedad relativa
+  $H$ (SHT35), CO$_2$ (NDIR), CH$_4$ y O$_2$ en la corriente de salida:
+  \[
+    \mathbf{y}_{\mathrm{gas}}(t) =
+    \bigl(T,\; H,\; c_{\mathrm{CO_2}},\; c_{\mathrm{CH_4}},\;
+    c_{\mathrm{O_2}}\bigr)(t).
+  \]
+  Bajo el supuesto de mezcla homogénea (A1), estas lecturas son los
+  propios estados del aire interno: el mapa de observación es aquí la
+  identidad, más ruido de medición.
+  \item[Lecho.] El sensor capacitivo insertado en el lecho aporta
+  $(\theta_s^{\mathrm{sen}}, T_s^{\mathrm{sen}})$. La temperatura lee el
+  estado $T_s$ directamente; el canal capacitivo requiere calibración
+  gravimétrica para relacionarse con $\theta_s$
+  (Sección~\ref{sec:caracterizacion}):
+  \[
+    \theta_s^{\mathrm{sen}}(t) = h_\theta\bigl(\theta_s(t)\bigr) + \varepsilon_\theta,
+    \qquad
+    T_s^{\mathrm{sen}}(t) = T_s(t) + \varepsilon_T.
+  \]
+  \item[Masa del lote.] La celda de carga registra $m_{\mathrm{LC}}(t)$,
+  la masa total del lote, sujeta a la restricción de consistencia global
+  de la Ec.~\eqref{eq:celda-carga}: su tasa de decrecimiento debe
+  igualar el flujo neto de masa por el \emph{outlet}.
+\end{description}
+
+Además, las variables de supervisión (H$_2$S, NH$_3$) se registran con
+fines de alarma sin entrar al mapa de observación del modelo
+(Sección~\ref{sec:sistema}), y las condiciones del \emph{inlet}
+$(T_{\mathrm{in}}, w_{\mathrm{in}}, c_{\mathrm{O_2,in}})$ se miden como
+forzamientos conocidos, no como estados.
+
+\subsection{Observabilidad con $(T, H, \mathrm{CO_2}, \mathrm{CH_4}, \mathrm{O_2})$}\label{sec:observabilidad}
+
+El vector de estado tiene dimensión $12$
+(Ec.~\eqref{eq:estado-completo}). Su observabilidad se analiza por
+grupos de compartimentos:
+
+\begin{description}
+  \item[Aire interno $(T, w, c_{\mathrm{CO_2}}, c_{\mathrm{CH_4}}, c_{\mathrm{O_2}})$.]
+  Observable directamente: cinco estados medidos por identidad, con $w$
+  obtenido de $H$ y $T$ vía psicrometría.
+  \item[Lecho $(\theta_s, T_s)$.] Observable con el sensor capacitivo
+  calibrado y el balance de agua~\eqref{eq:agua-lecho} como verificación
+  cruzada.
+  \item[Sustrato $S$.] No medible en línea de forma directa; se estima
+  por el balance~\eqref{eq:sustrato-general} una vez conocidas las tasas,
+  con ancla en la celda de carga y en la determinación gravimétrica
+  inicial.
+  \item[Larva promedio $(A, B, L)$ y población $N$.] Estados latentes:
+  ningún sensor los lee. Su única vía de observación son las tasas
+  agregadas $R_i$ medidas en los cierres
+  (Observación~\ref{rem:cierres}), que por~\eqref{eq:rco2-general}
+  combinan $mB$, $Y_B r_B$ y $Y_L r_L$. El par $(\mathrm{CO_2}, \mathrm{O_2})$
+  aporta además el cociente respiratorio medido~\eqref{eq:rq-medido},
+  que discrimina el sustrato metabólico oxidado.
+\end{description}
+
+En síntesis: siete estados son medibles de forma directa o semidirecta,
+y cinco $(A, B, L, N, S)$ son estimables solo a través del modelo. Esta
+estructura justifica la estrategia de estimación de la
+Sección~\ref{sec:estimacion}: los estados medidos anclan, y las tasas de
+los cierres informan a los latentes.
+
+\subsection{Identificabilidad: separación larva--microbiota}\label{sec:identificabilidad}
+
+Las señales del \emph{outlet} son superposiciones
+(Ec.~\eqref{eq:co2-superpuesto}): sin información adicional, la
+contribución larval y la microbiana no son separables, y el
+$RQ_{\mathrm{medido}}$ no es interpretable fisiológicamente
+(Ec.~\eqref{eq:rq-medido}). El protocolo resuelve esta identificabilidad
+con tres mecanismos complementarios:
+
+\begin{enumerate}
+  \item \textbf{Línea base microbiana temprana.} El primer cierre de
+  ventilación, ejecutado dentro de las primeras $24$~h tras la carga,
+  mide una señal dominada por $r^{\mathrm{mic}}$ (larvas neonatas de
+  masa despreciable). Es la estimación inicial de la actividad
+  microbiana del sustrato.
+  \item \textbf{Lote testigo sin larvas.} Una corrida completa con el
+  mismo sustrato, humedad inicial y calendario de cierres, pero
+  $N_0 = 0$, mide $r^{\mathrm{mic}}_{\mathrm{CO_2}}$ y
+  $r^{\mathrm{mic}}_{\mathrm{O_2}}$ de forma independiente en todo el
+  horizonte. Este tratamiento es parte obligatoria del protocolo
+  experimental: sin él, la descomposición
+  de~\eqref{eq:co2-superpuesto} queda indeterminada.
+  \item \textbf{Cierre post-cosecha.} Un cierre adicional tras retirar
+  las prepupas mide la respiración residual del frass, que acota la
+  actividad microbiana al final del ciclo.
+\end{enumerate}
+
+\begin{remark}[El CH$_4$ como testigo de anaerobiosis]
+La metanogénesis es casi exclusivamente microbiana
+(Observación~\ref{rem:microbiano}), de modo que el CH$_4$ no sufre el
+problema de superposición: su señal informa directamente la fracción
+anaerobia latente $\xi$ (Observación~\ref{rem:xi}) y valida la firma de
+terminación propuesta en la Observación~\ref{rem:tf}.
+\end{remark}
+
+\subsection{Caracterización previa del sistema}\label{sec:caracterizacion}
+
+Antes de cargar el primer lote, el sistema vacío y los sensores se
+caracterizan en cuatro pruebas, cuyos resultados son parámetros del
+modelo o de la cadena de medición:
+
+\begin{enumerate}
+  \item \textbf{Prueba de hermeticidad} (Observación~\ref{rem:fugas}):
+  estimación de $k_{\mathrm{fuga}}$ por decaimiento de CO$_2$ inyectado.
+  Si $k_{\mathrm{fuga}}$ no es despreciable, se incorpora como término
+  correctivo en los balances de gases.
+  \item \textbf{Volumen de aire efectivo.} $V_{\mathrm{aire}}$ se mide
+  por dilución: inyección de un pulso conocido de CO$_2$ en la cámara
+  cerrada con el lecho simulado, y lectura del incremento de
+  concentración en estado estacionario. Este valor, no el geométrico,
+  es el que entra en~\eqref{eq:modo-cerrado}.
+  \item \textbf{Calibración de sensores.} El NDIR de CO$_2$ se calibra
+  en dos puntos (aire ambiente $\sim 420$~ppm y gas patrón); el sensor
+  capacitivo del lecho se calibra contra determinaciones gravimétricas
+  de $\theta_s$ en el rango de operación.
+  \item \textbf{Validación contra cromatografía.} En cada corrida se
+  toman muestras por el septum en instantes seleccionados (inicio de
+  cierre, mitad y fin) para análisis por cromatografía de gases. La
+  comparación GC--sensor en línea cuantifica el sesgo y la deriva de
+  los sensores de CO$_2$ y CH$_4$, y documenta la calidad metrológica
+  del experimento.
+\end{enumerate}
+
+Las mismas pruebas se repiten en la recalibración entre réplicas
+secuenciales (Observación~\ref{rem:escalado}).
+
+\subsection{Estimación de estados y parámetros}\label{sec:estimacion}
+
+La estimación se organiza en dos niveles, coherentes con la distinción
+entre datos de identificación y datos de validación
+(Observación~\ref{rem:id-lazo}):
+
+\paragraph{Nivel 1: tasas instantáneas.} En cada cierre
+$[t_k^c, t_k^c + \Delta]$, las pendientes de acumulación se ajustan por
+mínimos cuadrados sobre los $\sim 9$ puntos disponibles
+(Observación~\ref{rem:muestreo-cierres}) y entregan las tasas agregadas
+\[
+  R_i(t_k) = \sigma_i\, V_{\mathrm{aire}}\,
+  \widehat{\left.\dot c_i\right|_{[t_k^c,\, t_k^c + \Delta]}},
+  \qquad i \in \{\mathrm{CO_2}, \mathrm{O_2}, \mathrm{CH_4}\},
+\]
+independientes de $Q$ y sin modelado fisiológico. La ventana $\Delta$ se
+ajusta día a día según las cotas~\eqref{eq:delta-min}
+y~\eqref{eq:delta-max}, evaluadas con las tasas del día anterior: es la
+primera función del gemelo digital.
+
+\paragraph{Nivel 2: estados y parámetros del modelo.} Las series
+$R_i(t_k)$, las señales continuas de la Sección~\ref{sec:mapa-obs} y las
+condiciones iniciales conocidas alimentan el ajuste de los parámetros
+$\boldsymbol{\theta}$ (fisiológicos, microbianos, térmicos e hídricos)
+y la reconstrucción de los estados latentes $(A, B, L, N, S)$. La
+vía prevista es una red neuronal informada por física (PINN), con las
+ecuaciones de la Sección~\ref{sec:modelo-general} como restricciones de
+la pérdida; un filtro de Kalman extendido o de ensamble sobre la forma
+unificada ventilado--cerrado sirve como referencia comparativa. Los
+datos de operación regulada normal se reservan para validación: el
+modelo ajustado debe predecir las concentraciones entre cierres sin
+haberlas usado en el ajuste.
+
+\paragraph{Criterio de éxito.} La estimación se considera exitosa si
+(i) los residuos de validación de $c_{\mathrm{CO_2}}$ y
+$c_{\mathrm{O_2}}$ son compatibles con el ruido de los sensores,
+(ii) la restricción de la celda de carga~\eqref{eq:celda-carga} se
+cumple dentro de su tolerancia, y (iii) los parámetros fisiológicos
+estimados caen en los rangos reportados para el modelo de referencia
+\citep{eriksenDynamicModellingFeed2022,eriksenMetabolicPerformanceFeed2024}.
+
+\subsection{Dashboard del sistema monitoreado}\label{sec:dashboard}
+
+El tablero web es la interfaz del gemelo digital y despliega, como
+mínimo, cuatro componentes:
+
+\begin{enumerate}
+  \item \textbf{Series en tiempo real} de $\mathbf{y}_{\mathrm{gas}}$,
+  $(\theta_s^{\mathrm{sen}}, T_s^{\mathrm{sen}})$ y $m_{\mathrm{LC}}$,
+  con los eventos de cierre marcados sobre las series de gases.
+  \item \textbf{Tasas estimadas} $R_i(t_k)$ del Nivel 1, superpuestas
+  con la predicción del modelo ajustado (Nivel 2): la brecha entre
+  ambas es el diagnóstico en línea del gemelo.
+  \item \textbf{Indicadores fisiológicos derivados:}
+  $RQ_{\mathrm{medido}}$ y la razón CH$_4$/CO$_2$, con la firma de
+  terminación de la Observación~\ref{rem:tf} evaluada en tiempo real.
+  \item \textbf{Supervisión y alarmas}: H$_2$S y NH$_3$ contra umbrales,
+  estado de los actuadores $(Q, P_{\mathrm{pel}}, P_{\mathrm{hum}})$ y
+  cumplimiento de las cotas de seguridad de O$_2$ durante los cierres.
+\end{enumerate}
+
+La persistencia es una base de datos en la nube alimentada por los
+ESP32 (Sección~\ref{sec:diseno}); cada réplica queda archivada como un
+conjunto completo de series, eventos y metadatos del lote (cepa, edad y
+cantidad de neonatos, $\theta_{s,0}$, $S_0$), reutilizable en el
+análisis estadístico posterior.

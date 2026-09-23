@@ -1,0 +1,215 @@
+\section{Protocolo experimental y plan de estimación}\label{sec:protocolo}
+
+Las secciones anteriores definieron el modelo (Sección~\ref{sec:modelo-general}),
+el montaje (Sección~\ref{sec:diseno}) y el mapa de observación
+(Sección~\ref{sec:mediciones}). Esta sección fija el experimento concreto:
+la matriz de corridas, los valores numéricos de entradas y salidas, la
+clasificación de los parámetros del modelo según su origen, y el esquema de
+estimación basado en una red neuronal informada por física (PINN).
+
+\subsection{Matriz experimental}\label{sec:matriz}
+
+El experimento consta de cinco corridas secuenciales
+(Observación~\ref{rem:escalado}), resumidas en la
+Tabla~\ref{tab:matriz-experimental}. El diseño obedece a tres criterios de la
+literatura de GEI con \textit{H.~illucens}: triplicado de la condición
+principal \citep{lindbergProcessEfficiencyGreenhouse2022,pangInfluenceCarbonNitrogen2020},
+lote testigo sin larvas para la separación microbiana
+\citep{parodiBioconversionEfficienciesGreenhouse2020a,rossiEstimatingDynamicsGreenhouse2024a},
+y una corrida de extrapolación que pone a prueba la capacidad predictiva del
+modelo fuera de la condición de ajuste.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Matriz experimental. Todas las corridas usan el mismo sustrato,
+  la misma dosis ($1{,}4$~g por larva) y el mismo calendario de cierres.}
+  \label{tab:matriz-experimental}
+  \begin{tabular}{clccccl}
+    \hline
+    Corrida & Rol & $N_0$ & $S_0$ (g) & $\theta_{s,0}$ & Duración & Réplica de \\
+    \hline
+    E0 & Caracterización (vacía) & 0 & 0 & --- & $\sim 2$~d & --- \\
+    E1 & Testigo microbiano & 0 & 560 & $0{,}70$ & $t_f$ & --- \\
+    E2 & Condición principal & 400 & 560 & $0{,}70$ & $t_f$ & --- \\
+    E3 & Condición principal & 400 & 560 & $0{,}70$ & $t_f$ & E2 \\
+    E4 & Condición principal & 400 & 560 & $0{,}70$ & $t_f$ & E2 \\
+    E5 & Validación por extrapolación & 700 & 980 & $0{,}70$ & $t_f$ & --- \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\begin{description}
+  \item[E0: caracterización.] Cámara vacía; ejecuta las cuatro pruebas de la
+  Sección~\ref{sec:caracterizacion} (hermeticidad, $V_{\mathrm{aire}}$,
+  calibración, línea base de sensores). Se repite en la recalibración entre
+  corridas.
+  \item[E1: testigo.] Sustrato sin larvas ($N_0 = 0$). Mide
+  $r^{\mathrm{mic}}_{\mathrm{CO_2}}$, $r^{\mathrm{mic}}_{\mathrm{O_2}}$ y
+  $r_{\mathrm{CH_4}}$ en todo el horizonte, resolviendo la identificabilidad
+  de la Sección~\ref{sec:identificabilidad}.
+  \item[E2--E4: condición principal.] $N_0 = 400$, el escenario central de la
+  Tabla~\ref{tab:carga-lote}. Las tres réplicas secuenciales estiman la
+  variabilidad entre lotes de los parámetros ajustados.
+  \item[E5: validación.] $N_0 = 700$, el escenario extremo. El modelo se
+  ajusta con E2--E4 y debe \emph{predecir} E5 sin reajuste: es la prueba de
+  generalización del gemelo digital.
+\end{description}
+
+\begin{remark}[Replicación secuencial y ruta de paralelización]\label{rem:paralelizacion}
+Las réplicas son secuenciales por economía de equipamiento: una sola cámara,
+un solo tren de sensores. El costo es el calendario ($\sim 4$~meses para las
+cinco corridas) y la confusión corrida--tiempo, mitigada con metadatos por
+corrida (cepa, edad y lote de neonatos), recalibración entre corridas y el
+testigo E1 como referencia común. Si el proyecto dispone de recursos
+adicionales, la paralelización no exige triplicar el tren de gases: basta
+replicar la cámara y los sensores baratos (SHT35, sensor capacitivo, celda de
+carga) y multiplexar el muestreo de gases con electroválvulas hacia el mismo
+NDIR, esquema análogo al de las cuatro cámaras de
+\citet{rossiEstimatingDynamicsGreenhouse2024a}.
+\end{remark}
+
+\subsection{Valores de entrada}\label{sec:entradas}
+
+Las entradas del sistema son las consignas de la ley de control
+(Definición~\ref{def41}), la ventilación conmutada (Definición~\ref{def42}) y
+las condiciones iniciales del lote. La Tabla~\ref{tab:entradas} fija sus
+valores numéricos.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Entradas del experimento: consignas, ventilación y condiciones
+  iniciales (corridas E2--E4).}
+  \label{tab:entradas}
+  \begin{tabular}{llll}
+    \hline
+    Entrada & Símbolo & Valor & Fuente \\
+    \hline
+    Consigna de temperatura & $T_{\mathrm{ref}}$ & $28$~°C & zona de confort larval \\
+    Consigna de humedad & $H_{\mathrm{ref}}$ & $70$~\% & operación del lecho \\
+    Caudal operativo & $Q_{\mathrm{op}}$ & $1$~L/min & Ec.~\eqref{eq:q-dimensionamiento} \\
+    Calendario de cierres & $\{t_k^c\}$ & cada $2$~días & Obs.~\ref{rem:cierres} \\
+    Duración de cierre & $\Delta$ & Tabla~\ref{tab:delta-adaptativo} & Ecs.~\eqref{eq:delta-min}--\eqref{eq:delta-max} \\
+    Carga de larvas & $N_0$ & $400$ neonatas & Tabla~\ref{tab:carga-lote} \\
+    Carga de sustrato & $S_0$ & $560$~g ($1{,}4$~g/larva) & dosis del diseño \\
+    Humedad inicial & $\theta_{s,0}$ & $0{,}70$ (gravimétrico) & determinación en carga \\
+    Condiciones del inlet & $(T_{\mathrm{in}}, w_{\mathrm{in}}, c_{i,\mathrm{in}})$ & medidas & forzamientos conocidos \\
+    \hline
+  \end{tabular}
+\end{table}
+
+El criterio de terminación $t_f$ es el de la Ec.~\eqref{eq:tf}, evaluado en
+línea por el gemelo digital mediante la firma metabólica
+(Observación~\ref{rem:tf}), con confirmación visual de la fracción de
+prepupas al abrir la cámara.
+
+\subsection{Valores de salida}\label{sec:salidas}
+
+La Tabla~\ref{tab:salidas} resume las mediciones con su frecuencia y rango
+esperado. Las series continuas se registran a $0{,}1$~Hz; las muestras de
+cromatografía se toman por el septum al inicio, mitad y fin de cada cierre
+(Sección~\ref{sec:caracterizacion}).
+
+\begin{table}[htbp]
+  \centering
+  \caption{Salidas medidas: variable, sensor, frecuencia y rango esperado.}
+  \label{tab:salidas}
+  \begin{tabular}{lllll}
+    \hline
+    Variable & Sensor & Frecuencia & Rango esperado & Estado asociado \\
+    \hline
+    $T$ aire & SHT35 & $0{,}1$~Hz & $20$--$35$~°C & $T$ \\
+    $H$ aire & SHT35 & $0{,}1$~Hz & $40$--$95$~\% & $w$ \\
+    $c_{\mathrm{CO_2}}$ & NDIR & $0{,}1$~Hz & $420$--$15\,000$~ppm & $c_{\mathrm{CO_2}}$ \\
+    $c_{\mathrm{O_2}}$ & electroquímico & $0{,}1$~Hz & $15$--$21$~\% & $c_{\mathrm{O_2}}$ \\
+    $c_{\mathrm{CH_4}}$ & NDIR & $0{,}1$~Hz & $0$--$500$~ppm & $c_{\mathrm{CH_4}}$ \\
+    $(\theta_s^{\mathrm{sen}}, T_s^{\mathrm{sen}})$ & capacitivo & $0{,}1$~Hz & operación del lecho & $\theta_s$, $T_s$ \\
+    $m_{\mathrm{LC}}$ & celda de carga & $0{,}1$~Hz & decreciente & restricción~\eqref{eq:celda-carga} \\
+    CO$_2$, CH$_4$ & GC (septum) & $3$ por cierre & --- & validación metrológica \\
+    H$_2$S, NH$_3$ & supervisión & $0{,}1$~Hz & umbrales de alarma & fuera del modelo \\
+    \hline
+  \end{tabular}
+\end{table}
+
+Los rangos de CO$_2$ y O$_2$ cubren el pico metabólico de la
+Tabla~\ref{tab:delta-adaptativo}; el de CH$_4$ se fija bajo a propósito: en
+condiciones aireadas la metanogénesis es marginal
+\citep{rossiEstimatingDynamicsGreenhouse2024a}, y cualquier superación del
+rango es en sí misma una señal de anaerobiosis
+(Observación~\ref{rem:microbiano}).
+
+\subsection{Clasificación de parámetros}\label{sec:clasificacion-parametros}
+
+Los parámetros del modelo se clasifican en tres grupos según su origen
+(Tabla~\ref{tab:parametros}). Esta clasificación es la base del plan de
+estimación: solo el tercer grupo se ajusta con los datos del experimento.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Origen de los parámetros del modelo.}
+  \label{tab:parametros}
+  \begin{tabular}{lll}
+    \hline
+    Grupo & Parámetros & Fuente \\
+    \hline
+    Fijados & $a$, $m$, $Y_B$, $Y_L$, $B_{\max}$, $\beta$, $\eta_A$ &
+    literatura \citep{eriksenDynamicModellingFeed2022,eriksenMetabolicPerformanceFeed2024} \\
+    Fijados & $\gamma_q$, $\gamma_w$, $\lambda$ &
+    equivalentes energéticos \citep{lightonMeasuringMetabolicRates2008,hansenUseCalorespirometricRatios2004} \\
+    Medidos & $V_{\mathrm{aire}}$, $k_{\mathrm{fuga}}$, $h_\theta$, $\sigma_i$ &
+    caracterización (Sección~\ref{sec:caracterizacion}) \\
+    Estimados & $k_{\mathrm{mic}}$, $h_s A_s$, $C_{\mathrm{th}}$, $C_{\mathrm{th},s}$,
+    coef.\ de $E_{\mathrm{lecho}}$ & ajuste con E1--E4 \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\begin{remark}[Reajuste fino de parámetros fisiológicos]
+Los parámetros fisiológicos se adoptan de la literatura porque fueron
+ajustados sobre datos de crecimiento directos, que este experimento no
+recolecta en línea. Si los residuos de validación (Sección~\ref{sec:estimacion})
+resultan sistemáticos, se admite un reajuste fino de $(a, m)$ ---los dos
+parámetros con mayor influencia sobre $r_{\mathrm{CO_2}}$ según la
+Ec.~\eqref{eq:rco2-general}--- reportándolo explícitamente como desviación
+del modelo de referencia.
+\end{remark}
+
+\subsection{Estimación con red neuronal informada por física}\label{sec:pinn}
+
+La estimación del grupo de parámetros estimados y de los estados latentes
+$(A, B, L, N, S)$ usa una PINN \citep{raissiPhysicsinformedNeuralNetworks2019a},
+con la forma unificada ventilado--cerrado del modelo
+(Sección~\ref{sec:modelo-general}) como restricción física.
+
+\paragraph{Arquitectura y pérdida.} La red aproxima los estados como funciones
+del tiempo, $\hat{\mathbf{x}}(t; \varphi)$, y la función de pérdida combina
+tres términos:
+\begin{equation}
+  \mathcal{L} = \underbrace{\mathcal{L}_{\mathrm{datos}}}_{\text{ajuste a } \mathbf{y}(t)}
+  + \underbrace{\mathcal{L}_{\mathrm{física}}}_{\text{residuos de las EDO}}
+  + \underbrace{\mathcal{L}_{\mathrm{ci}}}_{\text{condiciones iniciales}},
+  \label{eq:pinn-loss}
+\end{equation}
+donde $\mathcal{L}_{\mathrm{datos}}$ penaliza la discrepancia con las series
+de la Tabla~\ref{tab:salidas} y con las tasas $R_i(t_k)$ del Nivel~1
+(Sección~\ref{sec:estimacion}); $\mathcal{L}_{\mathrm{física}}$ evalúa los
+residuos de cada balance del modelo en puntos de colocación dentro de
+$[0, t_f]$; y $\mathcal{L}_{\mathrm{ci}}$ ancla las condiciones iniciales
+conocidas (Tabla~\ref{tab:entradas}). Los parámetros estimados de la
+Tabla~\ref{tab:parametros} son variables del entrenamiento junto con
+$\varphi$.
+
+\paragraph{Partición de datos.} Coherente con la
+Observación~\ref{rem:id-lazo}: los cierres de ventilación y las ventanas de
+consigna en escalón son los datos de \emph{identificación}; la operación
+regulada normal es \emph{validación}. La corrida E5 queda reservada como
+prueba de extrapolación final y no participa en ningún ajuste.
+
+\paragraph{Referencia comparativa.} Un filtro de Kalman de ensamble sobre la
+forma unificada sirve de línea base: la PINN debe al menos igualarlo en
+residuos de validación para justificar su complejidad.
+
+\paragraph{Criterios de éxito.} Los de la Sección~\ref{sec:estimacion}:
+residuos compatibles con el ruido de sensores, cumplimiento de la
+restricción de la celda de carga~\eqref{eq:celda-carga}, parámetros dentro
+de rangos fisiológicos, y ---criterio adicional de esta sección--- error de
+predicción de E5 del mismo orden que el error de validación de E2--E4.
