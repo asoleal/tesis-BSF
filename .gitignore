@@ -97,3 +97,5 @@ articulos/**/bibliografia
 !articulos/00-red-neuronal-biomasa/datos/
 *.bak
 .venv/
+.fuse_hidden*
+*.zip
