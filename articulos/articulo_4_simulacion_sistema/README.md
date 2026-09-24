@@ -120,3 +120,21 @@ modelo). Corre en el Python del host sin dependencias especiales
 - Script reescrito con BCs verificados y configuración por entorno (v2).
 - Pendiente: corridas completas C1v2, C2v2, C4v2 y redacción de
   `contenido_art4.tex`.
+
+## 10. Resultados (BCs verificados, corridas completas)
+
+| Config | Q_eff (L/min) | τ_aire (s) | η(720 s) | τ_mix (s) | τ_mix/τ_aire | masa remanente (720 s) |
+|---|---|---|---|---|---|---|
+| C1v2 | 0.857 | 175 | 0.246 | > 720 | > 4.1 | 36.5 % |
+| C2v2 | 0.899 | 167 | 0.114 | > 720 (cola sugiere ~890) | > 4.3 | 17.2 % |
+
+Ideal bien mezclado: masa remanente a 720 s ≈ 1.3–1.6 %.
+
+Lectura de diseño: en régimen Stokes (laminar puro, sin turbulencia) ninguna
+geometría de boquilla en pared alcanza mezcla homogénea: τ_mix supera
+ampliamente τ_aire y persiste una fracción grande de volumen muerto (en C1v2
+~75 % del volumen efectivamente no ventilado). La configuración diagonal (C2v2)
+purga más masa pero no elimina la varianza espacial residual. Pendiente: C4v2
+(jet inferior a 45°, componente tangencial) y la discusión contra el Re real
+del jet en puerto (~220, transicional), que mezcla más que el Stokes: estos
+resultados son cota conservadora inferior de la mezcla real.

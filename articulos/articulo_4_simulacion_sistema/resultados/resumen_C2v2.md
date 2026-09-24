@@ -1,0 +1,1 @@
+# Configuracion C2v2 — 2026-09-24 18:18\n\n- inlet (0, 0.05, 0.05) tang=False; outlet face x (0.05, 0.14, 0.13)\n- caudal in = 0.899 L/min, out = 0.899 L/min, Q_eff = 0.899 L/min\n- |u| max = 1.633 m/s (U_IN = 0.589 m/s)\n- tau_mix = >6 min s, tau_aire = 167 s, relacion = nan\n- masa: -82.84 % a 720 s (bien mezclado predice -98.7 %)\n
