@@ -150,3 +150,48 @@ mezcla en el piloto (sensores a dos alturas); (2) corrección de volumen
 muerto en el gemelo digital con las fracciones medidas aquí; (3) si se
 requiere mezcla garantizada: ventilador interno o jet turbulento — no
 alcanzable con geometría de puertos en laminar.
+
+## 12. C5 — Ventilador en tapa (configuración final de diseño)
+
+> Actualiza la conclusión del §11: el ventilador ya no es solo "recomendado",
+> queda **validado** como garantía del supuesto A1 en cámara sellada.
+
+### Modelo del fan
+- Fuente de momentum (fuerza corporal en −z) dentro de una esfera de r = 0.02 m
+  centrada en (Lx/2, Ly/2, Lz − 0.03): bajo la tapa, directamente sobre las larvas.
+  No se mallan las aspas (modelo estándar de ventilador como actuador de momentum).
+- Variables de entorno nuevas en `cfd_camara.py`:
+  `CFD_FAN` (0/1), `CFD_FAN_F` (fuerza N/m³, default 400), `CFD_FAN_R` (radio),
+  `CFD_Q0` (1 = cámara sellada, U_IN = 0 en ambos puertos), `CFD_NPASOS`.
+
+### Resultados (cámara sellada, mezcla solo por fan)
+
+| Config        | F0 (N/m³) | \|u\| max (m/s) | τ_mix  | deriva masa | η(t=62 s) |
+|---------------|-----------|-----------------|--------|-------------|-----------|
+| C5cerrada     | 400       | 1101.8          | 4 s    | −1.00 %     | 0.000     |
+| C5cerrada_F4  | 4         | 11.02           | 24 s   | −0.61 %     | 0.000     |
+
+- **Escalamiento verificado**: Stokes es lineal → |u| ∝ F0 exacto
+  (100× menos fuerza = 100× menos velocidad: 1101.8 → 11.018).
+- **La mezcla satura**: al bajar F0 100×, τ_mix solo sube 4 → 24 s. En ambos
+  casos η < 0.05 % antes de t = 60 s.
+
+### Conclusión de diseño
+- Con cualquier recirculación significativa del fan, la cámara sellada se
+  homogeniza en **< 60 s**, frente a cierres de medición de 10–30 min:
+  el supuesto A1 (bien mezclado) queda garantizado en la fase estática con
+  margen de 10–30×.
+- Stokes sigue siendo cota conservadora: con un fan real de 40 mm (Re ~ 10³,
+  flujo transicional/turbulento) la mezcla real es más rápida que el límite laminar.
+- Velocidad fija, no variable: la mezcla saturada hace innecesario el control
+  de velocidad. Especificación: fan axial 40 mm 5 V centrado en tapa, material
+  de baja emisión (evitar COV/plásticos baratos que contaminen las medidas).
+
+### Reproducción (cámara sellada + fan)
+
+    docker run --rm --user $(id -u):$(id -g) \
+      -e CFD_CONFIG=C5cerrada_F4 -e CFD_Q0=1 -e CFD_FAN=1 -e CFD_FAN_F=4 \
+      -e CFD_NPASOS=240 -e CFD_OUT_FACE=x -e CFD_OUT_Y=0.14 -e CFD_OUT_Z=0.13 \
+      -e CFD_IN_Y=0.05 -e CFD_IN_Z=0.05 \
+      -e PYTHONUNBUFFERED=1 -e MPLCONFIGDIR=/tmp/mpl -e HOME=/tmp \
+      -v "$BASE":/work -w /work tesis-cfd python3 -u simulacion/cfd_camara.py
