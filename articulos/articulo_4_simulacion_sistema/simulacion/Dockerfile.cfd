@@ -1,0 +1,2 @@
+FROM dolfinx/dolfinx:stable
+RUN pip3 install --no-cache-dir --break-system-packages matplotlib gmsh

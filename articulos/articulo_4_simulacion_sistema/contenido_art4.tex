@@ -1,0 +1,66 @@
+% ============================================================
+% Articulo 4 — Simulacion del sistema de bioconversion
+% Esqueleto por secciones (TODO pendientes)
+% ============================================================
+
+\begin{abstract}
+Presentamos la simulacion integral del sistema de bioconversion de residuos
+con \emph{Hermetia illucens} instrumentado para la medicion de CO$_2$ y CH$_4$:
+un gemelo digital de dimension cero que integra la dinamica larval, el lecho y
+el aire interno del contenedor, y una verificacion por dinamica de fluidos
+computacional (CFD, FEniCSx/dolfinx) del supuesto de mezcla homogenea en la
+camara de cria. Se reportan los escenarios de simulacion E2--E5 del protocolo
+experimental y las metricas de mezcla que condicionan la instrumentacion.
+
+\textbf{Palabras clave:} bioconversion, \emph{Hermetia illucens}, gemelo
+digital, CO$_2$, CH$_4$, dolfinx.
+\end{abstract}
+
+\section{Introduccion}
+% TODO: contexto del sistema instrumentado (hielera 4,5 L, sensores, cierres
+% de ventilacion) y objetivo del articulo: validar por simulacion el diseno
+% antes de la campana experimental.
+
+\section{Modelo del sistema}
+\subsection{Dinamica 0D: doce estados}
+% TODO: resumir el sistema de ecuaciones (larva A,B,L; poblacion N; sustrato S;
+% lecho theta_s,T_s; aire T,w,cCO2,cO2,cCH4). Referenciar el documento del
+% modelo matematico como base.
+\subsection{Entradas conmutadas y calendario de cierres}
+% TODO: forma unificada ventilado/cerrado (Ec. 45 del documento de modelo),
+% cotas de Delta (Ecs. 22-23).
+
+\section{Simulacion del sistema dinamico}
+\subsection{Implementacion}
+% TODO: Python/SciPy (solve_ivp, LSODA/BDF por rigidez), parametros de
+% Eriksen 2022/2024.
+\subsection{Escenarios E2--E5}
+% TODO: N0=400 (E2-E4) y N0=700 (E5); figuras de concentraciones, tasas y
+% masa del lote.
+\subsection{Cierres adaptativos}
+% TODO: Delta dia a dia segun tasas del cierre anterior; sensibilidad a Vaire.
+
+\section{Verificacion CFD de la mezcla}
+\subsection{Geometria y malla}
+% TODO: hielera Truper HIEL-5 (26x19x18 cm), gmsh, refinamiento en puertos.
+\subsection{Modelo de flujo}
+% TODO: Navier-Stokes incompresible laminar + Boussinesq + adveccion-difusion
+% de escalar pasivo (CO2).
+\subsection{Metricas de mezcla}
+% TODO: tau_mix vs tau_aire = Vaire/Q; zonas muertas; comparar 2-3
+% configuraciones de posicion inlet/outlet.
+
+\section{Resultados y discusion}
+% TODO: integrar ODE + CFD: donde rompe el supuesto A1 de mezcla homogenea.
+
+\section{Conclusiones}
+% TODO
+
+% ============================================================
+% Figuras sugeridas:
+% fig:esquema_sistema (Fig. 4 del documento de modelo)
+% fig:escenario_E2   (concentraciones CO2/O2/CH4 + temperaturas)
+% fig:cierres        (zoom cierre: pendientes ajustadas)
+% fig:cfd_campo      (campo velocidad/concentracion en corte)
+% fig:tau_mix        (tau_mix vs configuracion de puertos)
+% ============================================================
