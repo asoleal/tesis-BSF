@@ -1,0 +1,1 @@
+# Configuracion C4v2 — 2026-09-24 21:44\n\n- inlet (0, 0.04, 0.04) tang=True; outlet face x (0.05, 0.14, 0.13)\n- caudal in = 0.791 L/min, out = 0.899 L/min, Q_eff = 0.845 L/min\n- |u| max = 1.942 m/s (U_IN = 0.589 m/s)\n- tau_mix = >6 min s, tau_aire = 177 s, relacion = nan\n- masa: -81.51 % a 720 s (bien mezclado predice -98.3 %)\n

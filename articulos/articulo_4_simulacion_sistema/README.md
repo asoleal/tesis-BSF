@@ -138,3 +138,15 @@ purga más masa pero no elimina la varianza espacial residual. Pendiente: C4v2
 (jet inferior a 45°, componente tangencial) y la discusión contra el Re real
 del jet en puerto (~220, transicional), que mezcla más que el Stokes: estos
 resultados son cota conservadora inferior de la mezcla real.
+
+| C4v2 | 0.845 | 177 | 0.110 | > 720 | > 4.1 | 18.5 % |
+
+Conclusión del barrido C1v2/C2v2/C4v2 (BCs verificados): en régimen Stokes
+(laminar puro) la geometría de boquilla en pared NO logra mezcla homogénea —
+la componente tangencial (C4v2) no genera swirl sin inercia. τ_mix/τ_aire > 4
+es cota conservadora inferior: la mezcla real del jet transicional (Re ~ 220
+en puerto de 6 mm) será mayor. Implicaciones: (1) validación experimental de
+mezcla en el piloto (sensores a dos alturas); (2) corrección de volumen
+muerto en el gemelo digital con las fracciones medidas aquí; (3) si se
+requiere mezcla garantizada: ventilador interno o jet turbulento — no
+alcanzable con geometría de puertos en laminar.

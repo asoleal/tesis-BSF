@@ -45,3 +45,14 @@ El CFD no modela biología: es un trazador pasivo que verifica A1. Las variables
 objetivo (crecimiento larval A/B/L, CO2 larvario/microbiano, CH4, O2, T, RH) viven
 en bioconversion_ode.py. El CFD entrega la corrección de mezcla que el gemelo
 digital aplica a las lecturas de sensor (o el criterio de rediseño de cámara).
+
+## Cierre del barrido (C1v2/C2v2/C4v2, BCs verificados)
+Tres configuraciones de puertos, todas con τ_mix > 720 s (η no cruza 5 %),
+relación τ_mix/τ_aire > 4, fracción de volumen muerto mayoritaria.
+El jet a 45° con componente tangencial (C4v2) reproduce C2v2: sin inercia
+no hay swirl. Conclusión: en Stokes la mezcla está limitada por difusión
+entre líneas de corriente; la geometría de puertos no es la palanca. La
+palanca real es el régimen transicional del jet (fuera de Stokes) o mezcla
+forzada interna. Ver README §10-11 para la tabla completa.
+Nota: falta cfd_distribucion_C1v2.pdf (la corrida terminó tras el tau fig;
+regenerable re-corriendo C1v2).
