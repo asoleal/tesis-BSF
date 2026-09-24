@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
 cfd_camara.py - Verificacion CFD del supuesto de mezcla homogenea (A1).
-Malla gmsh con refinamiento local en puertos (2 mm) y bulk (12 mm).
-Flujo: Stokes penalizado. Transporte CO2: adveccion-difusion + SUPG,
-Euler implicito con LU exacto. Se reporta tau_mix y balance de masa.
+Puertos conformales (discos gmsh embebidos en las caras), marcados
+geometricamente en dolfinx (el lector 0.11 falla con facet groups).
+Flujo: Stokes penalizado (LU). Transporte CO2: adv-dif + SUPG, Euler implicito.
 """
-import os
+import os, sys
 import numpy as np
 import dolfinx
 from dolfinx import mesh, fem, io
@@ -24,106 +24,96 @@ os.makedirs(IMG, exist_ok=True)
 
 Lx, Ly, Lz = 0.26, 0.19, 0.18
 R_PUERTO = 0.003
-CENTRO_IN = (0.0, Ly/2.0, 0.05)
-CENTRO_OUT = (Lx/2.0, Ly/2.0, Lz)
+V_AIRE = 2.5e-3
 
-# ---------------- malla gmsh con refinamiento local ----------------
+# ---------------- malla gmsh: discos conformales ----------------
 gmsh.initialize()
 gmsh.model.add("camara")
-gmsh.option.setNumber("Mesh.CharacteristicLengthMin", 2.0e-3)
-gmsh.option.setNumber("Mesh.CharacteristicLengthMax", 12.0e-3)
-gmsh.option.setNumber("Mesh.CharacteristicLengthFromPoints", 1)
+gmsh.option.setNumber("Mesh.CharacteristicLengthMin", 1.0e-3)
+gmsh.option.setNumber("Mesh.CharacteristicLengthMax", 12e-3)
 box = gmsh.model.occ.addBox(0, 0, 0, Lx, Ly, Lz)
-p_in = gmsh.model.occ.addPoint(*CENTRO_IN, meshSize=1.5e-3)
-p_out = gmsh.model.occ.addPoint(*CENTRO_OUT, meshSize=1.5e-3)
-gmsh.model.occ.fragment([(3, box)], [(0, p_in), (0, p_out)])
+d_in = gmsh.model.occ.addDisk(-1.0e-3, Ly/2.0, 0.05, R_PUERTO, R_PUERTO, -1, [1, 0, 0])
+d_out = gmsh.model.occ.addDisk(Lx/2.0, Ly/2.0, Lz + 1.0e-3, R_PUERTO, R_PUERTO, -1, [0, 0, 1])
+p_in = gmsh.model.occ.addPoint(0.0, Ly/2.0, 0.05, meshSize=1.0e-3)
+p_out = gmsh.model.occ.addPoint(Lx/2.0, Ly/2.0, Lz, meshSize=1.0e-3)
+obj, mappa = gmsh.model.occ.fragment([(3, box)], [(2, d_in), (2, d_out), (0, p_in), (0, p_out)])
 gmsh.model.occ.synchronize()
-vols = gmsh.model.getEntities(3)
-gmsh.model.addPhysicalGroup(3, [v[1] for v in vols], 1)
+vols = [t[1] for t in gmsh.model.getEntities(3)]
+gmsh.model.addPhysicalGroup(3, vols, 1)
 gmsh.model.setPhysicalName(3, 1, "Camara")
+in_ids = [t[1] for t in mappa[1]]
+out_ids = [t[1] for t in mappa[2]]
+print("puerto in areas:", [gmsh.model.occ.getMass(2, s) for s in in_ids])
+print("puerto out areas:", [gmsh.model.occ.getMass(2, s) for s in out_ids])
 gmsh.model.mesh.generate(3)
 from dolfinx.io import gmsh as gmshio_mod
 res = gmshio_mod.model_to_mesh(gmsh.model, MPI.COMM_WORLD, 0, gdim=3)
 msh = res[0]
 gmsh.finalize()
-
-# probe: distancia minima de centroides a cada puerto
-msh.topology.create_connectivity(2, 0)
-conn = msh.topology.connectivity(2, 0)
-coords = msh.geometry.x
-def _probe(nombre, facets, ij, ci, cj):
-    dmin = 1e9
-    for f in facets:
-        mid = coords[conn.links(f)].mean(axis=0)
-        d2 = (mid[ij[0]]-ci)**2 + (mid[ij[1]]-cj)**2
-        dmin = min(dmin, d2)
-    print(f"probe {nombre}: facets={len(facets)} dist2_min={dmin:.3e} (R^2={R_PUERTO**2:.3e})")
-_probe("in", mesh.locate_entities_boundary(msh, 2, lambda x: np.isclose(x[0], 0.0, atol=1e-7)), (1, 2), Ly/2.0, 0.05)
-_probe("out", mesh.locate_entities_boundary(msh, 2, lambda x: np.isclose(x[2], Lz, atol=1e-7)), (0, 1), Lx/2.0, Ly/2.0)
-
 print(f"malla: {msh.topology.index_map(3).size_local} tets")
 
 dx = ufl.dx(domain=msh)
 
-def es_frontera(x):
-    return np.logical_or.reduce([
-        np.isclose(x[0], 0.0, atol=1e-7), np.isclose(x[0], Lx, atol=1e-7),
-        np.isclose(x[1], 0.0, atol=1e-7), np.isclose(x[1], Ly, atol=1e-7),
-        np.isclose(x[2], 0.0, atol=1e-7), np.isclose(x[2], Lz, atol=1e-7)])
+# ---------------- marcado geometrico de facets (puertos conformales) ----------------
+msh.topology.create_connectivity(2, 0)
+conn20 = msh.topology.connectivity(2, 0)
+coords = msh.geometry.x
+todas = mesh.locate_entities_boundary(msh, 2, lambda x: np.full(x.shape[1], True))
+facet_in, facet_out, facet_wall = [], [], []
+for f in todas:
+    mid = coords[conn20.links(f)].mean(axis=0)
+    if abs(mid[0]) < 1e-6 and (mid[1]-Ly/2.0)**2 + (mid[2]-0.05)**2 < R_PUERTO**2:
+        facet_in.append(f)
+    elif abs(mid[2]-Lz) < 1e-6 and (mid[0]-Lx/2.0)**2 + (mid[1]-Ly/2.0)**2 < R_PUERTO**2:
+        facet_out.append(f)
+    else:
+        facet_wall.append(f)
+facet_in = np.array(facet_in, dtype=np.int32)
+facet_out = np.array(facet_out, dtype=np.int32)
+facet_wall = np.array(facet_wall, dtype=np.int32)
+print(f"facets: in={len(facet_in)} out={len(facet_out)} wall={len(facet_wall)}")
 
-def inlet_m(x):
-    return np.logical_and(es_frontera(x),
-           np.logical_and(np.isclose(x[0], 0.0, atol=1e-7),
-           (x[1]-Ly/2.0)**2 + (x[2]-0.05)**2 < R_PUERTO**2))
+mt = mesh.meshtags(msh, 2,
+                   np.concatenate([facet_in, facet_out, facet_wall]),
+                   np.concatenate([np.full(len(facet_in), 2, np.int32),
+                                   np.full(len(facet_out), 3, np.int32),
+                                   np.full(len(facet_wall), 4, np.int32)]))
 
-def outlet_m(x):
-    return np.logical_and(es_frontera(x),
-           np.logical_and(np.isclose(x[2], Lz, atol=1e-7),
-           (x[0]-Lx/2.0)**2 + (x[1]-Ly/2.0)**2 < R_PUERTO**2))
-
-def wall_m(x):
-    return np.logical_and(es_frontera(x),
-           np.logical_not(np.logical_or(inlet_m(x), outlet_m(x))))
+if os.environ.get("CFD_MALLA"):
+    sys.exit(0)
 
 # ---------------- flujo (Stokes penalizado) ----------------
-Q = 1.6667e-5
+Q = 1.6667e-5            # m3/s (1 L/min)
 U_IN = Q/(np.pi*R_PUERTO**2)
 MU = 1.9e-5
-LAMBDA = 1.0e4*MU
+LAMBDA = 1.0e6*MU
 
 V = fem.functionspace(msh, ("Lagrange", 2, (3,)))
 u, v_ = ufl.TrialFunction(V), ufl.TestFunction(V)
 a_u = (MU*ufl.inner(ufl.grad(u), ufl.grad(v_))
        + LAMBDA*ufl.div(u)*ufl.div(v_))*dx
 L_u = ufl.inner(fem.Constant(msh, (0.0, 0.0, 0.0)), v_)*dx
-for _n,_m in [("wall",wall_m),("inlet",inlet_m),("outlet",outlet_m)]:
-    _d = fem.locate_dofs_geometrical(V,_m)
-    _f = mesh.locate_entities_boundary(msh,2,_m)
-    print(f"diag {_n}: dofs={len(_d)} facets={len(_f)}")
-bc_w = fem.dirichletbc(fem.Constant(msh, (0.0, 0.0, 0.0)),
-                       fem.locate_dofs_geometrical(V, wall_m), V)
-bc_i = fem.dirichletbc(fem.Constant(msh, (U_IN, 0.0, 0.0)),
-                       fem.locate_dofs_geometrical(V, inlet_m), V)
-prob_u = LinearProblem(a_u, L_u, bcs=[bc_w, bc_i],
+dofs_w = fem.locate_dofs_topological(V, 2, facet_wall)
+dofs_i = fem.locate_dofs_topological(V, 2, facet_in)
+bc_w = fem.dirichletbc(fem.Constant(msh, (0.0, 0.0, 0.0)), dofs_w, V)
+bc_i = fem.dirichletbc(fem.Constant(msh, (U_IN, 0.0, 0.0)), dofs_i, V)
+dofs_o = fem.locate_dofs_topological(V, 2, facet_out)
+bc_o = fem.dirichletbc(fem.Constant(msh, (0.0, 0.0, U_IN)), dofs_o, V)
+prob_u = LinearProblem(a_u, L_u, bcs=[bc_w, bc_i, bc_o],
                        petsc_options_prefix="stokes_",
                        petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
 uh = prob_u.solve()
 print(f"|u| max = {np.max(np.linalg.norm(uh.x.array.reshape(-1,3),axis=1)):.3f} m/s (U_IN={U_IN:.3f})")
 
-# verificacion de caudal en puertos
-facetas_in = mesh.locate_entities_boundary(msh, 2, inlet_m)
-facetas_out = mesh.locate_entities_boundary(msh, 2, outlet_m)
-mt_in = mesh.meshtags(msh, 2, facetas_in, np.full(len(facetas_in), 1, np.int32))
-mt_out = mesh.meshtags(msh, 2, facetas_out, np.full(len(facetas_out), 2, np.int32))
-ds_in = ufl.Measure("ds", domain=msh, subdomain_data=mt_in)
-ds_out = ufl.Measure("ds", domain=msh, subdomain_data=mt_out)
+ds = ufl.Measure("ds", domain=msh, subdomain_data=mt)
 n = ufl.FacetNormal(msh)
-q_in = fem.assemble_scalar(fem.form(ufl.dot(uh, n)*ds_in(1)))
-q_out = fem.assemble_scalar(fem.form(ufl.dot(uh, n)*ds_out(2)))
-import sys, os as _os
-if _os.environ.get("CFD_SOLO_FLUJO"): sys.exit(0)
-print(f"caudal in={q_in*60000:.2f} L/min | out={q_out*60000:.2f} L/min "
-      f"| Q_obj={Q*60000:.2f} L/min")
+q_in = fem.assemble_scalar(fem.form(ufl.dot(uh, n)*ds(2)))
+q_out = fem.assemble_scalar(fem.form(ufl.dot(uh, n)*ds(3)))
+Q_eff = (abs(q_in)+q_out)/2.0
+print(f"caudal in={abs(q_in)*60000:.3f} L/min | out={q_out*60000:.3f} L/min | Q_obj={Q*60000:.3f} L/min")
+
+if os.environ.get("CFD_SOLO_FLUJO"):
+    sys.exit(0)
 
 vol = fem.assemble_scalar(fem.form(1.0*dx))
 with io.VTXWriter(msh.comm, os.path.join(IMG, "cfd_velocidad.bp"), [uh]) as f:
@@ -136,9 +126,9 @@ c, w_ = ufl.TrialFunction(C), ufl.TestFunction(C)
 c_prev = fem.Function(C)
 c_prev.interpolate(lambda x: np.where(x[2] < 0.05, 1.0, 0.0))
 bc_c = fem.dirichletbc(np.float64(0.0),
-                       fem.locate_dofs_geometrical(C, inlet_m), C)
+                       fem.locate_dofs_topological(C, 2, facet_in), C)
 
-DT, NPASOS = 2.0, 180
+DT, NPASOS = 2.0, 360
 h = ufl.CellDiameter(msh)
 unorm = ufl.sqrt(ufl.dot(uh, uh))
 tau = h/(2.0*unorm + h/DT)
@@ -173,17 +163,14 @@ with io.VTXWriter(msh.comm, os.path.join(IMG, "cfd_co2_final.bp"), [c_prev]) as 
     f.write(0.0)
 
 drift = 100.0*(masa_hist[-1]-masa0)/masa0
-tau_aire = (2.5e-3)/Q
-print(f"\nmasa: inicial={masa0:.4f} final={masa_hist[-1]:.4f} "
-      f"(deriva {drift:+.2f}%)")
-print(f"tau_mix = {tau_mix if tau_mix else '>6 min'} s | "
-      f"tau_aire = {tau_aire:.0f} s | "
-      f"relacion = {(tau_mix/tau_aire) if tau_mix else float('nan'):.2f}")
+tau_aire = V_AIRE/Q_eff
+print(f"\nmasa: inicial={masa0:.4f} final={masa_hist[-1]:.4f} (deriva {drift:+.2f}%)")
+print(f"tau_mix = {tau_mix if tau_mix else '>6 min'} s | tau_aire = {tau_aire:.0f} s | relacion = {(tau_mix/tau_aire) if tau_mix else float('nan'):.2f}")
 
 import matplotlib.pyplot as plt
 fig, ax = plt.subplots(figsize=(7, 4))
 ax.semilogy(np.array(tiempo), eta_hist, lw=1.5,
-            label=r'$\eta(t)$ varianza normalizada')
+            label=r'$\eta(t)$ coef. variacion vs $c_0$')
 ax2 = ax.twinx()
 ax2.plot(np.array(tiempo), 100*(np.array(masa_hist)-masa0)/masa0,
          color='tab:red', lw=1, alpha=0.6, label='deriva de masa (%)')
