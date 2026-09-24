@@ -1,0 +1,1 @@
+# Configuracion C1v2 — 2026-09-24 17:21\n\n- inlet (0, 0.095, 0.05) tang=False; outlet face z (0.13, 0.095, 0.13)\n- caudal in = 0.872 L/min, out = 0.842 L/min, Q_eff = 0.857 L/min\n- |u| max = 1.524 m/s (U_IN = 0.589 m/s)\n
