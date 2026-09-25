@@ -195,3 +195,66 @@ alcanzable con geometría de puertos en laminar.
       -e CFD_IN_Y=0.05 -e CFD_IN_Z=0.05 \
       -e PYTHONUNBUFFERED=1 -e MPLCONFIGDIR=/tmp/mpl -e HOME=/tmp \
       -v "$BASE":/work -w /work tesis-cfd python3 -u simulacion/cfd_camara.py
+
+## 13. Validación preliminar con experimentos reales (sep 2025) — actualiza §7 y §9
+
+Datos: `../../datos/experimentos` (carpetas 9/11/13/17 = **días del ciclo**, no solo
+fechas; D1/D4 = dos alimentos; `*_alimento` = controles solo-alimento 250 g;
+`Larvas_Ayuno` = larvas sin alimento, día 17). Panera sellada 30×19 → 36×25 × 17 cm
+(V_air ≈ 12.1 L), N = 700, alimento repuesto en cada medición (ad libitum).
+Tasas ya extraídas en `datos_finales_PINN_corregidos.csv` (ppm/min, con R²);
+protocolo de resta: `restar_controles.py` (tratamiento − control del mismo día).
+
+Cruce modelo-vs-dato (conversión a ppm/min a 12.1 L):
+- **Días 9–11: el modelo acierta** — predice 226–417 ppm/min netos; observado 88–650
+  según alimento/estado. El caso de saturación en ~6 min es el experimento 1
+  (`experimento1_D1_voraz_tenian_hambre`): burst de día 9 ≈ pico del modelo.
+- **Días 13–17: fallaba por mecanismo faltante, no por parámetros** — con alimento
+  disponible, el descenso observado (→ ~0 en día 17) es cesación por prepupa.
+  El modelo no la tenía y mantenía 489 ppm/min. → switch PREP (§14).
+- **Módulo microbiano subestima el CO2 del alimento 5–20×** (modelo 0.6–2 vs
+  controles 26–110 ppm/min). Recalibración pendiente (guía §15.6).
+- **CH4 no es cuantitativo** (TGS2611; pasos de 200 ppm; controles "saturados"):
+  indicador solamente, no entra a ajuste ni PINN hasta calibrar.
+
+Supuestos operativos S1–S11: ver `supuestos.md` (cada uno con su parámetro en el código).
+
+## 14. Cambios al ODE (commits fb2e845, edcb5ae + ventilación S11)
+
+1. **PREP = dict(t_p=12.0, ancho=1.0, m_suelo=0.13)** (S5): la asimilación `a` se
+   multiplica por (1 − S) con S logística centrada en día 12; el mantenimiento
+   cae a ×0.13 (suelo 0.64 mg/larva/d, anclado a la medición de ayuno día 17).
+   Colateral: elimina la acumulación fantasma de lípidos (L final 209 → 54 mg) que
+   inflaba las emisiones ~2.3× (E2: 1.37 → 0.59 mol).
+2. **Tope de ingestión**: `comida = 0 si DM ≤ 0` — el lecho ya no se vuelve negativo.
+3. **Calendario adaptativo en dos pasadas** (`calendario_adaptativo`):
+   Δ_k = margen / ppm_s, con la tasa evaluada en el **punto medio** del cierre
+   (orden 2), piso 120 s, techo 1800 s; margen = 5000 − c(t_ck) de la pasada 1.
+4. **Ventilación entre cierres 4 L/min** (`caudal()` devuelve 6.6667e-5, ambas
+   bombas). CRÍTICO: con 1 L/min la base estacionaria entre cierres (c_in + R/Q)
+   sube a ~4300 ppm en el pico del ciclo y **ningún** cierre queda bajo 5000 ppm
+   aun con Δ en el piso — el constraint de diseño es la ventilación, no el Δ.
+   Con 4 L/min la base queda 500–1600 ppm.
+
+Verificado (E2/E5, este README §7): picos 4978/4604 ppm ≤ 5000; Δ_k van de
+30 min (días 3–6) a 2.5–5 min (pico) a 15–27 min (prepupa).
+Reproducción: `python3 simulacion/bioconversion_ode.py` (host: numpy/scipy/matplotlib).
+
+## 15. GUÍA — qué cambiar cuando lleguen los experimentos finales
+
+| # | Dato nuevo del experimento final | Dónde se cambia | Cómo |
+|---|---|---|---|
+| 1 | V_air medido (llenar cámara de agua) | `FIS['Vair']` | 12.1e-3 (panera) o el valor medido; re-verificar picos con el run estándar |
+| 2 | N real y razón de alimento | `correr(N0, ...)` y `S0 = 1.4*N0` | sustituir 1.4 g/larva por la razón medida; si hay agotamiento, quitar ad libitum (el tope DM ≥ 0 ya existe) |
+| 3 | T de proceso controlada | `FIS['Ta']`, `FIS['Tref']` | valor del nuevo protocolo |
+| 4 | Edad de prepupa observada | `PREP['t_p']`, `PREP['ancho']` | ajustar con el descenso de tasas; `m_suelo` con un test de ayuno |
+| 5 | Biomasa larval (pesadas) | `PHY` (YB, YL, m, amax, Bmax0) | mínimos cuadrados de B(t) medido vs simulado; validar S6 |
+| 6 | Controles solo-alimento nuevos | `MIC` (kref, kmax, YCO2, Kth, th_cs) | extraer tasas como en `datos_finales_PINN_corregidos.csv` y minimizar error en ppm/min a V_air real; valida S8 |
+| 7 | Rango del NDIR usado | `cmax` en `calendario_adaptativo` | 5000 (S8) o 10000 (K30) |
+| 8 | CH4 calibrado (p.ej. Mitchell 2024) | `YCH4`, `xi_*` en MIC + texto | recién entonces incluir CH4 en el ajuste |
+| 9 | Nuevos días de validación | escenario réplica (Fase 2, pendiente) | generalizar el calendario de cierres a las edades medidas |
+| 10 | Texto del artículo | `contenido_art4.tex` | §2 (switch + microbiano), §3 nueva subsección de validación, §5 (ventilación como constraint), §6, anexo de parámetros |
+
+Estado de figuras: `imagenes/sim_E2.pdf`, `sim_E5.pdf` regenerados con la dinámica
+con prepupa; `esquema_sistema.pdf` v3. Pendiente Fase 2: script de réplica del
+experimento (panera) + figura modelo-vs-datos; Fase 3: texto (ítem 10).
