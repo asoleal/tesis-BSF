@@ -68,15 +68,18 @@ def calendario_adaptativo(tf_d, sol, cmax=5000.0):
         t += (24.0 if 3.0 <= t/DIA <= 10.0 else 48.0)*3600.0
     return vent, deltas
 
+PREP = dict(t_p=12.0, ancho=1.0, m_suelo=0.13)  # S5: switch prepupa (supuestos.md)
+
 def tasas_larva(B, t_d):
     Bmax = PHY['Bmax0'] if t_d <= PHY['tp_min'] else \
            max(PHY['Bmax0']-PHY['rho']*(t_d-PHY['tp_min']), 1.0)
-    a = PHY['amax']/(1.0+(B/Bmax)**PHY['alpha'])      # d^-1 (Ec. 5)
+    S_prep = 1.0/(1.0+np.exp(-(t_d-PREP['t_p'])/PREP['ancho']))  # S5
+    a = PHY['amax']/(1.0+(B/Bmax)**PHY['alpha'])*(1.0-S_prep)      # d^-1 (Ec. 5)
     rA = a*B                                           # asimilacion mg/d (Ec. 4)
     logistic = max(1.0-(B/Bmax)**PHY['beta'], 0.0)     # Ec. 10
     muB = max((a-PHY['m'])*logistic/(1.0+PHY['YB']*logistic), 0.0)
     rB = muB*B
-    rCm = PHY['m']*B
+    rCm = PHY['m']*B*((1.0-S_prep)+PREP['m_suelo']*S_prep)
     rCB = PHY['YB']*rB
     rL = rA - rB - rCm - rCB                           # Ec. 12 (A en SS)
     rCL = PHY['YL']*rL if rL > 0 else 0.0
@@ -101,7 +104,8 @@ def rhs(t, y, ventanas):
     Q = caudal(t, ventanas)
     phi = min(ths/0.60, 1.0)
     E = FIS['keAs']*max(phi*wsat(Ts)-w, 0.0)           # kg/s
-    DM_p = (-N*rA/1000.0 - kmic*DM)/DIA                # g/s (frass queda)
+    comida = 0.0 if DM <= 1e-9 else N*rA/1000.0        # S3: tope por DM
+    DM_p = (-comida - kmic*DM)/DIA                # g/s (frass queda)
     W_p = -E/DIA
     RCO2_mol = (N*rCO2 + rCmic*1000.0)/44000.0/DIA
     RO2_mol = (N*rO2 + rOmic*1000.0)/32000.0/DIA
