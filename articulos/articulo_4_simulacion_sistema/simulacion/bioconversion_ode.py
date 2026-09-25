@@ -49,6 +49,25 @@ def caudal(t, ventanas):
             return 0.0
     return 1.6667e-5          # 1 L/min en m3/s
 
+def calendario_adaptativo(tf_d, sol, cmax=5000.0):
+    """Delta_k: tiempo hasta acercarse a la saturacion del NDIR (0-5000 ppm),
+    acotado a la ventana operativa de 10 a 30 min (dos pasadas)."""
+    vent, deltas = [], []
+    t = 0.25*DIA
+    while t < tf_d*DIA:
+        Y = sol.sol(t)
+        rA, rB, rL, rCO2, rO2, Bmax = tasas_larva(Y[1], t/DIA)
+        ths = Y[5]/max(Y[4] + Y[5], 1e-9)
+        rCmic, rOmic, rCH4g, kmic = tasas_mic(Y[4], ths, Y[6], Y[3], rA)
+        Rmol = (Y[3]*rCO2 + rCmic*1000.0)/44000.0          # mol/d
+        TK = Y[7] + 273.15
+        ppm_s = Rmol/FIS['Vair']/DIA * FIS['R']*TK/FIS['P'] * 1e6
+        margen = max(cmax - c2ppm(Y[9], TK), 50.0)        # ppm
+        dk = min(max(margen/max(ppm_s, 1e-9), 600.0), 1800.0)
+        vent.append((t, t + dk)); deltas.append(dk)
+        t += (24.0 if 3.0 <= t/DIA <= 10.0 else 48.0)*3600.0
+    return vent, deltas
+
 def tasas_larva(B, t_d):
     Bmax = PHY['Bmax0'] if t_d <= PHY['tp_min'] else \
            max(PHY['Bmax0']-PHY['rho']*(t_d-PHY['tp_min']), 1.0)
@@ -111,12 +130,18 @@ def rhs(t, y, ventanas):
             cCO2_p, cO2_p, cCH4_p, eT, eH]
 
 def correr(N0, tf_d=16.0, nombre='E2'):
-    vent = calendario_cierres(tf_d)
     S0 = 1.4*N0
     DM0, W0 = 0.40*S0, 0.60*S0
     y0 = [0.005, 0.012, 0.003, float(N0), DM0, W0, 27.0, 28.0,
           wsat(28.0)*0.60, ppm2c(420.0, 301.15), ppm2c(209500.0, 301.15),
           ppm2c(1.9, 301.15), 0.0, 0.0]
+    vent1 = calendario_cierres(tf_d, delta_min=15.0)
+    sol1 = solve_ivp(lambda t, y: rhs(t, y, vent1), (0, tf_d*DIA), y0,
+                     method='LSODA', dense_output=True,
+                     rtol=1e-6, atol=1e-9, max_step=120.0)
+    vent, deltas = calendario_adaptativo(tf_d, sol1)
+    print(f"  [{nombre}] Delta_k (min): "
+          + " ".join(f"{d/60:.1f}" for d in deltas))
     sol = solve_ivp(lambda t, y: rhs(t, y, vent), (0, tf_d*DIA), y0,
                    method='LSODA', dense_output=True,
                    rtol=1e-6, atol=1e-9, max_step=120.0)
