@@ -304,55 +304,175 @@ sin recalibrar frente a las curvas de control (S8), $V_{aire}$ sujeto a
 calibracion por trazador, y CH$_4$ no cuantitativo (S10).
 
 \section{Verificacion CFD de la mezcla}
+\subsection{Objetivo y criterio de aceptacion}
+
+El modelo 0D descrito en la Seccion~\ref{sec:dinamica0d} asume que el aire
+de la camara esta perfectamente mezclado en todo instante (supuesto A1):
+existe una unica concentracion de cada gas y la lectura del sensor la
+representa. El objetivo de esta seccion es verificar ese supuesto para el
+diseno de la camara y del protocolo. Para ello se resuelve el flujo y el
+transporte de un trazador pasivo de CO$_2$ que no modela la biologia del
+proceso: el CFD aporta el campo de mezcla con el que el gemelo digital
+interpreta, o corrige, las lecturas del sensor.
+
+El criterio de aceptacion es temporal. Con el indice de heterogeneidad
+$\eta(t) = \sigma_c(t)/\bar{c}_0$ del trazador y el tiempo de mezcla
+$\tau_{mix}$ (primer instante con $\eta < 0.05$), A1 se considera valido si
+
+\begin{equation}
+  \tau_{mix}/\tau_{aire} \leq 1.2, \qquad
+  \tau_{aire} = V_{aire}/Q_{eff},
+\end{equation}
+
+es decir, si la camara se homogeneiza en una constante de tiempo del aire.
+En fase ventilada la renovacion y la mezcla son comparables; en fase
+cerrada ($\tau_{aire} \rightarrow \infty$) la homogeneidad debe lograrla un
+mecanismo interno antes de que la pendiente de acumulacion se contamine por
+heterogeneidad espacial.
+
+Como hipotesis de trabajo se adopta el regimen de Stokes, sin inercia ni
+turbulencia. Esta eleccion es una cota conservadora: el jet real del puerto
+es transicional ($\mathrm{Re} \approx 220$) y la turbulencia real mezcla mas
+que el modelo, de modo que los tiempos de mezcla calculados son cotas
+superiores de los tiempos reales.
+
 \subsection{Geometria y malla}
+
 La camara es un contenedor de $26 \times 19 \times 18$ cm
 ($\approx 8.9$ L geometricos) empleado para conservar la temperatura del
-lote, con un volumen de aire efectivo $V_{aire} = 2.5$ L sobre el lecho de
-cria; el trazador se inicializa en la zona del lecho ($c = 1$ en $z < 0.05$ m). La malla se genero con gmsh: discos conformales de puerto
-(radio 3 mm) sobresaliendo 1 mm de la cara para garantizar su reconocimiento
-en el mallado, fragmentados con el volumen y puntos de refinamiento local
-(tamano 1--1.5 mm) que resuelven el chorro de entrada; resultado
-$\sim 32\,000$ tetraedros con elementos P2. Las fronteras se marcaron por
-centroide geometrico (la lectura aborta si el mallado lleva grupos fisicos
-en superficies); los puertos de entrada y salida quedaron con 29 facetas cada
-uno, verificando la resolucion local.
+lote; el volumen de aire efectivo sobre el lecho de cria es
+$V_{aire} = 2.5$ L. Los puertos de entrada y salida son discos conformales
+de radio 3 mm que sobresalen 1 mm de la cara para garantizar su
+reconocimiento en el mallado; a ese radio, el caudal nominal de 1 L/min
+exige una velocidad de puerto $U_{in} = 0.589$ m/s ($\mathrm{Re} \approx 220$,
+transicional).
+
+La malla se genero con gmsh: fragmentacion con el volumen mas puntos de
+refinamiento local (tamano de elemento 1--1.5 mm) que resuelven el chorro
+de entrada; el resultado son $\sim 32\,000$ tetraedros, usados con
+elementos P2 para la velocidad y P1 para el trazador. Las fronteras se
+marcaron por centroide geometrico (la lectura del mallado aborta si este
+lleva grupos fisicos en superficies), y los puertos quedaron con 29 facetas
+cada uno, lo que verifica la resolucion local del jet.
 
 \subsection{Modelo de flujo}
-Flujo incompresible estacionario en regimen de Stokes penalizado
-($\mu = 1.9\times10^{-5}$ Pa·s, $\lambda = 10^4 \mu$), con condiciones de
-Dirichlet de caudal en ambos puertos ($Q = 1$ L/min, velocidad de puerto
-$U_{in} = 0.589$ m/s, $\mathrm{Re} \approx 220$ en el puerto, transicional) y
-paredes sin deslizamiento. El transporte de CO$_2$ se modela como
-adveccion-difusion de un escalar pasivo ($D_{CO_2} = 2\times10^{-5}$ m$^2$/s)
-con estabilizacion SUPG e integracion implicita de Euler con $\Delta t = 2$ s;
-el trazador se inicializa en el lecho ($c = 1$ en $z < 0.05$ m) y la entrada
-impone $c = 0$. Las condiciones de contorno se aplicaron por subespacios
-vectoriales con verificacion post-solucion (en dolfinx 0.11 un \texttt{Constant}
-vectorial sobre el espacio bloqueado falla silenciosamente). El regimen de
-Stokes es una cota conservadora: al ignorar la inercia y la turbulencia del
-chorro real (Re $\approx 220$), el modelo subestima sistematicamente la mezcla.
+
+El flujo se resuelve como Stokes estacionario e incompresible,
+
+\begin{equation}
+  \mu \nabla^2 \mathbf{u} - \nabla p + \mathbf{f} = 0,
+  \qquad \nabla\cdot\mathbf{u} = 0,
+\end{equation}
+
+con $\mu = 1.9\times10^{-5}$ Pa·s (aire a 300 K). La incompressibilidad se
+impone por penalizacion, $p \approx -\lambda\nabla\cdot\mathbf{u}$ con
+$\lambda = 10^4\mu$: la forma debil queda simetrica y definida positiva y
+el sistema se resuelve con un solver directo. La fuerza corporal
+$\mathbf{f}$ es nula en los escenarios ventilados y vale
+$-\chi F_0\,\hat{\mathbf{z}}$ en el escenario C5 de mezcla forzada, donde
+$\chi$ es la funcion indicadora de una esfera de radio 2 cm bajo la tapa.
+
+Las condiciones de contorno son de Dirichlet de velocidad: paredes sin
+deslizamiento ($\mathbf{u} = 0$) y componente normal $U_{in}$ en cada
+puerto (0.589 m/s en el puerto de 3 mm para 1 L/min). Se aplicaron por
+subespacios vectoriales y no como condicion vectorial unica: en dolfinx 0.11
+un \texttt{Constant} vectorial sobre el espacio bloqueado falla
+silenciosamente, de modo que cada componente se restringio por separado y
+se verifico tras la solucion (rangos de velocidad en entrada y pared).
+
+La discretizacion usa elementos P2 de Lagrange sobre los $\sim 32\,000$
+tetraedros y el sistema lineal se resuelve con PETSc en modo directo
+(\texttt{preonly} + LU). La verificacion cuantitativa es el balance de masa
+por integrales de frontera: en la configuracion C2 los caudales de entrada
+y salida coinciden a 1.034 L/min; el caudal efectivo se define como
+$Q_{eff} = (|q_{in}| + q_{out})/2$.
+
+\subsection{Transporte del trazador}
+
+El CO$_2$ se modela como un escalar pasivo $c(\mathbf{x}, t)$ con
+adveccion-difusion:
+
+\begin{equation}
+  \frac{\partial c}{\partial t} + \mathbf{u}\cdot\nabla c
+  - D_{CO_2}\nabla^2 c = 0,
+  \qquad D_{CO_2} = 2\times10^{-5}\ \mathrm{m}^2/\mathrm{s},
+\end{equation}
+
+la difusion molecular del CO$_2$ en aire a 300 K. La condicion inicial
+concentra el trazador en el lecho ($c = 1$ para $z < 0.05$ m, cero en el
+resto), lo que reproduce la zona de emision; en fase ventilada la entrada
+impone $c = 0$ (aire limpio) y la salida y las paredes toman la condicion
+natural de flujo difusivo nulo.
+
+La integracion es de Euler implicito con $\Delta t = 2$ s hasta 720 s, con
+elementos P1 de Lagrange y estabilizacion SUPG,
+
+\begin{equation}
+  \tau_{SUPG} = \frac{h}{2|\mathbf{u}| + h/\Delta t},
+\end{equation}
+
+con $h$ el diametro de celda: el termino estabilizante pondera el residual
+fuerte en la direccion del flujo y controla las oscilaciones del P1 puro en
+las zonas de alto Peclet. El balance de masa se monitorea paso a paso; la
+deriva es inferior al 1\% en la camara sellada.
 
 \subsection{Metricas de mezcla}
-Se define el indice de heterogeneidad $\eta(t) = \sigma_c(t)/\bar{c}_0$ y el
-tiempo de mezcla $\tau_{mix}$ como el primer instante con $\eta < 0.05$. En
-fase ventilada comparamos contra $\tau_{aire} = V_{aire}/Q_{eff}$, con
-$Q_{eff} = (|q_{in}| + q_{out})/2$ medido sobre las fronteras (el caudal
-efectivo resulta 15--18\% inferior al nominal por el efecto de banda del
-borde del puerto). El fraccionamiento de la camara se evalua comparando la
-masa de trazador remanente contra el decaimiento del reactor ideal
-$e^{-t/\tau_{aire}}$.
+
+Con la media espacial $\bar{c}(t) = \frac{1}{V}\int_\Omega c\,dx$ y la
+desviacion estandar $\sigma_c(t) = \left( \frac{1}{V}\int_\Omega
+(c - \bar{c})^2\,dx \right)^{1/2}$, el indice de heterogeneidad es
+
+\begin{equation}
+  \eta(t) = \sigma_c(t)/\bar{c}_0,
+\end{equation}
+
+normalizado con la concentracion media inicial $\bar{c}_0$ para que arranque
+cerca de $\eta(0) \approx 1$ independientemente del volumen. El tiempo de
+mezcla $\tau_{mix}$ es el primer instante con $\eta < 0.05$ (mezcla al
+95\%).
+
+En fase ventilada el referente es $\tau_{aire} = V_{aire}/Q_{eff}$. El
+caudal efectivo, medido por integrales de frontera, resulta 15--18\% inferior
+al nominal: la banda de elementos del borde del disco no lleva la velocidad
+impuesta (el campo P2 decae antes del contorno), lo que equivale a un area
+de puerto ligeramente menor. El fraccionamiento de la camara se evalua
+comparando la masa remanente $m(t)/m_0$ contra el decaimiento del reactor
+ideal $e^{-t/\tau_{aire}}$: la diferencia cuantifica el bypass, la fraccion
+de trazador atrapada en zonas muertas que el flujo no barre.
+
+\subsection{Verificacion numerica}
+
+Tres verificaciones respaldan los resultados. (i)~Balance de masa exacto en
+cada frontera: en C2 la entrada y la salida coinciden a 1.034 L/min, y en
+camara sellada la masa del trazador deriva menos del 1\% en 720 s.
+(ii)~Linealidad de Stokes verificada de forma exacta: al dividir la fuerza
+del ventilador por 100 la velocidad maxima cae exactamente un factor 100
+(1101.8 a 11.02 m/s), lo que permite extrapolar cualquier fuerza sin nuevas
+simulaciones. (iii)~Control negativo C3: una entrada tangente pura inyecta
+masa nula ($\int \mathbf{u}\cdot\mathbf{n}\,ds = 0$) y la bomba de salida
+solo succiona, de modo que $\eta$ cayo por artefacto sin mezcla real; este
+caso quedo descartado por el balance de masa, no por la plausibilidad del
+campo. La conclusion conjunta es que, bajo la hipotesis de cota
+conservadora del regimen de Stokes, los tiempos calculados son cotas
+superiores de la mezcla real.
 
 \subsection{Escenarios de puertos en fase ventilada}
-Se barrio la posicion de los puertos: C1v2 (entrada lateral baja, salida
-lateral alta), C2v2 (entrada en tapa, chorro vertical) y C4v2 (entrada
-inclinada 45$^\circ$). Una configuracion con entrada tangencial (C3) se
-descarto porque inyecta masa nula en Stokes (artefacto de succion). La
-Figura~\ref{fig:tau_mix} (izquierda) muestra que en ningun caso $\eta$ cruza
-el umbral: $\tau_{mix} > 720$ s en las tres configuraciones, con
-$\eta(720\,\mathrm{s}) = 0.246/0.114/0.110$ y masa remanente
-$36.5/17.2/18.5\%$ para C1v2/C2v2/C4v2 (Tabla~\ref{tab:cfd}), es decir
-$\tau_{mix}/\tau_{aire} > 4$: sin inercia, la geometria de puertos por si
-sola no sostiene el supuesto A1 en fase ventilada.
+
+Como palanca de diseno se barrio la posicion de los puertos en fase
+ventilada: C1v2 (entrada lateral baja, salida lateral alta), C2v2 (entrada
+en tapa con chorro vertical) y C4v2 (entrada inclinada 45$^\circ$ con
+componente tangencial); la configuracion C3 (entrada tangencial pura) quedo
+descartada por el artefacto de succion documentado en la verificacion
+numerica. La Figura~\ref{fig:tau_mix} (izquierda) muestra que en ningun
+caso $\eta$ cruza el umbral: $\tau_{mix} > 720$ s en las tres
+configuraciones, con $\eta(720\,\mathrm{s}) = 0.246/0.114/0.110$ y masa
+remanente $36.5/17.2/18.5\%$ para C1v2/C2v2/C4v2 (Tabla~\ref{tab:cfd}),
+es decir $\tau_{mix}/\tau_{aire} > 4$. La interpretacion es estructural:
+sin inercia, el flujo va por hilos directos de la entrada a la salida y el
+intercambio con las zonas muertas es difusion lenta; la geometria de
+puertos, por si sola, no sostiene el supuesto A1 en fase ventilada. La
+palanca real pasa a ser el regimen transicional del jet (fuera del alcance
+del modelo) o la mezcla forzada interna.
 
 \begin{table}[htbp]
   \centering
@@ -374,20 +494,21 @@ sola no sostiene el supuesto A1 en fase ventilada.
 \end{table}
 
 \subsection{Mezcla forzada con ventilador en tapa (C5)}
-Se modelo un ventilador axial pequeno (40 mm) en la tapa, directamente sobre
-las larvas, como una fuente de momentum (fuerza corporal $-\mathbf{z}$)
-dentro de una esfera de radio 2 cm bajo la tapa; este modelo inyecta el
-momento del ventilador sin mallar las aspas. El escenario de interes es la
-camara sellada ($Q = 0$ en ambos puertos), que reproduce exactamente la fase
-de cierre del protocolo. La Figura~\ref{fig:tau_mix} (derecha) muestra el
-decaimiento de $\eta$: $\tau_{mix} = 4$ s con $F_0 = 400$ N/m$^3$ y
-$\tau_{mix} = 24$ s con $F_0 = 4$ N/m$^3$ (velocidad maxima 1101.8 y
-11.02 m/s respectivamente). El escalamiento lineal de Stokes se verifico de
-forma exacta (100$\times$ menos fuerza = 100$\times$ menos velocidad), y la
-mezcla satura: para cualquier fuerza significativa la camara se homogeniza
-en menos de 60 s, con deriva de masa inferior al 1\% en sellado perfecto.
-Como el regimen real del ventilador es transicional-turbulento, estos tiempos
-son una cota conservadora de la mezcla real.
+
+Se modelo un ventilador axial pequeno (40 mm) en la tapa, centrado sobre las
+larvas, como la fuente de momentum $-\chi F_0\,\hat{\mathbf{z}}$ del modelo
+de flujo: la representacion inyecta el momentum del ventilador sin mallar
+las aspas. El escenario de interes es la camara sellada ($Q = 0$ en ambos
+puertos), que reproduce exactamente la fase de cierre del protocolo. La
+Figura~\ref{fig:tau_mix} (derecha) muestra el decaimiento de $\eta$:
+$\tau_{mix} = 4$ s con $F_0 = 400$ N/m$^3$ y $\tau_{mix} = 24$ s con
+$F_0 = 4$ N/m$^3$. La mezcla satura: para cualquier fuerza significativa la
+camara se homogeniza en menos de 60 s, uno o dos ordenes de magnitud por
+debajo de los cierres de 10--30 min del protocolo. Con la linealidad exacta
+verificada en la verificacion numerica, estos tiempos se extrapolan a
+cualquier fuerza sin nuevas simulaciones; y como el regimen real del
+ventilador es transicional-turbulento, son cotas conservadoras de la mezcla
+real.
 
 \begin{figure}[htbp]
   \centering
@@ -409,6 +530,24 @@ son una cota conservadora de la mezcla real.
 \end{figure}
 
 \section{Resultados y discusion}
+
+En la dinamica del ciclo, el calendario adaptativo de dos pasadas cumple el
+tope del NDIR en los dos escenarios extremos: picos de CO$_2$ de 4978 ppm
+(E2) y 4604 ppm (E5), con cierres que se acortan desde 30 min al inicio del
+ciclo hasta 2.5--7 min en el pico de emision y vuelven a alargarse en la
+fase de ayuno. La ventilacion de 4 L/min entre cierres mantiene la base
+entre 500 y 1600 ppm, condicion necesaria: con 1 L/min la base supera los
+4300 ppm en el pico y ningun cierre es viable. Las emisiones acumuladas del
+ciclo son 0.59 mol de CO$_2$ (E2, $N_0 = 400$) y 1.04 mol (E5, $N_0 = 700$).
+
+El switch de prepupa (S5) tiene un efecto cuantitativo decisivo: sin el, el
+modelo acumula lipidos de forma ficticia hasta 209 mg/larva y las emisiones
+de E2 alcanzan 1.37 mol; con el switch, la biomasa lipidica final es de
+54 mg/larva y las emisiones caen a 0.59 mol. El efecto es directamente
+relevante para el inventario de GEI del sistema, pues fija la fraccion de
+carbono que se emite como CO$_2$ frente a la que se retiene en biomasa de
+prepupas.
+
 La combinacion de resultados fija las condiciones de validez del protocolo de
 medicion. En fase ventilada, el gemelo digital 0D proporciona tasas
 instantaneas de emision, pero el CFD muestra que el supuesto A1 no se
@@ -419,17 +558,25 @@ trazador permanece en la camara a 720 s). Por ello las tasas de fase
 ventilada deben tratarse como estimaciones acotadas, no como mediciones de
 precision. En fase cerrada, en cambio, el ventilador en tapa garantiza la
 homogeneidad en menos de 60 s frente a cierres de 10--30 min: el supuesto A1
-queda validado con un margen de 10--30$\times$, y la pendiente de acumulacion
-durante el cierre es una medicion de tasa directa y defendible. El diseno
-final que emerge es: (i) ventilador fijo (no controlado en velocidad; la
-mezcla saturada hace innecesario el control) de material de baja emision en
-la tapa centrado sobre las larvas; (ii) medicion del caudal efectivo de los
-puertos y de la presion interna de la camara (deteccion de fugas y
-correccion); (iii) cierres estaticos para CH$_4$ y validacion cruzada con la
-fase ventilada; y (iv) correccion del volumen muerto del gemelo digital a
-partir de la fraccion de mezcla observada. La linealidad de Stokes, verificada
-en C5, da ademas una ley de diseno sin nuevas simulaciones: $\tau_{mix}$
-escala inversamente con el momentum inyectado.
+queda validado con un margen de 10--30$\times$, y la pendiente de
+acumulacion durante el cierre es una medicion de tasa directa y defendible.
+El diseno final que emerge es: (i) ventilador fijo (no controlado en
+velocidad; la mezcla saturada hace innecesario el control) de material de
+baja emision en la tapa centrado sobre las larvas; (ii) medicion del caudal
+efectivo de los puertos y de la presion interna de la camara (deteccion de
+fugas y correccion); (iii) cierres estaticos para CH$_4$ y validacion cruzada
+con la fase ventilada; y (iv) correccion del volumen muerto del gemelo
+digital a partir de la fraccion de mezcla observada. La linealidad de Stokes,
+verificada en C5, da ademas una ley de diseno sin nuevas simulaciones:
+$\tau_{mix}$ escala inversamente con el momentum inyectado.
+
+La validacion preliminar de la Seccion~\ref{sec:validacion} situa el modelo
+en el orden de magnitud correcto y reproduce la caida de emisiones hacia el
+ayuno de prepupa, aunque sobreestima el pico del ciclo medio; las causas
+estan identificadas y delimitan el trabajo pendiente antes de los
+experimentos finales: verificacion de los parametros DEB con biomasa medida,
+recalibracion del modulo microbiano frente a las curvas de control,
+calibracion de $V_{aire}$ por trazador y calibracion cuantitativa de CH$_4$.
 
 \section{Conclusiones}
 \begin{enumerate}
