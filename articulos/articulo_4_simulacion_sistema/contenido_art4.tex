@@ -174,17 +174,39 @@ constan en \texttt{simulacion/bioconversion\_ode.py} y los supuestos S1--S11 en
 laboratorio se presenta en la Sec.~\ref{sec:validacion}.
 
 \subsection{Entradas conmutadas y cierres}
-Las entradas de aire toman una forma unificada para las fases ventilada y
-cerrada: con la ventilacion activa, los gases se renuevan a caudal $Q(t)$
-modulado por un controlador PI que mantiene el O$_2$ en banda operativa;
-durante un cierre, $Q = 0$ y la concentracion evoluciona por acumulacion pura,
-$\mathrm{d}c/\mathrm{d}t = r_{emis}/V_{aire}$, de donde se estima la tasa
-$r_{emis}$ por ajuste de pendiente. La duracion del cierre $\Delta$ esta
-acotada inferiormente por la resolucion del sensor y superiormente por la
-linealidad de la pendiente y la acumulacion de CH$_4$. El calendario es
-adaptativo: el $\Delta$ del dia siguiente se ajusta segun la pendiente
-observada en el cierre anterior, lo que mantiene la resolucion sin saturar
-los sensores.
+
+El protocolo de medicion alterna fases ventiladas y cierres. Con la
+ventilacion activa, el caudal $Q(t)$ lo fija un controlador PI que mantiene
+el O$_2$ en banda operativa, con $Q = 4$ L/min entre cierres (supuesto S11);
+durante un cierre, $Q = 0$ y la concentracion evoluciona por acumulacion
+pura, $\mathrm{d}c_i/\mathrm{d}t = \sigma_i R_i/V_{aire}$, de donde se estima
+la tasa por ajuste de pendiente.
+
+El calendario de cierres es adaptativo y de dos pasadas. La primera integra
+el ciclo con cierres nominales de $\Delta = 15$ min y registra la
+concentracion al inicio de cada cierre, $c(t_{c,k})$. La segunda fija la
+duracion de cada cierre para que la acumulacion proyectada no supere el tope
+del NDIR, $c_{max} = 5000$ ppm (supuesto S9), con la tasa evaluada en el
+punto medio del cierre, $t_{m,k} = t_{c,k} + \Delta_k/2$:
+
+\begin{equation}
+  \Delta_k = \mathrm{clip}\left(
+    \frac{c_{max} - c(t_{c,k})}{\dot{c}(t_{m,k})},\
+    120\ \mathrm{s},\ 1800\ \mathrm{s} \right)
+\end{equation}
+
+El piso de 120 s protege la resolucion temporal del cierre y el techo de
+1800 s preserva la linealidad de la pendiente; la evaluacion en el punto
+medio corrige la sobreestimacion propia de los cierres largos, cuando la
+tasa cae a lo largo del dia.
+
+Un resultado de diseno relevante es que el factor limitante no es $\Delta$
+sino la ventilacion entre cierres. La concentracion de base entre cierres es
+$c_{in} + R/Q$; con $Q = 1$ L/min alcanza unos 4300 ppm en el pico del
+ciclo y la camara satura aun con la tapa abierta, de modo que ningun
+$\Delta$ admisible evita el tope. Con $Q = 4$ L/min la base se mantiene
+entre 500 y 1600 ppm y ningun cierre supera los 5000 ppm en los escenarios
+simulados (E2: pico 4978 ppm; E5: pico 4604 ppm).
 
 \section{Simulacion del sistema dinamico}
 \subsection{Implementacion}
@@ -216,7 +238,7 @@ La duracion del cierre se adapta dia a dia a la tasa del cierre anterior: con
 tasas altas (inicio de la cria) los cierres se acortan para no saturar el
 rango de los sensores, y con tasas bajas se alargan para conservar resolucion.
 Se evaluo ademas la sensibilidad al volumen de aire efectivo $V_{aire}$:
-una incertidumbre de $\pm 20\,\%$ en $V_{aire}$ se traduce directamente en
+una incertidumbre de $\pm 20\%$ en $V_{aire}$ se traduce directamente en
 igual incertidumbre en las tasas estimadas, lo que justifica su calibracion
 experimental por dilucion de un trazador.
 
@@ -267,7 +289,7 @@ descarto porque inyecta masa nula en Stokes (artefacto de succion). La
 Figura~\ref{fig:tau_mix} (izquierda) muestra que en ningun caso $\eta$ cruza
 el umbral: $\tau_{mix} > 720$ s en las tres configuraciones, con
 $\eta(720\,\mathrm{s}) = 0.246/0.114/0.110$ y masa remanente
-$36.5/17.2/18.5\,\%$ para C1v2/C2v2/C4v2 (Tabla~\ref{tab:cfd}), es decir
+$36.5/17.2/18.5\%$ para C1v2/C2v2/C4v2 (Tabla~\ref{tab:cfd}), es decir
 $\tau_{mix}/\tau_{aire} > 4$: sin inercia, la geometria de puertos por si
 sola no sostiene el supuesto A1 en fase ventilada.
 
