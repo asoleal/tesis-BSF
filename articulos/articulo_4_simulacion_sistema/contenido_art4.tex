@@ -22,33 +22,71 @@ digital, CO$_2$, CH$_4$, dolfinx.
 \end{abstract}
 
 \section{Introduccion}
-La bioconversion de residuos organicos con larvas de \emph{Hermetia illucens}
-(mosca soldado negra) es una alternativa emergente al compostaje y al
-relleno sanitario, con produccion simultanea de proteina y abono
-\parencite{goldBiowasteTreatmentBlack2020,surendraBioconversionOrganicWastes2016}.
-La intensificacion del proceso exige cuantificar sus emisiones de gases de
-efecto invernadero (GEI): CO$_2$ de origen biogenico y, en condiciones
-anoxicas parciales, CH$_4$ \parencite{boakye-yiadomGreenhouseGasEmissions2022,
-ermolaevGreenhouseGasEmissions2019,parodiBioconversionEfficienciesGreenhouse2020a}.
-En sistemas de cria intensiva instrumentados, la medicion se realiza con
-sensores de bajo costo \parencite{dubeyLowCostCO2NDIR2024,
-kiplimoAddressingLowCostMethane2024,mitchellCalibrationLowCostMethane2024}
-dentro de una camara de cria donde la ventilacion conmuta entre fase abierta
-(renovacion de aire controlada) y cierres estaticos para estimar tasas de
-emision a partir de la acumulacion de concentracion
-\parencite{bertinMeasuringMethaneEmissions2026}.
+La bioconversion de residuos organicos con larvas de la mosca soldado negra
+(\emph{Hermetia illucens}, BSF) transforma substratos de bajo valor en biomasa
+rica en proteina y lipidos ---utilizable como ingrediente acuicola y
+avícola--- y en un residuo carbonizado (frass) con valor fertilizante
+\parencite{goldBiowasteTreatmentBlack2020,surendraBioconversionOrganicWastes2016,
+tomberlinBugBookBlackSoldier2025}. Frente al compostaje traditional, el proceso
+reduce el volumen del residuo en dias y opera a escala de contenedor, lo que lo
+hace apto para sistemas intensivos instrumentados.
 
-El supuesto que hace validas estas mediciones es que el aire interno esta
-bien mezclado (supuesto A1): si la concentracion es espacialmente uniforme,
-la tasa de emision se obtiene de la pendiente de concentracion sin necesidad
-de conocer el campo de flujo completo. Este articulo valida por simulacion el
-diseno de la camara antes de la campana experimental, con dos herramientas
-complementarias: (i) un gemelo digital de dimension cero (0D) que integra
-la dinamica larval, el lecho de sustrato y el aire interno, con el calendario
-de cierres del protocolo; y (ii) un modelo CFD estacionario del aire de la
-camara que verifica el supuesto A1 y cuantifica las metricas de mezcla
-($\tau_{mix}$, $\tau_{aire}$) para distintas configuraciones de puertos y
-para mezcla forzada con un ventilador interno.
+La intensificacion del proceso hace necesario cuantificar sus emisiones de
+gases de efecto invernadero (GEI): CO$_2$ de origen biogenico, producto de la
+respiracion larvaria y microbiana, y CH$_4$, que aparece cuando zonas del lecho
+se vuelven anoxicas \parencite{boakye-yiadomGreenhouseGasEmissions2022,
+ermolaevGreenhouseGasEmissions2019,parodiBioconversionEfficienciesGreenhouse2020a,
+filonchykGreenhouseGasesEmissions2024a}. La importancia del reporte de estas
+emisiones esta dada por los compromisos de inventario nacional de GEI
+\parencite{intergovernmentalpanelonclimatechangeipccClimateChange20212023}.
+En este trabajo la medicion se realiza dentro de la propia camara de cria,
+acondicionada como camara de emision: la ventilacion conmuta entre una fase
+abierta, con renovacion de aire a caudal controlado, y cierres estaticos en
+los que la concentracion acumula la tasa de emision
+\parencite{bertinMeasuringMethaneEmissions2026}. La instrumentacion emplea
+sensores de bajo costo de CO$_2$, CH$_4$ y O$_2$
+\parencite{dubeyLowCostCO2NDIR2024,kiplimoAddressingLowCostMethane2024,
+mitchellCalibrationLowCostMethane2024}. La validez del metodo descansa en un
+supuesto de mezcla: que el aire interno sea espacialmente homogeneo (supuesto
+A1), de modo que la pendiente de acumulacion durante un cierre reporte la tasa
+real de emision.
+
+El modelado de la bioconversion con BSF cuenta con antecedentes solidos en la
+dinamica energetica de los organismos (DEB): \textcite{eriksenDynamicModellingFeed2022}
+propuso un modelo dinamico calibrado que predice crecimiento, acumulacion de
+lipidos y emision de CO$_2$ larvario, refinado despues con datos metabolicos
+adicionales \parencite{eriksenMetabolicPerformanceFeed2024}; otros trabajos han
+extendido el modelado matematico y computacional del sistema larva--sustrato
+\parencite{katchaliMathematicalComputationalModeling2025,
+grausaMetabolicModelingHermetia2023}. En paralelo, los gemelos digitales
+ganan terreno como herramienta de supervision y prediccion en sistemas
+biologicos intensivos \parencite{luReviewIntelligentGreenhouse2025a}. Sin
+embargo, la literatura no reporta, hasta donde alcanza nuestro conocimiento,
+una verificacion del supuesto de mezcla homogenea en camaras de cria
+instrumentadas, ni un diseno de mezcla forzada orientado a la medicion de
+emisiones en este tipo de sistema.
+
+Este articulo valida por simulacion el diseno de la camara antes de la campana
+experimental, combinando un gemelo digital de dimension cero (0D) con un modelo
+de dinamica de fluidos computacional (CFD) del aire interno. Las
+contribuciones son: (i) un gemelo digital de 12 estados (larva, lecho y aire)
+que integra la cinetica DEB con los balances de gases, el control PI de
+ventilacion y un calendario de cierres adaptativos; (ii) la verificacion
+cuantitativa del supuesto A1 mediante CFD (FEniCSx/dolfinx), con metricas de
+mezcla en fase ventilada y en cierre; y (iii) el diseno de una configuracion
+con ventilador interno que garantiza la homogeneidad durante los cierres, con
+una ley de escalamiento verificada que permite su dimensionamiento sin
+simulaciones adicionales. La Figura~\ref{fig:esquema} muestra el sistema.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\textwidth]{imagenes/esquema_sistema.pdf}
+  \caption{Camara de cria instrumentada como camara de emision: lecho de
+  cria, ventilador en tapa, puertos de entrada y salida con caudal
+  controlado, sensores de CO$_2$, CH$_4$, O$_2$, temperatura/humedad y
+  presion, y el gemelo digital que procesa las mediciones.}
+  \label{fig:esquema}
+\end{figure}
 
 \section{Modelo del sistema}
 \subsection{Dinamica 0D: doce estados}
