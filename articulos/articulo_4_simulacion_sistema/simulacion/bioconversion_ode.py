@@ -47,7 +47,7 @@ def caudal(t, ventanas):
     for a, b in ventanas:
         if a <= t < b:
             return 0.0
-    return 1.6667e-5          # 1 L/min en m3/s
+    return 6.6667e-5          # 4 L/min en m3/s (ambas bombas)
 
 def calendario_adaptativo(tf_d, sol, cmax=5000.0):
     """Delta_k: tiempo hasta acercarse a la saturacion del NDIR (0-5000 ppm),

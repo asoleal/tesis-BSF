@@ -25,3 +25,4 @@ simulacion/bioconversion_ode.py; el experimento final solo cambia valores.
 - S9  CO2: NDIR con tope 6000 ppm (el plateau del CSV es del instrumento, no del proceso).
 - S10 CH4: TGS2611 no cuantitativo -> indicador solamente; NO entra al ajuste ni al PINN
       hasta calibrar (Mitchell 2024; Kiplimo 2024).
+- S11 Ventilacion entre cierres: 4 L/min (ambas bombas de 2 L/min). Con 1 L/min la base estacionaria (c_in + R/Q) supera 4000 ppm en el pico del ciclo y ningun cierre puede mantenerse bajo 5000 ppm aun con Δ en el piso; verificado con el gemelo (E5: pico 4889 ppm en sandbox; 4604 en local).
