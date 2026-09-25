@@ -51,7 +51,7 @@ def caudal(t, ventanas):
 
 def calendario_adaptativo(tf_d, sol, cmax=5000.0):
     """Delta_k: tiempo hasta acercarse a la saturacion del NDIR (0-5000 ppm),
-    acotado a la ventana operativa de 10 a 30 min (dos pasadas)."""
+    acotado a la ventana operativa de 2 a 30 min (2.5 L); 10-30 min a escala panera (dos pasadas)."""
     vent, deltas = [], []
     t = 0.25*DIA
     while t < tf_d*DIA:
@@ -63,7 +63,13 @@ def calendario_adaptativo(tf_d, sol, cmax=5000.0):
         TK = Y[7] + 273.15
         ppm_s = Rmol/FIS['Vair']/DIA * FIS['R']*TK/FIS['P'] * 1e6
         margen = max(cmax - c2ppm(Y[9], TK), 50.0)        # ppm
-        dk = min(max(margen/max(ppm_s, 1e-9), 600.0), 1800.0)
+        dk = min(max(margen/max(ppm_s, 1e-9), 120.0), 1800.0)
+        tm = t + dk/2.0
+        Ym = sol.sol(tm)
+        rm = tasas_larva(Ym[1], tm/DIA)
+        rmm = tasas_mic(Ym[4], Ym[5]/max(Ym[4] + Ym[5], 1e-9), Ym[6], Ym[3], rm[0])
+        ppm_sm = (Ym[3]*rm[3] + rmm[0]*1000.0)/44000.0/FIS['Vair']/DIA*FIS['R']*(Ym[7] + 273.15)/FIS['P']*1e6
+        dk = min(max(margen/max(ppm_sm, 1e-9), 120.0), 1800.0)
         vent.append((t, t + dk)); deltas.append(dk)
         t += (24.0 if 3.0 <= t/DIA <= 10.0 else 48.0)*3600.0
     return vent, deltas
