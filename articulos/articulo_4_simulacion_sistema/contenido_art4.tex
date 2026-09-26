@@ -430,7 +430,7 @@ del ciclo son 0.59 mol de CO$_2$ (E2) y 1.04 mol (E5).
   \label{fig:escenarios}
 \end{figure}
 
-\subsection{Escenarios de puertos en fase ventilada}
+\subsection{Escenarios de puertos en fase ventilada (P2)}
 
 Como palanca de diseno se barrio la posicion de los puertos en fase
 ventilada: C1v2 (entrada lateral baja, salida lateral alta), C2v2 (entrada
@@ -440,7 +440,7 @@ descartada por el artefacto de succion documentado en la verificacion
 numerica. La Figura~\ref{fig:tau_mix} (izquierda) muestra que en ningun
 caso $\eta$ cruza el umbral: $\tau_{mix} > 720$ s en las tres
 configuraciones, con $\eta(720\,\mathrm{s}) = 0.246/0.114/0.110$ y masa
-remanente $36.5/17.2/18.5\%$ para C1v2/C2v2/C4v2 (Tabla~\ref{tab:cfd}),
+remanente $36.5/17.2/18.5\%$ para C1v2/C2v2/C4v2 (Cuadro~\ref{tab:cfd}),
 es decir $\tau_{mix}/\tau_{aire} > 4$. La interpretacion es estructural:
 sin inercia, el flujo va por hilos directos de la entrada a la salida y el
 intercambio con las zonas muertas es difusion lenta; la geometria de
@@ -467,7 +467,7 @@ del modelo) o la mezcla forzada interna.
   \end{tabular}
 \end{table}
 
-\subsection{Mezcla forzada con ventilador en tapa (C5)}
+\subsection{Mezcla forzada con ventilador en tapa (C5, P2)}
 
 Se modelo un ventilador axial pequeno (40 mm) en la tapa, centrado sobre las
 larvas, como la fuente de momentum $-\chi F_0\,\hat{\mathbf{z}}$ del modelo
@@ -507,20 +507,12 @@ real.
 \subsection{Integracion con cria real (P3)}
 \label{sec:validacion}
 
-Como primera validacion se uso el experimento de septiembre de 2025: una
-panera de plastico sellada (base $30 \times 19$ cm, tapa $36 \times 25$ cm,
-altura 17 cm; volumen de tronco de cono $V \approx 12.4$ L, supuesto S1) con
-$N = 700$ larvas de \emph{Hermetia illucens} desde huevo, ciclo completo
-hasta prepupa (18 d), a temperatura ambiente cercana a 27~$^{\circ}$C (S4).
-Se probaron dos alimentos (D1 y D4) a libre disposicion, con 250 g
-renovados en cada medicion (S3). El CO$_2$ se midio por NDIR en cierres de
-acumulacion; las tasas netas se calculan restando el control del mismo dia
-(bandeja con alimento sin larvas, supuesto S7), y el CH$_4$ se uso solo como
-indicador (S10). Las tasas extraidas, con su R$^2$ de ajuste, estan en
+Como primera validacion se uso el experimento de septiembre de 2025 descrito en la Seccion 2.1 (panera sellada de 12.4 L, $N = 700$
+larvas, dietas D1/D4, cierres de acumulacion con bandeja control del mismo dia, supuesto S7). Las tasas extraidas, con su R$^2$ de ajuste, estan en
 \texttt{datos/experimentos/datos\_finales\_PINN\_corregidos.csv}.
 
 La Figura~\ref{fig:validacion} contrasta el modelo con las tasas
-observadas. El panel (a) muestra la tasa neta de CO$_2$ del modelo (linea)
+observadas; el Cuadro~\ref{tab:validacion} las resume por dia del ciclo. El panel (a) muestra la tasa neta de CO$_2$ del modelo (linea)
 frente a los valores observados por dia y alimento (D1 circulos, D4
 triangulos, ayuno estrella); el panel (b) muestra la biomasa estructural
 $B(t)$ y el switch de prepupa $S_{pr}(t)$, con las lineas punteadas de
@@ -605,7 +597,7 @@ experimental final, que ademas pesara biomasa cada dos dias. Con esa
 campana, el sistema validado aqui pasa de demostracion a produccion de
 factores de emision por dieta.
 
-\subsection{Trabajo en curso: correccion con redes informadas por la fisica}
+\subsection{Trabajo en curso: correccion con PINN}
 \label{sec:pinn}
 
 Como trabajo en curso se especifica una capa de correccion basada en una
@@ -653,19 +645,17 @@ corrige la tasa total; (iii) el flujo completo esta versionado en
   pasadas que respeta el tope del NDIR (picos de 4978 y 4604 ppm en E2 y
   E5).
   \item En fase ventilada, ninguna configuracion de puertos homogeneiza la
-  camara en regimen laminar: $\tau_{mix} > 720$ s y $\eta(720\,\mathrm{s})
-  \geq 0.11$ frente a $\tau_{aire} \approx 175$ s. El supuesto A1 no es
-  sostenible en fase abierta sin mezcla forzada.
+  camara en regimen laminar ($\tau_{mix} > 720$ s frente a $\tau_{aire} \approx 175$ s): el
+  supuesto A1 no es sostenible en fase abierta sin mezcla forzada. Y al ser cotas
+  conservadoras (laminar, isotermo, difusividad molecular), los resultados
+  subestiman la mezcla real; la discrepancia se cerrara con la calibracion
+  experimental con dos sensores a distinta altura y con la correccion de volumen
+  muerto del gemelo digital.
   \item Un ventilador pequeno en la tapa homogeneiza la camara sellada en
   menos de 60 s ($\tau_{mix} = 4$--$24$ s para un rango de 100$\times$ en la
-  fuerza inyectada), validando el supuesto A1 para los cierres de medicion
-  con margen de 10--30$\times$.
-  \item El escalamiento lineal de Stokes se verifico de forma exacta, lo que
-  permite dimensionar el ventilador sin corridas adicionales.
-  \item Al ser cotas conservadoras (laminar, isotermo, difusividad
-  molecular), los resultados subestiman la mezcla real; la discrepancia se
-  cerrara con la calibracion experimental con dos sensores a distinta altura
-  y con la correccion de volumen muerto del gemelo digital.
+  fuerza inyectada), validando el supuesto A1 para los cierres de medicion con
+  margen de 10--30$\times$; y el escalamiento lineal de Stokes, verificado de
+  forma exacta, permite dimensionar el ventilador sin corridas adicionales.
   \item El switch de prepupa, motivado por la medicion de ayuno del dia 17
   (14.3 ppm/min), elimina la acumulacion ficticia de lipidos (209 a
   54 mg/larva) y reduce las emisiones acumuladas de CO$_2$ de 1.37 a
