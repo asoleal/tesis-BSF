@@ -26,3 +26,9 @@ simulacion/bioconversion_ode.py; el experimento final solo cambia valores.
 - S10 CH4: TGS2611 no cuantitativo -> indicador solamente; NO entra al ajuste ni al PINN
       hasta calibrar (Mitchell 2024; Kiplimo 2024).
 - S11 Ventilacion entre cierres: 4 L/min (ambas bombas de 2 L/min). Con 1 L/min la base estacionaria (c_in + R/Q) supera 4000 ppm en el pico del ciclo y ningun cierre puede mantenerse bajo 5000 ppm aun con Δ en el piso; verificado con el gemelo (E5: pico 4889 ppm en sandbox; 4604 en local).
+
+- S12 Dietas: D1 = alimento comercial pollo de engorde (~20% PC en MS),
+  referencia en eriksenDynamicModellingFeed2022/2024; D4 = mezcla de
+  cascaras de naranja y platano, pulpas y frutas de descarte fermentada
+  con Bacillus. Proporciones D4 40/30/30 peso humedo = SUPUESTAS, ajus-
+  tar al registro real de la campana sep 2025 antes de envio.
