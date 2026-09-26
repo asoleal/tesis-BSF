@@ -16,12 +16,14 @@ dentro del rango en los escenarios extremos (picos de 4978 y 4604 ppm
 frente al tope de 5000); (ii) la verificacion por dinamica de fluidos
 computacional del supuesto de mezcla homogenea, que no se sostiene en fase
 ventilada ($\tau_{mix} > 720$ s frente a $\tau_{aire} \approx 175$ s) y se
-recupera con un ventilador pequeno en la tapa de la camara sellada
-($\tau_{mix} = 4$--$24$ s, margen de 10--30$\times$ sobre los cierres); y
+recupera en el diseno de una camara instrumentada con un ventilador
+pequeno en la tapa ($\tau_{mix} = 4$--$24$ s, margen de 10--30$\times$
+sobre los cierres); y
 (iii) un gemelo digital de dimension cero alimentado con las tasas medidas,
 que reproduce el orden de magnitud del ciclo observado en un experimento
-preliminar de cria (panera de 12.4 L, 700 larvas). El sistema queda listo
-para la campana de factores de emision.
+preliminar de cria (panera de 12.4 L, 700 larvas). El resultado es un
+instrumento de medicion de tasas de emision con condiciones de validez
+explicitas para la cria intensiva de BSF en contenedor.
 
 \textbf{Palabras clave:} bioconversion, \emph{Hermetia illucens}, gases de
 efecto invernadero, camara de emision, gemelo digital, dinamica de fluidos
@@ -104,7 +106,8 @@ de cria real. La Seccion 2 describe el sistema experimental y los modelos;
 la Seccion 3 presenta los resultados por pregunta; la Seccion 4 discute las
 limitaciones y el trabajo futuro, incluida una capa de correccion con redes
 neuronales informadas por la fisica (PINN) en entrenamiento piloto. La
-Figura~\ref{fig:esquema} muestra el sistema.
+Figura~\ref{fig:esquema} muestra la camara instrumentada cuyo
+diseno se verifica en la Seccion 2.4.
 
 \begin{figure}[htbp]
   \centering
@@ -141,9 +144,10 @@ En ambos casos el alimento se suministro a libre
 disposicion en raciones de 250 g, renovadas en cada jornada de medicion
 (S3).
 
-Las emisiones se midieron con un sensor NDIR de CO$_2$ (rango operativo
-acotado a 5000 ppm, supuesto S9) y un sensor TGS2611 de CH$_4$ cuya
-senal se uso solo como indicador de anoxia (S10). El protocolo consistio
+Las emisiones se midieron con un sensor NDIR MH-410 de CO$_2$ (rango
+operativo 0--5000 ppm, supuesto S9) y un sensor NDIR MH-440D de
+CH$_4$, cuya senal se uso como indicador de anoxia por no haberse
+calibrado contra una referencia (S10). El protocolo consistio
 en cierres de acumulacion en los dias 9, 11, 13 y 17 del ciclo: con la
 panera sellada, la concentracion de CO$_2$ crece de forma casi lineal
 y la tasa de produccion se estima por ajuste de la pendiente, aceptando
@@ -154,7 +158,7 @@ mismo dia (supuesto S7). Las tasas extraidas, con su $R^2$, se
 consolidan en
 \texttt{datos/experimentos/datos\_finales\_PINN\_corregidos.csv}.
 La biomasa larval no se peso en esta campana, lo que se declara como
-limitacion y se corrige en los experimentos finales.
+limitacion.
 
 \subsection{Dinamica 0D: doce estados}
 \label{sec:dinamica0d}
@@ -265,8 +269,11 @@ tasa cae a lo largo del dia.
 El modelo 0D descrito en la Seccion~\ref{sec:dinamica0d} asume que el aire
 de la camara esta perfectamente mezclado en todo instante (supuesto A1):
 existe una unica concentracion de cada gas y la lectura del sensor la
-representa. El objetivo de esta seccion es verificar ese supuesto para el
-diseno de la camara y del protocolo. Para ello se resuelve el flujo y el
+representa. El objetivo de esta seccion es verificar ese supuesto para la
+camara instrumentada representativa a escala de contenedor de la
+Figura~\ref{fig:esquema}; el experimento preliminar de la
+Seccion 2.1 (panera sellada, sin ventilador) se examina aparte
+en la Seccion 4. Para ello se resuelve el flujo y el
 transporte de un trazador pasivo de CO$_2$ que no modela la biologia del
 proceso: el CFD aporta el campo de mezcla con el que el gemelo digital
 interpreta, o corrige, las lecturas del sensor.
@@ -294,10 +301,11 @@ superiores de los tiempos reales.
 
 \subsubsection{Geometria y malla}
 
-La camara es un contenedor de $26 \times 19 \times 18$ cm
-($\approx 8.9$ L geometricos) empleado para conservar la temperatura del
-lote; el volumen de aire efectivo sobre el lecho de cria es
-$V_{aire} = 2.5$ L. Los puertos de entrada y salida son discos conformales
+La camara de estudio es una caja de $26 \times 19 \times 18$ cm
+($\approx 8.9$ L geometricos), geometria representativa de una
+camara instrumentada a escala de contenedor
+(Figura~\ref{fig:esquema}); el volumen de aire efectivo sobre el
+lecho de cria es $V_{aire} = 2.5$ L. Los puertos de entrada y salida son discos conformales
 de radio 3 mm que sobresalen 1 mm de la cara para garantizar su
 reconocimiento en el mallado; a ese radio, el caudal nominal de 1 L/min
 exige una velocidad de puerto $U_{in} = 0.589$ m/s ($\mathrm{Re} \approx 220$,
@@ -478,7 +486,8 @@ Se modelo un ventilador axial pequeno (40 mm) en la tapa, centrado sobre las
 larvas, como la fuente de momentum $-\chi F_0\,\hat{\mathbf{z}}$ del modelo
 de flujo: la representacion inyecta el momentum del ventilador sin mallar
 las aspas. El escenario de interes es la camara sellada ($Q = 0$ en ambos
-puertos), que reproduce exactamente la fase de cierre del protocolo. La
+puertos), que reproduce exactamente la fase de cierre del protocolo; los
+tiempos que se reportan son propiedades de este diseno. La
 Figura~\ref{fig:tau_mix} (derecha) muestra el decaimiento de $\eta$:
 $\tau_{mix} = 4$ s con $F_0 = 400$ N/m$^3$ y $\tau_{mix} = 24$ s con
 $F_0 = 4$ N/m$^3$. La mezcla satura: para cualquier fuerza significativa la
@@ -513,7 +522,10 @@ real.
 \label{sec:validacion}
 
 Como primera validacion se uso el experimento de septiembre de 2025 descrito en la Seccion 2.1 (panera sellada de 12.4 L, $N = 700$
-larvas, dietas D1/D4, cierres de acumulacion con bandeja control del mismo dia, supuesto S7). Las tasas extraidas, con su R$^2$ de ajuste, estan en
+larvas, dietas D1/D4, cierres de acumulacion con bandeja control del mismo dia, supuesto S7).
+Los cierres fueron estaticos, sin ventilador: el supuesto A1 se apoyo
+en la conveccion natural del lecho caliente y en la linealidad de la
+acumulacion (Seccion 4). Las tasas extraidas, con su R$^2$ de ajuste, estan en
 \texttt{datos/experimentos/datos\_finales\_PINN\_corregidos.csv}.
 
 La Figura~\ref{fig:validacion} contrasta el modelo con las tasas
@@ -557,7 +569,7 @@ prepupa (15 ppm/min frente a 0--14 observados en el dia 17), pero
 sobreestima el pico del ciclo medio (289 frente a 124--165 en el dia 11).
 La causa principal es que los parametros DEB (supuesto S6) no han podido
 verificarse sin biomasa larval medida; en consecuencia, la amplitud del pico
-queda sujeta a la calibracion con los experimentos finales. La medicion de
+queda sujeta a calibracion experimental con biomasa pesada. La medicion de
 ayuno del dia 17 (14.3 ppm/min) fue precisamente la evidencia que motivo el
 switch de prepupa (S5). Otras limitaciones abiertas: el modulo microbiano
 sin recalibrar frente a las curvas de control (S8), $V_{aire}$ sujeto a
@@ -581,26 +593,37 @@ caudal efectivo de los puertos y de la presion interna de la camara
 correccion del volumen muerto del gemelo digital a partir de la fraccion
 de mezcla observada.
 
+El experimento preliminar, en cambio, se realizo en una panera sellada
+y estatica, sin ventilador: alli la mezcla descansa en la conveccion
+natural. El lecho metabolico se mantiene 1--2~$^{\circ}$C por encima
+del aire (Figura~\ref{fig:escenarios}c), lo que con una altura de
+0.17 m da un numero de Rayleigh Ra~$= g\beta\Delta T L^{3}/(\nu\alpha)
+\approx 10^{6}$, mas de dos ordenes de magnitud por encima del umbral
+convectivo: la celda de conveccion recircula el volumen de aire en
+decenas de segundos, muy por debajo de la duracion de los cierres
+(2--30 min). La linealidad de la acumulacion observada en los cierres
+es evidencia empirica consistente con esa mezcla. En la panera, por
+tanto, A1 se sostiene por conveccion natural; la camara instrumentada
+de la Figura~\ref{fig:esquema} anade el ventilador como garantia
+cuando el gradiente termico no basta o la escala crece.
+
 El switch de prepupa tiene un efecto cuantitativo decisivo sobre el
 inventario de GEI del sistema: sin el, el modelo acumula lipidos de forma
 ficticia hasta 209 mg/larva y las emisiones de E2 alcanzan 1.37 mol; con
 el, la biomasa lipidica final es de 54 mg/larva y las emisiones caen a
 0.59 mol. El efecto fija la fraccion de carbono que se emite como CO$_2$
-frente a la que se retiene en biomasa de prepupas, magnitud central para
-el trabajo de factores de emision que esta instrumentacion habilita.
+frente a la que se retiene en biomasa de prepupas, magnitud central para la contabilidad de carbono del sistema.
 
 Las limitaciones se agrupan en dos conjuntos. Instrumentales: $V_{aire}$
 esta calculado por geometria y una incertidumbre de $\pm 20\%$ en su valor
 se traduce directamente en igual incertidumbre en las tasas estimadas, lo
 que justifica su calibracion experimental por dilucion de un trazador; y
-el CH$_4$ del TGS2611 es indicativo, con cuantificacion pendiente contra
+el CH$_4$ del MH-440D es indicativo, con cuantificacion pendiente contra
 una referencia. Del lado del modelo: los parametros DEB no han podido
 verificarse sin biomasa pesada y el modulo microbiano esta sin
 recalibrar (S8), lo que explica la sobreestimacion del pico medio de la
-Seccion~\ref{sec:validacion}; ambas quedan resueltas con la campana
-experimental final, que ademas pesara biomasa cada dos dias. Con esa
-campana, el sistema validado aqui pasa de demostracion a produccion de
-factores de emision por dieta.
+Seccion~\ref{sec:validacion}; ambas limitaciones delimitan la
+calibracion experimental pendiente.
 
 \subsection{Trabajo en curso: correccion con PINN}
 \label{sec:pinn}
@@ -612,14 +635,13 @@ funcion de perdida, de modo que las correcciones respeten los balances de
 masa. Tres roles estan definidos: correccion de la tasa de emision a
 partir del estado del lecho, inferencia de la biomasa larval no medida
 (problema inverso con restricciones DEB) y cuantificacion de CH$_4$ a
-partir de la senal no calibrada del TGS2611. Un entrenamiento piloto (red
+partir de la senal no calibrada del MH-440D. Un entrenamiento piloto (red
 4-8-1, 49 parametros; pre-entrenamiento con 48 puntos sinteticos tipo
 literatura y ajuste fino con las siete tasas netas propias) produce
 correcciones $\delta$ entre 0.10 y 0.53 que situan las predicciones dentro
 de los rangos observados en los cuatro dias (Figura~\ref{fig:pinn}); la
 validacion cruzada queda diferida porque el numero de parametros excede
-los datos disponibles. El entrenamiento definitivo, con datos de
-literatura digitalizados y los experimentos finales, se reportara por
+los datos disponibles. El entrenamiento definitivo se reportara por
 separado.
 
 \begin{figure}[htbp]
@@ -653,11 +675,11 @@ corrige la tasa total; (iii) el flujo completo esta versionado en
   camara en regimen laminar ($\tau_{mix} > 720$ s frente a $\tau_{aire} \approx 175$ s): el
   supuesto A1 no es sostenible en fase abierta sin mezcla forzada. Y al ser cotas
   conservadoras (laminar, isotermo, difusividad molecular), los resultados
-  subestiman la mezcla real; la discrepancia se cerrara con la calibracion
-  experimental con dos sensores a distinta altura y con la correccion de volumen
+  subestiman la mezcla real; su cuantificacion requiere calibracion
+  experimental con dos sensores a distinta altura y la correccion de volumen
   muerto del gemelo digital.
-  \item Un ventilador pequeno en la tapa homogeneiza la camara sellada en
-  menos de 60 s ($\tau_{mix} = 4$--$24$ s para un rango de 100$\times$ en la
+  \item Un ventilador pequeno en la tapa homogeneiza la camara
+  instrumentada sellada del diseno estudiado en menos de 60 s ($\tau_{mix} = 4$--$24$ s para un rango de 100$\times$ en la
   fuerza inyectada), validando el supuesto A1 para los cierres de medicion con
   margen de 10--30$\times$; y el escalamiento lineal de Stokes, verificado de
   forma exacta, permite dimensionar el ventilador sin corridas adicionales.
@@ -676,8 +698,7 @@ corrige la tasa total; (iii) el flujo completo esta versionado en
   piloto (red 4-8-1, 49 parametros; datos sinteticos tipo
   literatura y siete tasas propias) correcciones $\delta$ entre
   0.10 y 0.53 que situan las predicciones dentro de los rangos
-  observados; su entrenamiento definitivo queda para los
-  experimentos finales.
+  observados; su entrenamiento definitivo queda como trabajo futuro.
 \end{enumerate}
 
 % Figuras usadas:
