@@ -40,6 +40,16 @@ def tasas_observadas():
     import csv as _csv
     filas = [r for r in _csv.DictReader(open(csv))
              if r['Gas'] == 'co2' and float(r['R2']) >= 0.5]
+    # deduplicar filas identicas (mismo dia + etiqueta + tasa): una medicion
+    # no debe contar dos veces en el promedio de la jornada
+    _vistos, _fs = set(), []
+    for _r in filas:
+        _k = (_r['Dia_Experimento'], _r['Etiqueta'],
+              round(float(_r['Tasa_Produccion']), 6))
+        if _k not in _vistos:
+            _vistos.add(_k)
+            _fs.append(_r)
+    filas = _fs
     def tasa(etq, dia):
         v = [float(r['Tasa_Produccion']) for r in filas
              if r['Etiqueta'] == etq and int(r['Dia_Experimento']) == dia]

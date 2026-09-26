@@ -154,7 +154,7 @@ y la tasa de produccion se estima por ajuste de la pendiente, aceptando
 solo ajustes con $R^2 \geq 0.5$. Para cada dia y dieta se incluyo una
 bandeja control con 250 g de alimento sin larvas; la tasa neta de
 emision del tratamiento se obtiene restando la tasa del control del
-mismo dia (supuesto S7). Las tasas extraidas, con su $R^2$, se
+mismo dia (supuesto S7). El protocolo repitio el par cierre/control para cada dieta en las tres jornadas con alimento (dias 9, 11 y 13) del mismo lote de cria, de modo que cada dieta aporta $n = 3$ cierres independientes y el valor de cada jornada es el promedio de sus cierres. Las tasas extraidas, con su $R^2$, se
 consolidan en
 \texttt{datos/experimentos/datos\_finales\_PINN\_corregidos.csv}.
 La biomasa larval no se peso en esta campana, lo que se declara como
@@ -529,7 +529,7 @@ acumulacion (Seccion 4). Las tasas extraidas, con su R$^2$ de ajuste, estan en
 \texttt{datos/experimentos/datos\_finales\_PINN\_corregidos.csv}.
 
 La Figura~\ref{fig:validacion} contrasta el modelo con las tasas
-observadas; el Cuadro~\ref{tab:validacion} las resume por dia del ciclo. El panel (a) muestra la tasa neta de CO$_2$ del modelo (linea)
+observadas; el Cuadro~\ref{tab:validacion} las resume por dia del ciclo, con el rango entre las tres replicas de cada dia. El panel (a) muestra la tasa neta de CO$_2$ del modelo (linea)
 frente a los valores observados por dia y alimento (D1 circulos, D4
 triangulos, ayuno estrella); el panel (b) muestra la biomasa estructural
 $B(t)$ y el switch de prepupa $S_{pr}(t)$, con las lineas punteadas de
@@ -556,7 +556,7 @@ reposicion de alimento.
     \hline
     Dia & Modelo & Observado \\
     \hline
-    9  & 210 & 89--309 \\
+    9  & 210 & 89--268 \\
     11 & 289 & 124--165 \\
     13 & 129 & 22--103 \\
     17 & 15  & 0--14 \\
