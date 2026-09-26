@@ -7,6 +7,8 @@
 
 (pendiente: camara estatica tipo panera, sensores NDIR CO2/CH4, dietas D1 y D4, protocolo de cierres con tres repeticiones, controles alimento solo y larvas solas)
 
+En cada dia de medicion los cierres se realizaron de forma secuencial por dieta: primero un recipiente hasta la saturacion del sensor de CO$_2$ (6000 ppm) y luego el otro, con el mismo procedimiento. La tasa de cada cierre se estimo por ajuste lineal del tramo previo a la saturacion; cuando el ajuste fue de baja calidad o la curva alcanzo el techo del sensor (cierres marcados como saturados), la tasa estimada es conservadora y se trato como cota inferior en la validacion (sec. \ref{sec:resultados}).
+
 \subsection{Modelo dinamico del proceso}
 \label{sec:modelo}
 
@@ -193,7 +195,7 @@ La validacion explota la descomposicion de fuentes: la componente larvaria $N\,r
 
 \begin{table}[htbp]
 \centering
-\caption{Parametros del modelo. Nucleo DEB: literatura (ver texto); interruptor de prepupa y camara: este trabajo; modulo microbiano: valores iniciales, recalibrados con las curvas de control.}
+\caption{Parametros del modelo. Nucleo DEB: literatura (ver texto). Interruptor de prepupa, $B_0$ y $f$: calibrados en este trabajo con las tasas netas (sec. \ref{sec:resultados}). Modulo microbiano: $k_{\mathrm{ref}}$ e $Y_{CO_2}$ calibrados con los controles (sec. \ref{sec:resultados}); demas parametros fijos. Camara: mediciones del experimento.}
 \label{tab:parametros}
 \begin{tabular}{llll}
 \toprule
@@ -206,9 +208,11 @@ Costo de crecimiento & $Y_B$ & 0.44 & -- \\
 Costo de deposito de lipidos & $Y_L$ & 0.42 & -- \\
 Mantenimiento & $m$ & 0.08 & d$^{-1}$ \\
 Biomasa de referencia & $B_{\max}$ & 65 & mg \\
-Dia central de prepupa & $t_p$ & 12.0 & d \\
-Ancho del interruptor & $w_p$ & 1.0 & d \\
+Dia central de prepupa & $t_p$ & 12.3 (D1), 11.7 (D4) & d \\
+Ancho del interruptor & $w_p$ & 0.48 & d \\
 Suelo de mantenimiento & $m_{\mathrm{suelo}}$ & 0.13 & -- \\
+Biomasa inicial por larva & $B_0$ & 0.0175 & mg \\
+Factor de calidad de dieta & $f$ & 1 (D1), 0.817 (D4) & -- \\
 Numero de larvas & $N$ & 700 & -- \\
 Volumen de aire de la camara & $V_{\mathrm{aire}}$ & 12.1 & L \\
 Temperatura (constante) & $T$ & 300.15 & K \\
@@ -219,4 +223,18 @@ Cota cinetica microbiana & $k_{\max}$ & 0.02 & d$^{-1}$ \\
 \end{tabular}
 \end{table}
 
-El sistema se integra con \texttt{solve\_ivp} (LSODA, tolerancias $10^{-6}$ y $10^{-9}$) por segmentos entre eventos de reposicion. El codigo fuente y los datos quedan disponibles en el repositorio del articulo.
+\subsection{Solucion numerica y ajuste de parametros}
+\label{sec:numerica}
+
+El estado que se integra es $(B, L, D_M, W)$: el compartimento $A$ queda en cuasi-equilibrio por construccion (ec. \ref{eq:co2lar}) y las concentraciones de gas no se integran en el tiempo, pues la camara se abre entre cierres; la comparacion con el sensor se hace sobre la tasa aparente instantanea (ec. \ref{eq:ppm}). El sistema es hibrido: la dinamica continua se interrumpe cada dos dias en los eventos de reposicion, donde $D_M$ y $W$ se restablecen a 100 y 150 g como saltos discretos. Cada segmento entre eventos se integro con LSODA \parencite{petzoldAutomaticSelectionMethods1983} a traves de \texttt{solve\_ivp} (SciPy), un metodo multipaso de paso y orden variables que conmuta automaticamente entre formulas de Adams (regimen no rigido) y formulas BDF (rigido), con control del error local (tolerancias relativa $10^{-6}$ y absoluta $10^{-9}$). Se prefirio este esquema adaptativo a un metodo de paso fijo tipo Runge--Kutta (RK4): el campo vectorial cambia rapidamente en torno a la transicion de prepupa ($w_p = 0.48$ d) y en los eventos de reposicion, y el control automatico de error garantiza la precision sin ajustar el paso manualmente. La positividad de $D_M$ y $L$ se impuso en el campo vectorial. La implementacion se hizo en Python 3 con NumPy y SciPy.
+
+Los supuestos de la solucion son:
+\begin{itemize}
+  \item La camara esta bien mezclada y a $T$ y $P$ constantes, de modo que la concentracion medida representa todo el volumen de aire.
+  \item Durante un cierre (escala de minutos) las fuentes son constantes frente a la dinamica biologica (escala de dias), por lo que la acumulacion es lineal y la pendiente es la tasa aparente instantanea.
+  \item Entre cierres la camara se ventila: el gas no se acumula de un cierre al siguiente y por tanto no se integra como estado.
+  \item En los eventos de reposicion los estados larvarios $B$ y $L$ son continuos y solo $D_M$ y $W$ saltan.
+  \item La evaporacion del lecho se desprecia por tratarse de una camara cerrada.
+\end{itemize}
+
+El ajuste de parametros se hizo en dos etapas desacopladas, siguiendo la descomposicion de fuentes. En la primera, los parametros microbianos ($k_{\mathrm{ref}}$, $Y_{CO_2}$) se ajustaron por minimos cuadrados sobre las tasas de los controles de alimento solo, simulando el lecho sin larvas y sin reposicion, en escala logaritmica y con cotas $k_{\mathrm{ref}} \in [10^{-4}, 0.2]$ d$^{-1}$ e $Y_{CO_2} \in [0.05, 2]$. En la segunda, el ajuste conjunto del nucleo larvario se hizo sobre las tasas netas con cuatro grados de libertad: $B_0$ compartido entre dietas (misma postura de huevos), el factor de calidad $f$ de D4, $t_p$ por dieta y $w_p$ compartido; los cierres saturados entraron como restricciones de desigualdad (residuo nulo cuando el modelo supera la cota inferior) y el ajuste se repitio desde tres puntos de arranque para evitar minimos locales. Los parametros cineticos del nucleo DEB no se reajustaron. El codigo fuente y los datos quedan disponibles en el repositorio del articulo.

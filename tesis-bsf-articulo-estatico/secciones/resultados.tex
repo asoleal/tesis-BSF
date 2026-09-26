@@ -1,4 +1,62 @@
 \section{Resultados}
 \label{sec:resultados}
 
-(pendiente)
+Se presentan primero los parametros calibrados (modulo microbiano contra los controles; nucleo larvario contra las tasas netas) y luego la validacion por descomposicion de fuentes.
+
+\subsection{Calibracion del modulo microbiano con los controles de alimento solo}
+
+Las curvas de control (alimento sin larvas) aislaron la componente microbiana. El ajuste de $k_{\mathrm{ref}}$ e $Y_{CO_2}$ por minimos cuadrados dio valores consistentes entre dietas: $k_{\mathrm{ref}} = 0.0498$ d$^{-1}$ e $Y_{CO_2} = 0.652$ para D1, y $k_{\mathrm{ref}} = 0.0522$ d$^{-1}$ e $Y_{CO_2} = 0.692$ para D4. El modulo reproduce la magnitud de las tasas de control (RMSE de 5.8 y 11.3 ppm/min para D1 y D4), aunque no su tendencia creciente en el tiempo (Figuras \ref{fig:valD1} y \ref{fig:valD4}), atribuible al crecimiento de la biomasa microbiana, que el modulo no incluye; se retoma en la discusion.
+
+\subsection{Ajuste conjunto del nucleo larvario}
+
+El ajuste conjunto sobre las tasas netas (tratamiento menos control del mismo dia, promedio de tres repeticiones) dio una biomasa inicial $B_0 = 0.0175$ mg/larva, coherente con larvas neonatas de una postura de huevos; un factor de calidad de dieta $f = 0.817$ para D4 (D1 = 1, dieta de referencia de \textcite{eriksenDynamicModellingFeed2022}); tiempos centrales de prepupa $t_p = 12.3$ d para D1 y $t_p = 11.7$ d para D4; y un ancho de transicion $w_p = 0.48$ d, es decir, un cese de la alimentacion que ocurre en torno a un dia. Los parametros cineticos del nucleo DEB se mantuvieron fijos en los valores de la literatura (Cuadro \ref{tab:parametros}).
+
+\subsection{Validacion por descomposicion de fuentes}
+
+El Cuadro \ref{tab:tasas} resume la comparacion y las Figuras \ref{fig:valD1} y \ref{fig:valD4} muestran las curvas del modelo contra las mediciones.
+
+Para D4, la componente larvaria reproduce las tres tasas netas no saturadas con $R^2 = 0.983$ y RMSE de 5.0 ppm/min (88.4 frente a 88.6 el dia 9; 21.3 frente a 21.5 el dia 13; 8.6 frente a 0.0 el dia 17), y satisface la cota inferior del dia 11 (165.1 frente a 165.4 ppm/min, $-0.1$ \%). El suelo de mantenimiento en prepupa (8.6 ppm/min el dia 17) queda cercano a la tasa de larvas en ayuno medida ese mismo dia (14.3 ppm/min), lo que respalda el anclaje de $m_{\mathrm{suelo}}$.
+
+Para D1, el modelo reproduce el unico punto no saturado (dia 13: 102.8 frente a 102.8 ppm/min) y satisface las cotas inferiores de los dias 9 y 11 (267.8 y 414.9 ppm/min frente a cotas de 267.8 y 124.3 ppm/min). La tasa del dia 11 proviene del cierre con el ajuste lineal de menor calidad ($R^2 = 0.76$), por lo que su estimacion es especialmente conservadora, como se describio en metodos.
+
+La componente total (larvaria mas microbiana) reproduce el orden de magnitud y la forma temporal de las tasas de tratamiento en ambas dietas, incluido el pico previo a la prepupa y el colapso posterior.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Tasas de CO$_2$ observadas y modeladas por dieta y dia de medicion, en ppm/min: componente microbiana frente a controles de alimento solo; componente larvaria frente a la tasa neta (tratamiento menos control); total frente a tratamiento. ($^{*}$) cierre saturado: la tasa observada es una cota inferior (ver texto).}
+\label{tab:tasas}
+\begin{tabular}{ll rrr rr rr}
+\toprule
+Dieta & Dia & \multicolumn{2}{c}{Microbiana} & \multicolumn{2}{c}{Larvaria (neta)} & \multicolumn{2}{c}{Total} \\
+\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8}
+ & & obs. & mod. & obs. & mod. & obs. & mod. \\
+\midrule
+D1 & 9  & 26.5 & 33.6 & 267.8$^{*}$ & 267.8 & 294.3 & 301.4 \\
+   & 11 & 34.8 & 29.4 & 124.3$^{*}$ & 414.9 & 159.1 & 444.3 \\
+   & 13 & 40.2 & 35.6 & 102.8 & 102.8 & 143.0 & 138.4 \\
+\midrule
+D4 & 9  & 25.8 & 41.0 & 88.6 & 88.4 & 114.4 & 129.4 \\
+   & 11 & 27.2 & 37.9 & 165.4$^{*}$ & 165.1 & 192.5 & 203.1 \\
+   & 13 & 34.6 & 42.2 & 21.5 & 21.3 & 56.1 & 63.5 \\
+   & 17 & 54.1 & 43.6 & 0.0 & 8.6 & 40.0 & 52.2 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{figuras/validacion_co2_D1.png}
+\caption{Validacion por descomposicion de fuentes, dieta D1 (alimento estandar). Curvas: componentes larvaria y microbiana y total del modelo; los escalones cada dos dias corresponden a la reposicion del alimento. Puntos: controles de alimento solo (cuadrados), tratamiento (x) y tasa neta tratamiento menos control (circulos; triangulos: cierres saturados, es decir cotas inferiores, con el rango entre repeticiones).}
+\label{fig:valD1}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{figuras/validacion_co2_D4.png}
+\caption{Validacion por descomposicion de fuentes, dieta D4 (residuos agroindustriales de frutas). Simbologia como en la Figura \ref{fig:valD1}; el diamante es la tasa de larvas en ayuno medida el dia 17.}
+\label{fig:valD4}
+\end{figure}
+
+\paragraph{Nota sobre el CH$_4$.}
+Las lecturas de CH$_4$ no produjeron tasas netas utilizables: el sensor no estaba calibrado para tasa neta y varios controles saturaron, por lo que el termino $\xi(\theta_s)$ del modelo se mantiene como indicador cualitativo de microambientes anoxicos y no entra en la validacion cuantitativa; se retoma en la discusion.
