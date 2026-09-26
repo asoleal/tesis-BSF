@@ -1,0 +1,222 @@
+% secciones/metodos.tex
+\section{Materiales y metodos}
+\label{sec:metodos}
+
+\subsection{Sistema experimental y protocolo de medicion}
+\label{sec:sistema}
+
+(pendiente: camara estatica tipo panera, sensores NDIR CO2/CH4, dietas D1 y D4, protocolo de cierres con tres repeticiones, controles alimento solo y larvas solas)
+
+\subsection{Modelo dinamico del proceso}
+\label{sec:modelo}
+
+El proceso se describe con un modelo dinamico de parametros concentrados (0D) que amplia el modelo de asimilacion, crecimiento y produccion de CO$_2$ de \textcite{eriksenDynamicModellingFeed2022,eriksenMetabolicPerformanceFeed2024} ---desarrollado para larvas de \textit{H. illucens} sobre dieta estandar--- con tres componentes adicionales: (i) un interruptor de prepupa que representa la cesacion de la alimentacion al final del ciclo larvario; (ii) un modulo microbiano de primer orden para la degradacion del sustrato no consumido \parencite{roels1980}; y (iii) un balance de masa de gas en la cabeza de aire de la camara estatica de medicion. Los fundamentos de la teoria DEB del nucleo larvario se encuentran en \parencite{kooijmanDynamicEnergyBudget2009,jagerDEBkissQuestSimplest2013}. El modelo supone temperatura y humedad del lecho constantes (no determinantes durante las mediciones), oxigeno no limitante dentro de los cierres y numero de larvas $N$ constante (mortalidad despreciable en el periodo experimental).
+
+El vector de estado es $\mathbf{x} = (A, B, L, D_M, W, c_{CO_2}, c_{CH_4})$, donde $A$, $B$ y $L$ son los compartimentos larvarios (asimilado, estructura y lipidos, mg/larva), $D_M$ y $W$ la materia seca y el agua del lecho (g), y $c_i$ las concentraciones de gas en la cabeza de aire (mol/m$^3$). Las condiciones iniciales larvarias ($A_0 = 0.005$, $B_0 = 0.012$, $L_0 = 0.003$ mg) corresponden a una larva neonata \parencite{eriksenDynamicModellingFeed2022}.
+
+\subsubsection{Nucleo larvario (DEB de Eriksen)}
+
+El nucleo sigue el modelo de compartimentos de \textcite{eriksenDynamicModellingFeed2022}: el alimento asimilado entra al compartimento $A$ y de alli se reparte entre crecimiento estructural $B$, reservas lipidicas $L$ y costos metabolicos pagados como CO$_2$ (Figura \ref{fig:nucleo}); los fundamentos DEB de esta particion estan en \parencite{kooijmanDynamicEnergyBudget2009}. A continuacion se indica la procedencia de cada expresion.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  comp/.style={draw, rounded corners=2mm, minimum width=3.0cm, minimum height=1.1cm, align=center, fill=gray!8},
+  gas/.style={draw, dashed, rounded corners=2mm, minimum width=2.0cm, minimum height=1.1cm, align=center},
+  gate/.style={circle, draw, thick, fill=white, inner sep=1.8pt, font=\footnotesize},
+  flujo/.style={->, >=latex, thick, shorten >=3pt, shorten <=3pt},
+  etiqueta/.style={fill=white, inner sep=1.5pt, font=\footnotesize}]
+\node[comp] (alim) at (0,0) {Lecho\\ (alimento)};
+\node[comp] (A) at (6.0,0) {$A$: asimilado};
+\node[comp] (B) at (11.6,0) {$B$: estructura};
+\node[comp] (L) at (11.6,-4.0) {$L$: lipidos};
+\node[gas] (CO2) at (6.0,-4.0) {CO$_2$};
+\draw[flujo] (alim) -- node[etiqueta, above=2pt]{$r_A$}
+                      node[gate, below=2pt]{$S$} (A);
+\draw[flujo] (A) -- node[etiqueta, above=2pt]{$(1 + Y_B)\,r_B$} (B);
+\draw[flujo] (A) -- node[etiqueta, right=2pt]{$r_{Cm} + Y_B\,r_B$} (CO2);
+\draw[flujo] (A.south east) -- node[etiqueta]{$r_L$} (L.north west);
+\draw[flujo] (L) -- node[etiqueta, below=2pt]{$Y_L\,r_L$} (CO2);
+\end{tikzpicture}
+\caption{Compartimentos y flujos de carbono del nucleo larvario (adaptado de \parencite{eriksenDynamicModellingFeed2022}). El interruptor de prepupa $S(t)$ (ec. \ref{eq:switch}) cierra la entrada de alimento al final del ciclo; los costos $r_{Cm}$, $Y_B r_B$ y $Y_L r_L$ salen del sistema como CO$_2$.}
+\label{fig:nucleo}
+\end{figure}
+
+\paragraph{Interruptor de prepupa (componente propio).}
+Al final del ciclo larvario, \textit{H. illucens} deja de alimentarse y entra en prepupa, un estadio no alimentario sostenido por las reservas acumuladas \parencite{arreseInsectFatBody2010,llandresDynamicEnergyBudget2015,nayakHermetiaIllucensDiptera2023}. Esto se representa con un interruptor logistico
+\begin{equation}
+S(t) = \frac{1}{1 + \exp(-(t - t_p)/w_p)},
+\label{eq:switch}
+\end{equation}
+con $t_p$ el dia central y $w_p$ el ancho de la transicion, ajustados al descenso de las tasas medidas en los dias 13 a 17 (sec. \ref{sec:resultados}).
+
+\paragraph{Asimilacion (ecs. 4 y 5 de Eriksen, 2022).}
+La tasa especifica de asimilacion decrece con el tamano y el flujo asimilado es proporcional a $B$ \parencite{eriksenDynamicModellingFeed2022}:
+\begin{equation}
+a(B, t) = a_{\max}\,\frac{1}{1 + (B/B_{\max})^{\alpha}}\,(1 - S(t)),
+\qquad r_A = a\,B,
+\label{eq:asimilacion}
+\end{equation}
+donde $B_{\max}$ es la biomasa de referencia y $\alpha$ controla la caida con el tamano. El factor $(1 - S(t))$ es propio: cierra la asimilacion en prepupa.
+
+\paragraph{Crecimiento (ec. 10 de Eriksen, 2022).}
+El crecimiento estructural sigue la forma logistica con descuento de mantenimiento de \textcite{eriksenDynamicModellingFeed2022}:
+\begin{equation}
+G(B) = \max\!\left(1 - (B/B_{\max})^{\beta}, 0\right),
+\qquad
+\mu_B = \max\!\left(\frac{(a - m)\,G}{1 + Y_B\,G}, 0\right),
+\qquad r_B = \mu_B\,B,
+\label{eq:crecimiento}
+\end{equation}
+donde $m$ es la tasa de mantenimiento especifico, en la tradicion de Pirt y los principios macroscopicos de \textcite{roels1980}, y $Y_B$ el costo de crecimiento.
+
+\paragraph{Mantenimiento (Eriksen, 2022, con suelo propio).}
+El costo de mantenimiento es proporcional a la estructura, y durante la prepupa cae a un suelo (componente propio) anclado a la medicion de larvas en ayuno del dia 17 (sec. \ref{sec:resultados}):
+\begin{equation}
+r_{Cm} = m\,B\,\big[(1 - S(t)) + m_{\mathrm{suelo}}\,S(t)\big].
+\label{eq:mantenimiento}
+\end{equation}
+
+\paragraph{Balance de lipidos y CO$_2$ (ec. 12 de Eriksen, 2022).}
+Suponiendo el compartimento $A$ en cuasi-equilibrio ($dA/dt \approx 0$), lo asimilado se reparte instantaneamente entre crecimiento, mantenimiento y reservas, lo que da el flujo neto a lipidos y la produccion larvaria de CO$_2$ como la suma de los tres costos respiratorios \parencite{eriksenDynamicModellingFeed2022,eriksenMetabolicPerformanceFeed2024}:
+\begin{equation}
+r_L = r_A - (1 + Y_B)\,r_B - r_{Cm},
+\qquad
+r_{CO_2}^{\mathrm{lar}} = r_{Cm} + Y_B\,r_B + Y_L\,\max(r_L, 0),
+\label{eq:co2lar}
+\end{equation}
+con $Y_L$ el costo de deposito de lipidos; todas las tasas en mg/larva/d.
+
+\subsubsection{Modulo microbiano del lecho}
+
+El segundo componente propio describe la degradacion microbiana del lecho: la fraccion no asimilada del sustrato permanece en el lecho y se descompone por actividad microbiana en paralelo al consumo larvario (Figura \ref{fig:lecho}); este modulo es el que permite contrastar el modelo con los controles de alimento solo (sec. \ref{sec:resultados}). A continuacion se indica la procedencia de cada expresion.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  comp/.style={draw, rounded corners=2mm, minimum width=3.0cm, minimum height=1.1cm, align=center, fill=gray!8},
+  gas/.style={draw, dashed, rounded corners=2mm, minimum width=2.0cm, minimum height=1.1cm, align=center},
+  drv/.style={font=\footnotesize, align=center},
+  flujo/.style={->, >=latex, thick, shorten >=3pt, shorten <=3pt},
+  mod/.style={->, >=latex, dashed, shorten >=2pt},
+  etiqueta/.style={fill=white, inner sep=1.5pt, font=\footnotesize}]
+\node[comp] (lecho) at (0,0) {Lecho\\ $D_M$, $W$};
+\node[gas] (co2) at (6.5,0) {CO$_2$};
+\node[gas] (ch4) at (6.5,-3.4) {CH$_4$};
+\node[drv] (T) at (1.6,1.9) {$T$\; ($Q_{10}$)};
+\node[drv] (H) at (4.9,1.9) {$\theta_s$\; (Monod)};
+\draw[flujo] (lecho) -- node[etiqueta, above=2pt]{$Y_{CO_2}\,k\,D_M$}
+                       node[coordinate, pos=0.5] (k) {} (co2);
+\draw[flujo] (lecho.south east) -- node[etiqueta]{$Y_{CH_4}\,\xi(\theta_s)\,k\,D_M$} (ch4.north west);
+\draw[mod] (T.south) -- (k);
+\draw[mod] (H.south) -- (k);
+\end{tikzpicture}
+\caption{Modulo microbiano del lecho (componente propio). La constante efectiva $k$ (ec. \ref{eq:kmic}) integra la correccion termica $Q_{10}$ y la respuesta de humedad tipo Monod; el CO$_2$ microbiano es proporcional a la materia seca $D_M$ y el CH$_4$ se activa con la fraccion saturada $\theta_s$ via $\xi$ (ec. \ref{eq:rmic}), como indicador cualitativo.}
+\label{fig:lecho}
+\end{figure}
+
+\paragraph{Humedad del lecho y constante efectiva (formas estandar, combinacion propia).}
+El estado de humedad del lecho se resume en la fraccion gravimetrica $\theta_s$ y la constante efectiva combina tres elementos clasicos de la cinetica de descomposicion de residuos \parencite{roels1980,shulerbioprocess2017}: cinetica de primer orden en la materia seca, correccion termica tipo $Q_{10}$ y respuesta de humedad tipo Monod con semisaturacion $K_{\theta}$, acotada por un tope $k_{\max}$; el efecto de la humedad del sustrato sobre el proceso con \textit{H. illucens} esta documentado en \parencite{bekkerImpactSubstrateMoisture2021a,mertenatBlackSoldierFly2019}.
+\begin{equation}
+\theta_s = \frac{W}{D_M + W},
+\qquad
+k = \min\!\left(k_{\mathrm{ref}}\,Q_{10}^{(T - T_{\mathrm{ref}})/10}\,
+\frac{\theta_s}{\theta_s + K_{\theta}},\; k_{\max}\right),
+\label{eq:kmic}
+\end{equation}
+
+\paragraph{Tasas de CO$_2$ y CH$_4$ microbianos.}
+El CO$_2$ microbiano se obtiene con un rendimiento $Y_{CO_2}$ sobre sustrato degradado, en la tradicion de los balances macroscopicos \parencite{roels1980,shulerbioprocess2017}. El termino de CH$_4$, introducido en este trabajo, modula la tasa con un factor logistico $\xi(\theta_s)$ de la fraccion saturada: la metanogenesis requiere microambientes anoxicos asociados a la saturacion de humedad, y en bioconversion con \textit{H. illucens} se han reportado emisiones de CH$_4$ dependientes del sustrato y las condiciones \parencite{ermolaevGreenhouseGasEmissions2019,parodiBioconversionEfficienciesGreenhouse2020a,boakye-yiadomGreenhouseGasEmissions2022}. Este termino se usa solo como indicador cualitativo, pues el sensor disponible no esta calibrado para tasa neta \parencite{mitchellCalibrationLowCostMethane2024,kiplimoAddressingLowCostMethane2024}.
+\begin{equation}
+r_{C}^{\mathrm{mic}} = Y_{CO_2}\,k\,D_M,
+\qquad
+r_{CH_4} = Y_{CH_4}\,\xi(\theta_s)\,k\,D_M,
+\qquad
+\xi(\theta_s) = \frac{\xi_{\max}}{1 + \exp(-(\theta_s - \theta_{cs})/s_{\theta})},
+\label{eq:rmic}
+\end{equation}
+en g/d.
+
+\paragraph{Balance de masa del lecho.}
+\begin{equation}
+\frac{dD_M}{dt} = -\frac{N\,r_A}{1000} - k\,D_M,
+\qquad
+\frac{dW}{dt} = \gamma_w\left(\frac{N\,r_{CO_2}^{\mathrm{lar}}}{1000} + r_C^{\mathrm{mic}}\right),
+\label{eq:lecho}
+\end{equation}
+El primer termino de $dD_M/dt$ es el consumo larvario (con el tope $D_M \geq 0$). El agua del lecho crece con el agua metabolica de la respiracion: $\gamma_w = 0.41$ g de H$_2$O por g de CO$_2$ corresponde a la estequiometria de oxidacion de carbohidratos (1 mol de H$_2$O por mol de CO$_2$, es decir 18/44) \parencite{atkinsPhysicalChemistry2014}; la evaporacion se desprecia por tratarse de una camara cerrada. Cada dos dias, al reponer el alimento, $D_M$ y $W$ se restablecen a 100 y 150 g (250 g, relacion 40/60) como eventos discretos.
+
+\subsubsection{Balance de gas en camara estatica}
+
+El tercer componente conecta las fuentes con la medicion: durante un cierre, el CO$_2$ y el CH$_4$ se acumulan en el volumen de aire de la camara y el sensor registra la pendiente de concentracion (Figura \ref{fig:camara}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  comp/.style={draw, rounded corners=2mm, minimum width=2.6cm, minimum height=1.1cm, align=center, fill=gray!8},
+  inst/.style={draw, rounded corners=2mm, minimum width=2.6cm, minimum height=1.1cm, align=center},
+  flujo/.style={->, >=latex, thick, shorten >=3pt, shorten <=3pt},
+  etiqueta/.style={fill=white, inner sep=1.5pt, font=\footnotesize}]
+\node[comp] (larvas) at (0,1.8) {Larvas\\ $N$};
+\node[comp] (lecho) at (0,-1.8) {Lecho\\ $D_M$, $W$};
+\node[comp] (camara) at (6.4,0) {Camara cerrada\\ $V_{\mathrm{aire}}$};
+\node[inst] (sensor) at (12.2,0) {Sensor\\ pendiente $dc/dt$};
+\draw[flujo] (larvas.east) -- node[etiqueta, sloped, above]{$N\,r_{CO_2}^{\mathrm{lar}}$} (camara.170);
+\draw[flujo] (lecho.east) -- node[etiqueta, sloped, below]{$r_C^{\mathrm{mic}}$} (camara.190);
+\draw[flujo] (camara) -- node[etiqueta, above=2pt]{$R_{CO_2}/V_{\mathrm{aire}}$} (sensor);
+\end{tikzpicture}
+\caption{Balance de gas en la camara estatica, sobre el metodo estandar \parencite{hutchinsonMethodsSoilAnalysis1992}. Las fuentes larvaria y microbiana acumulan gas en el volumen de aire durante un cierre (ec. \ref{eq:camara}); el sensor registra la pendiente, llevada a ppm/min con la ley de gas ideal (ec. \ref{eq:ppm}).}
+\label{fig:camara}
+\end{figure}
+
+\paragraph{Acumulacion en el cierre (balance propio sobre el metodo estandar).}
+El metodo de camara estatica estima la tasa a partir de la acumulacion lineal del gas en un volumen conocido \parencite{hutchinsonMethodsSoilAnalysis1992}; con las fuentes del modelo, el balance molar sobre el aire de la camara es
+\begin{equation}
+\frac{dc_{CO_2}}{dt} = \frac{R_{CO_2}}{V_{\mathrm{aire}}},
+\qquad
+R_{CO_2} = \frac{N\,r_{CO_2}^{\mathrm{lar}} + 1000\,r_C^{\mathrm{mic}}}{44000},
+\label{eq:camara}
+\end{equation}
+con $R_{CO_2}$ en mol/d: el termino larvario pasa de mg a g y ambos a mol con la masa molar del CO$_2$ (44 g/mol); un balance analogo aplica para $c_{CH_4}$ con $R_{CH_4} = 1000\,r_{CH_4}/16000$ (16 g/mol).
+
+\paragraph{Escala del sensor (ppm/min).}
+La comparacion con el sensor se hace en la escala propia del metodo \parencite{hutchinsonMethodsSoilAnalysis1992}, convirtiendo la acumulacion molar a ppm/min con la ley de gas ideal \parencite{atkinsPhysicalChemistry2014}:
+\begin{equation}
+r_{\mathrm{ppm}} = \frac{R_{CO_2}}{V_{\mathrm{aire}}}\,\frac{R_g\,T}{P}\,\frac{10^6}{1440}
+\quad [\mathrm{ppm/min}],
+\label{eq:ppm}
+\end{equation}
+con $R_g = 8.314$ J/(mol$\cdot$K) y $T$, $P$ la temperatura y presion de la camara: el factor $R_g T/P$ es el volumen molar, $10^6$ lleva a ppm y 1440 de dias a minutos.
+
+\paragraph{Validacion por descomposicion de fuentes (estrategia propia).}
+La validacion explota la descomposicion de fuentes: la componente larvaria $N\,r_{CO_2}^{\mathrm{lar}}$ se compara con la tasa neta medida (tratamiento menos control del mismo dia, promedio de tres repeticiones), y la componente microbiana $r_C^{\mathrm{mic}}$ con las curvas de control (alimento solo). Los parametros del nucleo DEB se tomaron de \textcite{eriksenDynamicModellingFeed2022,eriksenMetabolicPerformanceFeed2024} (Cuadro \ref{tab:parametros}); los del modulo microbiano ($k_{\mathrm{ref}}$, $Y_{CO_2}$) se calibran en este trabajo contra las curvas de control (sec. \ref{sec:resultados}).
+
+\begin{table}[htbp]
+\centering
+\caption{Parametros del modelo. Nucleo DEB: literatura (ver texto); interruptor de prepupa y camara: este trabajo; modulo microbiano: valores iniciales, recalibrados con las curvas de control.}
+\label{tab:parametros}
+\begin{tabular}{llll}
+\toprule
+Parametro & Simbolo & Valor & Unidad \\
+\midrule
+Tasa maxima de asimilacion & $a_{\max}$ & 1.4 & d$^{-1}$ \\
+Exponente de asimilacion & $\alpha$ & 1.0 & -- \\
+Exponente de crecimiento & $\beta$ & 2.0 & -- \\
+Costo de crecimiento & $Y_B$ & 0.44 & -- \\
+Costo de deposito de lipidos & $Y_L$ & 0.42 & -- \\
+Mantenimiento & $m$ & 0.08 & d$^{-1}$ \\
+Biomasa de referencia & $B_{\max}$ & 65 & mg \\
+Dia central de prepupa & $t_p$ & 12.0 & d \\
+Ancho del interruptor & $w_p$ & 1.0 & d \\
+Suelo de mantenimiento & $m_{\mathrm{suelo}}$ & 0.13 & -- \\
+Numero de larvas & $N$ & 700 & -- \\
+Volumen de aire de la camara & $V_{\mathrm{aire}}$ & 12.1 & L \\
+Temperatura (constante) & $T$ & 300.15 & K \\
+Factor $Q_{10}$ microbiano & $Q_{10}$ & 2.0 & -- \\
+Afinidad por humedad & $K_{\theta}$ & 0.15 & -- \\
+Cota cinetica microbiana & $k_{\max}$ & 0.02 & d$^{-1}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+El sistema se integra con \texttt{solve\_ivp} (LSODA, tolerancias $10^{-6}$ y $10^{-9}$) por segmentos entre eventos de reposicion. El codigo fuente y los datos quedan disponibles en el repositorio del articulo.

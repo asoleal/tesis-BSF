@@ -1,0 +1,42 @@
+% main.tex - validacion estatica del modelo extendido DEB (CO2/CH4, H. illucens)
+% Compilar: xelatex main; biber main; xelatex main; xelatex main
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Termes}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{Latin Modern Mono Light}
+
+\usepackage[spanish,es-noquoting]{babel}
+\usepackage{amsmath}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{caption}
+\usepackage{tikz}
+
+\usepackage[backend=biber,style=authoryear,sorting=nyt]{biblatex}
+\addbibresource{bibliografia/bibliografia.bib}
+
+\usepackage[hidelinks]{hyperref}
+
+\title{Validacion experimental de un modelo dinamico de emisiones de
+  CO$_2$ y CH$_4$ en bioconversion estatica con \textit{Hermetia
+  illucens}: extension del modelo DEB de Eriksen}
+\author{} % TODO: autores y afiliacion
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\input{secciones/resumen}
+\input{secciones/introduccion}
+\input{secciones/metodos}
+\input{secciones/resultados}
+\input{secciones/discusion}
+\input{secciones/conclusiones}
+
+\printbibliography
+
+\end{document}

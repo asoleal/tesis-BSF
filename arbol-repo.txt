@@ -1,0 +1,956 @@
+.
+├── arbol-repo.txt
+├── archivos_bib
+│   ├── bibliografia_tesis_leal.bib
+│   ├── bibliografia_tesis_leal.bib.bak
+│   ├── bibliografia_tesis_leal.tex
+│   └── bibliografia_tesis_leal.tex.bak
+├── articulo-00-red-neuronal-biomasa
+│   ├── codigo
+│   │   └── codigo.tex
+│   ├── datos
+│   │   └── experimentos -> ../../../datos/experimentos
+│   ├── prueba.tex
+│   ├── prueba.tex.bak
+│   ├── secciones
+│   │   ├── introduccion.tex
+│   │   └── resultados.tex
+│   └── simulacion
+│       ├── moscaleal5.py
+│       └── moscaleal5.txt
+├── articulos
+│   ├── articulo_1_sensor_virtual
+│   │   ├── contenido_art1.tex
+│   │   ├── contenido_art1.tex.bak
+│   │   ├── imagenes
+│   │   ├── main_art1.bbl
+│   │   └── main_art1.tex
+│   ├── articulo_2_modelo_pinn
+│   │   ├── contenido_art2.tex
+│   │   ├── main_art2.bbl
+│   │   └── main_art2.tex
+│   ├── articulo_3_acv_dinamico
+│   │   ├── contenido_art3.tex
+│   │   ├── main_art3.bbl
+│   │   └── main_art3.tex
+│   ├── articulo_4_simulacion_sistema
+│   │   ├── contenido_art4.tex
+│   │   ├── disenho_cfd.md
+│   │   ├── fix_paso1.py
+│   │   ├── fix_pct.py
+│   │   ├── imagenes
+│   │   │   ├── cfd_co2_final.bp
+│   │   │   │   ├── data.0
+│   │   │   │   ├── md.0
+│   │   │   │   ├── md.idx
+│   │   │   │   ├── mmd.0
+│   │   │   │   └── profiling.json
+│   │   │   ├── cfd_co2_final_C1v2.bp
+│   │   │   │   ├── data.0
+│   │   │   │   ├── md.0
+│   │   │   │   ├── md.idx
+│   │   │   │   ├── mmd.0
+│   │   │   │   └── profiling.json
+│   │   │   ├── cfd_co2_final_C2.bp
+│   │   │   │   ├── data.0
+│   │   │   │   ├── md.0
+│   │   │   │   ├── md.idx
+│   │   │   │   ├── mmd.0
+│   │   │   │   └── profiling.json
+│   │   │   ├── cfd_co2_final_C2v2.bp
+│   │   │   │   ├── data.0
+│   │   │   │   ├── md.0
+│   │   │   │   ├── md.idx
+│   │   │   │   ├── mmd.0
+│   │   │   │   └── profiling.json
+│   │   │   ├── cfd_co2_final_C3.bp
+│   │   │   │   ├── data.0
+│   │   │   │   ├── md.0
+│   │   │   │   ├── md.idx
+│   │   │   │   ├── mmd.0
+│   │   │   │   └── profiling.json
+│   │   │   ├── cfd_co2_final_C4.bp
+│   │   │   │   ├── data.0
+│   │   │   │   ├── md.0
+│   │   │   │   ├── md.idx
+│   │   │   │   ├── mmd.0
+│   │   │   │   └── profiling.json
+│   │   │   ├── cfd_co2_final_C4v2.bp
+│   │   │   │   ├── data.0
+│   │   │   │   ├── md.0
+│   │   │   │   ├── md.idx
+│   │   │   │   ├── mmd.0
+│   │   │   │   └── profiling.json
+│   │   │   ├── cfd_co2_final_C5cerrada.bp
+│   │   │   │   ├── data.0
+│   │   │   │   ├── md.0
+│   │   │   │   ├── md.idx
+│   │   │   │   ├── mmd.0
+│   │   │   │   └── profiling.json
+│   │   │   ├── cfd_co2_final_C5cerrada_F4.bp
+│   │   │   │   ├── data.0
+│   │   │   │   ├── md.0
+│   │   │   │   ├── md.idx
+│   │   │   │   ├── mmd.0
+│   │   │   │   └── profiling.json
+│   │   │   ├── cfd_distribucion_C2.pdf
+│   │   │   ├── cfd_distribucion_C2v2.pdf
+│   │   │   ├── cfd_distribucion_C3.pdf
+│   │   │   ├── cfd_distribucion_C4.pdf
+│   │   │   ├── cfd_distribucion_C4v2.pdf
+│   │   │   ├── cfd_distribucion_C5cerrada_F4.pdf
+│   │   │   ├── cfd_distribucion_C5cerrada.pdf
+│   │   │   ├── cfd_tau_mix_C1v2.pdf
+│   │   │   ├── cfd_tau_mix_C2.pdf
+│   │   │   ├── cfd_tau_mix_C2v2.pdf
+│   │   │   ├── cfd_tau_mix_C3.pdf
+│   │   │   ├── cfd_tau_mix_C4.pdf
+│   │   │   ├── cfd_tau_mix_C4v2.pdf
+│   │   │   ├── cfd_tau_mix_C5cerrada_F4.pdf
+│   │   │   ├── cfd_tau_mix_C5cerrada.pdf
+│   │   │   ├── cfd_tau_mix.pdf
+│   │   │   ├── cfd_velocidad.bp
+│   │   │   │   ├── data.0
+│   │   │   │   ├── md.0
+│   │   │   │   ├── md.idx
+│   │   │   │   ├── mmd.0
+│   │   │   │   └── profiling.json
+│   │   │   ├── cfd_velocidad_C1v2.bp
+│   │   │   │   ├── data.0
+│   │   │   │   ├── md.0
+│   │   │   │   ├── md.idx
+│   │   │   │   ├── mmd.0
+│   │   │   │   └── profiling.json
+│   │   │   ├── cfd_velocidad_C2.bp
+│   │   │   │   ├── data.0
+│   │   │   │   ├── md.0
+│   │   │   │   ├── md.idx
+│   │   │   │   ├── mmd.0
+│   │   │   │   └── profiling.json
+│   │   │   ├── cfd_velocidad_C2v2.bp
+│   │   │   │   ├── data.0
+│   │   │   │   ├── md.0
+│   │   │   │   ├── md.idx
+│   │   │   │   ├── mmd.0
+│   │   │   │   └── profiling.json
+│   │   │   ├── cfd_velocidad_C3.bp
+│   │   │   │   ├── data.0
+│   │   │   │   ├── md.0
+│   │   │   │   ├── md.idx
+│   │   │   │   ├── mmd.0
+│   │   │   │   └── profiling.json
+│   │   │   ├── cfd_velocidad_C4.bp
+│   │   │   │   ├── data.0
+│   │   │   │   ├── md.0
+│   │   │   │   ├── md.idx
+│   │   │   │   ├── mmd.0
+│   │   │   │   └── profiling.json
+│   │   │   ├── cfd_velocidad_C4v2.bp
+│   │   │   │   ├── data.0
+│   │   │   │   ├── md.0
+│   │   │   │   ├── md.idx
+│   │   │   │   ├── mmd.0
+│   │   │   │   └── profiling.json
+│   │   │   ├── cfd_velocidad_C5cerrada.bp
+│   │   │   │   ├── data.0
+│   │   │   │   ├── md.0
+│   │   │   │   ├── md.idx
+│   │   │   │   ├── mmd.0
+│   │   │   │   └── profiling.json
+│   │   │   ├── cfd_velocidad_C5cerrada_F4.bp
+│   │   │   │   ├── data.0
+│   │   │   │   ├── md.0
+│   │   │   │   ├── md.idx
+│   │   │   │   ├── mmd.0
+│   │   │   │   └── profiling.json
+│   │   │   ├── esquema_sistema.pdf
+│   │   │   ├── pinn_entrenamiento.pdf
+│   │   │   ├── sim_E2.pdf
+│   │   │   ├── sim_E5.pdf
+│   │   │   └── validacion_preliminar.pdf
+│   │   ├── main_art4.aux
+│   │   ├── main_art4.bbl
+│   │   ├── main_art4.bcf
+│   │   ├── main_art4.blg
+│   │   ├── main_art4.log
+│   │   ├── main_art4.out
+│   │   ├── main_art4.pdf
+│   │   ├── main_art4.run.xml
+│   │   ├── main_art4.tex
+│   │   ├── patch_a_s33.py
+│   │   ├── patch_b_concl.py
+│   │   ├── patch_dietas.py
+│   │   ├── patch_mayor1.py
+│   │   ├── patch_menores.py
+│   │   ├── patch_midpoint.py
+│   │   ├── patch_paso1.py
+│   │   ├── patch_paso2.py
+│   │   ├── patch_paso3.py
+│   │   ├── patch_paso4.py
+│   │   ├── patch_paso5.py
+│   │   ├── patch_paso6.py
+│   │   ├── patch_prep.py
+│   │   ├── patch_readme16.py
+│   │   ├── patch_readme17b.py
+│   │   ├── patch_readme17.py
+│   │   ├── patch_recupera5.py
+│   │   ├── patch_replicas.py
+│   │   ├── patch_s22.py
+│   │   ├── patch_s23pinn.py
+│   │   ├── patch_s23_val.py
+│   │   ├── patch_s25.py
+│   │   ├── patch_s35_pinn.py
+│   │   ├── patch_s41.py
+│   │   ├── patch_s43.py
+│   │   ├── patch_s45.py
+│   │   ├── patch_s47.py
+│   │   ├── README.md
+│   │   ├── resultados
+│   │   │   ├── cfd_camara_C1v2.py
+│   │   │   ├── cfd_camara_C2.py
+│   │   │   ├── cfd_camara_C2v2.py
+│   │   │   ├── cfd_camara_C3.py
+│   │   │   ├── cfd_camara_C4.py
+│   │   │   ├── cfd_camara_C4v2.py
+│   │   │   ├── cfd_camara_C5cerrada_F4.py
+│   │   │   ├── cfd_camara_C5cerrada.py
+│   │   │   ├── hist_C1.csv
+│   │   │   ├── hist_C1v2.csv
+│   │   │   ├── hist_C2v2.csv
+│   │   │   ├── hist_C4v2.csv
+│   │   │   ├── hist_C5cerrada.csv
+│   │   │   ├── hist_C5cerrada_F4.csv
+│   │   │   ├── pinn_resumen.md
+│   │   │   ├── resumen_C1.md
+│   │   │   ├── resumen_C1v2.md
+│   │   │   ├── resumen_C2.md
+│   │   │   ├── resumen_C2v2.md
+│   │   │   ├── resumen_C3.md
+│   │   │   ├── resumen_C4.md
+│   │   │   ├── resumen_C4v2.md
+│   │   │   ├── resumen_C5cerrada_F4.md
+│   │   │   └── resumen_C5cerrada.md
+│   │   ├── simulacion
+│   │   │   ├── bioconversion_ode.py
+│   │   │   ├── cfd_camara.py
+│   │   │   ├── Dockerfile.cfd
+│   │   │   ├── pinn_entrenamiento.py
+│   │   │   ├── __pycache__
+│   │   │   │   └── bioconversion_ode.cpython-314.pyc
+│   │   │   └── validacion_experimento.py
+│   │   └── supuestos.md
+│   ├── gemelo-digital
+│   │   └── estructura.tex
+│   ├── Makefile
+│   ├── modelo-hibrido
+│   │   ├── hybrid_deb_rna_article.aux
+│   │   ├── hybrid_deb_rna_article.log
+│   │   ├── hybrid_deb_rna_article.out
+│   │   ├── hybrid_deb_rna_article.pdf
+│   │   ├── hybrid_deb_rna_article.tex
+│   │   ├── hybrid_deb_rna_article.tex.bak
+│   │   └── Kimi_Agent_Revisión DEB-RNA.zip
+│   └── recursos_comunes
+│       ├── bibliografia
+│       │   ├── referencias_comunes.bib -> ../../../archivos_bib/bibliografia_tesis_leal.bib
+│       │   └── referencias_comunes.bib.bak
+│       ├── imagenes
+│       └── preambulo.tex
+├── articulo-simulacion
+│   ├── articulo-simulacion
+│   │   ├── main.aux
+│   │   ├── main.bcf
+│   │   ├── main.log
+│   │   ├── main.out
+│   │   └── main.run.xml
+│   ├── figuras
+│   ├── main.aux
+│   ├── main.bbl
+│   ├── main.bcf
+│   ├── main.blg
+│   ├── main.fdb_latexmk
+│   ├── main.fls
+│   ├── main.log
+│   ├── main.out
+│   ├── main.run.xml
+│   └── main.xdv
+├── candidatura
+│   ├── preguntas_candidatura.log
+│   ├── preguntas_candidatura.out
+│   ├── preguntas_candidatura.pdf
+│   └── preguntas_candidatura.tex
+├── Capitulos
+│   ├── cap2_sec02_sistema_experimental.tex
+│   └── cap2_sec02_sistema_experimental.tex.bak
+├── cargar_cronograma.sh
+├── codigo
+│   ├── calibracion
+│   ├── pgnn
+│   ├── pinn
+│   └── scripts-utilitarios
+│       ├── automatizar.py
+│       ├── experimento1.tex
+│       ├── experimento_ch4.csv
+│       ├── experimento_co2.csv
+│       ├── figura_dinamica_gases.pdf
+│       ├── figura_dinamica_gases.png
+│       ├── limpiar.py
+│       ├── reporte_experimento_1.pdf
+│       └── reporte_experimento_1.tex
+├── cronograma_completo.tsv
+├── cronograma.tsv
+├── dashboard
+│   ├── backend
+│   └── frontend
+├── datos
+│   ├── experimentos
+│   │   ├── 11
+│   │   │   ├── co2_larvas
+│   │   │   │   ├── analisis_co2_comparacion.png
+│   │   │   │   ├── co2_larvas_completo2.py
+│   │   │   │   ├── experimento_co2.csv
+│   │   │   │   └── experimento_co2_.csv
+│   │   │   ├── experimento_D1
+│   │   │   │   ├── experimento_ch4.csv
+│   │   │   │   ├── experimento_ch4_grafica.png
+│   │   │   │   ├── experimento_co2.csv
+│   │   │   │   ├── experimento_co2_grafica.png
+│   │   │   │   ├── generar_ch4.py
+│   │   │   │   └── generar_co2.py
+│   │   │   ├── experimento_D1_alimento
+│   │   │   │   ├── experimento_ch4.csv
+│   │   │   │   ├── experimento_ch4_grafica.png
+│   │   │   │   ├── experimento_co2.csv
+│   │   │   │   ├── experimento_co2_grafica.png
+│   │   │   │   ├── generar_ch4.py
+│   │   │   │   └── generar_co2.py
+│   │   │   ├── experimento_D4
+│   │   │   │   ├── experimento_ch4.csv
+│   │   │   │   ├── experimento_ch4_grafica.png
+│   │   │   │   ├── experimento_co2.csv
+│   │   │   │   ├── experimento_co2_grafica.png
+│   │   │   │   ├── generar_ch4.py
+│   │   │   │   └── generar_co2.py
+│   │   │   └── experimento_D4_alimento
+│   │   │       ├── experimento_ch4.csv
+│   │   │       ├── experimento_ch4_grafica.png
+│   │   │       ├── experimento_co2.csv
+│   │   │       ├── experimento_co2_grafica.png
+│   │   │       ├── generar_ch4.py
+│   │   │       └── generar_co2.py
+│   │   ├── 13
+│   │   │   ├── co2_larvas
+│   │   │   │   ├── analisis_co2_comparacion.png
+│   │   │   │   ├── co2_larvas_completo2.py
+│   │   │   │   ├── experimento_co2.csv
+│   │   │   │   └── experimento_co2_.csv
+│   │   │   ├── experimento_D1
+│   │   │   │   ├── experimento_ch4.csv
+│   │   │   │   ├── experimento_ch4_grafica.png
+│   │   │   │   ├── experimento_co2.csv
+│   │   │   │   ├── experimento_co2_grafica.png
+│   │   │   │   ├── generar_ch4.py
+│   │   │   │   └── generar_co2.py
+│   │   │   ├── experimento_D1_alimento
+│   │   │   │   ├── experimento_ch4.csv
+│   │   │   │   ├── experimento_ch4_grafica.png
+│   │   │   │   ├── experimento_co2.csv
+│   │   │   │   ├── experimento_co2_grafica.png
+│   │   │   │   ├── generar_ch4.py
+│   │   │   │   └── generar_co2.py
+│   │   │   ├── experimento_D4
+│   │   │   │   ├── experimento_ch4.csv
+│   │   │   │   ├── experimento_ch4_grafica.png
+│   │   │   │   ├── experimento_co2.csv
+│   │   │   │   ├── experimento_co2_grafica.png
+│   │   │   │   ├── generar_ch4.py
+│   │   │   │   └── generar_co2.py
+│   │   │   └── experimento_D4_alimento
+│   │   │       ├── experimento_ch4.csv
+│   │   │       ├── experimento_ch4_grafica.png
+│   │   │       ├── experimento_co2.csv
+│   │   │       ├── experimento_co2_grafica.png
+│   │   │       ├── generar_ch4.py
+│   │   │       └── generar_co2.py
+│   │   ├── 17
+│   │   │   ├── co2_larvas
+│   │   │   │   ├── experimento_ch4.csv
+│   │   │   │   ├── experimento_ch4_grafica.png
+│   │   │   │   ├── experimento_co2.csv
+│   │   │   │   ├── experimento_co2_grafica.png
+│   │   │   │   ├── generar_ch4.py
+│   │   │   │   └── generar_co2.py
+│   │   │   ├── experimento_D4
+│   │   │   │   ├── experimento_ch4.csv
+│   │   │   │   ├── experimento_ch4_grafica.png
+│   │   │   │   ├── experimento_co2.csv
+│   │   │   │   ├── experimento_co2_grafica.png
+│   │   │   │   ├── generar_ch4.py
+│   │   │   │   └── generar_co2.py
+│   │   │   └── experimento_D4_alimento
+│   │   │       ├── experimento_ch4.csv
+│   │   │       ├── experimento_ch4_grafica.png
+│   │   │       ├── experimento_co2.csv
+│   │   │       ├── experimento_co2_grafica.png
+│   │   │       ├── generar_ch4.py
+│   │   │       └── generar_co2.py
+│   │   ├── 9
+│   │   │   ├── arbol
+│   │   │   ├── co2_larvas_D1
+│   │   │   │   ├── analisis_co2_comparacion.png
+│   │   │   │   ├── co2_larvas_completo2.py
+│   │   │   │   ├── experimento_co2.csv
+│   │   │   │   └── experimento_co2_.csv
+│   │   │   ├── D1R1C_1.jpeg
+│   │   │   ├── D1R1C_2.jpeg
+│   │   │   ├── D1R1c_4.jpeg
+│   │   │   ├── D1R1C.jpeg
+│   │   │   ├── experimento_D1
+│   │   │   │   ├── experimento_ch4.csv
+│   │   │   │   ├── experimento_ch4_grafica.png
+│   │   │   │   ├── experimento_co2.csv
+│   │   │   │   ├── experimento_co2_grafica.png
+│   │   │   │   ├── generar_ch4.py
+│   │   │   │   └── generar_co2.py
+│   │   │   ├── experimento_D1_alimento
+│   │   │   │   ├── experimento_ch4.csv
+│   │   │   │   ├── experimento_ch4_grafica.png
+│   │   │   │   ├── experimento_co2.csv
+│   │   │   │   ├── experimento_co2_grafica.png
+│   │   │   │   ├── generar_ch4.py
+│   │   │   │   └── generar_co2.py
+│   │   │   ├── experimento_D4
+│   │   │   │   ├── experimento_ch4.csv
+│   │   │   │   ├── experimento_ch4_grafica.png
+│   │   │   │   ├── experimento_co2.csv
+│   │   │   │   ├── experimento_co2_grafica.png
+│   │   │   │   ├── generar_ch4.py
+│   │   │   │   └── generar_co2.py
+│   │   │   └── experimento_D4_alimento
+│   │   │       ├── experimento_ch4.csv
+│   │   │       ├── experimento_ch4_grafica.png
+│   │   │       ├── experimento_co2.csv
+│   │   │       ├── experimento_co2_grafica.png
+│   │   │       ├── generar_ch4.py
+│   │   │       └── generar_co2.py
+│   │   ├── arbol.txt
+│   │   ├── buscando_rutas.py
+│   │   ├── comparar_tasas.py
+│   │   ├── datos_entrenamiento_PINN.csv
+│   │   ├── datos_filtrados.csv
+│   │   ├── datos_filtrados.ods
+│   │   ├── datos_finales_PINN_corregidos.csv
+│   │   ├── datos_PINN_netos.csv
+│   │   ├── descripcion de los experimentos.odt
+│   │   ├── entrenar_pinn.py
+│   │   ├── figuras_con_etiquetas.pdf
+│   │   ├── figuras_unidas.pdf
+│   │   ├── limpieza_datos1.py
+│   │   ├── listado-imagenes
+│   │   ├── lista_figuras.txt
+│   │   ├── parametros.py
+│   │   ├── pdf-figuras.pdf
+│   │   ├── pdf-figuras.tex
+│   │   ├── pdf-figuras.tex.bak
+│   │   ├── pinn_eriksen1.py
+│   │   ├── pinn_eriksen.py
+│   │   ├── procesar_datos.py
+│   │   ├── procesar_todo.py
+│   │   ├── restar_controles.py
+│   │   └── verificar_datos.py
+│   └── referencia
+│       └── eriksen2022
+│           └── journal.pone.0276605.s003.xlsx - Sheet1.csv
+├── Dockerfile
+├── Dockerfile.texlive2026
+├── Docker.texlive2026
+├── documentacion
+│   └── estructura_proyecto.txt
+├── hardware
+│   ├── bom
+│   ├── esquematicos
+│   └── pcbs
+├── Makefile
+├── modelo_gei
+│   ├── docs
+│   │   └── 01_parametros.md
+│   ├── README.md
+│   ├── resultados
+│   │   └── figuras
+│   └── src
+│       └── parametros.py
+├── patch_s21.py
+├── presentacion
+│   ├── bioconversion.jpg
+│   ├── ciclo-bsf2.png
+│   ├── ciclo-bsf3.png
+│   ├── ciclo-bsf.jpg
+│   ├── ciclo-bsf.png
+│   ├── compilacion_modelado.log
+│   ├── compilar-respuestas.sh
+│   ├── Copia de presentacion-candidatura.tex
+│   ├── cronograma.png
+│   ├── larvas1.png
+│   ├── larvas2.png
+│   ├── larvas3.png
+│   ├── larvas4.png
+│   ├── localizacion.jpg
+│   ├── modelo-deb.png
+│   ├── preguntas
+│   │   ├── 1 bioquimica.pdf
+│   │   ├── 24 hibrido mrv.pdf
+│   │   ├── 6 impacto climático.pdf
+│   │   ├── 7 esquema.pdf
+│   │   ├── 9 limitaciones-riesgos.pdf
+│   │   ├── bioconversion.jpg
+│   │   ├── esquema.jpeg
+│   │   ├── modelo_completo_ia.pdf
+│   │   ├── presentacion_modelo_completo.fdb_latexmk
+│   │   ├── presentacion_modelo_completo.fls
+│   │   ├── presentacion_modelo_completo.log
+│   │   ├── presentacion_modelo_completo.nav
+│   │   ├── presentacion_modelo_completo.out
+│   │   ├── presentacion_modelo_completo.snm
+│   │   ├── presentacion_modelo_completo.synctex.gz
+│   │   ├── presentacion_modelo_completo.tex
+│   │   ├── presentacion_modelo_completo.toc
+│   │   ├── presentacion_modelo_completo.xdv
+│   │   ├── presentacion_respuesta1.fdb_latexmk
+│   │   ├── presentacion_respuesta1.fls
+│   │   ├── presentacion_respuesta1.log
+│   │   ├── presentacion_respuesta1.nav
+│   │   ├── presentacion_respuesta1.out
+│   │   ├── presentacion_respuesta1.snm
+│   │   ├── presentacion_respuesta1.synctex.gz
+│   │   ├── presentacion_respuesta1.tex
+│   │   ├── presentacion_respuesta1.toc
+│   │   ├── presentacion_respuesta1.xdv
+│   │   ├── presentacion_respuesta24.fdb_latexmk
+│   │   ├── presentacion_respuesta24.fls
+│   │   ├── presentacion_respuesta24.log
+│   │   ├── presentacion_respuesta24.nav
+│   │   ├── presentacion_respuesta24.out
+│   │   ├── presentacion_respuesta24.snm
+│   │   ├── presentacion_respuesta24.synctex.gz
+│   │   ├── presentacion_respuesta24.tex
+│   │   ├── presentacion_respuesta24.toc
+│   │   ├── presentacion_respuesta24.xdv
+│   │   ├── presentacion_respuesta6.fdb_latexmk
+│   │   ├── presentacion_respuesta6.fls
+│   │   ├── presentacion_respuesta6.log
+│   │   ├── presentacion_respuesta6.nav
+│   │   ├── presentacion_respuesta6.out
+│   │   ├── presentacion_respuesta6.snm
+│   │   ├── presentacion_respuesta6.synctex.gz
+│   │   ├── presentacion_respuesta6.tex
+│   │   ├── presentacion_respuesta6.toc
+│   │   ├── presentacion_respuesta6.xdv
+│   │   ├── presentacion_respuesta7.fdb_latexmk
+│   │   ├── presentacion_respuesta7.fls
+│   │   ├── presentacion_respuesta7.log
+│   │   ├── presentacion_respuesta7.nav
+│   │   ├── presentacion_respuesta7.out
+│   │   ├── presentacion_respuesta7.snm
+│   │   ├── presentacion_respuesta7.synctex.gz
+│   │   ├── presentacion_respuesta7.tex
+│   │   ├── presentacion_respuesta7.toc
+│   │   ├── presentacion_respuesta7.xdv
+│   │   ├── presentacion_respuesta9.fdb_latexmk
+│   │   ├── presentacion_respuesta9.fls
+│   │   ├── presentacion_respuesta9.log
+│   │   ├── presentacion_respuesta9.nav
+│   │   ├── presentacion_respuesta9.out
+│   │   ├── presentacion_respuesta9.snm
+│   │   ├── presentacion_respuesta9.synctex.gz
+│   │   ├── presentacion_respuesta9.tex
+│   │   ├── presentacion_respuesta9.toc
+│   │   └── presentacion_respuesta9.xdv
+│   ├── presentacion2.tex
+│   ├── presentacion-candidatura2.tex
+│   ├── presentacion-candidatura.bbl
+│   ├── presentacion-candidatura.bbl-SAVE-ERROR
+│   ├── presentacion-candidatura.bcf
+│   ├── presentacion-candidatura.bcf-SAVE-ERROR
+│   ├── presentacion-candidatura.blg
+│   ├── presentacion-candidatura.fdb_latexmk
+│   ├── presentacion-candidatura.fls
+│   ├── presentacion-candidatura.log
+│   ├── presentacion-candidatura.nav
+│   ├── presentacion-candidatura.out
+│   ├── presentacion-candidatura.pdf
+│   ├── presentacion-candidatura.run.xml
+│   ├── presentacion-candidatura.snm
+│   ├── presentacion-candidatura.synctex.gz
+│   ├── presentacion-candidatura.tex
+│   ├── presentacion-candidatura.tex.bak
+│   ├── presentacion-candidatura.toc
+│   ├── presentacion-candidatura.vrb
+│   ├── presentacion-candidatura.xdv
+│   ├── presentacion_hibrido.fdb_latexmk
+│   ├── presentacion_hibrido.fls
+│   ├── presentacion_hibrido.log
+│   ├── presentacion_hibrido.nav
+│   ├── presentacion_hibrido.out
+│   ├── presentacion_hibrido.pdf
+│   ├── presentacion_hibrido.snm
+│   ├── presentacion_hibrido.synctex.gz
+│   ├── presentacion_hibrido.tex
+│   ├── presentacion_hibrido.toc
+│   ├── presentacion_hibrido.xdv
+│   ├── presentacion_modelado.fdb_latexmk
+│   ├── presentacion_modelado.fls
+│   ├── presentacion_modelado.log
+│   ├── presentacion_modelado.nav
+│   ├── presentacion_modelado.out
+│   ├── presentacion_modelado.pdf
+│   ├── presentacion_modelado.snm
+│   ├── presentacion_modelado.synctex.gz
+│   ├── presentacion_modelado.tex
+│   ├── presentacion_modelado.toc
+│   ├── presentacion_modelado.xdv
+│   ├── presentacion-modelodeb.fdb_latexmk
+│   ├── presentacion-modelodeb.fls
+│   ├── presentacion-modelodeb.log
+│   ├── presentacion-modelodeb.nav
+│   ├── presentacion-modelodeb.out
+│   ├── presentacion-modelodeb.pdf
+│   ├── presentacion-modelodeb.snm
+│   ├── presentacion-modelodeb.synctex.gz
+│   ├── presentacion-modelodeb.tex
+│   ├── presentacion-modelodeb.toc
+│   ├── presentacion-modelodeb.xdv
+│   ├── presentacion_proceso_bioconversion.fdb_latexmk
+│   ├── presentacion_proceso_bioconversion.fls
+│   ├── presentacion_proceso_bioconversion.log
+│   ├── presentacion_proceso_bioconversion.nav
+│   ├── presentacion_proceso_bioconversion.out
+│   ├── presentacion_proceso_bioconversion.pdf
+│   ├── presentacion_proceso_bioconversion.snm
+│   ├── presentacion_proceso_bioconversion.synctex.gz
+│   ├── presentacion_proceso_bioconversion.tex
+│   ├── presentacion_proceso_bioconversion.toc
+│   ├── presentacion_proceso_bioconversion.xdv
+│   ├── presentacion_respuestas_completas.fdb_latexmk
+│   ├── presentacion_respuestas_liviana.tex
+│   ├── presentacion_respuestas_ultraliviana.tex
+│   ├── presentacion.synctex.gz
+│   ├── presentacion.tex
+│   ├── propuesta.jpg
+│   ├── referencias.bib
+│   ├── referencias.bib.bak
+│   ├── respuestas.docx
+│   ├── xelatex294023.fls
+│   ├── xelatex294236.fls
+│   └── xelatex294599.fls
+├── README.md
+├── recursos-comunes
+│   ├── bibliografia
+│   │   ├── bibliografia -> ../../recursos-comunes/bibliografia
+│   │   ├── bibliografia_tesis_leal.bib
+│   │   ├── bibliografia_tesis_leal.bib.bak
+│   │   ├── Bibliografia_unificada_1.bib
+│   │   ├── Bibliografia_unificada_1.bib.bak
+│   │   ├── Bibliografia_unificada.bib
+│   │   ├── Bibliografia_unificada.bib.bak
+│   │   ├── pdfs
+│   │   │   └── Dynamic modelling of feed assimilation-edo.pdf
+│   │   ├── referencias.bib
+│   │   ├── Referencias.bib
+│   │   ├── referencias.bib.bak
+│   │   ├── Referencias.bib.bak
+│   │   └── referencias.tex
+│   ├── estilos
+│   │   ├── dtvstyle.bst
+│   │   └── dtvstyle.dbj
+│   └── scripts
+├── revision-bibliografica-detallada
+│   ├── revision.log
+│   ├── revision.pdf
+│   └── revision.tex
+├── scripts
+│   ├── compilar-local.sh
+│   ├── compilar-presentacion.sh
+│   ├── compilar-respuestas.sh
+│   └── README.md
+├── simulacion
+│   ├── core
+│   ├── modelo
+│   ├── salidas
+│   │   ├── csv
+│   │   └── figuras
+│   └── tests
+├── tesis
+│   ├── 00Figuras
+│   │   ├── 00f00EscudoUN2016.jpg
+│   │   ├── biomasa_comparada.png
+│   │   ├── biomasa_estimada.png
+│   │   ├── captura_reporte_turnitin.png
+│   │   ├── deb_base_validation.png
+│   │   ├── deb_batch_calibration.png
+│   │   ├── DG_FLUJO_GENERAL.png
+│   │   ├── esquema.jpeg
+│   │   ├── fig_compartimentos_deb.png
+│   │   ├── fig_tasas_alpha_beta.png
+│   │   ├── gant.png
+│   │   ├── localizacion_ciat.png
+│   │   ├── localizacion.jpg
+│   │   ├── localizacion.png
+│   │   ├── MapaLeal.pdf
+│   │   ├── modelo-deb.png
+│   │   └── simulacion_ia.png
+│   ├── Anexos
+│   │   └── anexo_b_modelo.tex
+│   ├── articulos
+│   │   └── articulo_2_gemelo_gei
+│   │       ├── figuras
+│   │       ├── main.aux
+│   │       ├── main.bcf
+│   │       ├── main.log
+│   │       ├── main.pdf
+│   │       ├── main.run.xml
+│   │       ├── main.tex
+│   │       ├── refs.bib
+│   │       └── secciones
+│   │           ├── conclusiones.tex
+│   │           ├── introduccion.tex
+│   │           ├── metodologia.tex
+│   │           └── resultados.tex
+│   ├── candidatura
+│   │   ├── defensa.pdf
+│   │   └── defensa.tex
+│   ├── Capitulos
+│   │   ├── alcance_limitaciones.tex
+│   │   ├── antecedentes.tex
+│   │   ├── antecedentes.tex.bak
+│   │   ├── cap1_sec01_introduccion.tex
+│   │   ├── cap1_sec01_introduccion.tex.backup_refs
+│   │   ├── cap1_sec01_introduccion.tex.bak
+│   │   ├── cap1_sec02_antecedentes.tex
+│   │   ├── cap1_sec02_antecedentes.tex.backup_refs
+│   │   ├── cap1_sec02_antecedentes.tex.bak
+│   │   ├── cap1_sec03_planteamiento.tex
+│   │   ├── cap1_sec03_planteamiento.tex.backup_refs
+│   │   ├── cap1_sec03_planteamiento.tex.bak
+│   │   ├── cap1_sec04_pregunta.tex
+│   │   ├── cap1_sec04_pregunta.tex.backup_refs
+│   │   ├── cap1_sec05_hipotesis.tex
+│   │   ├── cap1_sec05_hipotesis.tex.backup_refs
+│   │   ├── cap1_sec06_objetivos.tex
+│   │   ├── cap1_sec06_objetivos.tex.backup_refs
+│   │   ├── cap1_sec07_alcance.tex
+│   │   ├── cap1_sec07_alcance.tex.backup_refs
+│   │   ├── cap2_materiales_metodos.tex
+│   │   ├── cap2_materiales_metodos.tex.bak
+│   │   ├── cap2_sec01_introduccion.tex
+│   │   ├── cap2_sec01_introduccion.tex.bak
+│   │   ├── cap2_sec02_sistema_experimental.tex
+│   │   ├── cap2_sec02_sistema_experimental.tex.bak
+│   │   ├── cap2_sec03_sensores.tex
+│   │   ├── cap2_sec03_sensores.tex.bak
+│   │   ├── cap2_sec04_protocolo.tex
+│   │   ├── cap2_sec04_protocolo.tex.bak
+│   │   ├── cap2_sec05_calibracion.tex
+│   │   ├── cap2_sec05_calibracion.tex.bak
+│   │   ├── cap2_sec06_resultados.tex
+│   │   ├── cap2_sec06_resultados.tex.bak
+│   │   ├── cap2_sec07_conclusiones.tex
+│   │   ├── cap2_sec07_conclusiones.tex.bak
+│   │   ├── cap3_sec01_introduccion.tex
+│   │   ├── cap3_sec01_introduccion.tex.bak
+│   │   ├── cap3_sec02_fundamentos_deb.tex
+│   │   ├── cap3_sec02_fundamentos_deb.tex.bak
+│   │   ├── cap3_sec03_variables_estado.tex
+│   │   ├── cap3_sec03_variables_estado.tex.bak
+│   │   ├── cap3_sec04_formulacion_ode.tex
+│   │   ├── cap3_sec04_formulacion_ode.tex.bak
+│   │   ├── cap3_sec05_cinetica_asimilacion.tex
+│   │   ├── cap3_sec05_cinetica_asimilacion.tex.bak
+│   │   ├── cap3_sec06_parametros.tex
+│   │   ├── cap3_sec07_analisis_estructural.tex
+│   │   ├── cap3_sec07_analisis_estructural.tex.bak
+│   │   ├── cap3_sec08_conclusiones.tex
+│   │   ├── cap4_sec01_introduccion.tex
+│   │   ├── cap4_sec01_introduccion.tex.bak
+│   │   ├── cap4_sec02_arquitectura.tex
+│   │   ├── cap4_sec02_redes.tex
+│   │   ├── cap4_sec03_ventanas.tex
+│   │   ├── cap4_sec04_calibrador.tex
+│   │   ├── cap4_sec05_calibracion.tex
+│   │   ├── cap4_sec05_calibracion.tex.bak
+│   │   ├── cap4_sec06_comparativa.tex
+│   │   ├── cap4_sec07_conclusiones.tex
+│   │   ├── cap4_sec07_validacion.tex
+│   │   ├── cap4_sec08_resultados.tex
+│   │   ├── cap4_sec09_conclusiones.tex
+│   │   ├── cap5_sec01_introduccion.tex
+│   │   ├── cap5_sec02_validacion.tex
+│   │   ├── cap5_sec03_resultados.tex
+│   │   ├── cap5_sec04_plataforma.tex
+│   │   ├── cap5_sec05_semaforo.tex
+│   │   ├── cap5_sec06_protocolo.tex
+│   │   ├── cap5_sec07_mrv.tex
+│   │   ├── cap5_sec08_utilidad.tex
+│   │   ├── cap5_sec09_conclusiones.tex
+│   │   ├── cap6_sec01_sintesis.tex
+│   │   ├── cap6_sec02_limitaciones.tex
+│   │   ├── cap6_sec03_trabajos_futuros.tex
+│   │   ├── costos.tex
+│   │   ├── desarrollo-hardware.tex
+│   │   ├── discusion_capitulo2.tex
+│   │   ├── discusion_capitulo2.tex.bak
+│   │   ├── estimacion-biomasa.tex
+│   │   ├── intro_capitulo2.tex
+│   │   ├── intro_capitulo2.tex.bak
+│   │   ├── introduccion_contexto.tex
+│   │   ├── introduccion_contexto.tex.bak
+│   │   ├── introduccion.tex
+│   │   ├── introduccion.tex.bak
+│   │   ├── justificacion.tex
+│   │   ├── justificacion.tex.bak
+│   │   ├── manejo-datos.tex
+│   │   ├── marco_bsf_estado_arte.tex
+│   │   ├── marco_bsf_estado_arte.tex.bak
+│   │   ├── marco_gei_comparacion.tex
+│   │   ├── marco_gei_comparacion.tex.bak
+│   │   ├── marco_monitoreo.tex
+│   │   ├── marco-teorico.tex
+│   │   ├── marco-teorico.tex.bak
+│   │   ├── metodologia.tex
+│   │   ├── objetivo_General.tex
+│   │   ├── planteamiento.tex
+│   │   ├── planteamiento.tex.bak
+│   │   ├── Pregunta.tex
+│   │   ├── propuesta-hibrida.tex
+│   │   ├── reemplaza_citas_cap1.py
+│   │   ├── resultados_capitulo2.tex
+│   │   ├── resultados_capitulo2.tex.bak
+│   │   ├── resultados_esperados.tex
+│   │   └── riesgos-tecnologicos.tex
+│   ├── compartimentos_desarrollado.tex
+│   ├── compartimentos_desarrollado.tex.bak
+│   ├── contenido
+│   │   ├── 0000.tex
+│   │   ├── 00Abreviaturas.aux
+│   │   ├── 00Abreviaturas.tex
+│   │   ├── 00Agradecimientos.aux
+│   │   ├── 00Agradecimientos.tex
+│   │   ├── 00ResumenAbstract.aux
+│   │   └── 00ResumenAbstract.tex
+│   ├── diseno-experimental
+│   │   ├── diagrama_reactor.tex
+│   │   ├── main.aux
+│   │   ├── main.log
+│   │   ├── main.out
+│   │   ├── main.tex
+│   │   ├── main.toc
+│   │   ├── manual-reactor-presupuesto.pdf
+│   │   └── README.md
+│   ├── enfoque-ambiental
+│   │   ├── propuesta.pdf
+│   │   └── propuesta.tex
+│   ├── gemelo
+│   │   ├── datos
+│   │   │   ├── flujos_reales.csv
+│   │   │   └── sintetico_base.csv
+│   │   ├── modelo_0d
+│   │   │   ├── calibrar_camara.py
+│   │   │   ├── gemelo_0d.py
+│   │   │   ├── gemelo_camara.py
+│   │   │   └── gemelo_continuo.py
+│   │   ├── modelo_2d
+│   │   │   ├── co2_cama_2d.py
+│   │   │   └── co2_ch4_ventilacion.py
+│   │   ├── README.md
+│   │   └── resultados
+│   │       ├── calibracion_camara_co2.png
+│   │       ├── co2_mapa_6h.png
+│   │       ├── co2_perfiles.png
+│   │       ├── gei_curva_diseno_ventilacion.png
+│   │       ├── gei_mapa_ch4_4ach.png
+│   │       ├── gei_mapa_co2_4ach.png
+│   │       ├── gemelo_0d_series.png
+│   │       ├── gemelo_continuo_adaptativo.png
+│   │       └── gemelo_vs_datos.png
+│   ├── preambulo
+│   │   ├── paquetes_comunes.sty
+│   │   └── variables.tex
+│   ├── presupuesto
+│   │   ├── apilado.tex
+│   │   ├── bandeja.tex
+│   │   ├── celda.tex
+│   │   ├── electronica.tex
+│   │   ├── esquema.tex
+│   │   ├── linea.tex
+│   │   ├── main.aux
+│   │   ├── main.log
+│   │   ├── main.out
+│   │   ├── main.pdf
+│   │   ├── main.tex
+│   │   ├── main.toc
+│   │   └── plenum.tex
+│   ├── programas
+│   │   └── deb_base.py
+│   ├── referencias.tex -> ../recursos-comunes/bibliografia/referencias.tex
+│   ├── tasas_metabolicas_desarrollado.tex
+│   ├── tasas_metabolicas_desarrollado.tex.bak
+│   ├── tesis01.tex
+│   ├── tesis.aux
+│   ├── tesis.bbl
+│   ├── tesis.bbl-SAVE-ERROR
+│   ├── tesis.bcf
+│   ├── tesis.bcf-SAVE-ERROR
+│   ├── tesis.blg
+│   ├── tesis.fdb_latexmk
+│   ├── tesis.fls
+│   ├── tesis.lof
+│   ├── tesis.log
+│   ├── tesis.lot
+│   ├── tesis.out
+│   ├── tesis.pdf
+│   ├── tesis.run.xml
+│   ├── tesis.tex
+│   ├── tesis.toc
+│   ├── tesis.xdv
+│   └── version01
+│       ├── fig1_emissions_comparison.png
+│       ├── fig2_DEB_model_scheme.png
+│       ├── fig3_system_architecture.png
+│       ├── fig4_EDO_simulation.png
+│       ├── fig5c_HNODE.png
+│       ├── fig6_temperature_compensation.png
+│       └── report.md
+├── tesis.bbl
+├── texlive.profile
+├── texput.log
+├── texto-bioconversion
+│   ├── figuras
+│   │   └── modelo-deb.png
+│   ├── main.aux
+│   ├── main.bbl
+│   ├── main.blg
+│   ├── main.fdb_latexmk
+│   ├── main.fls
+│   ├── main.log
+│   ├── main.out
+│   ├── main.pdf
+│   ├── main.tex
+│   ├── main.toc
+│   ├── main.xdv
+│   ├── refs.bib
+│   └── secciones
+│       ├── 01_introduccion.tex
+│       ├── 02_notacion.tex
+│       ├── 03_sistema.tex
+│       ├── 04_supuestos.tex
+│       ├── 05_modelo.tex
+│       ├── 06_diseño.tex
+│       ├── 07_mediciones.tex
+│       ├── 08_discusion.tex
+│       ├── 08_protocolo.tex
+│       ├── introduccion.tex
+│       ├── Kimi_Agent_Modelo BSF LaTeX.zip
+│       ├── notacion.tex
+│       └── sistema.tex
+└── verificar_refs_tesis.py
+
+130 directories, 824 files
