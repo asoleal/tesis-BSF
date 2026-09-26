@@ -4,37 +4,45 @@
 % ============================================================
 
 \begin{abstract}
-Presentamos la simulacion integral del sistema de bioconversion de residuos
-con \emph{Hermetia illucens} instrumentado para la medicion de CO$_2$ y CH$_4$:
-un gemelo digital de dimension cero que integra la dinamica larval, el lecho
-y el aire interno del contenedor, y una verificacion por dinamica de fluidos
-computacional (CFD, FEniCSx/dolfinx) del supuesto de mezcla homogenea en la
-camara de cria. Se reportan los escenarios de simulacion E2--E5 del protocolo
-experimental y las metricas de mezcla que condicionan la instrumentacion.
-En el regimen laminar analizado, ninguna configuracion de puertos de
-ventilacion logra homogeneizar la camara en la fase ventilada ($\tau_{mix} >
-720$ s frente a $\tau_{aire} \approx 175$ s); en cambio, un ventilador pequeno
-en la tapa homogeneiza la camara sellada en menos de 60 s, validando la fase
-de cierre estatico del protocolo de medicion.
+Presentamos un sistema de medicion de tasas de emision de CO$_2$ para cria
+intensiva de \emph{Hermetia illucens} en contenedor, orientado a resolver
+dos problemas de la instrumentacion de bajo costo: la saturacion del sensor
+NDIR a lo largo del ciclo ---incluido el ayuno de la prepupa--- y la
+heterogeneidad espacial del aire, que invalida la pendiente de acumulacion
+como estimador de la tasa. El sistema combina tres elementos: (i) un
+calendario de cierres adaptativo de dos pasadas, con duraciones entre 2 y
+30 min fijadas por el margen del sensor, que mantiene la concentracion
+dentro del rango en los escenarios extremos (picos de 4978 y 4604 ppm
+frente al tope de 5000); (ii) la verificacion por dinamica de fluidos
+computacional del supuesto de mezcla homogenea, que no se sostiene en fase
+ventilada ($\tau_{mix} > 720$ s frente a $\tau_{aire} \approx 175$ s) y se
+recupera con un ventilador pequeno en la tapa de la camara sellada
+($\tau_{mix} = 4$--$24$ s, margen de 10--30$\times$ sobre los cierres); y
+(iii) un gemelo digital de dimension cero alimentado con las tasas medidas,
+que reproduce el orden de magnitud del ciclo observado en un experimento
+preliminar de cria (panera de 12.4 L, 700 larvas). El sistema queda listo
+para la campana de factores de emision.
 
-\textbf{Palabras clave:} bioconversion, \emph{Hermetia illucens}, gemelo
-digital, CO$_2$, CH$_4$, dolfinx.
+\textbf{Palabras clave:} bioconversion, \emph{Hermetia illucens}, gases de
+efecto invernadero, camara de emision, gemelo digital, dinamica de fluidos
+computacional.
 \end{abstract}
 
 \section{Introduccion}
 La bioconversion de residuos organicos con larvas de la mosca soldado negra
-(\emph{Hermetia illucens}, BSF) transforma substratos de bajo valor en biomasa
+(\emph{Hermetia illucens}, BSF) transforma sustratos de bajo valor en biomasa
 rica en proteina y lipidos ---utilizable como ingrediente acuicola y
-avícola--- y en un residuo carbonizado (frass) con valor fertilizante
+avicola--- y en un residuo carbonizado (frass) con valor fertilizante
 \parencite{goldBiowasteTreatmentBlack2020,surendraBioconversionOrganicWastes2016,
-tomberlinBugBookBlackSoldier2025}. Frente al compostaje traditional, el proceso
+tomberlinBugBookBlackSoldier2025}. Frente al compostaje tradicional, el proceso
 reduce el volumen del residuo en dias y opera a escala de contenedor, lo que lo
 hace apto para sistemas intensivos instrumentados.
 
 La intensificacion del proceso hace necesario cuantificar sus emisiones de
-gases de efecto invernadero (GEI): CO$_2$ de origen biogenico, producto de la
-respiracion larvaria y microbiana, y CH$_4$, que aparece cuando zonas del lecho
-se vuelven anoxicas \parencite{boakye-yiadomGreenhouseGasEmissions2022,
+gases de efecto invernadero (GEI): CO$_2$ biogenico, producto de la
+respiracion larvaria y microbiana, y CH$_4$, que aparece cuando zonas del
+lecho se vuelven anoxicas
+\parencite{boakye-yiadomGreenhouseGasEmissions2022,
 ermolaevGreenhouseGasEmissions2019,parodiBioconversionEfficienciesGreenhouse2020a,
 filonchykGreenhouseGasesEmissions2024a}. La importancia del reporte de estas
 emisiones esta dada por los compromisos de inventario nacional de GEI
@@ -43,40 +51,60 @@ En este trabajo la medicion se realiza dentro de la propia camara de cria,
 acondicionada como camara de emision: la ventilacion conmuta entre una fase
 abierta, con renovacion de aire a caudal controlado, y cierres estaticos en
 los que la concentracion acumula la tasa de emision
-\parencite{bertinMeasuringMethaneEmissions2026}. La instrumentacion emplea
-sensores de bajo costo de CO$_2$, CH$_4$ y O$_2$
+\parencite{bertinMeasuringMethaneEmissions2026}. La instrumentacion de bajo
+costo ---NDIR para CO$_2$, semiconductores para CH$_4$ y sensores de
+O$_2$--- hace viable el monitoreo continuo
 \parencite{dubeyLowCostCO2NDIR2024,kiplimoAddressingLowCostMethane2024,
-mitchellCalibrationLowCostMethane2024}. La validez del metodo descansa en un
-supuesto de mezcla: que el aire interno sea espacialmente homogeneo (supuesto
-A1), de modo que la pendiente de acumulacion durante un cierre reporte la tasa
-real de emision.
+mitchellCalibrationLowCostMethane2024}, pero impone dos condiciones que el
+diseno debe garantizar. La primera es de rango: el sensor tiene un tope de
+concentracion y la tasa del ciclo varia desde un maximo en el crecimiento
+activo hasta casi cero en el ayuno de la prepupa, de modo que la duracion
+del cierre debe adaptarse para no saturar el sensor ni perder resolucion.
+La segunda es espacial: el metodo de la pendiente exige que el aire interno
+sea homogeneo (supuesto A1); si la camara tiene zonas muertas, la lectura no
+representa el estado del sistema y la tasa estimada queda sesgada.
 
-El modelado de la bioconversion con BSF cuenta con antecedentes solidos en la
-dinamica energetica de los organismos (DEB): \textcite{eriksenDynamicModellingFeed2022}
-propuso un modelo dinamico calibrado que predice crecimiento, acumulacion de
-lipidos y emision de CO$_2$ larvario, refinado despues con datos metabolicos
-adicionales \parencite{eriksenMetabolicPerformanceFeed2024}; otros trabajos han
+El modelado de la bioconversion con BSF cuenta con antecedentes solidos en
+la dinamica energetica de los organismos (DEB):
+\textcite{eriksenDynamicModellingFeed2022} propuso un modelo dinamico
+calibrado que predice crecimiento, acumulacion de lipidos y emision de
+CO$_2$ larvario, refinado despues con datos metabolicos adicionales
+\parencite{eriksenMetabolicPerformanceFeed2024}; otros trabajos han
 extendido el modelado matematico y computacional del sistema larva--sustrato
 \parencite{katchaliMathematicalComputationalModeling2025,
 grausaMetabolicModelingHermetia2023}. En paralelo, los gemelos digitales
 ganan terreno como herramienta de supervision y prediccion en sistemas
-biologicos intensivos \parencite{luReviewIntelligentGreenhouse2025a}. Sin
-embargo, la literatura no reporta, hasta donde alcanza nuestro conocimiento,
-una verificacion del supuesto de mezcla homogenea en camaras de cria
-instrumentadas, ni un diseno de mezcla forzada orientado a la medicion de
-emisiones en este tipo de sistema.
+biologicos intensivos \parencite{luReviewIntelligentGreenhouse2025a}. Un
+gemelo de emisiones, sin embargo, no es mejor que las tasas que lo
+alimentan: requiere un instrumento que las mida de forma defendible durante
+todo el ciclo. Hasta donde alcanza nuestro conocimiento, la literatura no
+reporta una verificacion del supuesto de mezcla homogenea en camaras de
+cria instrumentadas, ni un diseno de mezcla forzada orientado a la medicion
+de emisiones en este tipo de sistema, ni garantias de rango del sensor para
+ciclos completos que incluyan el ayuno de la prepupa.
 
-Este articulo valida por simulacion el diseno de la camara antes de la campana
-experimental, combinando un gemelo digital de dimension cero (0D) con un modelo
-de dinamica de fluidos computacional (CFD) del aire interno. Las
-contribuciones son: (i) un gemelo digital de 12 estados (larva, lecho y aire)
-que integra la cinetica DEB con los balances de gases, el control PI de
-ventilacion y un calendario de cierres adaptativos; (ii) la verificacion
-cuantitativa del supuesto A1 mediante CFD (FEniCSx/dolfinx), con metricas de
-mezcla en fase ventilada y en cierre; y (iii) el diseno de una configuracion
-con ventilador interno que garantiza la homogeneidad durante los cierres, con
-una ley de escalamiento verificada que permite su dimensionamiento sin
-simulaciones adicionales. La Figura~\ref{fig:esquema} muestra el sistema.
+El objetivo de este articulo es disenar y verificar, antes de la campana
+experimental, un sistema de medicion de tasas de CO$_2$ para cria
+intensiva de BSF en contenedor, que mantenga al sensor dentro de su rango
+durante todo el ciclo y garantice la homogeneidad del aire durante los
+cierres. Tres preguntas ordenan el trabajo: (P1)~de rango: ?`un calendario
+de cierres de duracion adaptativa mantiene al NDIR dentro de su rango
+durante todo el ciclo, desde el pico de emision del crecimiento activo
+hasta el ayuno de la prepupa? (P2)~de mezcla: ?`el supuesto de mezcla
+homogenea (A1) se sostiene en la fase ventilada y en la fase de cierre, y
+que intervencion de diseno lo garantiza cuando falla? (P3)~de integracion:
+?`las tasas medidas alimentan un gemelo digital de dimension cero que
+reproduce, en orden de magnitud, el ciclo de emision observado en cria
+real? Las contribuciones son: (i) el calendario de cierres adaptativo de
+dos pasadas con cotas operativas, que cumple el tope del sensor en los
+escenarios extremos; (ii) el veredicto cuantitativo del CFD sobre A1 y el
+diseno de un ventilador interno con ley de escalamiento verificada; y
+(iii) la integracion con un gemelo digital 0D y su demostracion con datos
+de cria real. La Seccion 2 describe el sistema experimental y los modelos;
+la Seccion 3 presenta los resultados por pregunta; la Seccion 4 discute las
+limitaciones y el trabajo futuro, incluida una capa de correccion con redes
+neuronales informadas por la fisica (PINN) en entrenamiento piloto. La
+Figura~\ref{fig:esquema} muestra el sistema.
 
 \begin{figure}[htbp]
   \centering
@@ -88,90 +116,114 @@ simulaciones adicionales. La Figura~\ref{fig:esquema} muestra el sistema.
   \label{fig:esquema}
 \end{figure}
 
-\section{Modelo del sistema}
+\section{Materiales y metodos}
+\subsection{Sistema experimental}
+\label{sec:sistema}
+
+El experimento preliminar se realizo en septiembre de 2025 en una panera
+de plastico sellada (base $30 \times 19$ cm, tapa $36 \times 25$ cm,
+altura 17 cm), cuyo volumen interno de tronco de cono es
+$V \approx 12.4$ L; descontando el lecho, el volumen de aire efectivo es
+$V_{aire} = 12.1$ L (supuesto S1). En la panera se criaron $N = 700$
+larvas de \emph{Hermetia illucens} desde huevo, con el ciclo completo
+hasta la prepupa (18 d), a temperatura ambiente cercana a 27~$^{\circ}$C
+(S4).
+
+Se evaluaron dos dietas: D1, dieta estandar de sustrato de pollo
+reportada en la literatura, y D4, dieta de residuos agroindustriales
+(frutas, cascaras de naranja y residuos similares) procesada con
+\emph{Bacillus}. En ambos casos el alimento se suministro a libre
+disposicion en raciones de 250 g, renovadas en cada jornada de medicion
+(S3).
+
+Las emisiones se midieron con un sensor NDIR de CO$_2$ (rango operativo
+acotado a 5000 ppm, supuesto S9) y un sensor TGS2611 de CH$_4$ cuya
+senal se uso solo como indicador de anoxia (S10). El protocolo consistio
+en cierres de acumulacion en los dias 9, 11, 13 y 17 del ciclo: con la
+panera sellada, la concentracion de CO$_2$ crece de forma casi lineal
+y la tasa de produccion se estima por ajuste de la pendiente, aceptando
+solo ajustes con $R^2 \geq 0.5$. Para cada dia y dieta se incluyo una
+bandeja control con 250 g de alimento sin larvas; la tasa neta de
+emision del tratamiento se obtiene restando la tasa del control del
+mismo dia (supuesto S7). Las tasas extraidas, con su $R^2$, se
+consolidan en
+\texttt{datos/experimentos/datos\_finales\_PINN\_corregidos.csv}.
+La biomasa larval no se peso en esta campana, lo que se declara como
+limitacion y se corrige en los experimentos finales.
+
 \subsection{Dinamica 0D: doce estados}
 \label{sec:dinamica0d}
-El gemelo digital tiene doce estados: asimilados y estructura larvaria ($A$, $B$, mg),
-lipidos ($L$, mg), poblacion ($N$, larvas), materia seca y agua del lecho ($DM$, $W$, g),
-temperaturas del lecho y del aire ($T_s$, $T$, $^{\circ}$C), humedad absoluta del aire
-($w$, kg/kg) y concentraciones de CO$_2$, O$_2$ y CH$_4$ del aire interno ($c_i$, mol/m$^3$).
-La cinetica larval sigue el modelo de \textcite{eriksenDynamicModellingFeed2022} con
-parametros de \textcite{eriksenMetabolicPerformanceFeed2024}; el balance de gases
-integra respiracion larvaria, actividad microbiana del lecho y transferencia con el
-aire renovado por la ventilacion. El estado se propaga con \texttt{scipy.solve\_ivp}
-(metodo LSODA, \texttt{rtol}=10$^{-6}$, \texttt{atol}=10$^{-9}$), con reinicio de
-segmentos cuando el protocolo repone alimento (Sec.~\ref{sec:validacion}).
 
-\textbf{Cinetica larval (DEB).} La capacidad de carga estructural decrece
-linealmente despues del dia $t_{p,min}$:
+El gemelo digital tiene doce estados: asimilado y estructura larvaria
+($A$, $B$, mg), lipidos ($L$, mg), poblacion ($N$, larvas), materia seca y
+agua del lecho ($DM$, $W$, g), temperaturas del lecho y del aire ($T_s$,
+$T$, $^{\circ}$C), humedad absoluta del aire ($w$, kg/kg) y concentraciones
+de CO$_2$, O$_2$ y CH$_4$ del aire interno ($c_i$, mol/m$^3$). La cinetica
+larval sigue el modelo DEB de \textcite{eriksenDynamicModellingFeed2022}
+con parametros de \parencite{eriksenMetabolicPerformanceFeed2024}: la
+capacidad de carga estructural decrece linealmente despues del dia
+$t_{p,min}$ (inicio de la prepupa),
+
 \begin{equation}
-B_{max}(t) = \left\{ \begin{array}{ll} B_{max,0}, & t \le t_{p,min} \\[2pt]
-\max\{B_{max,0} - \rho\,(t - t_{p,min}),\, B_{max,f}\}, & t > t_{p,min}
-\end{array} \right.
-\end{equation}
-Respecto al modelo base se anade el \emph{switch de prepupa} $S_{pr}(t)\in[0,1]$
-(supuesto S5, \texttt{supuestos.md}): una logistica centrada en $t_p$ que reproduce
-la cesacion de alimentacion observada al final del ciclo:
-\begin{equation}
-S_{pr}(t) = \frac{1}{1 + e^{-(t - t_p)/s_p}}, \qquad
-a(B,t) = \frac{a_{max}}{1 + (B/B_{max}(t))^{\alpha}}\,\bigl(1 - S_{pr}(t)\bigr)
-\end{equation}
-con $a$ la tasa especifica de asimilacion ($r_A = a\,B$) y $s_p$ el ancho de la
-transicion. El crecimiento sigue la regulacion logistica de Eriksen:
-\begin{equation}
-\mu_B = \left[\frac{(a - m)\,\ell}{1 + Y_B\,\ell}\right]^{+}, \qquad
-\ell = \left[1 - \left(\frac{B}{B_{max}(t)}\right)^{\beta}\right]^{+}
-\end{equation}
-de donde $r_B = \mu_B B$, $r_{CB} = Y_B r_B$, y el mantenimiento, reducido al suelo
-de ayuno durante la prepupa, $r_{Cm} = m\,B\,[(1 - S_{pr}) + m_s S_{pr}]$. El pool
-$A$ se assume en cuasi-estado estacionario: $r_L = r_A - r_B - r_{Cm} - r_{CB}$.
-La produccion de CO$_2$ larval agrupa mantenimiento, sintesis estructural y
-sintesis de lipidos ($r_{CL} = Y_L r_L$ si $r_L > 0$):
-\begin{equation}
-r_{CO_2}^{lar} = r_{Cm} + r_{CB} + r_{CL}, \qquad r_{O_2}^{lar} = r_{CO_2}^{lar}/RQ
+  B_{max}(t) = \left\{ \begin{array}{ll} B_{max,0}, & t \leq t_{p,min} \\
+  \max\{B_{max,0} - \rho\,(t - t_{p,min}),\, B_{max,f}\}, & t > t_{p,min}
+  \end{array} \right.
 \end{equation}
 
-\textbf{Modulo microbiano.} La materia seca del lecho se mineraliza con cinética
-de primer orden, correccion $Q_{10}$ y saturacion por humedad (Monod en $\theta_s$,
-tope $k_{max}$), y una fraccion anaerobica $\xi$ logistica en $\theta_s$, atenuada
-por la actividad bioturbadora de las larvas:
+y respecto al modelo base se anade el switch de prepupa $S_{pr}(t) \in [0;1]$
+(supuesto S5), una logistica centrada en $t_p$ que reproduce la cesacion
+de alimentacion observada al final del ciclo:
+
 \begin{equation}
-k_{mic} = \min\left\{k_{ref}\,Q_{10}^{(T_s - T_{ref})/10}\,
-\frac{\theta_s}{\theta_s + K_{\theta}},\, k_{max}\right\}, \quad
-\xi = \frac{\xi_{max}}{1 + e^{-(\theta_s - \theta_{cs})/s_{\theta}}}\,
-\frac{1}{1 + a_{biot}\,N\,r_A}
-\end{equation}
-\begin{equation}
-r_{CO_2}^{mic} = Y_{CO_2}\,k_{mic}\,DM, \qquad
-r_{CH_4} = Y_{CH_4}\,\xi\,k_{mic}\,DM
+  S_{pr}(t) = \frac{1}{1 + e^{-(t-t_p)/s_p}}, \qquad
+  a(B,t) = \frac{a_{max}}{1 + (B/B_{max}(t))^{\alpha}} (1 - S_{pr}(t))
 \end{equation}
 
-\textbf{Balances del lecho y del aire.} El lecho pierde materia seca por ingestion
-larval y mineralizacion, con tope de disponibilidad (el consumo cesa si $DM \le 0$),
-y agua por evaporacion $E = k_e A_s [\phi(\theta_s) w_{sat}(T_s) - w]^{+}$:
-\begin{equation}
-\dot{DM} = -N\,r_A/1000 - k_{mic}\,DM, \qquad \dot{W} = -E
-\end{equation}
-Los gases usan un balance unificado para fase ventilada y cerrada ($\sigma_i = +1$
-para CO$_2$/CH$_4$ y $-1$ para O$_2$); en cierre, $Q = 0$ y la tasa es $d c_i/dt = \sigma_i R_i / V_{air}$:
-\begin{equation}
-V_{air}\,\dot{c}_i = Q\,(c_{in,i} - c_i) + \sigma_i R_i
-\end{equation}
-La temperatura sigue dos nodos acoplados (lecho y aire): el lecho recibe el calor
-metabolico $\gamma_q R_{CO_2}$ y cede al aire; el aire recibe el Peltier
-($PI$ sobre $T$, actuador limitado a $\pm 15$ W), pierde por ventilacion y por
-$UA$ con el ambiente. La humedad absoluta $w$ balancea evaporacion, agua
-metabolica ($\gamma_w R_{CO_2}$) y el humectador ($PI$ sobre $HR$, caudal de
-vapor limitado a $5\times 10^{-6}$ kg/s).
+con $a$ la tasa especifica de asimilacion ($r_A = aB$) y $s_p$ el ancho de
+la transicion. El crecimiento sigue la regulacion logistica de Eriksen:
 
-\textbf{Condiciones iniciales y parametros.} A(0) = 0.005, $B$(0) = 0.012 y
-$L$(0) = 0.003 mg (neonatos), $T_s$(0) = 27, $T$(0) = 28 $^{\circ}$C,
-$w$(0) = 0.6\,$w_{sat}$(28), y concentraciones de aire ambiente (420 ppm de
-CO$_2$). La racion base es $S_0 = 1.4$ g/larva (40\% materia seca, 60\% agua).
-Los valores completos de \texttt{PHY}, \texttt{MIC}, \texttt{FIS} y \texttt{PREP}
-constan en \texttt{simulacion/bioconversion\_ode.py} y los supuestos S1--S11 en
-\texttt{supuestos.md}. La validacion de esta cinetica frente a medidas de
-laboratorio se presenta en la Sec.~\ref{sec:validacion}.
+\begin{equation}
+  \mu_B = \left[ \frac{(a - m)\ell}{1 + Y_B\,\ell} \right]^{+}, \qquad
+  \ell = \left[ 1 - \left( \frac{B}{B_{max}(t)} \right)^{\beta} \right]^{+}
+\end{equation}
+
+de donde $r_B = \mu_B B$, $r_{CB} = Y_B r_B$, y el mantenimiento, reducido
+al suelo de ayuno durante la prepupa, $r_{Cm} = mB[(1-S_{pr}) + m_s S_{pr}]$.
+La produccion de CO$_2$ larval agrupa mantenimiento, sintesis estructural
+y sintesis de lipidos ($r_{CL} = Y_L r_L$ si $r_L > 0$):
+
+\begin{equation}
+  r^{lar}_{CO_2} = r_{Cm} + r_{CB} + r_{CL}, \qquad
+  r^{lar}_{O_2} = r^{lar}_{CO_2}/RQ
+\end{equation}
+
+El lecho mineraliza materia seca con cinetica de primer orden, correccion
+$Q_{10}$ y saturacion por humedad, con una fraccion anaerobica atenuada por
+la actividad bioturbadora de las larvas (modulo microbiano, supuesto S8,
+pendiente de recalibracion); pierde materia por ingestion larval, con tope
+de disponibilidad, y agua por evaporacion. Los gases usan un balance
+unificado para fase ventilada y cerrada ($\sigma_i = +1$ para CO$_2$/CH$_4$
+y $-1$ para O$_2$); en cierre, $Q = 0$ y la tasa es
+$\mathrm{d}c_i/\mathrm{d}t = \sigma_i R_i/V_{air}$:
+
+\begin{equation}
+  V_{air}\,\dot{c}_i = Q\,(c_{in,i} - c_i) + \sigma_i R_i
+\end{equation}
+
+La temperatura sigue dos nodos acoplados (lecho y aire) con calor
+metabolico y Peltier, y la humedad se balancea con evaporacion; los
+detalles y los parametros completos (PHY, MIC, FIS, PREP) estan en
+\texttt{simulacion/bioconversion\_ode.py} y los supuestos S1--S11 en
+\texttt{supuestos.md}. Las condiciones iniciales replican el experimento:
+$A(0) = 0.005$, $B(0) = 0.012$ y $L(0) = 0.003$ mg (neonatos), $T_s(0) = 27$,
+$T(0) = 28$~$^{\circ}$C, $w(0) = 0.6\,w_{sat}(28)$, concentraciones de aire
+ambiente (420 ppm de CO$_2$) y razon base de alimento $S_0 = 1.4$ g/larva
+(40\% materia seca, 60\% agua). La implementacion usa
+\texttt{scipy.solve\_ivp} (LSODA, rtol = $10^{-6}$), con reinicio de
+segmentos en cada reposicion de alimento; el codigo, las figuras y los
+resultados estan versionados en el repositorio del proyecto. La validacion
+de esta cinetica frente a medidas de laboratorio se presenta en la
+Seccion~\ref{sec:validacion}.
 
 \subsection{Entradas conmutadas y cierres}
 
@@ -200,227 +252,10 @@ El piso de 120 s protege la resolucion temporal del cierre y el techo de
 medio corrige la sobreestimacion propia de los cierres largos, cuando la
 tasa cae a lo largo del dia.
 
-Un resultado de diseno relevante es que el factor limitante no es $\Delta$
-sino la ventilacion entre cierres. La concentracion de base entre cierres es
-$c_{in} + R/Q$; con $Q = 1$ L/min alcanza unos 4300 ppm en el pico del
-ciclo y la camara satura aun con la tapa abierta, de modo que ningun
-$\Delta$ admisible evita el tope. Con $Q = 4$ L/min la base se mantiene
-entre 500 y 1600 ppm y ningun cierre supera los 5000 ppm en los escenarios
-simulados (E2: pico 4978 ppm; E5: pico 4604 ppm).
 
-\subsection{Capa de prediccion con redes informadas por la fisica (PINN)}
-\label{sec:pinn}
 
-El gemelo mecanicista tiene errores estructurales conocidos y senalados
-(S6, S8, S10): no es realista esperar que el ajuste fino de parametros los
-absorba todos. Se plantea entonces una capa de correccion basada en una red
-neuronal informada por la fisica (PINN, por sus siglas en ingles): una red
-pequena que aprende la discrepancia entre el modelo y las observaciones con
-los residuales del propio ODE (Seccion 2.1) en la funcion de perdida, de
-modo que las correcciones respeten los balances de masa y la cinetica DEB.
-La red se mantiene deliberadamente pequena: con los datos disponibles
-(las tasas netas del experimento de septiembre) una arquitectura grande
-sobreajustaria; el mecanismo de generalizacion es la fisica, no el numero
-de parametros.
-
-La capa tiene tres roles. (i)~Correccion de la tasa de emision
-(S8): la red toma el estado del lecho (materia seca $DM$, agua $W$,
-temperatura $T_s$, dia del ciclo) y produce un factor $\delta$ que
-modula la tasa total del modelo (larvaria mas microbiana); la
-perdida contrasta la tasa corregida contra las observadas en los
-cierres. La correccion microbiana aislada no es identificable con
-los datos actuales (el termino microbiano de la replica es
-despreciable frente al larval), de modo que $\delta$ actua sobre la
-tasa total y la atribucion por componentes queda para la
-recalibracion del modulo microbiano (Seccion 3.5). (ii)~Inferencia de la biomasa larval no medida (S6): un problema
-inverso en el que la red propone trayectorias $B(t)$ condicionadas por las
-observaciones de CO$_2$ y penalizadas por los residuales DEB; la
-incertidumbre se estima con un conjunto pequeno de redes entrenadas con
-semillas distintas. (iii)~Cuantificacion de CH$_4$ (S10): la senal no
-cuantitativa del sensor TGS2611 se fusiona con las variables ambientales
-bajo el balance de masa del ODE para producir una tasa calibrada de CH$_4$.
-
-El entrenamiento es por transferencia: pre-entrenamiento con datos de
-respirometria larvaria reportados en la literatura
-\parencite{eriksenDynamicModellingFeed2022,
-eriksenMetabolicPerformanceFeed2024} y ajuste fino con los datos propios;
-la validacion es por dia excluido (leave-one-day-out), coherente con el
-tamano del conjunto.
-
-\textbf{Notas pendientes.} Esta capa se especifica en el presente articulo
-y su entrenamiento completo queda para la fase de experimentos finales: con
-ocho observaciones la red solo puede fijar unos pocos grados de libertad
-y se espera un ajuste pobre en esta etapa; lo relevante aqui es la
-arquitectura de perdida, no el ajuste. Cuando lleguen los experimentos
-finales habra que: (i) reentrenar $\delta$ con las curvas de control completas,
-incluida la descomposicion larvaria/microbiana; (ii) verificar la $B(t)$ inferida contra biomasa pesada;
-(iii) recalibrar CH$_4$ contra una referencia; y (iv) fijar el peso de los
-residuales del ODE en la perdida por validacion cruzada.
-
-\section{Simulacion del sistema dinamico}
-\subsection{Implementacion}
-Python 3 + SciPy; parametros de \textcite{eriksenDynamicModellingFeed2022,
-eriksenMetabolicPerformanceFeed2024}. El codigo, las figuras y los
-resultados estan versionados en el repositorio del proyecto.
-
-\subsection{Escenarios E2--E5}
-Se simularon los escenarios E2--E5 del protocolo experimental; la Figura
-\ref{fig:escenarios} muestra los escenarios E2 (densidad inicial
-$N_0 = 400$ larvas) y E5 ($N_0 = 700$ larvas): concentraciones de CO$_2$,
-O$_2$ y CH$_4$, temperaturas del aire y del lecho, y masa del lote. En ambos
-casos el controlador de O$_2$ mantiene la concentracion dentro de la banda
-operativa y los cierres capturan pendientes de acumulacion distinguibles
-sobre el ruido.
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=\textwidth]{imagenes/sim_E2.pdf}\\[2mm]
-  \includegraphics[width=\textwidth]{imagenes/sim_E5.pdf}
-  \caption{Escenarios E2 ($N_0 = 400$, arriba) y E5 ($N_0 = 700$, abajo):
-  concentraciones de CO$_2$ y O$_2$, variables termicas y masa del lote.
-  Las excursiones verticales de CO$_2$ marcan los cierres de medicion.}
-  \label{fig:escenarios}
-\end{figure}
-
-\subsection{Cierres adaptativos}
-
-El calendario aplicado en las simulaciones es el adaptativo de dos pasadas
-descrito en la Seccion 2.2: una primera pasada con cierres nominales de
-$\Delta = 15$ min y una segunda con duraciones ajustadas al margen del NDIR
-con la tasa evaluada en el punto medio del cierre. En la practica los
-cierres resultantes se acortan a pocos minutos en el pico de emision del
-ciclo y se alargan hasta 30 min al inicio y en la fase de ayuno. Se evaluo
-ademas la sensibilidad al volumen de aire efectivo $V_{aire}$: una
-incertidumbre de $\pm 20\%$ en $V_{aire}$ se traduce directamente en igual
-incertidumbre en las tasas estimadas, lo que justifica su calibracion
-experimental por dilucion de un trazador.
-
-\subsection{Validacion contra datos preliminares}
-\label{sec:validacion}
-
-Como primera validacion se uso el experimento de septiembre de 2025: una
-panera de plastico sellada (base $30 \times 19$ cm, tapa $36 \times 25$ cm,
-altura 17 cm; volumen de tronco de cono $V \approx 12.4$ L, supuesto S1) con
-$N = 700$ larvas de \emph{Hermetia illucens} desde huevo, ciclo completo
-hasta prepupa (18 d), a temperatura ambiente cercana a 27~$^{\circ}$C (S4).
-Se probaron dos alimentos (D1 y D4) a libre disposicion, con 250 g
-renovados en cada medicion (S3). El CO$_2$ se midio por NDIR en cierres de
-acumulacion; las tasas netas se calculan restando el control del mismo dia
-(bandeja con alimento sin larvas, supuesto S7), y el CH$_4$ se uso solo como
-indicador (S10). Las tasas extraidas, con su R$^2$ de ajuste, estan en
-\texttt{datos/experimentos/datos\_finales\_PINN\_corregidos.csv}.
-
-La Figura~\ref{fig:validacion} contrasta el modelo con las tasas
-observadas. El panel (a) muestra la tasa neta de CO$_2$ del modelo (linea)
-frente a los valores observados por dia y alimento (D1 circulos, D4
-triangulos, ayuno estrella); el panel (b) muestra la biomasa estructural
-$B(t)$ y el switch de prepupa $S_{pr}(t)$, con las lineas punteadas de
-reposicion de alimento.
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=\textwidth]{imagenes/validacion_preliminar.pdf}
-  \caption{Validacion preliminar (experimento de septiembre de 2025,
-  panera de 12.4 L, $N = 700$). (a) Tasa neta de CO$_2$: modelo (linea) vs.
-  observado por dia y alimento. (b) Biomasa estructural $B(t)$ y switch de
-  prepupa $S_{pr}(t)$; las lineas punteadas marcan la reposicion de
-  alimento.}
-  \label{fig:validacion}
-\end{figure}
-
-\begin{table}[htbp]
-  \centering
-  \caption{Tasas netas de CO$_2$ por dia del ciclo: modelo vs.\ rango
-  observado (tratamiento $-$ control del mismo dia, ppm/min).}
-  \label{tab:validacion}
-  \begin{tabular}{c c c}
-    \hline
-    Dia & Modelo & Observado \\
-    \hline
-    9  & 210 & 89--309 \\
-    11 & 289 & 124--165 \\
-    13 & 129 & 22--103 \\
-    17 & 15  & 0--14 \\
-    \hline
-  \end{tabular}
-\end{table}
-
-El modelo reproduce el orden de magnitud y la caida final hacia el ayuno de
-prepupa (15 ppm/min frente a 0--14 observados en el dia 17), pero
-sobreestima el pico del ciclo medio (289 frente a 124--165 en el dia 11).
-La causa principal es que los parametros DEB (supuesto S6) no han podido
-verificarse sin biomasa larval medida; en consecuencia, la amplitud del pico
-queda sujeta a la calibracion con los experimentos finales. La medicion de
-ayuno del dia 17 (14.3 ppm/min) fue precisamente la evidencia que motivo el
-switch de prepupa (S5). Otras limitaciones abiertas: el modulo microbiano
-sin recalibrar frente a las curvas de control (S8), $V_{aire}$ sujeto a
-calibracion por trazador, y CH$_4$ no cuantitativo (S10).
-
-\subsection{Entrenamiento piloto de la capa PINN}
-\label{sec:pinn-piloto}
-
-Se entreno la red del rol (i) (Seccion 2.3) siguiendo el esquema de
-transferencia alli descrito. El pre-entrenamiento uso 48 puntos tipo
-respirometria larvaria generados sinteticamente en los rangos reportados
-para la BSF (correcciones $\delta$ centradas en 1); estos puntos son un
-SUSTITUTO explicito de datos de literatura digitalizados y estan marcados
-como tales en el repositorio
-(\texttt{resultados/pinn\_resumen.md}). El ajuste fino uso las siete
-tasas netas propias de los dias 9, 11, 13 y 17 (alimentos D1 y D4).
-
-La red es una MLP 4-8-1 con tangente hiperbolica (49 parametros,
-implementada en numpy y entrenada con L-BFGS-B). La funcion de perdida
-combina el error de datos con restricciones fisicas:
-
-\begin{equation}
-  J = \sum_i \left( \frac{\hat{y}_i - y_i}{\sigma_i} \right)^2
-  + \lambda_b \sum_i \mathrm{relu}\left(|g_i| - \ln 10\right)^2
-  + \lambda_{bg} \sum_{\mathrm{malla}} \mathrm{relu}\left(|g| - \ln 3\right)^2
-  + \lambda_c\, \mathrm{relu}\left(\hat{C} - 2 C_0\right)^2,
-\end{equation}
-
-con $\sigma_i = 0.2 y_i + 5$ ppm/min, $g = \ln \delta$ la salida de la
-red, $\hat{C}$ el CO$_2$ acumulado del ciclo con la correccion y $C_0$ el
-del modelo puro: las dos primeras penalizaciones acotan la correccion
-($|\delta| \leq 10$ en los datos y $\leq 3$ fuera del soporte) y la ultima
-impone un tope de carbono (la correccion no puede mas que duplicar las
-emisiones del ciclo).
-
-El resultado (Figura~\ref{fig:pinn}) es un factor de correccion que decae
-de $\delta = 0.53$ en el dia 9 a $\delta = 0.24$ en el dia 13 y alcanza el
-piso $\delta = 0.10$ en el ayuno del dia 17. Las tasas corregidas
-(112, 140, 31 y 1.5 ppm/min) caen dentro de los rangos observados en los
-cuatro dias de medicion, algo que el modelo puro no logra en los dias 11,
-13 y 17; las emisiones acumuladas del ciclo pasan de 1.05 a 1.00 mol de
-CO$_2$, dentro del tope de carbono impuesto.
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=\textwidth]{imagenes/pinn_entrenamiento.pdf}
-  \caption{Entrenamiento piloto de la capa PINN. (a) Evolucion de la
-  perdida en el pre-entrenamiento (datos sinteticos tipo literatura) y el
-  ajuste fino (tasas propias). (b) Paridad entre prediccion corregida y
-  observacion. (c) Factor de correccion $\delta$ aprendido frente al dia
-  del ciclo; las lineas punteadas marcan los dias de medicion.}
-  \label{fig:pinn}
-\end{figure}
-
-Tres limitaciones se reportan de forma explicita. Primero, la validacion
-cruzada por dia excluido no es aplicable: con 49 parametros y a lo sumo
-seis puntos por pliegue, la red interpola el pliegue de entrenamiento y el
-error de test no mide generalizacion; queda diferida a los experimentos
-finales. Segundo, el componente microbiano aislado no es identificable con
-los datos actuales (en la replica el termino microbiano es despreciable
-frente al larval), de modo que $\delta$ corrige la tasa total y la
-atribucion por componentes queda para la recalibracion del modulo
-microbiano (S8). Tercero, los pesos $\lambda$ no se calibraron por
-validacion cruzada. En conjunto, el valor de este piloto no es el ajuste
-(sesgado por el tamano del conjunto) sino la arquitectura de perdida y el
-flujo de entrenamiento, listos para reentrenar cuando lleguen los
-experimentos finales.
-
-\section{Verificacion CFD de la mezcla}
-\subsection{Objetivo y criterio de aceptacion}
+\subsection{Verificacion CFD de la mezcla}
+\subsubsection{Objetivo y criterio de aceptacion}
 
 El modelo 0D descrito en la Seccion~\ref{sec:dinamica0d} asume que el aire
 de la camara esta perfectamente mezclado en todo instante (supuesto A1):
@@ -452,7 +287,7 @@ es transicional ($\mathrm{Re} \approx 220$) y la turbulencia real mezcla mas
 que el modelo, de modo que los tiempos de mezcla calculados son cotas
 superiores de los tiempos reales.
 
-\subsection{Geometria y malla}
+\subsubsection{Geometria y malla}
 
 La camara es un contenedor de $26 \times 19 \times 18$ cm
 ($\approx 8.9$ L geometricos) empleado para conservar la temperatura del
@@ -471,7 +306,7 @@ marcaron por centroide geometrico (la lectura del mallado aborta si este
 lleva grupos fisicos en superficies), y los puertos quedaron con 29 facetas
 cada uno, lo que verifica la resolucion local del jet.
 
-\subsection{Modelo de flujo}
+\subsubsection{Modelo de flujo}
 
 El flujo se resuelve como Stokes estacionario e incompresible,
 
@@ -503,7 +338,7 @@ por integrales de frontera: en la configuracion C2 los caudales de entrada
 y salida coinciden a 1.034 L/min; el caudal efectivo se define como
 $Q_{eff} = (|q_{in}| + q_{out})/2$.
 
-\subsection{Transporte del trazador}
+\subsubsection{Transporte del trazador}
 
 El CO$_2$ se modela como un escalar pasivo $c(\mathbf{x}, t)$ con
 adveccion-difusion:
@@ -532,7 +367,7 @@ fuerte en la direccion del flujo y controla las oscilaciones del P1 puro en
 las zonas de alto Peclet. El balance de masa se monitorea paso a paso; la
 deriva es inferior al 1\% en la camara sellada.
 
-\subsection{Metricas de mezcla}
+\subsubsection{Metricas de mezcla}
 
 Con la media espacial $\bar{c}(t) = \frac{1}{V}\int_\Omega c\,dx$ y la
 desviacion estandar $\sigma_c(t) = \left( \frac{1}{V}\int_\Omega
@@ -556,7 +391,7 @@ comparando la masa remanente $m(t)/m_0$ contra el decaimiento del reactor
 ideal $e^{-t/\tau_{aire}}$: la diferencia cuantifica el bypass, la fraccion
 de trazador atrapada en zonas muertas que el flujo no barre.
 
-\subsection{Verificacion numerica}
+\subsubsection{Verificacion numerica}
 
 Tres verificaciones respaldan los resultados. (i)~Balance de masa exacto en
 cada frontera: en C2 la entrada y la salida coinciden a 1.034 L/min, y en
@@ -571,6 +406,29 @@ caso quedo descartado por el balance de masa, no por la plausibilidad del
 campo. La conclusion conjunta es que, bajo la hipotesis de cota
 conservadora del regimen de Stokes, los tiempos calculados son cotas
 superiores de la mezcla real.
+
+\section{Resultados}
+\subsection{Cumplimiento de rango del calendario adaptativo (P1)}
+
+El calendario de dos pasadas (Seccion 2.3) cumple el tope del
+NDIR en los dos escenarios extremos: picos de CO$_2$ de 4978 ppm (E2,
+$N_0 = 400$) y 4604 ppm (E5, $N_0 = 700$), con cierres que se acortan desde
+30 min al inicio del ciclo hasta 2.5--7 min en el pico de emision y vuelven
+a alargarse en la fase de ayuno (Figura~\ref{fig:escenarios}). La
+ventilacion de 4 L/min entre cierres mantiene la concentracion de base
+entre 500 y 1600 ppm, condicion necesaria: con 1 L/min la base supera los
+4300 ppm en el pico y ningun cierre es viable. Las emisiones acumuladas
+del ciclo son 0.59 mol de CO$_2$ (E2) y 1.04 mol (E5).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{imagenes/sim_E2.pdf}\\[2mm]
+  \includegraphics[width=\textwidth]{imagenes/sim_E5.pdf}
+  \caption{Escenarios E2 ($N_0 = 400$, arriba) y E5 ($N_0 = 700$, abajo):
+  concentraciones de CO$_2$ y O$_2$, variables termicas y masa del lote.
+  Las excursiones verticales de CO$_2$ marcan los cierres de medicion.}
+  \label{fig:escenarios}
+\end{figure}
 
 \subsection{Escenarios de puertos en fase ventilada}
 
@@ -645,54 +503,146 @@ real.
   \label{fig:campo_c5}
 \end{figure}
 
-\section{Resultados y discusion}
 
-En la dinamica del ciclo, el calendario adaptativo de dos pasadas cumple el
-tope del NDIR en los dos escenarios extremos: picos de CO$_2$ de 4978 ppm
-(E2) y 4604 ppm (E5), con cierres que se acortan desde 30 min al inicio del
-ciclo hasta 2.5--7 min en el pico de emision y vuelven a alargarse en la
-fase de ayuno. La ventilacion de 4 L/min entre cierres mantiene la base
-entre 500 y 1600 ppm, condicion necesaria: con 1 L/min la base supera los
-4300 ppm en el pico y ningun cierre es viable. Las emisiones acumuladas del
-ciclo son 0.59 mol de CO$_2$ (E2, $N_0 = 400$) y 1.04 mol (E5, $N_0 = 700$).
+\subsection{Integracion con cria real (P3)}
+\label{sec:validacion}
 
-El switch de prepupa (S5) tiene un efecto cuantitativo decisivo: sin el, el
-modelo acumula lipidos de forma ficticia hasta 209 mg/larva y las emisiones
-de E2 alcanzan 1.37 mol; con el switch, la biomasa lipidica final es de
-54 mg/larva y las emisiones caen a 0.59 mol. El efecto es directamente
-relevante para el inventario de GEI del sistema, pues fija la fraccion de
-carbono que se emite como CO$_2$ frente a la que se retiene en biomasa de
-prepupas.
+Como primera validacion se uso el experimento de septiembre de 2025: una
+panera de plastico sellada (base $30 \times 19$ cm, tapa $36 \times 25$ cm,
+altura 17 cm; volumen de tronco de cono $V \approx 12.4$ L, supuesto S1) con
+$N = 700$ larvas de \emph{Hermetia illucens} desde huevo, ciclo completo
+hasta prepupa (18 d), a temperatura ambiente cercana a 27~$^{\circ}$C (S4).
+Se probaron dos alimentos (D1 y D4) a libre disposicion, con 250 g
+renovados en cada medicion (S3). El CO$_2$ se midio por NDIR en cierres de
+acumulacion; las tasas netas se calculan restando el control del mismo dia
+(bandeja con alimento sin larvas, supuesto S7), y el CH$_4$ se uso solo como
+indicador (S10). Las tasas extraidas, con su R$^2$ de ajuste, estan en
+\texttt{datos/experimentos/datos\_finales\_PINN\_corregidos.csv}.
 
-La combinacion de resultados fija las condiciones de validez del protocolo de
-medicion. En fase ventilada, el gemelo digital 0D proporciona tasas
-instantaneas de emision, pero el CFD muestra que el supuesto A1 no se
-sostiene con ventilacion por puertos en el regimen analizado: las lecturas
-del sensor promedian una camara con zonas muertas, con sesgo hacia las
-concentraciones mas altas del entorno del lecho (en C1v2 el 36.5\% del
-trazador permanece en la camara a 720 s). Por ello las tasas de fase
-ventilada deben tratarse como estimaciones acotadas, no como mediciones de
-precision. En fase cerrada, en cambio, el ventilador en tapa garantiza la
-homogeneidad en menos de 60 s frente a cierres de 10--30 min: el supuesto A1
-queda validado con un margen de 10--30$\times$, y la pendiente de
-acumulacion durante el cierre es una medicion de tasa directa y defendible.
-El diseno final que emerge es: (i) ventilador fijo (no controlado en
-velocidad; la mezcla saturada hace innecesario el control) de material de
-baja emision en la tapa centrado sobre las larvas; (ii) medicion del caudal
-efectivo de los puertos y de la presion interna de la camara (deteccion de
-fugas y correccion); (iii) cierres estaticos para CH$_4$ y validacion cruzada
-con la fase ventilada; y (iv) correccion del volumen muerto del gemelo
-digital a partir de la fraccion de mezcla observada. La linealidad de Stokes,
-verificada en C5, da ademas una ley de diseno sin nuevas simulaciones:
-$\tau_{mix}$ escala inversamente con el momentum inyectado.
+La Figura~\ref{fig:validacion} contrasta el modelo con las tasas
+observadas. El panel (a) muestra la tasa neta de CO$_2$ del modelo (linea)
+frente a los valores observados por dia y alimento (D1 circulos, D4
+triangulos, ayuno estrella); el panel (b) muestra la biomasa estructural
+$B(t)$ y el switch de prepupa $S_{pr}(t)$, con las lineas punteadas de
+reposicion de alimento.
 
-La validacion preliminar de la Seccion~\ref{sec:validacion} situa el modelo
-en el orden de magnitud correcto y reproduce la caida de emisiones hacia el
-ayuno de prepupa, aunque sobreestima el pico del ciclo medio; las causas
-estan identificadas y delimitan el trabajo pendiente antes de los
-experimentos finales: verificacion de los parametros DEB con biomasa medida,
-recalibracion del modulo microbiano frente a las curvas de control,
-calibracion de $V_{aire}$ por trazador y calibracion cuantitativa de CH$_4$.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{imagenes/validacion_preliminar.pdf}
+  \caption{Validacion preliminar (experimento de septiembre de 2025,
+  panera de 12.4 L, $N = 700$). (a) Tasa neta de CO$_2$: modelo (linea) vs.
+  observado por dia y alimento. (b) Biomasa estructural $B(t)$ y switch de
+  prepupa $S_{pr}(t)$; las lineas punteadas marcan la reposicion de
+  alimento.}
+  \label{fig:validacion}
+\end{figure}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Tasas netas de CO$_2$ por dia del ciclo: modelo vs.\ rango
+  observado (tratamiento $-$ control del mismo dia, ppm/min).}
+  \label{tab:validacion}
+  \begin{tabular}{c c c}
+    \hline
+    Dia & Modelo & Observado \\
+    \hline
+    9  & 210 & 89--309 \\
+    11 & 289 & 124--165 \\
+    13 & 129 & 22--103 \\
+    17 & 15  & 0--14 \\
+    \hline
+  \end{tabular}
+\end{table}
+
+El modelo reproduce el orden de magnitud y la caida final hacia el ayuno de
+prepupa (15 ppm/min frente a 0--14 observados en el dia 17), pero
+sobreestima el pico del ciclo medio (289 frente a 124--165 en el dia 11).
+La causa principal es que los parametros DEB (supuesto S6) no han podido
+verificarse sin biomasa larval medida; en consecuencia, la amplitud del pico
+queda sujeta a la calibracion con los experimentos finales. La medicion de
+ayuno del dia 17 (14.3 ppm/min) fue precisamente la evidencia que motivo el
+switch de prepupa (S5). Otras limitaciones abiertas: el modulo microbiano
+sin recalibrar frente a las curvas de control (S8), $V_{aire}$ sujeto a
+calibracion por trazador, y CH$_4$ no cuantitativo (S10).
+
+\section{Discusion}
+
+El veredicto del CFD fija las condiciones de validez del protocolo de
+medicion. En fase ventilada las lecturas deben tratarse como estimaciones
+acotadas: el sensor promedia una camara con zonas muertas, con sesgo hacia
+las concentraciones del entorno del lecho (en C1v2 el 36.5\% del trazador
+permanece en la camara a 720 s), de modo que el supuesto A1 no se sostiene
+y la pendiente de fase ventilada no es una medicion de precision. En fase
+cerrada, en cambio, el ventilador en tapa homogeneiza en menos de 60 s
+frente a cierres de 2--30 min: A1 queda validado con un margen de
+10--30$\times$ y la pendiente de acumulacion es una medicion de tasa
+directa y defendible. El diseno que emerge es: ventilador fijo de material
+de baja emision en la tapa, centrado sobre las larvas; medicion del
+caudal efectivo de los puertos y de la presion interna de la camara
+(deteccion de fugas); cierres estaticos como medicion primaria; y
+correccion del volumen muerto del gemelo digital a partir de la fraccion
+de mezcla observada.
+
+El switch de prepupa tiene un efecto cuantitativo decisivo sobre el
+inventario de GEI del sistema: sin el, el modelo acumula lipidos de forma
+ficticia hasta 209 mg/larva y las emisiones de E2 alcanzan 1.37 mol; con
+el, la biomasa lipidica final es de 54 mg/larva y las emisiones caen a
+0.59 mol. El efecto fija la fraccion de carbono que se emite como CO$_2$
+frente a la que se retiene en biomasa de prepupas, magnitud central para
+el trabajo de factores de emision que esta instrumentacion habilita.
+
+Las limitaciones se agrupan en dos conjuntos. Instrumentales: $V_{aire}$
+esta calculado por geometria y una incertidumbre de $\pm 20\%$ en su valor
+se traduce directamente en igual incertidumbre en las tasas estimadas, lo
+que justifica su calibracion experimental por dilucion de un trazador; y
+el CH$_4$ del TGS2611 es indicativo, con cuantificacion pendiente contra
+una referencia. Del lado del modelo: los parametros DEB no han podido
+verificarse sin biomasa pesada y el modulo microbiano esta sin
+recalibrar (S8), lo que explica la sobreestimacion del pico medio de la
+Seccion~\ref{sec:validacion}; ambas quedan resueltas con la campana
+experimental final, que ademas pesara biomasa cada dos dias. Con esa
+campana, el sistema validado aqui pasa de demostracion a produccion de
+factores de emision por dieta.
+
+\subsection{Trabajo en curso: correccion con redes informadas por la fisica}
+\label{sec:pinn}
+
+Como trabajo en curso se especifica una capa de correccion basada en una
+red neuronal informada por la fisica (PINN), que aprende la discrepancia
+entre el gemelo y las observaciones con los residuales del ODE en la
+funcion de perdida, de modo que las correcciones respeten los balances de
+masa. Tres roles estan definidos: correccion de la tasa de emision a
+partir del estado del lecho, inferencia de la biomasa larval no medida
+(problema inverso con restricciones DEB) y cuantificacion de CH$_4$ a
+partir de la senal no calibrada del TGS2611. Un entrenamiento piloto (red
+4-8-1, 49 parametros; pre-entrenamiento con 48 puntos sinteticos tipo
+literatura y ajuste fino con las siete tasas netas propias) produce
+correcciones $\delta$ entre 0.10 y 0.53 que situan las predicciones dentro
+de los rangos observados en los cuatro dias (Figura~\ref{fig:pinn}); la
+validacion cruzada queda diferida porque el numero de parametros excede
+los datos disponibles. El entrenamiento definitivo, con datos de
+literatura digitalizados y los experimentos finales, se reportara por
+separado.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{imagenes/pinn_entrenamiento.pdf}
+  \caption{Entrenamiento piloto de la capa PINN. (a) Perdida en el
+  pre-entrenamiento (datos sinteticos tipo literatura) y el ajuste fino
+  (tasas propias). (b) Paridad prediccion corregida vs observacion.
+  (c) Factor de correccion $\delta$ aprendido; las lineas punteadas
+  marcan los dias de medicion.}
+  \label{fig:pinn}
+\end{figure}
+
+Las notas de este trabajo en curso son: (i) los datos de literatura del
+pre-entrenamiento son sinteticos ---un sustituto marcado en
+\texttt{resultados/pinn\_resumen.md}--- y deben reemplazarse por la
+digitalizacion de \textcite{eriksenDynamicModellingFeed2022,
+eriksenMetabolicPerformanceFeed2024}; (ii) el componente microbiano
+aislado no es identificable con los datos actuales, de modo que $\delta$
+corrige la tasa total; (iii) el flujo completo esta versionado en
+\texttt{simulacion/pinn\_entrenamiento.py}.
 
 \section{Conclusiones}
 \begin{enumerate}
@@ -725,11 +675,12 @@ calibracion de $V_{aire}$ por trazador y calibracion cuantitativa de CH$_4$.
   magnitud correcto y reproduce la caida de emisiones del ayuno de
   prepupa; la sobreestimacion del pico medio queda atribuida a los
   parametros DEB sin verificar y delimita la calibracion pendiente.
-  \item El entrenamiento piloto de la capa PINN (red 4-8-1, 49
-  parametros) con datos sinteticos tipo literatura y siete tasas
-  propias aprende correcciones $\delta$ entre 0.10 y 0.53 que
-  situan las predicciones dentro de los rangos observados en los
-  cuatro dias; la validacion cruzada queda diferida a los
+  \item Como trabajo en curso, una capa de correccion con redes
+  informadas por la fisica (PINN) muestra en su entrenamiento
+  piloto (red 4-8-1, 49 parametros; datos sinteticos tipo
+  literatura y siete tasas propias) correcciones $\delta$ entre
+  0.10 y 0.53 que situan las predicciones dentro de los rangos
+  observados; su entrenamiento definitivo queda para los
   experimentos finales.
 \end{enumerate}
 
