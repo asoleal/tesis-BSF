@@ -340,18 +340,34 @@ pesajes cada 2 d + mediciones de gas con el protocolo de A1. Cada paper toma
 su contraste sin solaparse (evitar salami slicing).
 
 ### Tareas de reorganizacion de A1 (en orden)
-1. Titulo nuevo + Resumen + Introduccion con objetivo explicito y 3 preguntas
+[x] 1. Titulo nuevo + Resumen + Introduccion con objetivo explicito y 3 preguntas
    (P1 calendario/NDIR, P2 mezcla A1/CFD, P3 gemelo vs observado).
-2. Nueva §2.1 "Sistema experimental" (panera, alimentos D1/D4, sensores,
+[x] 2. Nueva §2.1 "Sistema experimental" (panera, alimentos D1/D4, sensores,
    protocolo dias 9/11/13/17, controles _alimento, 250 g ad libitum) —
    arregla el "experimento sin definir".
-3. §2.1 actual (ODE) comprimida y renumerada; §2.2 cierres -> 2.3; CFD
+[x] 3. §2.1 actual (ODE) comprimida y renumerada; §2.2 cierres -> 2.3; CFD
    integra como 2.4.
-4. PINN (§2.3 + §3.5) movida a Discusion como trabajo en curso (parrafo +
+[x] 4. PINN (§2.3 + §3.5) movida a Discusion como trabajo en curso (parrafo +
    notas), liberando foco.
-5. Resultados espejando P1-P3; Discusion; Conclusiones una por pregunta.
-6. Pendientes menores: cosmeticos (Fig 2 width, caveat Fig 3b al caption).
+[x] 5. Resultados espejando P1-P3; Discusion; Conclusiones una por pregunta.
+[x] 6. Pendientes menores: cosmeticos (Fig 2 width, caveat Fig 3b al caption).
 
 ### Estado
-- Pasos 1-6 de A1: PENDIENTE (parches por paso, uno a la vez).
-- Campana de experimentos: por disenar (DOE).
+- Pasos 1-6 de A1: HECHOS (2026-09-26). Estructura final: §1 Introduccion
+  (objetivo + P1-P3) / §2 Materiales y metodos (2.1 Sistema experimental,
+  2.2 ODE comprimida, 2.3 Cierres, 2.4 CFD) / §3 Resultados por pregunta
+  (3.1 P1 rango calendario, 3.2-3.3 P2 CFD, 3.4 P3 validacion) / §4
+  Discusion (incl. PINN trabajo en curso) / §5 Conclusiones (8 items).
+  Compila limpio con xelatex+biber, 13 paginas. Incidente: la S2.4 CFD se
+  perdio en el paso 3 (parche con corte mal limitado); se recupero de
+  c8a84e6 sin perdida de contenido. Leccion: commitear DESPUES de cada
+  paso compilado, no al final de varios.
+- Articulo A1: listo para lectura de terceros / envio a coautor.
+- Campana de experimentos: por disenar (DOE) — habilita A2 + A3.
+
+### Siguiente paso (fuera de A1)
+1. Disenar el DOE de la campana extendida (dietas x lineas x replicas x
+   pesaje cada 2 d + gas con protocolo A1). Salida: plan de 1-2 meses.
+2. Redactar Articulo A2 (ambiental) con los datos de la campana.
+3. Lista de verificacion instrumental previa: calibracion V_air por
+   trazador, referencia CH4 para el TGS2611, bascula para biomasa.
