@@ -124,7 +124,7 @@ ax[0].legend(by_lbl.values(), by_lbl.keys(), fontsize=8, loc='upper left')
 ax[1].plot(tt, Bm, color='tab:blue', lw=1.8, label='B (biomasa estructural)')
 ax[1].plot(tt, np.array(S_lecho)/10, color='tab:red', lw=1.4, label='S/10 (lecho)')
 ax[1].set_xlabel('dia del ciclo'); ax[1].set_ylabel('mg / (g/10)')
-ax[1].set_title('(b) Trayectorias del gemelo (sin verificar: no hay biomasa medida)')
+ax[1].set_title('(b) Trayectorias del gemelo')
 ax[1].grid(alpha=0.3); ax[1].set_xlim(0, TF_D); ax[1].legend(fontsize=8)
 for a in DIAS_MED:
     ax[1].axvline(a, color='gray', ls=':', lw=0.8)
