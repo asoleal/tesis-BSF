@@ -208,6 +208,55 @@ $\Delta$ admisible evita el tope. Con $Q = 4$ L/min la base se mantiene
 entre 500 y 1600 ppm y ningun cierre supera los 5000 ppm en los escenarios
 simulados (E2: pico 4978 ppm; E5: pico 4604 ppm).
 
+\subsection{Capa de prediccion con redes informadas por la fisica (PINN)}
+\label{sec:pinn}
+
+El gemelo mecanicista tiene errores estructurales conocidos y senalados
+(S6, S8, S10): no es realista esperar que el ajuste fino de parametros los
+absorba todos. Se plantea entonces una capa de correccion basada en una red
+neuronal informada por la fisica (PINN, por sus siglas en ingles): una red
+pequena que aprende la discrepancia entre el modelo y las observaciones con
+los residuales del propio ODE (Seccion 2.1) en la funcion de perdida, de
+modo que las correcciones respeten los balances de masa y la cinetica DEB.
+La red se mantiene deliberadamente pequena: con los datos disponibles
+(las tasas netas del experimento de septiembre) una arquitectura grande
+sobreajustaria; el mecanismo de generalizacion es la fisica, no el numero
+de parametros.
+
+La capa tiene tres roles. (i)~Correccion de la tasa de emision
+(S8): la red toma el estado del lecho (materia seca $DM$, agua $W$,
+temperatura $T_s$, dia del ciclo) y produce un factor $\delta$ que
+modula la tasa total del modelo (larvaria mas microbiana); la
+perdida contrasta la tasa corregida contra las observadas en los
+cierres. La correccion microbiana aislada no es identificable con
+los datos actuales (el termino microbiano de la replica es
+despreciable frente al larval), de modo que $\delta$ actua sobre la
+tasa total y la atribucion por componentes queda para la
+recalibracion del modulo microbiano (Seccion 3.5). (ii)~Inferencia de la biomasa larval no medida (S6): un problema
+inverso en el que la red propone trayectorias $B(t)$ condicionadas por las
+observaciones de CO$_2$ y penalizadas por los residuales DEB; la
+incertidumbre se estima con un conjunto pequeno de redes entrenadas con
+semillas distintas. (iii)~Cuantificacion de CH$_4$ (S10): la senal no
+cuantitativa del sensor TGS2611 se fusiona con las variables ambientales
+bajo el balance de masa del ODE para producir una tasa calibrada de CH$_4$.
+
+El entrenamiento es por transferencia: pre-entrenamiento con datos de
+respirometria larvaria reportados en la literatura
+\parencite{eriksenDynamicModellingFeed2022,
+eriksenMetabolicPerformanceFeed2024} y ajuste fino con los datos propios;
+la validacion es por dia excluido (leave-one-day-out), coherente con el
+tamano del conjunto.
+
+\textbf{Notas pendientes.} Esta capa se especifica en el presente articulo
+y su entrenamiento completo queda para la fase de experimentos finales: con
+ocho observaciones la red solo puede fijar unos pocos grados de libertad
+y se espera un ajuste pobre en esta etapa; lo relevante aqui es la
+arquitectura de perdida, no el ajuste. Cuando lleguen los experimentos
+finales habra que: (i) reentrenar $\delta$ con las curvas de control completas,
+incluida la descomposicion larvaria/microbiana; (ii) verificar la $B(t)$ inferida contra biomasa pesada;
+(iii) recalibrar CH$_4$ contra una referencia; y (iv) fijar el peso de los
+residuales del ODE en la perdida por validacion cruzada.
+
 \section{Simulacion del sistema dinamico}
 \subsection{Implementacion}
 Python 3 + SciPy; parametros de \textcite{eriksenDynamicModellingFeed2022,
@@ -306,6 +355,69 @@ ayuno del dia 17 (14.3 ppm/min) fue precisamente la evidencia que motivo el
 switch de prepupa (S5). Otras limitaciones abiertas: el modulo microbiano
 sin recalibrar frente a las curvas de control (S8), $V_{aire}$ sujeto a
 calibracion por trazador, y CH$_4$ no cuantitativo (S10).
+
+\subsection{Entrenamiento piloto de la capa PINN}
+\label{sec:pinn-piloto}
+
+Se entreno la red del rol (i) (Seccion 2.3) siguiendo el esquema de
+transferencia alli descrito. El pre-entrenamiento uso 48 puntos tipo
+respirometria larvaria generados sinteticamente en los rangos reportados
+para la BSF (correcciones $\delta$ centradas en 1); estos puntos son un
+SUSTITUTO explicito de datos de literatura digitalizados y estan marcados
+como tales en el repositorio
+(\texttt{resultados/pinn\_resumen.md}). El ajuste fino uso las siete
+tasas netas propias de los dias 9, 11, 13 y 17 (alimentos D1 y D4).
+
+La red es una MLP 4-8-1 con tangente hiperbolica (49 parametros,
+implementada en numpy y entrenada con L-BFGS-B). La funcion de perdida
+combina el error de datos con restricciones fisicas:
+
+\begin{equation}
+  J = \sum_i \left( \frac{\hat{y}_i - y_i}{\sigma_i} \right)^2
+  + \lambda_b \sum_i \mathrm{relu}\left(|g_i| - \ln 10\right)^2
+  + \lambda_{bg} \sum_{\mathrm{malla}} \mathrm{relu}\left(|g| - \ln 3\right)^2
+  + \lambda_c\, \mathrm{relu}\left(\hat{C} - 2 C_0\right)^2,
+\end{equation}
+
+con $\sigma_i = 0.2 y_i + 5$ ppm/min, $g = \ln \delta$ la salida de la
+red, $\hat{C}$ el CO$_2$ acumulado del ciclo con la correccion y $C_0$ el
+del modelo puro: las dos primeras penalizaciones acotan la correccion
+($|\delta| \leq 10$ en los datos y $\leq 3$ fuera del soporte) y la ultima
+impone un tope de carbono (la correccion no puede mas que duplicar las
+emisiones del ciclo).
+
+El resultado (Figura~\ref{fig:pinn}) es un factor de correccion que decae
+de $\delta = 0.53$ en el dia 9 a $\delta = 0.24$ en el dia 13 y alcanza el
+piso $\delta = 0.10$ en el ayuno del dia 17. Las tasas corregidas
+(112, 140, 31 y 1.5 ppm/min) caen dentro de los rangos observados en los
+cuatro dias de medicion, algo que el modelo puro no logra en los dias 11,
+13 y 17; las emisiones acumuladas del ciclo pasan de 1.05 a 1.00 mol de
+CO$_2$, dentro del tope de carbono impuesto.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{imagenes/pinn_entrenamiento.pdf}
+  \caption{Entrenamiento piloto de la capa PINN. (a) Evolucion de la
+  perdida en el pre-entrenamiento (datos sinteticos tipo literatura) y el
+  ajuste fino (tasas propias). (b) Paridad entre prediccion corregida y
+  observacion. (c) Factor de correccion $\delta$ aprendido frente al dia
+  del ciclo; las lineas punteadas marcan los dias de medicion.}
+  \label{fig:pinn}
+\end{figure}
+
+Tres limitaciones se reportan de forma explicita. Primero, la validacion
+cruzada por dia excluido no es aplicable: con 49 parametros y a lo sumo
+seis puntos por pliegue, la red interpola el pliegue de entrenamiento y el
+error de test no mide generalizacion; queda diferida a los experimentos
+finales. Segundo, el componente microbiano aislado no es identificable con
+los datos actuales (en la replica el termino microbiano es despreciable
+frente al larval), de modo que $\delta$ corrige la tasa total y la
+atribucion por componentes queda para la recalibracion del modulo
+microbiano (S8). Tercero, los pesos $\lambda$ no se calibraron por
+validacion cruzada. En conjunto, el valor de este piloto no es el ajuste
+(sesgado por el tamano del conjunto) sino la arquitectura de perdida y el
+flujo de entrenamiento, listos para reentrenar cuando lleguen los
+experimentos finales.
 
 \section{Verificacion CFD de la mezcla}
 \subsection{Objetivo y criterio de aceptacion}
@@ -586,7 +698,9 @@ calibracion de $V_{aire}$ por trazador y calibracion cuantitativa de CH$_4$.
 \begin{enumerate}
   \item El gemelo digital 0D integra la dinamica larvaria, el lecho y el
   aire interno, y reproduce los escenarios E2--E5 del protocolo con control
-  de O$_2$ por ventilacion y cierres adaptativos de duracion dia a dia.
+  de O$_2$ por ventilacion y un calendario de cierres adaptativo de dos
+  pasadas que respeta el tope del NDIR (picos de 4978 y 4604 ppm en E2 y
+  E5).
   \item En fase ventilada, ninguna configuracion de puertos homogeneiza la
   camara en regimen laminar: $\tau_{mix} > 720$ s y $\eta(720\,\mathrm{s})
   \geq 0.11$ frente a $\tau_{aire} \approx 175$ s. El supuesto A1 no es
@@ -601,6 +715,22 @@ calibracion de $V_{aire}$ por trazador y calibracion cuantitativa de CH$_4$.
   molecular), los resultados subestiman la mezcla real; la discrepancia se
   cerrara con la calibracion experimental con dos sensores a distinta altura
   y con la correccion de volumen muerto del gemelo digital.
+  \item El switch de prepupa, motivado por la medicion de ayuno del dia 17
+  (14.3 ppm/min), elimina la acumulacion ficticia de lipidos (209 a
+  54 mg/larva) y reduce las emisiones acumuladas de CO$_2$ de 1.37 a
+  0.59 mol en E2, con efecto directo sobre el inventario de GEI del
+  sistema.
+  \item La validacion preliminar contra el experimento de septiembre de
+  2025 (panera de 12.4 L, $N = 700$) situa el modelo en el orden de
+  magnitud correcto y reproduce la caida de emisiones del ayuno de
+  prepupa; la sobreestimacion del pico medio queda atribuida a los
+  parametros DEB sin verificar y delimita la calibracion pendiente.
+  \item El entrenamiento piloto de la capa PINN (red 4-8-1, 49
+  parametros) con datos sinteticos tipo literatura y siete tasas
+  propias aprende correcciones $\delta$ entre 0.10 y 0.53 que
+  situan las predicciones dentro de los rangos observados en los
+  cuatro dias; la validacion cruzada queda diferida a los
+  experimentos finales.
 \end{enumerate}
 
 % Figuras usadas:
