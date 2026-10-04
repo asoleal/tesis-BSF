@@ -2,19 +2,63 @@
 \section{Materiales y metodos}
 \label{sec:metodos}
 
-\subsection{Sistema experimental y protocolo de medicion}
+\subsection{Sistema experimental y protocolo de medición}
 \label{sec:sistema}
 
-(pendiente: camara estatica tipo panera, sensores NDIR CO2/CH4, dietas D1 y D4, protocolo de cierres con tres repeticiones, controles alimento solo y larvas solas)
+Los experimentos se realizaron en recipientes plásticos rígidos de geometría
+troncopiramidal rectangular: boca superior de $37 \times 26$~cm, base de
+$32 \times 21$~cm y altura de $17$~cm, para un volumen geométrico de
+$\approx 13{,}8$~L. Los sensores de gases (CO$_2$, MH-410D; CH$_4$, MH-440D)
+se montaron empotrados en una de las caras laterales mayores, con el elemento
+sensible hacia el interior y por encima del nivel del sustrato. Durante cada
+cierre el recipiente se mantuvo sellado con su tapa reforzada con silicona, y
+el volumen de aire efectivo $V_{\mathrm{aire}}$ ---el volumen geométrico menos
+el ocupado por el recipiente interno y su contenido--- entró como parámetro
+medido en el cálculo de tasas.
 
-En cada dia de medicion los cierres se realizaron de forma secuencial por dieta: primero un recipiente hasta la saturacion del sensor de CO$_2$ (6000 ppm) y luego el otro, con el mismo procedimiento. La tasa de cada cierre se estimo por ajuste lineal del tramo previo a la saturacion; cuando el ajuste fue de baja calidad o la curva alcanzo el techo del sensor (cierres marcados como saturados), la tasa estimada es conservadora y se trato como cota inferior en la validacion (sec. \ref{sec:resultados}).
+El sustrato y las larvas se alojaron en un recipiente plástico de
+$15 \times 12 \times 5$~cm con tapa aireada por malla, colocado dentro de la
+cámara; se supuso equilibrio rápido de gases entre el recipiente interno y el
+aire de la cámara a través de la malla. El mismo tipo de montaje se usó en
+tratamientos y controles, de modo que $V_{\mathrm{aire}}$ fue comparable entre
+ellos.
+
+Se evaluaron dos dietas, D1 y D4, cuya composición se detalla en la
+Cuadro~\ref{tab:dietas}. En cada día de medición los cierres se realizaron de
+forma secuencial por dieta: primero un recipiente hasta la saturación del
+sensor de CO$_2$ (6000~ppm) y luego el otro, con el mismo procedimiento. Cada
+condición se midió con tres cierres consecutivos sobre el mismo lote (réplicas técnicas de medición); el valor reportado por punto es su media y el rango su dispersión. Las réplicas biológicas (lotes independientes) quedan como extensión futura. Como controles se incluyeron
+recipientes con alimento solo (respiración del sustrato) y con larvas solas
+(mantenimiento sin alimento), medidos con el mismo protocolo; la tasa neta de
+cada tratamiento se obtuvo restando el control correspondiente del mismo día.
+
+La tasa de cada cierre se estimó por ajuste lineal del tramo previo a la
+saturación; cuando el ajuste fue de baja calidad o la curva alcanzó el techo
+del sensor (cierres marcados como saturados), la tasa estimada es conservadora
+y se trató como cota inferior en la validación (sec. \ref{sec:resultados}).
+
+\begin{table}[htbp]
+  \centering
+  \caption{Descripción de las dietas evaluadas.}
+  \label{tab:dietas}
+  \begin{tabular}{lp{8cm}}
+    \hline
+    Dieta & Descripción \\
+    \hline
+    D1 & Alimento comercial estándar para pollo de engorde (dieta de
+         referencia del modelo de Eriksen) \\
+    D4 & Residuos agroindustriales de frutas (naranja, plátano, entre
+         otras), fermentados \\
+    \hline
+  \end{tabular}
+\end{table}
 
 \subsection{Modelo dinamico del proceso}
 \label{sec:modelo}
 
-El proceso se describe con un modelo dinamico de parametros concentrados (0D) que amplia el modelo de asimilacion, crecimiento y produccion de CO$_2$ de \textcite{eriksenDynamicModellingFeed2022,eriksenMetabolicPerformanceFeed2024} ---desarrollado para larvas de \textit{H. illucens} sobre dieta estandar--- con tres componentes adicionales: (i) un interruptor de prepupa que representa la cesacion de la alimentacion al final del ciclo larvario; (ii) un modulo microbiano de primer orden para la degradacion del sustrato no consumido \parencite{roels1980}; y (iii) un balance de masa de gas en la cabeza de aire de la camara estatica de medicion. Los fundamentos de la teoria DEB del nucleo larvario se encuentran en \parencite{kooijmanDynamicEnergyBudget2009,jagerDEBkissQuestSimplest2013}. El modelo supone temperatura y humedad del lecho constantes (no determinantes durante las mediciones), oxigeno no limitante dentro de los cierres y numero de larvas $N$ constante (mortalidad despreciable en el periodo experimental).
+El proceso se describe con un modelo dinamico de parametros concentrados (0D) que amplia el modelo de asimilacion, crecimiento y produccion de CO$_2$ de \textcite{eriksenDynamicModellingFeed2022,eriksenMetabolicPerformanceFeed2024} ---desarrollado para larvas de \textit{H. illucens} sobre dieta estandar--- con tres componentes adicionales: (i) un interruptor de prepupa que representa la cesacion de la alimentacion al final del ciclo larvario; (ii) un modulo microbiano de primer orden para la degradacion del sustrato no consumido \parencite{roels1980}; y (iii) un balance de masa de gas en la cabeza de aire de la camara estatica de medicion. Los fundamentos de la teoria DEB del nucleo larvario se encuentran en \parencite{kooijmanDynamicEnergyBudget2009,jagerDEBkissQuestSimplest2013}. El modelo supone temperatura constante (medida) y humedad del lecho como variable de estado, oxigeno no limitante dentro de los cierres y numero de larvas $N$ constante (mortalidad despreciable en el periodo experimental).
 
-El vector de estado es $\mathbf{x} = (A, B, L, D_M, W, c_{CO_2}, c_{CH_4})$, donde $A$, $B$ y $L$ son los compartimentos larvarios (asimilado, estructura y lipidos, mg/larva), $D_M$ y $W$ la materia seca y el agua del lecho (g), y $c_i$ las concentraciones de gas en la cabeza de aire (mol/m$^3$). Las condiciones iniciales larvarias ($A_0 = 0.005$, $B_0 = 0.012$, $L_0 = 0.003$ mg) corresponden a una larva neonata \parencite{eriksenDynamicModellingFeed2022}.
+El vector de estado es $\mathbf{x} = (A, B, L, D_M, W, X, c_{CO_2}, c_{CH_4})$, donde $A$, $B$ y $L$ son los compartimentos larvarios (asimilado, estructura y lipidos, mg/larva), $D_M$, $W$ y $X$ la materia seca, el agua y la biomasa microbiana del lecho (g), y $c_i$ las concentraciones de gas en la cabeza de aire (mol/m$^3$). Las condiciones iniciales $A_0 = 0.005$ y $L_0 = 0.003$~mg corresponden a una larva neonata \parencite{eriksenDynamicModellingFeed2022}; $B_0$ se calibro en este trabajo con las tasas netas (Cuadro~\ref{tab:parametros}).
 
 \subsubsection{Nucleo larvario (DEB de Eriksen)}
 
@@ -55,11 +99,11 @@ con $t_p$ el dia central y $w_p$ el ancho de la transicion, ajustados al descens
 \paragraph{Asimilacion (ecs. 4 y 5 de Eriksen, 2022).}
 La tasa especifica de asimilacion decrece con el tamano y el flujo asimilado es proporcional a $B$ \parencite{eriksenDynamicModellingFeed2022}:
 \begin{equation}
-a(B, t) = a_{\max}\,\frac{1}{1 + (B/B_{\max})^{\alpha}}\,(1 - S(t)),
+a(B, t, D_M) = f\,a_{\max}\,\frac{1}{1 + (B/B_{\max})^{\alpha}}\,(1 - S(t))\,\frac{D_M}{D_M + K_s},
 \qquad r_A = a\,B,
 \label{eq:asimilacion}
 \end{equation}
-donde $B_{\max}$ es la biomasa de referencia y $\alpha$ controla la caida con el tamano. El factor $(1 - S(t))$ es propio: cierra la asimilacion en prepupa.
+donde $B_{\max}$ es la biomasa de referencia y $\alpha$ controla la caida con el tamano. El factor $(1 - S(t))$ es propio: cierra la asimilacion en prepupa. Tambien son propios el factor de calidad de dieta $f$ ($f = 1$ en D1, calibrado en D4, sec. \ref{sec:resultados}) y la limitacion por disponibilidad de alimento $D_M/(D_M + K_s)$, con $K_s = 2$~g fijo, que apaga la asimilacion suavemente cuando el sustrato se agota en el regimen de carga unica.
 
 \paragraph{Crecimiento (ec. 10 de Eriksen, 2022).}
 El crecimiento estructural sigue la forma logistica con descuento de mantenimiento de \textcite{eriksenDynamicModellingFeed2022}:
@@ -91,7 +135,7 @@ con $Y_L$ el costo de deposito de lipidos; todas las tasas en mg/larva/d.
 
 \subsubsection{Modulo microbiano del lecho}
 
-El segundo componente propio describe la degradacion microbiana del lecho: la fraccion no asimilada del sustrato permanece en el lecho y se descompone por actividad microbiana en paralelo al consumo larvario (Figura \ref{fig:lecho}); este modulo es el que permite contrastar el modelo con los controles de alimento solo (sec. \ref{sec:resultados}). A continuacion se indica la procedencia de cada expresion.
+El segundo componente propio describe la degradacion microbiana del lecho: la fraccion no asimilada del sustrato permanece en el lecho y se descompone por actividad microbiana en paralelo al consumo larvario (Figura \ref{fig:lecho}). A diferencia de una cinetica de primer orden sobre la materia seca, la biomasa microbiana $X$ es un estado del modelo que crece sobre el sustrato degradado; esto permite reproducir el aumento sostenido de las tasas de los controles de alimento solo (sec. \ref{sec:resultados}). A continuacion se indica la procedencia de cada expresion.
 
 \begin{figure}[htbp]
 \centering
@@ -102,23 +146,23 @@ El segundo componente propio describe la degradacion microbiana del lecho: la fr
   flujo/.style={->, >=latex, thick, shorten >=3pt, shorten <=3pt},
   mod/.style={->, >=latex, dashed, shorten >=2pt},
   etiqueta/.style={fill=white, inner sep=1.5pt, font=\footnotesize}]
-\node[comp] (lecho) at (0,0) {Lecho\\ $D_M$, $W$};
+\node[comp] (lecho) at (0,0) {Lecho\\ $D_M$, $W$, $X$};
 \node[gas] (co2) at (6.5,0) {CO$_2$};
 \node[gas] (ch4) at (6.5,-3.4) {CH$_4$};
 \node[drv] (T) at (1.6,1.9) {$T$\; ($Q_{10}$)};
 \node[drv] (H) at (4.9,1.9) {$\theta_s$\; (Monod)};
-\draw[flujo] (lecho) -- node[etiqueta, above=2pt]{$Y_{CO_2}\,k\,D_M$}
+\draw[flujo] (lecho) -- node[etiqueta, above=2pt]{$Y_{CO_2}\,r_{\mathrm{deg}}$}
                        node[coordinate, pos=0.5] (k) {} (co2);
-\draw[flujo] (lecho.south east) -- node[etiqueta]{$Y_{CH_4}\,\xi(\theta_s)\,k\,D_M$} (ch4.north west);
+\draw[flujo] (lecho.south east) -- node[etiqueta]{$Y_{CH_4}\,\xi(\theta_s)\,r_{\mathrm{deg}}$} (ch4.north west);
 \draw[mod] (T.south) -- (k);
 \draw[mod] (H.south) -- (k);
 \end{tikzpicture}
-\caption{Modulo microbiano del lecho (componente propio). La constante efectiva $k$ (ec. \ref{eq:kmic}) integra la correccion termica $Q_{10}$ y la respuesta de humedad tipo Monod; el CO$_2$ microbiano es proporcional a la materia seca $D_M$ y el CH$_4$ se activa con la fraccion saturada $\theta_s$ via $\xi$ (ec. \ref{eq:rmic}), como indicador cualitativo.}
+\caption{Modulo microbiano del lecho (componente propio). La constante efectiva $k$ (ec. \ref{eq:kmic}) integra la correccion termica $Q_{10}$ y la respuesta de humedad tipo Monod; la degradacion $r_{\mathrm{deg}}$ (ec. \ref{eq:rmic}) crece con la biomasa microbiana $X$ y se apaga al agotarse el sustrato; el CH$_4$ se activa con la fraccion saturada $\theta_s$ via $\xi$, como indicador cualitativo.}
 \label{fig:lecho}
 \end{figure}
 
 \paragraph{Humedad del lecho y constante efectiva (formas estandar, combinacion propia).}
-El estado de humedad del lecho se resume en la fraccion gravimetrica $\theta_s$ y la constante efectiva combina tres elementos clasicos de la cinetica de descomposicion de residuos \parencite{roels1980,shulerbioprocess2017}: cinetica de primer orden en la materia seca, correccion termica tipo $Q_{10}$ y respuesta de humedad tipo Monod con semisaturacion $K_{\theta}$, acotada por un tope $k_{\max}$; el efecto de la humedad del sustrato sobre el proceso con \textit{H. illucens} esta documentado en \parencite{bekkerImpactSubstrateMoisture2021a,mertenatBlackSoldierFly2019}.
+El estado de humedad del lecho se resume en la fraccion gravimetrica $\theta_s$ y la constante efectiva combina elementos clasicos de la cinetica de descomposicion de residuos \parencite{roels1980,shulerbioprocess2017}: cinetica de primer orden en la biomasa microbiana, correccion termica tipo $Q_{10}$ y respuesta de humedad tipo Monod con semisaturacion $K_{\theta}$, acotada por un tope $k_{\max}$ no limitante; el efecto de la humedad del sustrato sobre el proceso con \textit{H. illucens} esta documentado en \parencite{bekkerImpactSubstrateMoisture2021a,mertenatBlackSoldierFly2019}.
 \begin{equation}
 \theta_s = \frac{W}{D_M + W},
 \qquad
@@ -128,25 +172,38 @@ k = \min\!\left(k_{\mathrm{ref}}\,Q_{10}^{(T - T_{\mathrm{ref}})/10}\,
 \end{equation}
 
 \paragraph{Tasas de CO$_2$ y CH$_4$ microbianos.}
-El CO$_2$ microbiano se obtiene con un rendimiento $Y_{CO_2}$ sobre sustrato degradado, en la tradicion de los balances macroscopicos \parencite{roels1980,shulerbioprocess2017}. El termino de CH$_4$, introducido en este trabajo, modula la tasa con un factor logistico $\xi(\theta_s)$ de la fraccion saturada: la metanogenesis requiere microambientes anoxicos asociados a la saturacion de humedad, y en bioconversion con \textit{H. illucens} se han reportado emisiones de CH$_4$ dependientes del sustrato y las condiciones \parencite{ermolaevGreenhouseGasEmissions2019,parodiBioconversionEfficienciesGreenhouse2020a,boakye-yiadomGreenhouseGasEmissions2022}. Este termino se usa solo como indicador cualitativo, pues el sensor disponible no esta calibrado para tasa neta \parencite{mitchellCalibrationLowCostMethane2024,kiplimoAddressingLowCostMethane2024}.
+La tasa de degradacion es proporcional a la biomasa microbiana y esta limitada por el sustrato disponible (Monod con semisaturacion $K_{sm} = 5$~g fija, componente propio); el CO$_2$ microbiano se obtiene con un rendimiento $Y_{CO_2}$ sobre sustrato degradado, en la tradicion de los balances macroscopicos \parencite{roels1980,shulerbioprocess2017}. El termino de CH$_4$, introducido en este trabajo, modula la tasa con un factor logistico $\xi(\theta_s)$ de la fraccion saturada: la metanogenesis requiere microambientes anoxicos asociados a la saturacion de humedad, y en bioconversion con \textit{H. illucens} se han reportado emisiones de CH$_4$ dependientes del sustrato y las condiciones \parencite{ermolaevGreenhouseGasEmissions2019,parodiBioconversionEfficienciesGreenhouse2020a,boakye-yiadomGreenhouseGasEmissions2022}. Este termino se usa solo como indicador cualitativo, pues el sensor disponible no esta calibrado para tasa neta \parencite{mitchellCalibrationLowCostMethane2024,kiplimoAddressingLowCostMethane2024}. Los parametros de $\xi$ ($\theta_{cs}$, $s_\theta$, $\xi_{\max}$) y $Y_{CH_4}$ son nominales, no calibrados, y el termino no entra en la validacion cuantitativa.
 \begin{equation}
-r_{C}^{\mathrm{mic}} = Y_{CO_2}\,k\,D_M,
+r_{\mathrm{deg}} = k\,X\,\frac{D_M}{D_M + K_{sm}},
 \qquad
-r_{CH_4} = Y_{CH_4}\,\xi(\theta_s)\,k\,D_M,
+r_{C}^{\mathrm{mic}} = Y_{CO_2}\,r_{\mathrm{deg}},
+\qquad
+r_{CH_4} = Y_{CH_4}\,\xi(\theta_s)\,r_{\mathrm{deg}},
 \qquad
 \xi(\theta_s) = \frac{\xi_{\max}}{1 + \exp(-(\theta_s - \theta_{cs})/s_{\theta})},
 \label{eq:rmic}
 \end{equation}
 en g/d.
 
+\paragraph{Biomasa microbiana (componente propio).}
+La biomasa crece con un rendimiento $Y_X$ sobre el sustrato degradado:
+\begin{equation}
+\frac{dX}{dt} = Y_X\,r_{\mathrm{deg}},
+\qquad X(0) = X_0.
+\label{eq:xmic}
+\end{equation}
+De las curvas de control solo son identificables el nivel inicial de la tasa (producto $Y_{CO_2}\,k\,X_0$) y la tasa de crecimiento ($\mu = Y_X\,k$); por ello $X_0 = 1$~g (nominal) y $Y_X = 0.4$ (rendimiento aerobio tipico \parencite{roels1980}) quedan fijos, y se calibran $k_{\mathrm{ref}}$ e $Y_{CO_2}$ contra los controles (sec. \ref{sec:resultados}).
+
 \paragraph{Balance de masa del lecho.}
 \begin{equation}
-\frac{dD_M}{dt} = -\frac{N\,r_A}{1000} - k\,D_M,
+\frac{dD_M}{dt} = -\frac{N\,r_A}{1000} - r_{\mathrm{deg}},
 \qquad
 \frac{dW}{dt} = \gamma_w\left(\frac{N\,r_{CO_2}^{\mathrm{lar}}}{1000} + r_C^{\mathrm{mic}}\right),
+\qquad
+\frac{dX}{dt} = Y_X\,r_{\mathrm{deg}},
 \label{eq:lecho}
 \end{equation}
-El primer termino de $dD_M/dt$ es el consumo larvario (con el tope $D_M \geq 0$). El agua del lecho crece con el agua metabolica de la respiracion: $\gamma_w = 0.41$ g de H$_2$O por g de CO$_2$ corresponde a la estequiometria de oxidacion de carbohidratos (1 mol de H$_2$O por mol de CO$_2$, es decir 18/44) \parencite{atkinsPhysicalChemistry2014}; la evaporacion se desprecia por tratarse de una camara cerrada. Cada dos dias, al reponer el alimento, $D_M$ y $W$ se restablecen a 100 y 150 g (250 g, relacion 40/60) como eventos discretos.
+El primer termino de $dD_M/dt$ es el consumo larvario y el segundo la degradacion microbiana (con el tope $D_M \geq 0$). El agua del lecho crece con el agua metabolica de la respiracion: $\gamma_w = 0.41$ g de H$_2$O por g de CO$_2$ corresponde a la estequiometria de oxidacion de carbohidratos (1 mol de H$_2$O por mol de CO$_2$, es decir 18/44) \parencite{atkinsPhysicalChemistry2014}; la evaporacion se desprecia a la escala de los cierres (minutos); la perdida por ventilacion entre cierres no se modela y se declara como limitacion del balance de agua. El experimento fue de carga unica: se pusieron 250~g de sustrato al inicio (100~g de materia seca y 150~g de agua, relacion 40/60) y no hubo reposicion ni retiro durante el ciclo; $D_M(0) = 100$~g y $W(0) = 150$~g son las condiciones iniciales del lecho.
 
 \subsubsection{Balance de gas en camara estatica}
 
@@ -191,7 +248,7 @@ r_{\mathrm{ppm}} = \frac{R_{CO_2}}{V_{\mathrm{aire}}}\,\frac{R_g\,T}{P}\,\frac{1
 con $R_g = 8.314$ J/(mol$\cdot$K) y $T$, $P$ la temperatura y presion de la camara: el factor $R_g T/P$ es el volumen molar, $10^6$ lleva a ppm y 1440 de dias a minutos.
 
 \paragraph{Validacion por descomposicion de fuentes (estrategia propia).}
-La validacion explota la descomposicion de fuentes: la componente larvaria $N\,r_{CO_2}^{\mathrm{lar}}$ se compara con la tasa neta medida (tratamiento menos control del mismo dia, promedio de tres repeticiones), y la componente microbiana $r_C^{\mathrm{mic}}$ con las curvas de control (alimento solo). Los parametros del nucleo DEB se tomaron de \textcite{eriksenDynamicModellingFeed2022,eriksenMetabolicPerformanceFeed2024} (Cuadro \ref{tab:parametros}); los del modulo microbiano ($k_{\mathrm{ref}}$, $Y_{CO_2}$) se calibran en este trabajo contra las curvas de control (sec. \ref{sec:resultados}).
+La validacion explota la descomposicion de fuentes: la componente larvaria $N\,r_{CO_2}^{\mathrm{lar}}$ se compara con la tasa neta medida (tratamiento menos control del mismo dia, promedio de tres cierres consecutivos), y la componente microbiana $r_C^{\mathrm{mic}}$ con las curvas de control (alimento solo). Los parametros del nucleo DEB se tomaron de \textcite{eriksenDynamicModellingFeed2022,eriksenMetabolicPerformanceFeed2024} (Cuadro \ref{tab:parametros}); los del modulo microbiano ($k_{\mathrm{ref}}$, $Y_{CO_2}$) se calibran en este trabajo contra las curvas de control (sec. \ref{sec:resultados}).
 
 \begin{table}[htbp]
 \centering
@@ -208,17 +265,23 @@ Costo de crecimiento & $Y_B$ & 0.44 & -- \\
 Costo de deposito de lipidos & $Y_L$ & 0.42 & -- \\
 Mantenimiento & $m$ & 0.08 & d$^{-1}$ \\
 Biomasa de referencia & $B_{\max}$ & 65 & mg \\
-Dia central de prepupa & $t_p$ & 12.3 (D1), 11.7 (D4) & d \\
-Ancho del interruptor & $w_p$ & 0.48 & d \\
+Dia central de prepupa & $t_p$ & 14.6 (D1), 11.7 (D4) & d \\
+Ancho del interruptor & $w_p$ & 0.46 & d \\
 Suelo de mantenimiento & $m_{\mathrm{suelo}}$ & 0.13 & -- \\
-Biomasa inicial por larva & $B_0$ & 0.0175 & mg \\
-Factor de calidad de dieta & $f$ & 1 (D1), 0.817 (D4) & -- \\
+Biomasa inicial por larva & $B_0$ & 0.0227 & mg \\
+Factor de calidad de dieta & $f$ & 1 (D1), 0.808 (D4) & -- \\
 Numero de larvas & $N$ & 700 & -- \\
 Volumen de aire de la camara & $V_{\mathrm{aire}}$ & 12.1 & L \\
 Temperatura (constante) & $T$ & 300.15 & K \\
 Factor $Q_{10}$ microbiano & $Q_{10}$ & 2.0 & -- \\
 Afinidad por humedad & $K_{\theta}$ & 0.15 & -- \\
-Cota cinetica microbiana & $k_{\max}$ & 0.02 & d$^{-1}$ \\
+Cota cinetica microbiana & $k_{\max}$ & 1.0 & d$^{-1}$ \\
+Constante microbiana & $k_{\mathrm{ref}}$ & 0.283 (D1), 0.291 (D4) & d$^{-1}$ \\
+Rendimiento de CO$_2$ microbiano & $Y_{CO_2}$ & 1.40 (D1), 1.15 (D4) & g/g \\
+Biomasa microbiana inicial (fija) & $X_0$ & 1 & g \\
+Rendimiento de biomasa microbiana (fijo) & $Y_X$ & 0.4 & g/g \\
+Semisaturacion de alimento (fija) & $K_s$ & 2 & g \\
+Semisaturacion de sustrato microbiano (fija) & $K_{sm}$ & 5 & g \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -226,30 +289,26 @@ Cota cinetica microbiana & $k_{\max}$ & 0.02 & d$^{-1}$ \\
 \subsection{Solucion numerica y ajuste de parametros}
 \label{sec:numerica}
 
-El estado que se integra es $(B, L, D_M, W)$: el compartimento $A$ queda en cuasi-equilibrio por construccion (ec. \ref{eq:co2lar}) y las concentraciones de gas no se integran en el tiempo, pues la camara se abre entre cierres; la comparacion con el sensor se hace sobre la tasa aparente instantanea (ec. \ref{eq:ppm}). El sistema es hibrido: la dinamica continua se interrumpe cada dos dias en los eventos de reposicion, donde $D_M$ y $W$ se restablecen a 100 y 150 g como saltos discretos. Cada segmento entre eventos se integro con LSODA \parencite{petzoldAutomaticSelectionMethods1983} a traves de \texttt{solve\_ivp} (SciPy), un metodo multipaso de paso y orden variables que conmuta automaticamente entre formulas de Adams (regimen no rigido) y formulas BDF (rigido), con control del error local (tolerancias relativa $10^{-6}$ y absoluta $10^{-9}$). Se prefirio este esquema adaptativo a un metodo de paso fijo tipo Runge--Kutta (RK4): el campo vectorial cambia rapidamente en torno a la transicion de prepupa ($w_p = 0.48$ d) y en los eventos de reposicion, y el control automatico de error garantiza la precision sin ajustar el paso manualmente. La positividad de $D_M$ y $L$ se impuso en el campo vectorial. La implementacion se hizo en Python 3 con NumPy y SciPy.
+El estado que se integra es $(B, L, D_M, W, X)$: el compartimento $A$ queda en cuasi-equilibrio por construccion (ec. \ref{eq:co2lar}) y las concentraciones de gas no se integran en el tiempo, pues la camara se abre entre cierres; la comparacion con el sensor se hace sobre la tasa aparente instantanea (ec. \ref{eq:ppm}). El sistema es continuo: el experimento fue de carga unica, sin eventos discretos de reposicion. La integracion se hizo con LSODA \parencite{petzoldAutomaticSelectionMethods1983} a traves de \texttt{solve\_ivp} (SciPy), un metodo multipaso de paso y orden variables que conmuta automaticamente entre formulas de Adams (regimen no rigido) y formulas BDF (rigido), con control del error local (tolerancias relativa $10^{-6}$ y absoluta $10^{-9}$). Se prefirio este esquema adaptativo a un metodo de paso fijo tipo Runge--Kutta (RK4): el campo vectorial cambia rapidamente en torno a la transicion de prepupa y al agotarse el sustrato, y el control automatico de error garantiza la precision sin ajustar el paso manualmente. La positividad de $D_M$ y $L$ se impuso en el campo vectorial. La implementacion se hizo en Python 3 con NumPy y SciPy.
 
 Los supuestos de la solucion son:
 \begin{itemize}
   \item La camara esta bien mezclada y a $T$ y $P$ constantes, de modo que la concentracion medida representa todo el volumen de aire.
   \item Durante un cierre (escala de minutos) las fuentes son constantes frente a la dinamica biologica (escala de dias), por lo que la acumulacion es lineal y la pendiente es la tasa aparente instantanea.
   \item Entre cierres la camara se ventila: el gas no se acumula de un cierre al siguiente y por tanto no se integra como estado.
-  \item En los eventos de reposicion los estados larvarios $B$ y $L$ son continuos y solo $D_M$ y $W$ saltan.
-  \item La evaporacion del lecho se desprecia por tratarse de una camara cerrada.
+  \item El experimento fue de carga unica: $D_M$, $W$ y $X$ solo cambian por la dinamica continua, sin eventos de reposicion.
+  \item La evaporacion del lecho se desprecia a la escala de los cierres; la perdida por ventilacion entre cierres no se modela (limitacion del balance de agua).
 \end{itemize}
 
-El ajuste de parametros se hizo en dos etapas desacopladas, siguiendo la descomposicion de fuentes. En la primera, los parametros microbianos ($k_{\mathrm{ref}}$, $Y_{CO_2}$) se ajustaron por minimos cuadrados sobre las tasas de los controles de alimento solo, simulando el lecho sin larvas y sin reposicion, en escala logaritmica y con cotas $k_{\mathrm{ref}} \in [10^{-4}, 0.2]$ d$^{-1}$ e $Y_{CO_2} \in [0.05, 2]$. En la segunda, el ajuste conjunto del nucleo larvario se hizo sobre las tasas netas con cuatro grados de libertad: $B_0$ compartido entre dietas (misma postura de huevos), el factor de calidad $f$ de D4, $t_p$ por dieta y $w_p$ compartido; los cierres saturados entraron como restricciones de desigualdad (residuo nulo cuando el modelo supera la cota inferior) y el ajuste se repitio desde tres puntos de arranque para evitar minimos locales. Los parametros cineticos del nucleo DEB no se reajustaron. El codigo fuente y los datos quedan disponibles en el repositorio del articulo.
+El ajuste de parametros se hizo en dos etapas desacopladas, siguiendo la descomposicion de fuentes. En la primera, los parametros microbianos ($k_{\mathrm{ref}}$, $Y_{CO_2}$; $X_0$ e $Y_X$ fijos) se ajustaron por minimos cuadrados sobre las tasas de los controles de alimento solo, simulando el lecho sin larvas, en escala logaritmica y con cotas $k_{\mathrm{ref}} \in [10^{-3}, 1]$ d$^{-1}$ e $Y_{CO_2} \in [0.05, 2]$. En la segunda, el ajuste conjunto del nucleo larvario se hizo sobre las tasas netas con cuatro grados de libertad: $B_0$ compartido entre dietas (misma postura de huevos), el factor de calidad $f$ de D4, $t_p$ por dieta y $w_p$ compartido; los cierres saturados entraron como restricciones de desigualdad (residuo nulo cuando el modelo supera la cota inferior) y el ajuste se repitio desde tres puntos de arranque para evitar minimos locales. Los parametros cineticos del nucleo DEB no se reajustaron. El codigo fuente y los datos quedan disponibles en el repositorio del articulo.
 
 \subsection{Analisis de incertidumbre}
 \label{sec:incertidumbre}
 
-Las fuentes de incertidumbre consideradas fueron: (i) la exactitud instrumental del sensor de CO$_2$ (MH-410D, $\pm(50$ ppm $+\ 5$ \% de la lectura) segun el fabricante \parencite{winsenMH410D2022}), que se propaga a la pendiente de cada cierre como un error relativo aproximado de $5$ \% $+\ 50/\Delta C$, con $\Delta C$ el incremento de concentracion durante el cierre (entre 6 y 12 \% para las tasas de este trabajo); (ii) la calidad del ajuste lineal de cada curva, controlada con el filtro $R^2 \geq 0.5$ y el tratamiento de los cierres saturados como cotas inferiores; (iii) la dispersion entre repeticiones, reportada como rango cuando hubo mas de una curva util por punto; y (iv) la incertidumbre del volumen de aire y de las condiciones de la camara (menor al 2 \%). La incertidumbre de la tasa neta se propago como $\sigma_{\mathrm{neto}} = \sqrt{\sigma_{\mathrm{trat}}^2 + \sigma_{\mathrm{ctrl}}^2}$, suponiendo errores independientes entre el tratamiento y su control del mismo dia. Formalmente, para la tasa molar $R = f(m, V_{\mathrm{aire}}, T)$, con $m$ la pendiente medida, la ley de propagacion para errores independientes da
+Las fuentes de incertidumbre consideradas fueron: (i) la exactitud instrumental del sensor de CO$_2$ (MH-410D, $\pm(50$ ppm $+\ 5$ \% de la lectura) segun el fabricante \parencite{winsenMH410D2022}), que se propaga a la pendiente de cada cierre como un error relativo aproximado de $5$ \% $+\ 50/\Delta C$, con $\Delta C$ el incremento de concentracion durante el cierre (entre 6 y 12 \% para las tasas de este trabajo); (ii) la calidad del ajuste lineal de cada curva, controlada con el filtro $R^2 \geq 0.5$ y el tratamiento de los cierres saturados como cotas inferiores; (iii) la dispersion entre los cierres consecutivos del mismo lote, reportada como rango cuando hubo mas de una curva util por punto; y (iv) la incertidumbre del volumen de aire y de las condiciones de la camara (menor al 2 \%). La incertidumbre de la tasa neta se propago como $\sigma_{\mathrm{neto}} = \sqrt{\sigma_{\mathrm{trat}}^2 + \sigma_{\mathrm{ctrl}}^2}$, suponiendo errores independientes entre el tratamiento y su control del mismo dia. Formalmente, para la tasa molar $R = f(m, V_{\mathrm{aire}}, T)$, con $m$ la pendiente medida, la ley de propagacion para errores independientes da
 \begin{equation}
 \left(\frac{u_R}{R}\right)^2 = \left(\frac{u_m}{m}\right)^2 + \left(\frac{u_V}{V_{\mathrm{aire}}}\right)^2 + \left(\frac{u_T}{T}\right)^2,
 \label{eq:propagacion}
 \end{equation}
-con $u_m/m \approx 0.06$ a $0.12$ (instrumental, sistematica: afecta todos los cierres en el mismo sentido y no se reduce al promediar), $u_V/V_{\mathrm{aire}} < 0.02$ y $u_T/T < 0.005$, lo que da una incertidumbre combinada de 6.5 a 12 \% por tasa. La componente aleatoria (dispersion del ajuste lineal y entre repeticiones) se suma en cuadratura y domina la dispersion punto a punto observada entre el modelo y los datos. Formalmente, para la tasa molar $R = f(m, V_{\mathrm{aire}}, T)$, con $m$ la pendiente medida, la ley de propagacion para errores independientes da
-\begin{equation}
-\left(\frac{u_R}{R}\right)^2 = \left(\frac{u_m}{m}\right)^2 + \left(\frac{u_V}{V_{\mathrm{aire}}}\right)^2 + \left(\frac{u_T}{T}\right)^2,
-\label{eq:propagacion}
-\end{equation}
-con $u_m/m \approx 0.06$ a $0.12$ (instrumental, sistematica: afecta todos los cierres en el mismo sentido y no se reduce al promediar), $u_V/V_{\mathrm{aire}} < 0.02$ y $u_T/T < 0.005$, lo que da una incertidumbre combinada de 6.5 a 12 \% por tasa. La componente aleatoria (dispersion del ajuste lineal y entre repeticiones) se suma en cuadratura y domina la dispersion punto a punto observada entre el modelo y los datos. El tiempo de respuesta del sensor ($T_{90} < 30$ s) es despreciable frente a la duracion de los cierres. El sensor de CH$_4$ (MH-440D) no estaba calibrado, por lo que sus lecturas se excluyeron de la validacion cuantitativa.
+con $u_m/m \approx 0.06$ a $0.12$ (instrumental, sistematica: afecta todos los cierres en el mismo sentido y no se reduce al promediar), $u_V/V_{\mathrm{aire}} < 0.02$ y $u_T/T < 0.005$, lo que da una incertidumbre combinada de 6.5 a 12 \% por tasa. La componente aleatoria (dispersion del ajuste lineal y entre repeticiones) se suma en cuadratura y domina la dispersion punto a punto observada entre el modelo y los datos.
+El tiempo de respuesta del sensor ($T_{90} < 30$ s) es despreciable frente a la duracion de los cierres. El sensor de CH$_4$ (MH-440D) no estaba calibrado, por lo que sus lecturas se excluyeron de la validacion cuantitativa.
