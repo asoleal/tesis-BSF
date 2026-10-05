@@ -10,7 +10,10 @@ troncopiramidal rectangular: boca superior de $37 \times 26$~cm, base de
 $32 \times 21$~cm y altura de $17$~cm, para un volumen geométrico de
 $\approx 13{,}8$~L. Los sensores de gases (CO$_2$, MH-410D; CH$_4$, MH-440D)
 se montaron empotrados en una de las caras laterales mayores, con el elemento
-sensible hacia el interior y por encima del nivel del sustrato. Durante cada
+sensible hacia el interior y por encima del nivel del sustrato. Ambos sensores se verificaron en laboratorio contra un
+cromatógrafo de gases con fuente certificada, en los rangos de
+medición del experimento (CO$_2$: 0--6000~ppm; CH$_4$: 0--10~\%
+en volumen). Durante cada
 cierre el recipiente se mantuvo sellado con su tapa reforzada con silicona, y
 el volumen de aire efectivo $V_{\mathrm{aire}}$ ---el volumen geométrico menos
 el ocupado por el recipiente interno y su contenido--- entró como parámetro
@@ -437,10 +440,10 @@ El ajuste de parámetros se hizo en dos etapas desacopladas, siguiendo la descom
 \subsection{Análisis de incertidumbre}
 \label{sec:incertidumbre}
 
-Las fuentes de incertidumbre consideradas fueron: (i) la exactitud instrumental del sensor de CO$_2$ (MH-410D, $\pm(50$ ppm $+\ 5$ \% de la lectura) según el fabricante \parencite{winsenMH410D2022}), que se propaga a la pendiente de cada cierre como un error relativo aproximado de $5$ \% $+\ 50/\Delta C$, con $\Delta C$ el incremento de concentración durante el cierre (entre 6 y 12 \% para las tasas de este trabajo); (ii) la calidad del ajuste lineal de cada curva, controlada con el filtro $R^2 \geq 0.5$ y el tratamiento de los cierres saturados como cotas inferiores; (iii) la dispersión entre los cierres consecutivos del mismo lote, reportada como rango cuando hubo más de una curva útil por punto; y (iv) la incertidumbre del volumen de aire y de las condiciones de la cámara (menor al 2 \%). La incertidumbre de la tasa neta se propago como $\sigma_{\mathrm{neto}} = \sqrt{\sigma_{\mathrm{trat}}^2 + \sigma_{\mathrm{ctrl}}^2}$, suponiendo errores independientes entre el tratamiento y su control del mismo día. Formalmente, para la tasa molar $R = f(m, V_{\mathrm{aire}}, T)$, con $m$ la pendiente medida, la ley de propagación para errores independientes da
+Las fuentes de incertidumbre consideradas fueron: (i) la exactitud instrumental del sensor de CO$_2$ (MH-410D, $\pm(50$ ppm $+\ 5$ \% de la lectura) según el fabricante \parencite{winsenMH410D2022}, con verificación de laboratorio contra cromatógrafo de gases (sec. \ref{sec:sistema}), que se propaga a la pendiente de cada cierre como un error relativo aproximado de $5$ \% $+\ 50/\Delta C$, con $\Delta C$ el incremento de concentración durante el cierre (entre 6 y 12 \% para las tasas de este trabajo); (ii) la calidad del ajuste lineal de cada curva, controlada con el filtro $R^2 \geq 0.5$ y el tratamiento de los cierres saturados como cotas inferiores; (iii) la dispersión entre los cierres consecutivos del mismo lote, reportada como rango cuando hubo más de una curva útil por punto; y (iv) la incertidumbre del volumen de aire y de las condiciones de la cámara (menor al 2 \%). La incertidumbre de la tasa neta se propago como $\sigma_{\mathrm{neto}} = \sqrt{\sigma_{\mathrm{trat}}^2 + \sigma_{\mathrm{ctrl}}^2}$, suponiendo errores independientes entre el tratamiento y su control del mismo día. Formalmente, para la tasa molar $R = f(m, V_{\mathrm{aire}}, T)$, con $m$ la pendiente medida, la ley de propagación para errores independientes da
 \begin{equation}
 \left(\frac{u_R}{R}\right)^2 = \left(\frac{u_m}{m}\right)^2 + \left(\frac{u_V}{V_{\mathrm{aire}}}\right)^2 + \left(\frac{u_T}{T}\right)^2,
 \label{eq:propagacion}
 \end{equation}
 con $u_m/m \approx 0.06$ a $0.12$ (instrumental, sistemática: afecta todos los cierres en el mismo sentido y no se reduce al promediar), $u_V/V_{\mathrm{aire}} < 0.02$ y $u_T/T < 0.005$, lo que da una incertidumbre combinada de 6.5 a 12 \% por tasa. La componente aleatoria (dispersión del ajuste lineal y entre repeticiones) se suma en cuadratura y domina la dispersión punto a punto observada entre el modelo y los datos.
-El tiempo de respuesta del sensor ($T_{90} < 30$ s) es despreciable frente a la duración de los cierres. El sensor de CH$_4$ (MH-440D) no estaba calibrado, por lo que sus lecturas se excluyeron de la validación cuantitativa.
+El tiempo de respuesta del sensor ($T_{90} < 30$ s) es despreciable frente a la duración de los cierres. El sensor de CH$_4$ (MH-440D) también se verificó en laboratorio (0--10~\% en volumen); sus lecturas se excluyeron de la validación cuantitativa no por la calibración sino por la dinámica observada, discutida en la sec. \ref{sec:resultados}.
