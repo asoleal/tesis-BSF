@@ -25,7 +25,7 @@ P = dict(amax=1.4, alpha=1.0, beta=2.0, YB=0.44, YL=0.42, m=0.08, Bmax=65.0,
          Vair=12.1, T=300.15, Patm=101325.0, Rg=8.314,
          Q10=2.0, Tref=25.0, Kth=0.15, kmax=1.0, gw=0.41, Ks=2.0, YX=0.4, Ksm=5.0)
 TC = P["T"] - 273.15
-X0 = dict(B=0.012, L=0.003, DM=100.0, W=150.0, X=1.0)  # mg/larva ; g de lecho
+X0 = dict(B=0.012, L=0.003, DM=75.0, W=175.0, X=1.0)  # mg/larva ; g de lecho
 T_FIN, REPON = 18.0, 2.0
 DIAS_MED = [9, 11, 13, 17]
 
@@ -50,7 +50,7 @@ def tasas(t, B, L, DM, W, X, p, kref, YCO2):
 def rhs(t, y, p, kref, YCO2):
     B, L, DM, W, X = [max(v, 0.0) for v in y]
     r = tasas(t, B, L, DM, W, X, p, kref, YCO2)
-    dL = r["rL"] if (L > 1e-12 or r["rL"] > 0) else 0.0
+    dL = r["rL"] if r["rL"] > 0 else r["rL"] * L / (L + 1e-6)  # apagado suave en L->0
     dDM = -p["N"] * r["rA"] / 1000.0 - r["rdeg"]
     if DM <= 0:
         dDM = max(dDM, 0.0)

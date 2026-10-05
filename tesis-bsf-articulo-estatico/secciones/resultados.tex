@@ -1,47 +1,47 @@
 \section{Resultados}
 \label{sec:resultados}
 
-Se presentan primero los parametros calibrados (modulo microbiano contra los controles; nucleo larvario contra las tasas netas) y luego la validacion por descomposicion de fuentes.
+Se presentan primero los parámetros calibrados (módulo microbiano contra los controles; núcleo larvario contra las tasas netas) y luego la validación por descomposición de fuentes.
 
-\subsection{Calibracion del modulo microbiano con los controles de alimento solo}
+\subsection{Calibración del módulo microbiano con los controles de alimento solo}
 
-Las curvas de control (alimento sin larvas) aislaron la componente microbiana. El ajuste de $k_{\mathrm{ref}}$ e $Y_{CO_2}$ por minimos cuadrados dio valores consistentes entre dietas: $k_{\mathrm{ref}} = 0.283$ d$^{-1}$ e $Y_{CO_2} = 1.40$ para D1, y $k_{\mathrm{ref}} = 0.291$ d$^{-1}$ e $Y_{CO_2} = 1.15$ para D4. Con el estado de biomasa microbiana, el modulo reproduce tanto la magnitud como la tendencia creciente de las tasas de control ($R^2 = 0.968$ y $0.982$; RMSE de 1.0 y 1.5 ppm/min para D1 y D4; Figuras \ref{fig:valD1} y \ref{fig:valD4}): el aumento sostenido de las tasas de control corresponde al crecimiento de la biomasa microbiana sobre el sustrato.
+Las curvas de control (alimento sin larvas) aislaron la componente microbiana. El ajuste de $k_{\mathrm{ref}}$ e $Y_{CO_2}$ por mínimos cuadrados dio valores consistentes entre dietas: $k_{\mathrm{ref}} = 0.282$ d$^{-1}$ e $Y_{CO_2} = 1.39$ para D1, y $k_{\mathrm{ref}} = 0.290$ d$^{-1}$ e $Y_{CO_2} = 1.13$ para D4. Con el estado de biomasa microbiana, el módulo reproduce tanto la magnitud como la tendencia creciente de las tasas de control ($R^2 = 0.968$ y $0.982$; RMSE de 1.0 y 1.5 ppm/min para D1 y D4; Figuras \ref{fig:valD1} y \ref{fig:valD4}): el aumento sostenido de las tasas de control corresponde al crecimiento de la biomasa microbiana sobre el sustrato.
 
-\subsection{Ajuste conjunto del nucleo larvario}
+\subsection{Ajuste conjunto del núcleo larvario}
 
-El ajuste conjunto sobre las tasas netas (tratamiento menos control del mismo dia, promedio de tres cierres consecutivos) dio una biomasa inicial $B_0 = 0.0227$ mg/larva, coherente con larvas neonatas de una postura de huevos; un factor de calidad de dieta $f = 0.808$ para D4 (D1 = 1, dieta de referencia de \textcite{eriksenDynamicModellingFeed2022}); tiempos centrales de prepupa $t_p = 14.6$ d para D1 y $t_p = 11.7$ d para D4; y un ancho de transicion $w_p = 0.46$ d, es decir, un cese de la alimentacion que ocurre en torno a un dia. El ajuste uso cuatro grados de libertad frente a cuatro puntos no saturados (uno en D1 y tres en D4) mas tres cotas inferiores; el $R^2$ reportado debe leerse con ese tamano muestral. Los parametros cineticos del nucleo DEB se mantuvieron fijos en los valores de la literatura (Cuadro \ref{tab:parametros}).
+El ajuste conjunto sobre las tasas netas (tratamiento menos control del mismo día, promedio de tres cierres consecutivos) dio una biomasa inicial $B_0 = 0.0735$ mg/larva, del orden de la biomasa de una larva neonata (decenas de \textmu g); un factor de calidad de dieta $f = 0.698$ para D4 (D1 = 1, dieta de referencia de \textcite{eriksenDynamicModellingFeed2022}); tiempos centrales de prepupa $t_p = 16.4$ d para D1 y $t_p = 12.1$ d para D4; y un ancho de transición $w_p = 0.36$ d, es decir, un cese de la alimentación que ocurre en torno a un día. El ajuste usó cuatro grados de libertad frente a cuatro puntos no saturados (uno en D1 y tres en D4) más tres cotas inferiores; el $R^2$ reportado debe leerse con ese tamaño muestral. Los parámetros cinéticos del núcleo DEB se mantuvieron fijos en los valores de la literatura (Cuadro \ref{tab:parametros}).
 
-\subsection{Validacion por descomposicion de fuentes}
+\subsection{Validación por descomposición de fuentes}
 
-El Cuadro \ref{tab:tasas} resume la comparacion y las Figuras \ref{fig:valD1} y \ref{fig:valD4} muestran las curvas del modelo contra las mediciones.
+El Cuadro \ref{tab:tasas} resume la comparación y las Figuras \ref{fig:valD1} y \ref{fig:valD4} muestran las curvas del modelo contra las mediciones.
 
-Para D4, la componente larvaria reproduce las tres tasas netas no saturadas con $R^2 = 0.982$ y RMSE de 5.0 ppm/min (88.4 frente a 88.6 el dia 9; 21.3 frente a 21.5 el dia 13; 8.7 frente a 0.0 el dia 17), y satisface la cota inferior del dia 11 (165.1 frente a 165.4 ppm/min, $-0.1$ \%). El suelo de mantenimiento en prepupa (8.7 ppm/min el dia 17) queda cercano a la tasa de larvas en ayuno medida ese mismo dia (14.3 ppm/min), lo que respalda el anclaje de $m_{\mathrm{suelo}}$: la medicion de ayuno proviene de un tratamiento independiente (larvas sin alimento) y no entro en la calibracion.
+Para D4, la componente larvaria reproduce las tres tasas netas no saturadas con $R^2 = 0.981$ y RMSE de 5.2 ppm/min (89.0 frente a 88.6 el día 9; 21.3 frente a 21.5 el día 13; 9.0 frente a 0.0 el día 17), y satisface la cota inferior del día 11 (164.7 frente a 165.4 ppm/min, $-0.4$ \%). El suelo de mantenimiento en prepupa (9.0 ppm/min el día 17) queda cercano a la tasa de larvas en ayuno medida ese mismo día (14.3 ppm/min), lo que respalda el anclaje de $m_{\mathrm{suelo}}$: la medición de ayuno proviene de un tratamiento independiente (larvas sin alimento) y no entró en la calibración.
 
-Para D1, el modelo reproduce el unico punto no saturado (dia 13: 102.8 frente a 102.8 ppm/min) y satisface las cotas inferiores de los dias 9 y 11 (267.8 y 334.4 ppm/min frente a cotas de 267.8 y 124.3 ppm/min). La tasa del dia 11 proviene del cierre con el ajuste lineal de menor calidad ($R^2 = 0.76$), por lo que su estimacion es especialmente conservadora, como se describio en metodos.
+Para D1, el modelo reproduce la forma de la trayectoria pero no todos los puntos: satisface la cota inferior del día 9 (267.9 frente a 267.8 ppm/min, $+0.0$ \%) y queda a un 10 \% del único punto no saturado (día 13: 92.2 frente a 102.8 ppm/min), pero no alcanza la cota inferior del día 11 (92.2 frente a 124.3 ppm/min, $-25.9$ \%). En el modelo la causa es estructural: con 75~g de materia seca para 700 larvas ($\approx 107$~mg de sustrato por larva, en el rango de ración por larva del modelo de referencia), las larvas agotan la fracción degradable del lecho hacia el día 10 y la tasa larvaria cae a la respiración de mantenimiento ($\approx 92$~ppm/min) antes de que opere el interruptor de prepupa ($t_p = 16.4$~d, ya al final de la ventana experimental). Es decir, para D1 el colapso de emisiones observado entre los días 9 y 11 se atribuye al agotamiento del alimento y no a la transición a prepupa, y la subestimación del día 11 indica que el agotamiento real fue más gradual que el del modelo, compatible con un lecho heterogéneo que la formulación de parámetros concentrados no representa. La tasa del día 11 proviene además del cierre con el ajuste lineal de menor calidad ($R^2 = 0.76$), por lo que la discrepancia real puede ser aún mayor; se retoma en la discusión.
 
-Cabe notar que el RMSE de la componente larvaria en D4 (5.0 ppm/min) es del orden de la incertidumbre instrumental estimada para esas tasas (6 a 10 ppm/min, sec. \ref{sec:incertidumbre}), de modo que la componente larvaria reproduce las tasas netas dentro de la incertidumbre experimental; las discrepancias restantes (el punto saturado del dia 11 de D1, que el modelo supera ampliamente, y el apagado del termino microbiano en el tratamiento cuando las larvas agotan el sustrato) son estructurales y no instrumentales; se retoman en la discusion.
+Cabe notar que el RMSE de la componente larvaria en D4 (5.2 ppm/min) es del orden de la incertidumbre instrumental estimada para esas tasas (6 a 10 ppm/min, sec. \ref{sec:incertidumbre}), de modo que la componente larvaria reproduce las tasas netas de D4 dentro de la incertidumbre experimental; las discrepancias restantes (la cota inferior del día 11 de D1, que el modelo no alcanza, y el apagado del término microbiano en el tratamiento de D1 cuando las larvas agotan el sustrato) son estructurales y no instrumentales; se retoman en la discusión.
 
-La componente total (larvaria mas microbiana) reproduce el orden de magnitud y la forma temporal de las tasas de tratamiento en ambas dietas, incluido el pico previo a la prepupa y el colapso posterior.
+La componente total (larvaria más microbiana) reproduce el orden de magnitud y la forma temporal de las tasas de tratamiento en ambas dietas, incluidos el pico previo al colapso y el colapso mismo, que el modelo atribuye al agotamiento del sustrato en D1 y a la transición a prepupa en D4.
 
 \begin{table}[htbp]
 \centering
 \small
-\caption{Tasas de CO$_2$ observadas y modeladas por dieta y dia de medicion, en ppm/min: componente microbiana frente a controles de alimento solo; componente larvaria frente a la tasa neta (tratamiento menos control); total frente a tratamiento. ($^{*}$) cierre saturado: la tasa observada es una cota inferior (ver texto). En el tratamiento de D1 el total modelado del dia 13 es solo la componente larvaria: las larvas agotan el sustrato y el termino microbiano se apaga (sec. 2.2.2).}
+\caption{Tasas de CO$_2$ observadas y modeladas por dieta y día de medición, en ppm/min: componente microbiana frente a controles de alimento solo; componente larvaria frente a la tasa neta (tratamiento menos control); total frente a tratamiento. ($^{*}$) cierre saturado: la tasa observada es una cota inferior (ver texto). En el tratamiento de D1 el total modelado de los días 11 y 13 es solo la componente larvaria: las larvas agotan la fracción degradable del sustrato hacia el día 10 y el término microbiano se apaga (sec. 2.2.2).}
 \label{tab:tasas}
 \begin{tabular}{ll rrr rr rr}
 \toprule
-Dieta & Dia & \multicolumn{2}{c}{Microbiana} & \multicolumn{2}{c}{Larvaria (neta)} & \multicolumn{2}{c}{Total} \\
+Dieta & Día & \multicolumn{2}{c}{Microbiana} & \multicolumn{2}{c}{Larvaria (neta)} & \multicolumn{2}{c}{Total} \\
 \cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8}
  & & obs. & mod. & obs. & mod. & obs. & mod. \\
 \midrule
-D1 & 9  & 26.5 & 27.4 & 267.8$^{*}$ & 267.8 & 294.3 & 295.2 \\
-   & 11 & 34.8 & 33.4 & 124.3$^{*}$ & 334.4 & 159.1 & 353.8 \\
-   & 13 & 40.2 & 40.8 & 102.8 & 102.8 & 143.0 & 102.8 \\
+D1 & 9  & 26.5 & 27.4 & 267.8$^{*}$ & 267.9 & 294.3 & 280.8 \\
+   & 11 & 34.8 & 33.4 & 124.3$^{*}$ & 92.2 & 159.1 & 92.2 \\
+   & 13 & 40.2 & 40.8 & 102.8 & 92.2 & 143.0 & 92.2 \\
 \midrule
-D4 & 9  & 25.8 & 23.6 & 88.6 & 88.4 & 114.4 & 112.1 \\
-   & 11 & 27.2 & 28.9 & 165.4$^{*}$ & 165.1 & 192.5 & 194.1 \\
-   & 13 & 34.6 & 35.5 & 21.5 & 21.3 & 56.1 & 56.3 \\
-   & 17 & 54.1 & 53.6 & 0.0 & 8.7 & 40.0 & 60.7 \\
+D4 & 9  & 25.8 & 23.6 & 88.6 & 89.0 & 114.4 & 112.4 \\
+   & 11 & 27.2 & 28.9 & 165.4$^{*}$ & 164.7 & 192.5 & 192.3 \\
+   & 13 & 34.6 & 35.5 & 21.5 & 21.3 & 56.1 & 51.5 \\
+   & 17 & 54.1 & 53.5 & 0.0 & 9.0 & 40.0 & 49.2 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -49,38 +49,38 @@ D4 & 9  & 25.8 & 23.6 & 88.6 & 88.4 & 114.4 & 112.1 \\
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{figuras/validacion_co2_D1.png}
-\caption{Validacion por descomposicion de fuentes, dieta D1 (alimento estandar). Curvas: componentes larvaria y microbiana y total del modelo para el regimen de carga unica. Puntos: controles de alimento solo (cuadrados), tratamiento (x) y tasa neta tratamiento menos control (circulos; triangulos: cierres saturados, es decir cotas inferiores, con el rango entre cierres).}
+\caption{Validación por descomposición de fuentes, dieta D1 (alimento estándar). Curvas: componentes larvaria y microbiana y total del modelo para el régimen de carga única. Puntos: controles de alimento solo (cuadrados), tratamiento (x) y tasa neta tratamiento menos control (círculos; triángulos: cierres saturados, es decir cotas inferiores, con el rango entre cierres).}
 \label{fig:valD1}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{figuras/validacion_co2_D4.png}
-\caption{Validacion por descomposicion de fuentes, dieta D4 (residuos agroindustriales de frutas). Simbologia como en la Figura \ref{fig:valD1}; el diamante es la tasa de larvas en ayuno medida el dia 17.}
+\caption{Validación por descomposición de fuentes, dieta D4 (residuos agroindustriales de frutas). Simbología como en la Figura \ref{fig:valD1}; el diamante es la tasa de larvas en ayuno medida el día 17.}
 \label{fig:valD4}
 \end{figure}
 
 \paragraph{Nota sobre el CH$_4$.}
-Las lecturas de CH$_4$ no produjeron tasas netas utilizables: el sensor no estaba calibrado para tasa neta y varios controles saturaron, por lo que el termino $\xi(\theta_s)$ del modelo se mantiene como indicador cualitativo de microambientes anoxicos y no entra en la validacion cuantitativa; se retoma en la discusion.
+Las lecturas de CH$_4$ no produjeron tasas netas utilizables: el sensor no estaba calibrado para tasa neta y varios controles saturaron, por lo que el término $\xi(\theta_s)$ del modelo se mantiene como indicador cualitativo de microambientes anóxicos y no entra en la validación cuantitativa; se retoma en la discusión.
 
-\subsection{Analisis de sensibilidad}
-Para evaluar cuanto dependen las conclusiones de los parametros tomados de la literatura y del numero aproximado de larvas, se recalibraron $B_0$, $f$, $t_p$ y $w_p$ perturbando uno a la vez $m$, $a_{\max}$ y $N$ en $\pm 20$~\% (Cuadro~\ref{tab:sensibilidad}). El ajuste es robusto al mantenimiento ($m$ $\pm 20$~\%: $R^2 = 0.98$ en D4, RMSE de 5.4 a 5.5 ppm/min, cotas satisfechas), pero sensible a $a_{\max}$ y $N$: con $\pm 20$~\% el $R^2$ de D4 cae a $-2.8$ y $0.19$ ($a_{\max}$) y a $0.86$ y $0.93$ ($N$), y algunas cotas inferiores dejan de satisfacerse. Es decir, las tasas de gas si restringen la combinacion de parametros: los valores cineticos del nucleo DEB no son intercambiables: las conclusiones son condicionales a esos valores de la literatura y la sensibilidad cuantificada define la magnitud del riesgo, lo que refuerza la necesidad de una validacion directa de biomasa que los fije de forma independiente.
+\subsection{Análisis de sensibilidad}
+Para evaluar cuánto dependen las conclusiones de los parámetros tomados de la literatura y del número aproximado de larvas, se recalibraron $B_0$, $f$, $t_p$ y $w_p$ perturbando uno a la vez $m$, $a_{\max}$ y $N$ en $\pm 20$~\% (Cuadro~\ref{tab:sensibilidad}). El ajuste es robusto al mantenimiento ($m$ $\pm 20$~\%: $R^2 \approx 0.98$ en D4, RMSE de 5.3 a 5.6 ppm/min), pero sensible a $a_{\max}$ y $N$: con $\pm 20$~\% el $R^2$ de D4 cae a $-2.44$ y $0.09$ ($a_{\max}$) y a $0.84$ y $0.93$ ($N$), y algunas cotas inferiores adicionales dejan de satisfacerse. La cota del día 11 de D1 queda incumplida en el caso base y en todos los escenarios de perturbación, lo que confirma su origen estructural (el agotamiento del sustrato en D1) y no un accidente de la calibración. Es decir, las tasas de gas sí restringen la combinación de parámetros: los valores cinéticos del núcleo DEB no son intercambiables, las conclusiones son condicionales a esos valores de la literatura y la sensibilidad cuantificada define la magnitud del riesgo, lo que refuerza la necesidad de una validación directa de biomasa que los fije de forma independiente.
 
 \begin{table}[htbp]
 \centering
-\caption{Analisis de sensibilidad uno a la vez ($\pm 20$~\%) sobre los parametros fijos $m$, $a_{\mathrm{máx}}$ y $N$, recalibrando $B_0$, $f$, $t_p$ y $w_p$ en cada caso. RMSE en ppm/min sobre los puntos no saturados (en D1, un solo punto); cota min.: margen porcentual minimo sobre las cotas inferiores de los cierres saturados (negativo: cota violada).}
+\caption{Análisis de sensibilidad uno a la vez ($\pm 20$~\%) sobre los parámetros fijos $m$, $a_{\mathrm{máx}}$ y $N$, recalibrando $B_0$, $f$, $t_p$ y $w_p$ en cada caso. RMSE en ppm/min sobre los puntos no saturados (en D1, un solo punto); cotas D1/D4: margen porcentual mínimo sobre las cotas inferiores de los cierres saturados de cada dieta (negativo: cota violada).}
 \label{tab:sensibilidad}
-\begin{tabular}{lrrrrrr}
+\begin{tabular}{lrrrrrrr}
 \toprule
-Perturbacion & $B_0$ (mg) & $f$ (D4) & $R^2$ (D4) & RMSE (D4) & RMSE (D1) & cota min. (\%) \\
+Perturbación & $B_0$ (mg) & $f$ (D4) & $R^2$ (D4) & RMSE (D4) & RMSE (D1) & cota D1 (\%) & cota D4 (\%) \\
 \midrule
-Base            & 0.0227 & 0.808 &  0.982 &  5.0 &  0.0 &  $-0.1$ \\
-$m$ $-20$~\%    & 0.0266 & 0.786 &  0.980 &  5.4 &  2.6 &  $-2.1$ \\
-$m$ $+20$~\%    & 0.0236 & 0.810 &  0.979 &  5.5 & 16.4 &   1.4   \\
-$a_{\max}$ $-20$~\% & 0.218 & 0.745 & $-2.80$ & 73.6 & 1.6 & $-60.4$ \\
-$a_{\max}$ $+20$~\% & 0.0308 & 0.648 & 0.187 & 34.0 &  0.9 & $-61.1$ \\
-$N$ $-20$~\%    & 0.0441 & 0.774 &  0.857 & 14.3 &  2.8 & $-15.1$ \\
-$N$ $+20$~\%    & 0.0151 & 0.825 &  0.932 &  9.9 & 10.4 & $-16.5$ \\
+Base            & 0.0735 & 0.698 &  0.981 &  5.2 & 10.6 & $-25.9$ &  $-0.4$ \\
+$m$ $-20$~\%    & 0.0656 & 0.705 &  0.980 &  5.3 & 10.7 & $-25.9$ &  $-1.9$ \\
+$m$ $+20$~\%    & 0.0813 & 0.693 &  0.978 &  5.6 & 16.0 & $-25.8$ &    1.4  \\
+$a_{\max}$ $-20$~\% & 0.278 & 0.730 & $-2.44$ & 69.9 &  9.9 & $-65.3$ & $-46.0$ \\
+$a_{\max}$ $+20$~\% & 0.0136 & 0.722 & 0.086 & 36.1 & 11.9 & $-24.2$ & $-64.3$ \\
+$N$ $-20$~\%    & 0.0924 & 0.711 &  0.840 & 15.1 & 10.5 & $-50.0$ &   21.6  \\
+$N$ $+20$~\%    & 0.0515 & 0.707 &  0.933 &  9.8 & 10.8 & $-26.0$ & $-16.1$ \\
 \bottomrule
 \end{tabular}
 \end{table}
