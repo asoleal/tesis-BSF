@@ -9,7 +9,7 @@ Las curvas de control (alimento sin larvas) aislaron la componente microbiana. E
 
 \subsection{Ajuste conjunto del núcleo larvario}
 
-El ajuste conjunto sobre las tasas netas (tratamiento menos control del mismo día, promedio de tres cierres consecutivos) dio una biomasa inicial $B_0 = 0.0735$ mg/larva, del orden de la biomasa de una larva neonata (decenas de \textmu g); un factor de calidad de dieta $f = 0.698$ para D4 (D1 = 1, dieta de referencia de \textcite{eriksenDynamicModellingFeed2022}); tiempos centrales de prepupa $t_p = 16.4$ d para D1 y $t_p = 12.1$ d para D4; y un ancho de transición $w_p = 0.36$ d, es decir, un cese de la alimentación que ocurre en torno a un día. El ajuste usó cuatro grados de libertad frente a cuatro puntos no saturados (uno en D1 y tres en D4) más tres cotas inferiores; el $R^2$ reportado debe leerse con ese tamaño muestral. Los parámetros cinéticos del núcleo DEB se mantuvieron fijos en los valores de la literatura (Cuadro \ref{tab:parametros}).
+El ajuste conjunto sobre las tasas netas (tratamiento menos control del mismo día, promedio de tres cierres consecutivos) dio una biomasa inicial $B_0 = 0.0735$ mg/larva, del orden de la biomasa de una larva neonata (decenas de \textmu g); un factor de calidad de dieta $f = 0.698$ para D4 (D1 = 1, dieta de referencia de \textcite{eriksenDynamicModellingFeed2022}); tiempos centrales de prepupa $t_p = 16.4$ d para D1 y $t_p = 12.1$ d para D4; y un ancho de transición $w_p = 0.36$ d, es decir, un cese de la alimentación que ocurre en torno a un día. El ajuste usó cinco grados de libertad frente a cuatro puntos no saturados (uno en D1 y tres en D4) más tres cotas inferiores; el $R^2$ reportado debe leerse con ese tamaño muestral. Los parámetros cinéticos del núcleo DEB se mantuvieron fijos en los valores de la literatura (Cuadro \ref{tab:parametros}).
 
 \subsection{Validación por descomposición de fuentes}
 
@@ -84,3 +84,35 @@ $N$ $+20$~\%    & 0.0515 & 0.707 &  0.933 &  9.8 & 10.8 & $-26.0$ & $-16.1$ \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\subsection{Validación externa con datos independientes}
+\label{sec:resultados_ermolaev}
+
+El reajuste de los dos parámetros de dieta sobre los datos de \cite{ermolaevGreenhouseGasEmissions2019} arrojó $f = 0.74$ y $t_p = 16.1$~días desde la eclosión (equivalente al día 11 de su ensayo), valores coherentes con los obtenidos para las dietas de este trabajo ($f$ entre 0.70 y 1.0; $t_p$ entre 12.1 y 16.4~días). El Cuadro~\ref{cua:ermolaev} y la Figura~\ref{fig:ermolaev} comparan el modelo con las mediciones: las tres tasas se reproducen con desviaciones menores al 5~\%, el descenso entre los días 7 y 11 es de 30~\% en el modelo frente a 31~\% observado, y la emisión acumulada a los 14 días queda dentro de la dispersión experimental (88.0 frente a 92.4~$\pm$~14.5~g/kg de peso fresco). El máximo de la curva simulada ocurre el día 9.2, entre las dos mediciones más altas del ensayo (días 7 y 11).
+
+\begin{table}[htbp]
+\centering
+\caption{Validación externa: tasas de emisión de CO$_2$ por caja (700 larvas) y emisión acumulada, modelo frente a datos de \cite{ermolaevGreenhouseGasEmissions2019} (media $\pm$ desviación estándar).}
+\label{cua:ermolaev}
+\begin{tabular}{lcc}
+\hline
+Día & Modelo (mg/min) & Observado (mg/min) \\
+\hline
+2  & 2.65 & 2.53~$\pm$~1.1 \\
+7  & 7.93 & 8.04~$\pm$~1.6 \\
+11 & 5.58 & 5.58~$\pm$~1.5 \\
+\hline
+\multicolumn{3}{l}{Emisión acumulada al día 14 (g/kg peso fresco):} \\
+\multicolumn{1}{r}{modelo: 88.0} & \multicolumn{2}{l}{observado: 92.4~$\pm$~14.5} \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{figuras/validacion_ermolaev.png}
+\caption{Validación externa del modelo con los datos de \cite{ermolaevGreenhouseGasEmissions2019}. (a) Tasa de emisión de CO$_2$ por caja: línea continua, modelo; puntos, media observada $\pm$ desviación estándar del tratamiento con larvas; líneas verticales, pulsos de alimentación. (b) Emisión acumulada. Los tratamientos de referencia del artículo original se muestran atenuados.}
+\label{fig:ermolaev}
+\end{figure}
+
+La validación es robusta frente a la elección del módulo microbiano: repitiendo el ejercicio con los parámetros microbianos calibrados con la dieta D4, los resultados cambian menos del 1~\% (tasa del día 11: 5.61~mg/min; acumulado: 88.3~g/kg; descenso: 29~\%). Como limitación, el modelo sobreestima la masa larvaria final (212~mg de materia seca frente a los 102~mg reportados), lo que indica que una calibración basada únicamente en emisiones de CO$_2$ no restringe la partición entre crecimiento y reservas lipídicas (véase la discusión).

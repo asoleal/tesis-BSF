@@ -136,9 +136,7 @@ monótona decreciente, lo que mantiene el campo vectorial continuo para la
 integración (sec. 2.3). En el modelo, el factor $(1 - S(t))$ cierra la
 asimilación (ec. \ref{eq:asimilacion}) y el suelo de mantenimiento
 $m_{\mathrm{suelo}}$ representa el metabolismo residual sobre reservas durante
-la prepupa, anclado a la medición de larvas en ayuno (sec. 3). Los parámetros
-$t_p$ y $w_p$ se ajustan al descenso de las tasas medidas entre los días 13 y
-17.
+la prepupa, anclado a la medición de larvas en ayuno (sec. 3). Los parámetros $t_p$ y $w_p$ se ajustan al descenso de las tasas medidas al final del ciclo, que en la dieta de residuos ocurre entre los días 13 y 17; en la dieta estándar el descenso es temprano y lo domina el agotamiento del sustrato, por lo que el interruptor queda identificado sobre todo por D4 (sec.~\ref{sec:resultados}).
 
 \paragraph{Asimilación (ecs. 4 y 5 de Eriksen, 2022).}
 La tasa específica de asimilación decrece con el tamano y el flujo asimilado es proporcional a $B$ \parencite{eriksenDynamicModellingFeed2022}:
@@ -435,7 +433,7 @@ Los supuestos de la solución son:
   \item La evaporación del lecho se desprecia a la escala de los cierres; la perdida por ventilación entre cierres no se modela (limitación del balance de agua).
 \end{itemize}
 
-El ajuste de parámetros se hizo en dos etapas desacopladas, siguiendo la descomposición de fuentes. En la primera, los parámetros microbianos ($k_{\mathrm{ref}}$, $Y_{CO_2}$; $X_0$ e $Y_X$ fijos) se ajustaron por mínimos cuadrados sobre las tasas de los controles de alimento solo, simulando el lecho sin larvas, en escala logarítmica y con cotas $k_{\mathrm{ref}} \in [10^{-3}, 1]$ d$^{-1}$ e $Y_{CO_2} \in [0.05, 2]$. En la segunda, el ajuste conjunto del núcleo larvario se hizo sobre las tasas netas con cuatro grados de libertad: $B_0$ compartido entre dietas (misma postura de huevos), el factor de calidad $f$ de D4, $t_p$ por dieta y $w_p$ compartido; los cierres saturados entraron como restricciones de desigualdad (residuo nulo cuando el modelo supera la cota inferior) y el ajuste se repitio desde tres puntos de arranque para evitar mínimos locales. Los parámetros cinéticos del núcleo DEB no se reajustaron. El código fuente y los datos quedan disponibles en el repositorio del artículo.
+El ajuste de parámetros se hizo en dos etapas desacopladas, siguiendo la descomposición de fuentes. En la primera, los parámetros microbianos ($k_{\mathrm{ref}}$, $Y_{CO_2}$; $X_0$ e $Y_X$ fijos) se ajustaron por mínimos cuadrados sobre las tasas de los controles de alimento solo, simulando el lecho sin larvas, en escala logarítmica y con cotas $k_{\mathrm{ref}} \in [10^{-3}, 1]$ d$^{-1}$ e $Y_{CO_2} \in [0.05, 2]$. En la segunda, el ajuste conjunto del núcleo larvario se hizo sobre las tasas netas con cinco grados de libertad: $B_0$ compartido entre dietas (misma postura de huevos), el factor de calidad $f$ de D4, $t_p$ por dieta y $w_p$ compartido; los cierres saturados entraron como restricciones de desigualdad (residuo nulo cuando el modelo supera la cota inferior) y el ajuste se repitio desde tres puntos de arranque para evitar mínimos locales. Los parámetros cinéticos del núcleo DEB no se reajustaron. El código fuente y los datos quedan disponibles en el repositorio del artículo.
 
 \subsection{Análisis de incertidumbre}
 \label{sec:incertidumbre}
@@ -447,3 +445,10 @@ Las fuentes de incertidumbre consideradas fueron: (i) la exactitud instrumental 
 \end{equation}
 con $u_m/m \approx 0.06$ a $0.12$ (instrumental, sistemática: afecta todos los cierres en el mismo sentido y no se reduce al promediar), $u_V/V_{\mathrm{aire}} < 0.02$ y $u_T/T < 0.005$, lo que da una incertidumbre combinada de 6.5 a 12 \% por tasa. La componente aleatoria (dispersión del ajuste lineal y entre repeticiones) se suma en cuadratura y domina la dispersión punto a punto observada entre el modelo y los datos.
 El tiempo de respuesta del sensor ($T_{90} < 30$ s) es despreciable frente a la duración de los cierres. El sensor de CH$_4$ (MH-440D) también se verificó en laboratorio (0--10~\% en volumen); sus lecturas se excluyeron de la validación cuantitativa no por la calibración sino por la dinámica observada, discutida en la sec. \ref{sec:resultados}.
+
+\subsection{Validación externa con datos independientes}
+\label{sec:metodos_ermolaev}
+
+Para evaluar la transferibilidad del modelo a condiciones distintas de las de calibración se emplearon los datos de \cite{ermolaevGreenhouseGasEmissions2019}, quienes midieron la tasa de emisión de CO$_2$ de 700 larvas de \textit{H. illucens} criadas sobre residuos de alimentos (24.9~\% de materia seca) a 28~$^{\circ}$C durante 14 días, con alimentación en pulsos discretos los días 0, 2, 7 y 11 (294~g de materia seca en total, unas cuatro veces la ración por larva de este trabajo). Las tasas puntuales (días 2, 7 y 11) y la emisión acumulada se digitalizaron de la figura~2 de ese artículo, con error menor al 2~\% frente a los valores reportados en su texto y tablas.
+
+La simulación transfiere sin cambios la cinética larvaria y el módulo microbiano calibrados en este trabajo. El estado larvario inicial se tomó de la simulación propia a los cinco días de edad, que corresponde a la edad de las larvas de ese ensayo al iniciarse el experimento; los pulsos de alimentación se representaron como adiciones discretas de sustrato seco y agua según la humedad reportada, y la temperatura de 28~$^{\circ}$C se aplicó mediante la corrección $Q_{10}$ del módulo microbiano. Únicamente los dos parámetros dependientes de la dieta, $f$ y $t_p$, se reajustaron por mínimos cuadrados a las tres tasas medidas; todos los demás parámetros permanecieron fijos en sus valores calibrados.
