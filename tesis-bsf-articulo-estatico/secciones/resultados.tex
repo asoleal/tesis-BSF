@@ -116,3 +116,33 @@ Día & Modelo (mg/min) & Observado (mg/min) \\
 \end{figure}
 
 La validación es robusta frente a la elección del módulo microbiano: repitiendo el ejercicio con los parámetros microbianos calibrados con la dieta D4, los resultados cambian menos del 1~\% (tasa del día 11: 5.61~mg/min; acumulado: 88.3~g/kg; descenso: 29~\%). Como limitación, el modelo sobreestima la masa larvaria final (212~mg de materia seca frente a los 102~mg reportados), lo que indica que una calibración basada únicamente en emisiones de CO$_2$ no restringe la partición entre crecimiento y reservas lipídicas (véase la discusión).
+
+\subsection{Validación externa adicional: dietas con distinta relación proteína:carbohidrato}
+\label{sec:resultados_schn}
+
+Una segunda validación externa, de resolución temporal mucho mayor que la anterior, empleó las curvas horarias de VCO$_2$ reconstruidas a partir de \cite{schonUsingGasExchange2026} para cuatro dietas con composición proximal conocida y relación proteína:carbohidrato decreciente (sec.~\ref{sec:metodos_ermolaev}). El ajuste de un único parámetro por dieta, $f$, reprodujo el ordenamiento cualitativo esperado: el alimento de pollo quedó con $f = 0.95$, es decir, de calidad similar a la dieta estándar de este trabajo ($f = 1$), y las mezclas semisintéticas ordenaron su factor de calidad de forma estrictamente decreciente con su contenido proteico (0.81, 0.78 y 0.70 para P:C 1:3, 1:5 y 1:9; Cuadro~\ref{cua:schn}). Las cuatro emisiones totales quedaron dentro de un 18~\% del valor observado (Cuadro~\ref{cua:schn}), y la posición del pico de emisión (días 5.5 a 6.1 según la dieta en el ensayo) quedó en los días 6.2 a 7.0 del modelo, con un desfase máximo de 1.5 días atribuible a que el agotamiento del sustrato es más gradual en el modelo que en el lecho real.
+
+\begin{table}[htbp]
+\centering
+\caption{Validación externa con respirometría de flujo abierto \cite{schonUsingGasExchange2026}: proteína de la dieta, factor de calidad ajustado, emisión total de CO$_2$, día del pico y biomasa larvaria final (observado / modelo).}
+\label{cua:schn}
+\begin{tabular}{lccccc}
+\hline
+Dieta & Proteína (\%) & $f$ & VCO$_2$ total (L) & Pico (día) & Masa final (mg MS) \\
+\hline
+REF     & 19.9 & 0.95 & 19.6 / 19.3 & 5.7 / 6.2 & 43.2 / 90.8 \\
+P:C 1:3 & 17.3 & 0.81 & 16.9 / 14.7 & 6.0 / 7.0 & 37.7 / 65.2 \\
+P:C 1:5 & 12.1 & 0.78 & 16.2 / 13.3 & 6.0 / 7.0 & 33.5 / 57.7 \\
+P:C 1:9 & 7.0  & 0.70 & 10.8 / 10.7 & 5.5 / 7.0 & 21.0 / 43.8 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{figuras/validacion_schn.png}
+\caption{Validación externa con \cite{schonUsingGasExchange2026}. Curvas de VCO$_2$ por cámara (línea continua, modelo; cuadrados, curva reconstruida digitalizando su figura~2) y biomasa larvaria diaria observada (línea naranja, eje derecho, mg MS por larva) para las cuatro dietas.}
+\label{fig:schn}
+\end{figure}
+
+La biomasa larvaria final quedó sobrestimada por un factor cercano a 2 en las cuatro dietas (1.7 a 2.1). A diferencia de la validación anterior, aquí la desviación es sistemática y constante entre tratamientos, lo que indica un sesgo de asignación ---crecimiento estructural frente a reservas lipídicas--- y no ruido propio de cada dieta. El resultado es robusto a la elección del módulo microbiano: con los parámetros calibrados con la dieta de residuos los valores de $f$ cambian menos del 1~\%. La limitación coincide con la señalada en la discusión para la validación anterior: una calibración basada solo en CO$_2$ restringe el gasto respiratorio total, pero no la partición de ese carbono entre biomasa estructural y lípidos de reserva, de modo que el factor de corrección requerido es estable y estimable (véase la discusión).
