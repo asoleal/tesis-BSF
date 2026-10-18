@@ -8,12 +8,11 @@
 Los experimentos se realizaron en recipientes plásticos rígidos de geometría
 troncopiramidal rectangular: boca superior de $37 \times 26$~cm, base de
 $32 \times 21$~cm y altura de $17$~cm, para un volumen geométrico de
-$\approx 13{,}8$~L. Los sensores de gases (CO$_2$, MH-410D; CH$_4$, MH-440D)
-se montaron empotrados en una de las caras laterales mayores, con el elemento
-sensible hacia el interior y por encima del nivel del sustrato. Ambos sensores se verificaron en laboratorio contra un
-cromatógrafo de gases con fuente certificada, en los rangos de
-medición del experimento (CO$_2$: 0--6000~ppm; CH$_4$: 0--10~\%
-en volumen). Durante cada
+$\approx 13{,}8$~L. El sensor de CO$_2$ (MH-410D)
+se montó empotrado en una de las caras laterales mayores, con el elemento
+sensible hacia el interior y por encima del nivel del sustrato. El sensor se verificó en laboratorio contra un
+cromatógrafo de gases con fuente certificada, en el rango de
+medición del experimento (0--6000~ppm). Durante cada
 cierre el recipiente se mantuvo sellado con su tapa reforzada con silicona, y
 el volumen de aire efectivo $V_{\mathrm{aire}}$ ---el volumen geométrico menos
 el ocupado por el recipiente interno y su contenido--- entró como parámetro
@@ -71,7 +70,7 @@ y se trató como cota inferior en la validación (sec. \ref{sec:resultados}).
 
 El proceso se describe con un modelo dinámico de parámetros concentrados (0D) que amplia el modelo de asimilación, crecimiento y producción de CO$_2$ de \textcite{eriksenDynamicModellingFeed2022,eriksenMetabolicPerformanceFeed2024} (en adelante, el \emph{modelo de referencia}) ---desarrollado para larvas de \textit{H. illucens} sobre dieta estándar, cuya estructura de instares detiene la asimilación al final del ciclo larvario--- con tres componentes adicionales: (i) dos extensiones de la asimilación que la adaptan al régimen de carga única y a dietas de calidad distinta de la de referencia (un factor de calidad de dieta $f$ y una limitación por alimento disponible); (ii) un módulo microbiano de biomasa creciente para la degradación del sustrato no consumido \parencite{roels1980}; y (iii) un balance de masa de gas en la cabeza de aire de la cámara estática de medición. Los fundamentos de la teoría DEB del núcleo larvario se encuentran en \parencite{kooijmanDynamicEnergyBudget2009,jagerDEBkissQuestSimplest2013}. El modelo supone temperatura constante (medida) y humedad del lecho como variable de estado, oxígeno no limitante dentro de los cierres y número de larvas $N$ constante (mortalidad despreciable en el periodo experimental).
 
-El vector de estado es $\mathbf{x} = (A, B, L, D_M, W, X, c_{CO_2}, c_{CH_4})$, donde $A$, $B$ y $L$ son los compartimentos larvarios (asimilado, estructura y lípidos, mg/larva), $D_M$, $W$ y $X$ la materia seca, el agua y la biomasa microbiana del lecho (g), y $c_i$ las concentraciones de gas en la cabeza de aire (mol/m$^3$). El origen temporal $t = 0$ corresponde al montaje del experimento (larvas de 4.5~d de edad). La estructura al montaje $B_0$ se calibró en este trabajo (Cuadro~\ref{tab:parametros}) y las reservas iniciales se tomaron proporcionales a ella, $L_0 = 0.25\,B_0$ (valor fijo, no calibrado: a los 4.5~d la larva ya ha acumulado lípidos del cuerpo graso). El compartimento $A$ no requiere condición inicial, pues queda en cuasi-equilibrio por construcción (sec.~\ref{sec:numerica}).
+El vector de estado es $\mathbf{x} = (A, B, L, D_M, W, X, c_{CO_2})$, donde $A$, $B$ y $L$ son los compartimentos larvarios (asimilado, estructura y lípidos, mg/larva), $D_M$, $W$ y $X$ la materia seca, el agua y la biomasa microbiana del lecho (g), y $c_{CO_2}$ la concentración de CO$_2$ en la cabeza de aire (mol/m$^3$). El origen temporal $t = 0$ corresponde al montaje del experimento (larvas de 4.5~d de edad). La estructura al montaje $B_0$ se calibró en este trabajo (Cuadro~\ref{tab:parametros}) y las reservas iniciales se tomaron proporcionales a ella, $L_0 = 0.25\,B_0$ (valor fijo, no calibrado: a los 4.5~d la larva ya ha acumulado lípidos del cuerpo graso). El compartimento $A$ no requiere condición inicial, pues queda en cuasi-equilibrio por construcción (sec.~\ref{sec:numerica}).
 
 \subsubsection{Núcleo larvario (DEB de Eriksen)}
 
@@ -247,18 +246,14 @@ tradición de los balances macroscópicos de la ingeniería bioquímica
   etiqueta/.style={fill=white, inner sep=1.5pt, font=\footnotesize}]
 \node[comp] (lecho) at (0,0) {Lecho\\ $D_M$, $W$, $X$};
 \node[gas] (co2) at (6.5,0) {CO$_2$};
-\node[gas] (ch4) at (6.5,-3.4) {CH$_4$};
 \node[drv] (T) at (1.6,1.9) {$T$\; ($Q_{10}$)};
 \node[drv] (H) at (4.9,1.9) {$\theta_s$\; (Monod)};
 \draw[flujo] (lecho) -- node[etiqueta, pos=0.62, above=2pt]{$Y_{CO_2}\,r_{\mathrm{deg}}$}
                        node[coordinate, pos=0.35] (k) {} (co2);
-\draw[flujo] (lecho.south east) -- node[etiqueta, pos=0.62]{$Y_{CH_4}\,\xi(\theta_s)\,r_{\mathrm{deg}}$}
-                       node[coordinate, pos=0.45] (kc) {} (ch4.north west);
 \draw[mod] (T.south) -- (k);
 \draw[mod] (H.south) -- (k);
-\draw[mod] (H.east) -- (kc);
 \end{tikzpicture}
-\caption{Módulo microbiano del lecho (extensión respecto al modelo de referencia). La constante efectiva $k$ (ec. \ref{eq:kmic}) integra la corrección térmica $Q_{10}$ y la respuesta de humedad tipo Monod; la degradación $r_{\mathrm{deg}}$ (ec. \ref{eq:rmic}) crece con la biomasa microbiana $X$ y se apaga al agotarse el sustrato; el CH$_4$ se activa con la fracción saturada $\theta_s$ vía $\xi$, como indicador cualitativo.}
+\caption{Módulo microbiano del lecho (extensión respecto al modelo de referencia). La constante efectiva $k$ (ec. \ref{eq:kmic}) integra la corrección térmica $Q_{10}$ y la respuesta de humedad tipo Monod; la degradación $r_{\mathrm{deg}}$ (ec. \ref{eq:rmic}) crece con la biomasa microbiana $X$ y se apaga al agotarse el sustrato.}
 \label{fig:lecho}
 \end{figure}
 
@@ -289,7 +284,7 @@ en este ensayo $\theta_s \approx 0.7 \gg K_{\theta}$, de modo que el factor oper
 la saturación y la humedad no fue limitante; su papel es estructural, para
 condiciones más secas. Finalmente, el tope $k_{\max} = 1.0$~d$^{-1}$ (fijo, no calibrado) se incluye solo por seguridad numérica: con los valores calibrados la constante efectiva queda en $k \approx 0.36$--$0.41$~d$^{-1}$ según la dieta (con los factores térmico y de humedad incluidos), menos de la mitad del tope, que nunca resulta activo.
 
-\paragraph{Tasas de CO$_2$ y CH$_4$ microbianos.}
+\paragraph{Tasa de CO$_2$ microbiana.}
 Desde el punto de vista químico, la degradación microbiana del lecho es la
 oxidación de la materia orgánica residual: los microorganismos usan el
 sustrato como fuente de carbono y energía, liberan CO$_2$ como producto
@@ -304,40 +299,13 @@ $Y_{CO_2}$ sobre el sustrato degradado, en la tradición de los balances
 macroscópicos \parencite{roels1980,shulerbioprocess2017}; $Y_{CO_2}$ se
 calibra contra los controles (sec. \ref{sec:resultados}).
 
-El CH$_4$ tiene un origen distinto: la metanogénesis es un proceso anaerobio
-estricto que, en un lecho húmedo y bien aireado en promedio, solo puede
-ocurrir en microambientes anóxicos, asociados a las zonas saturadas de agua;
-de ahí que las emisiones de CH$_4$ reportadas en bioconversión con
-\textit{H. illucens} dependan del sustrato y de las condiciones de humedad
-\parencite{ermolaevGreenhouseGasEmissions2019,parodiBioconversionEfficienciesGreenhouse2020a,boakye-yiadomGreenhouseGasEmissions2022}.
-Como extensión cualitativa, la tasa se modula con un factor
-logístico $\xi(\theta_s)$ de la fracción saturada: $\xi$ es prácticamente
-nulo a humedades moderadas y crece al acercarse el lecho a la saturación.
-Este término se usa solo como indicador cualitativo: aunque el sensor de CH$_4$
-se calibró contra cromatógrafo de gases y patrones certificados (sec.~\ref{sec:sistema}),
-la metanogénesis depende de microambientes anóxicos que el modelo no resuelve
-espacialmente y solo aproxima mediante $\xi(\theta_s)$; además, los sensores de bajo
-costo presentan limitaciones documentadas para tasas netas
-\parencite{mitchellCalibrationLowCostMethane2024,kiplimoAddressingLowCostMethane2024}.
-Los parámetros de $\xi$ ($\theta_{cs}$, $s_\theta$, $\xi_{\max}$) y
-$Y_{CH_4}$ son nominales, no calibrados, y el término no entra en la
-validación cuantitativa.
-
 \begin{equation}
-\begin{aligned}
-r_{\mathrm{deg}} &= k\,X\,\frac{D_M}{D_M + K_{sm}},
-&
-r_{C}^{\mathrm{mic}} &= Y_{CO_2}\,r_{\mathrm{deg}},
-\\
-r_{CH_4} &= Y_{CH_4}\,\xi(\theta_s)\,r_{\mathrm{deg}},
-&
-\xi(\theta_s) &= \frac{\xi_{\max}}{1 + \exp(-(\theta_s - \theta_{cs})/s_{\theta})},
-\end{aligned}
+r_{\mathrm{deg}} = k\,X\,\frac{D_M}{D_M + K_{sm}},
+\qquad
+r_{C}^{\mathrm{mic}} = Y_{CO_2}\,r_{\mathrm{deg}},
 \label{eq:rmic}
 \end{equation}
-en g~d$^{-1}$, donde $\theta_{cs}$ es la humedad del punto medio de
-activación del metano, $s_{\theta}$ la pendiente de la transición y
-$\xi_{\max}$ la fracción máxima de degradación que pasa por vía anaerobia.
+en g~d$^{-1}$.
 
 \paragraph{Biomasa microbiana.}
 Al degradar el sustrato, los microorganismos incorporan una fracción del
@@ -373,9 +341,8 @@ mol de H$_2$O por cada mol de CO$_2$ producido
 larvaria y microbiana aporta agua metabólica al lecho en proporción
 fija $\gamma_w = 18/44 \approx 0.41$~g de H$_2$O por g de CO$_2$ (razón de
 masas molares del agua y del dióxido de carbono).
-La evaporación se desprecia a la escala de los cierres (minutos), la
-pérdida por ventilación entre cierres no se modela y el carbono del
-CH$_4$ no se descuenta del lecho (el término es cualitativo); estas
+La evaporación se desprecia a la escala de los cierres (minutos) y la
+pérdida por ventilación entre cierres no se modela; estas
 simplificaciones se declaran como limitaciones del balance de agua y
 materia seca.
 \begin{equation}
@@ -396,7 +363,7 @@ iniciales del lecho.
 
 \subsubsection{Balance de gas en cámara estática}
 
-El tercer componente conecta las fuentes con la medición: durante un cierre, el CO$_2$ y el CH$_4$ se acumulan en el volumen de aire de la cámara y el sensor registra la pendiente de concentración (Figura \ref{fig:camara}).
+El tercer componente conecta las fuentes con la medición: durante un cierre, el CO$_2$ se acumula en el volumen de aire de la cámara y el sensor registra la pendiente de concentración (Figura \ref{fig:camara}).
 
 \begin{figure}[htbp]
 \centering
@@ -425,7 +392,7 @@ El método de cámara estática estima la tasa a partir de la acumulación linea
 R_{CO_2} = \frac{N\,r_{CO_2}^{\mathrm{lar}} + 1000\,r_C^{\mathrm{mic}}}{44000},
 \label{eq:camara}
 \end{equation}
-donde $c_{CO_2}$ es la concentración molar del aire de la cámara (mol/L), $V_{\mathrm{aire}}$ el volumen de aire efectivo (L) y $R_{CO_2}$ la fuente total (mol/d): el término larvario pasa de mg a g y ambos a mol con la masa molar del CO$_2$ (44~g/mol); un balance análogo aplica para $c_{CH_4}$ con $R_{CH_4} = 1000\,r_{CH_4}/16000$ (16~g/mol).
+donde $c_{CO_2}$ es la concentración molar del aire de la cámara (mol/L), $V_{\mathrm{aire}}$ el volumen de aire efectivo (L) y $R_{CO_2}$ la fuente total (mol/d): el término larvario pasa de mg a g y ambos a mol con la masa molar del CO$_2$ (44~g/mol).
 
 \paragraph{Escala del sensor (ppm/min).}
 La comparación con el sensor se hace en la escala propia del método \parencite{hutchinsonMethodsSoilAnalysis1992}, convirtiendo la acumulación molar a ppm/min con la ley de gas ideal \parencite{atkinsPhysicalChemistry2014}:
@@ -478,12 +445,12 @@ Semisaturación de sustrato microbiano (fija) & $K_{sm}$ & 5 & g \\
 \end{tabular}
 \end{table}
 
-\noindent Procedencia de los valores: $B_0$, $a_{\max}$, $B_{\max,0}$, $\rho$, $f$ de D4, $\tau$ y $\delta_{DW,f}$ se calibraron en el ajuste conjunto con las tasas netas de CO$_2$ y la biomasa larvaria (secs.~\ref{sec:numerica} y~\ref{sec:resultados}); $k_{\mathrm{ref}}$ e $Y_{CO_2}$ se calibraron con los controles de alimento solo; los demás parámetros del núcleo provienen de la literatura o se fijaron (ver texto); los de la cámara son mediciones del experimento y los de la vía de CH$_4$ son nominales y se dan en el texto.
+\noindent Procedencia de los valores: $B_0$, $a_{\max}$, $B_{\max,0}$, $\rho$, $f$ de D4, $\tau$ y $\delta_{DW,f}$ se calibraron en el ajuste conjunto con las tasas netas de CO$_2$ y la biomasa larvaria (secs.~\ref{sec:numerica} y~\ref{sec:resultados}); $k_{\mathrm{ref}}$ e $Y_{CO_2}$ se calibraron con los controles de alimento solo; los demás parámetros del núcleo provienen de la literatura o se fijaron (ver texto); los de la cámara son mediciones del experimento.
 
 \subsection{Solución numérica y ajuste de parámetros}
 \label{sec:numerica}
 
-El estado que se integra es $(B, L, D_M, W, X)$: el compartimento $A$ queda en cuasi-equilibrio por construcción (ec. \ref{eq:co2lar}) y las concentraciones de gas no se integran en el tiempo, pues la cámara se abre entre cierres; la comparación con el sensor se hace sobre la tasa aparente instantánea (ec. \ref{eq:ppm}). El sistema es continuo: el experimento fue de carga única, sin eventos discretos de reposición. La integración se hizo con LSODA \parencite{petzoldAutomaticSelectionMethods1983} a través de \texttt{solve\_ivp} (SciPy), un método multipaso de paso y orden variables que conmuta automáticamente entre fórmulas de Adams (régimen no rígido) y fórmulas BDF (rígido), con control del error local (tolerancias relativa $10^{-6}$ y absoluta $10^{-9}$). Se prefirió este esquema adaptativo a un método de paso fijo tipo Runge--Kutta (RK4): el campo vectorial cambia rápidamente en torno a la transición de prepupa y al agotarse el sustrato, y el control automático de error garantiza la precisión sin ajustar el paso manualmente. La positividad de $D_M$ y $L$ se impuso anulando las tasas que las harían negativas. La implementación se hizo en Python 3 con NumPy y SciPy.
+El estado que se integra es $(B, L, D_M, W, X)$: el compartimento $A$ queda en cuasi-equilibrio por construcción (ec. \ref{eq:co2lar}) y la concentración de gas no se integra en el tiempo, pues la cámara se abre entre cierres; la comparación con el sensor se hace sobre la tasa aparente instantánea (ec. \ref{eq:ppm}). El sistema es continuo: el experimento fue de carga única, sin eventos discretos de reposición. La integración se hizo con LSODA \parencite{petzoldAutomaticSelectionMethods1983} a través de \texttt{solve\_ivp} (SciPy), un método multipaso de paso y orden variables que conmuta automáticamente entre fórmulas de Adams (régimen no rígido) y fórmulas BDF (rígido), con control del error local (tolerancias relativa $10^{-6}$ y absoluta $10^{-9}$). Se prefirió este esquema adaptativo a un método de paso fijo tipo Runge--Kutta (RK4): el campo vectorial cambia rápidamente en torno a la transición de prepupa y al agotarse el sustrato, y el control automático de error garantiza la precisión sin ajustar el paso manualmente. La positividad de $D_M$ y $L$ se impuso anulando las tasas que las harían negativas. La implementación se hizo en Python 3 con NumPy y SciPy.
 
 Los supuestos de la solución son:
 \begin{itemize}
@@ -517,7 +484,7 @@ Las fuentes de incertidumbre consideradas fueron: (i) la exactitud instrumental 
 \label{eq:propagacion}
 \end{equation}
 con $u_m/m \approx 0.06$ a $0.12$ (instrumental, sistemática: afecta todos los cierres en el mismo sentido y no se reduce al promediar), $u_V/V_{\mathrm{aire}} < 0.02$ y $u_T/T < 0.005$, lo que da una incertidumbre combinada de 6.5 a 12 \% por tasa. La componente aleatoria (dispersión del ajuste lineal y entre repeticiones) se suma en cuadratura y domina la dispersión punto a punto observada entre el modelo y los datos.
-El tiempo de respuesta del sensor ($T_{90} < 30$ s) es despreciable frente a la duración de los cierres. El sensor de CH$_4$ (MH-440D) también se verificó en laboratorio (0--10~\% en volumen); sus lecturas se excluyeron de la validación cuantitativa no por la calibración sino por la dinámica observada, discutida en la sec. \ref{sec:resultados}.
+El tiempo de respuesta del sensor ($T_{90} < 30$ s) es despreciable frente a la duración de los cierres.
 
 \subsection{Validación externa con datos independientes}
 \label{sec:metodos_ermolaev}
