@@ -117,21 +117,28 @@ El núcleo sigue el modelo de compartimentos de \textcite{eriksenDynamicModellin
 \end{figure}
 
 \paragraph{Cierre del ciclo larvario: instares y umbral de prepupa (modelo de referencia).}
-Al final del último instar, las larvas de \textit{H. illucens} cesan la
-alimentación y entran en prepupa, un estadio de transición a la metamorfosis
-en el que el insecto no se alimenta y sostiene su metabolismo con las reservas
+Al final del último instar, la larva cesa de alimentarse y entra en prepupa:
+vacía el intestino, deja de crecer y sostiene su metabolismo con las reservas
 acumuladas durante la fase larvaria, principalmente los lípidos del cuerpo
 graso \parencite{arreseInsectFatBody2010,nayakHermetiaIllucensDiptera2023}.
-Fisiológicamente, la transición es un umbral del ciclo de vida: en los modelos
-DEB de insectos holometábolos, los cambios de estadio separan regímenes
-energéticos distintos, con asimilación en la fase larvaria y metabolismo de
-mantenimiento sobre reservas en las fases no alimentarias
+Para este trabajo el evento es decisivo: al apagarse la asimilación, la
+principal fuente de CO$_2$ del sistema cae al nivel de mantenimiento, y el
+colapso de las emisiones al final del ciclo depende de que el modelo
+reproduzca ese cierre. En la tradición DEB el cierre no se impone por
+calendario sino por estado fisiológico: es un cambio de régimen energético,
+de asimilación activa a mantenimiento sobre reservas
 \parencite{kooijmanDynamicEnergyBudget2009,llandresDynamicEnergyBudget2015}.
-El modelo de referencia representa este cierre \emph{por estado y no por
-tiempo}, mediante la estructura de instares de
-\textcite{eriksenDynamicModellingFeed2022} (sus ecs. 5, 15 y 16): la biomasa
-máxima alcanzable no es constante, sino que tras un tiempo $t_{pm}$ empieza a
-decrecer a razón $\rho$ (su ec. 16),
+
+El modelo de referencia lo representa con un umbral de talla sobre la
+estructura $B$ (la biomasa estructural por larva, en mg; su valor al montaje
+es $B_0$, calibrado en este trabajo). Bajo condiciones óptimas la estructura
+puede crecer hasta un techo $B_{\max,0}$, la talla estructural máxima en
+esas condiciones. Sin embargo, las larvas que crecen más lento no alcanzan
+ese techo: cierran el ciclo a menor talla, porque el peso final y el tiempo
+de desarrollo están relacionados de forma negativa en la especie
+\parencite{eriksenDynamicModellingFeed2022}. Para captar ese hecho el techo
+no se toma constante: pasado un tiempo $t_{pm}$, el umbral empieza a decrecer
+a razón constante $\rho$ (mg~d$^{-1}$) (ec. 16 del artículo de referencia):
 \begin{equation}
 B_{\max}(t) =
 \begin{cases}
@@ -140,24 +147,33 @@ B_{\max,0}, & t < t_{pm},\\[2pt]
 \end{cases}
 \label{eq:bmaxt}
 \end{equation}
-y el instar se asigna por tamaño relativo (su ec. 15): con $\delta_I = 5$
-(fijo), la larva está en los instares iniciales mientras
-$B < B_{\max,0}/\delta_I$, entra en el último instar alimentario (instar 6)
-cuando $B \ge B_{\max,0}/\delta_I$, y pasa a prepupa (instar 7) cuando la
-estructura alcanza el umbral vigente, $B \ge B_{\max}(t)$; este último cierre
-tiene prioridad sobre la condición de instar. La entrada a prepupa es así una
-propiedad emergente del cruce entre una estructura que crece y un umbral que
-decrece: el modelo no recibe el día de cierre como dato, sino que lo predice
-como el instante $t_{\mathrm{stop}}$ en que $B(t) = B_{\max}(t)$
-(sec.~\ref{sec:resultados}), con $\rho$ como el único parámetro específico
-del cierre que se calibró. En \textcite{eriksenDynamicModellingFeed2022}, $t_{pm} = 13$~d
-contados desde la eclosión; como los montajes de este trabajo se hicieron con
-larvas de 4.5~d de edad, se adoptó $t_{pm} = 8.5$~d desde el montaje (fijo;
+$B_{\max}(t)$ es así el techo de talla vigente en cada instante: plano al
+inicio y en descenso lineal después de $t_{pm}$.
+
+Sobre ese umbral opera la asignación de instares por tamaño relativo (ec. 15
+del artículo de referencia, con el divisor $\delta_I = 5$ fijo): mientras
+$B < B_{\max,0}/\delta_I$ la larva está en los instares iniciales y asimila a
+tasa plena; al superar $B_{\max,0}/\delta_I$ entra en el último instar
+alimentario (instar 6) y la asimilación se frena
+(ec.~\ref{eq:asimilacion_eriksen}); y cuando la estructura alcanza el umbral
+vigente, $B \ge B_{\max}(t)$, pasa a prepupa (instar 7) y la asimilación se
+detiene por completo, con prioridad de esta condición sobre la de instar.
+Como $B(t)$ crece de forma sigmoidal mientras el umbral primero es plano y
+luego decrece, las dos curvas terminan por cruzarse: el instante del cruce,
+$t_{\mathrm{stop}}$, no se entrega al modelo como dato sino que emerge de la
+dinámica, y es la predicción que se contrasta con el colapso observado de las
+emisiones (sec.~\ref{sec:resultados}).
+
+Del mecanismo de cierre se fijaron $\delta_I$ y $t_{pm}$, y se calibró
+$\rho$, el único parámetro específico del cierre sujeto a calibración. En
+\textcite{eriksenDynamicModellingFeed2022}, $t_{pm} = 13$~d contados desde la
+eclosión; como los montajes de este trabajo se hicieron con larvas de 4.5~d
+de edad, se adoptó $t_{pm} = 8.5$~d desde el montaje (fijo;
 Cuadro~\ref{tab:parametros}). Una precisión de interpretación: la ec. 15 del
 artículo de referencia escribe el umbral de transición en términos de
-$B_{\max}$; aquí se interpretó como la $B_{\max}(t)$ vigente en cada instante,
-de modo que el decrecimiento de la ec.~\ref{eq:bmaxt} induce efectivamente el
-cierre del ciclo.
+$B_{\max}$; aquí se interpretó como la $B_{\max}(t)$ vigente en cada
+instante, de modo que el decrecimiento de la ec.~\ref{eq:bmaxt} induce
+efectivamente el cierre del ciclo.
 
 \paragraph{Asimilación larvaria: modelo de referencia y extensiones.}
 El modelo de referencia \parencite{eriksenDynamicModellingFeed2022} postula
