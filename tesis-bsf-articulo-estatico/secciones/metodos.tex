@@ -48,8 +48,7 @@ detallan en el Cuadro~\ref{tab:dietas}.
   \end{tabular}
 \end{table}
 
-Cada lote se cargó una sola vez al inicio del ciclo, sin reposición ni
-retiro: 250~g de alimento por recipiente al momento de la siembra y una segunda alimentación idéntica al día~5 del experimento, en ambos casos tal como se recibió, sin ajuste de humedad (materia seca del análisis bromatológico: 86.3~\% en D1 y 80.3~\% en D4; es decir, 215.8 y 200.8~g de materia seca por carga, respectivamente), con 700 larvas por recipiente. El experimento se dio por finalizado el día~15. Como controles se
+Cada lote recibió dos cargas de alimento, sin retiros durante el ciclo: 250~g de alimento por recipiente al momento de la siembra y una segunda alimentación idéntica al día~5 del experimento, en ambos casos tal como se recibió, sin ajuste de humedad (materia seca del análisis bromatológico: 86.3~\% en D1 y 80.3~\% en D4; es decir, 215.8 y 200.8~g de materia seca por carga, respectivamente), con 700 larvas por recipiente. El experimento se dio por finalizado el día~15. Como controles se
 incluyeron recipientes con alimento solo (el mismo régimen de dos cargas de 250~g, sin larvas; respiración del sustrato) y con larvas solas (mantenimiento sin
 alimento), medidos con el mismo protocolo; la tasa neta de cada tratamiento
 se obtuvo restando el control correspondiente del mismo día. La temperatura
@@ -109,7 +108,7 @@ El núcleo sigue el modelo de compartimentos de \textcite{eriksenDynamicModellin
 \draw[flujo] (A.south east) -- node[etiqueta]{$r_L$} (L.north west);
 \draw[flujo] (L) -- node[etiqueta, below=2pt]{$Y_L\,r_L$} (CO2);
 \end{tikzpicture}
-\caption{Compartimentos y flujos de carbono del núcleo larvario (adaptado de \parencite{eriksenDynamicModellingFeed2022}). La asimilación se detiene al final del ciclo por la transición a prepupa (ec.~\ref{eq:asimilacion_eriksen}); los costos $r_{Cm}$, $Y_B r_B$ y $Y_L r_L$ salen del sistema como CO$_2$. La línea discontinua indica un sumidero, no un compartimento acumulable; respecto al diagrama de Eriksen et al.\ se añade el costo de lipogénesis $Y_L r_L$.}
+\caption{Compartimentos y flujos de carbono del núcleo larvario (adaptado de \parencite{eriksenDynamicModellingFeed2022}). La asimilación se detiene al final del ciclo por la transición a prepupa (ec.~\ref{eq:asimilacion_eriksen}); los costos $r_{Cm}$, $Y_B r_B$ y $Y_L r_L$ salen del sistema como CO$_2$. La línea discontinua indica un sumidero, no un compartimento acumulable; respecto al diagrama de Eriksen se añade el costo de lipogénesis $Y_L r_L$.}
 \label{fig:nucleo}
 \end{figure}
 
@@ -301,9 +300,7 @@ se multiplica por $Q_{10}$ cada 10~°C de aumento sobre $T_{\mathrm{ref}}$; se t
 valores nominales estándar $Q_{10} = 2$ y $T_{\mathrm{ref}} = 25$~°C
 \parencite{roels1980,shulerbioprocess2017}. El tercero, $\theta_s/(\theta_s + K_{\theta})$,
 es una forma de Monod sobre la humedad con semisaturación $K_{\theta} = 0.15$ (fija, no calibrada):
-en este ensayo $\theta_s \approx 0.7 \gg K_{\theta}$, de modo que el factor operó cerca de
-la saturación y la humedad no fue limitante; su papel es estructural, para
-condiciones más secas. Finalmente, el tope $k_{\max} = 1.0$~d$^{-1}$ (fijo, no calibrado) se incluye solo por seguridad numérica: con los valores calibrados la constante efectiva queda en $k \approx 0.36$--$0.41$~d$^{-1}$ según la dieta (con los factores térmico y de humedad incluidos), menos de la mitad del tope, que nunca resulta activo.
+en este ensayo $\theta_s$ partió de $0.14$ (D1) y $0.20$ (D4), por debajo de $K_{\theta}$, y subió hasta $0.21$ y $0.27$ al final del ciclo con el aporte de agua metabólica, de modo que el factor operó entre el $48$ y el $64$~\% de la saturación: la humedad limitó la degradación microbiana al inicio y su efecto se atenuó hacia el final. Finalmente, el tope $k_{\max} = 1.0$~d$^{-1}$ (fijo, no calibrado) se incluye solo por seguridad numérica: con los valores calibrados la constante efectiva queda en $k \approx 0.24$--$0.29$~d$^{-1}$ según la dieta (con los factores térmico y de humedad incluidos), menos de un tercio del tope, que nunca resulta activo.
 
 \paragraph{Tasa de CO$_2$ microbiana.}
 Desde el punto de vista químico, la degradación microbiana del lecho es la
@@ -442,7 +439,7 @@ Mantenimiento & $m$ & 0.08 & d$^{-1}$ \\
 Suelo de mantenimiento & $m_{\mathrm{suelo}}$ & 0.13 & -- \\
 Biomasa inicial por larva & $B_0$ & 1.14 & mg \\
 Factor de calidad de dieta & $f$ & 1 (D1), 0.769 (D4) & -- \\
-Retraso aparente de la señal de gas & $\tau$ & 3.03 (D1), 5.57 (D4) & d \\
+Anticipación de la rampa de conversión a peso seco respecto al cese & $\tau$ & 3.03 (D1), 5.57 (D4) & d \\
 Fracción de materia seca larvaria final & $\delta_{DW,f}$ & 0.39 & -- \\
 Número de larvas & $N$ & 700 & -- \\
 Volumen de aire de la cámara & $V_{\mathrm{aire}}$ & 12.1 & L \\
