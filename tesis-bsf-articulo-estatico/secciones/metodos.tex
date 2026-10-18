@@ -5,65 +5,82 @@
 \subsection{Sistema experimental y protocolo de medición}
 \label{sec:sistema}
 
-Los experimentos se realizaron en recipientes plásticos rígidos de geometría
-troncopiramidal rectangular: boca superior de $37 \times 26$~cm, base de
-$32 \times 21$~cm y altura de $17$~cm, para un volumen geométrico de
-$\approx 13{,}8$~L. El sensor de CO$_2$ (MH-410D)
-se montó empotrado en una de las caras laterales mayores, con el elemento
-sensible hacia el interior y por encima del nivel del sustrato. El sensor se verificó en laboratorio contra un
-cromatógrafo de gases con fuente certificada, en el rango de
-medición del experimento (0--6000~ppm). Durante cada
-cierre el recipiente se mantuvo sellado con su tapa reforzada con silicona, y
-el volumen de aire efectivo $V_{\mathrm{aire}}$ ---el volumen geométrico menos
-el ocupado por el recipiente interno y su contenido--- entró como parámetro
-medido en el cálculo de tasas.
+Las mediciones de gas se realizaron en cámaras plásticas rígidas de
+geometría troncopiramidal rectangular (boca de $37 \times 26$~cm, base de
+$32 \times 21$~cm y altura de $17$~cm; volumen geométrico aproximado de
+13.8~L). Durante cada cierre la cámara se mantuvo sellada con su tapa
+reforzada con silicona, de modo que la concentración interior de CO$_2$ solo
+cambia por la producción del contenido. El volumen de aire efectivo
+$V_{\mathrm{aire}}$ ---el volumen geométrico menos el ocupado por el
+recipiente interno y su contenido--- entró como parámetro medido en el cálculo
+de tasas.
+
+El sensor de CO$_2$ (MH-410D) se montó empotrado en una de las caras
+laterales mayores, con el elemento sensible hacia el interior y por encima
+del nivel del sustrato. Antes del experimento se verificó en laboratorio
+contra un cromatógrafo de gases con fuente certificada, en el rango de
+medición del experimento (0--6000~ppm).
 
 El sustrato y las larvas se alojaron en un recipiente plástico de
 $15 \times 12 \times 5$~cm con tapa aireada por malla, colocado dentro de la
 cámara; se supuso equilibrio rápido de gases entre el recipiente interno y el
 aire de la cámara a través de la malla. El mismo tipo de montaje se usó en
-tratamientos y controles, de modo que $V_{\mathrm{aire}}$ fue comparable entre
-ellos.
+tratamientos y controles, de modo que $V_{\mathrm{aire}}$ fue comparable
+entre ellos.
 
-Se evaluaron dos dietas, D1 y D4, cuya composición se detalla en la
-Cuadro~\ref{tab:dietas}. En cada día de medición los cierres se realizaron de
-forma secuencial por dieta: primero un recipiente hasta la saturación del
-sensor de CO$_2$ (6000~ppm) y luego el otro, con el mismo procedimiento. Cada
-condición se midió con tres cierres consecutivos sobre el mismo lote (réplicas técnicas de medición); el valor reportado por punto es su media y el rango su dispersión. Las réplicas biológicas (lotes independientes) quedan como extensión futura. Como controles se incluyeron
-recipientes con alimento solo (respiración del sustrato) y con larvas solas
-(mantenimiento sin alimento), medidos con el mismo protocolo; la tasa neta de
-cada tratamiento se obtuvo restando el control correspondiente del mismo día.
-
-Cada lote se cargó una sola vez al inicio del ciclo, sin reposición ni
-retiro: 250~g de sustrato por recipiente, preparado mezclando el
-alimento seco con agua hasta una humedad del 70~\% en base húmeda
-(75~g de materia seca y 175~g de agua), y 700 larvas por tratamiento.
-Los controles de alimento solo llevaron los mismos 250~g de sustrato
-sin larvas. La temperatura dentro de la cámara se registró de forma
-continua y se mantuvo aproximadamente constante entre cierres.
-
-En un ensayo paralelo, con las mismas dietas y condiciones de cría, se siguió el crecimiento larvario en D1 y D4 con tres recipientes (réplicas) por dieta, cada uno con 700 larvas. En los días 0, 2, 4, 6, 8, 10 y 14 se tomó de cada recipiente una muestra de 10 larvas, que se pesó en conjunto de forma no destructiva y se devolvió al recipiente. El valor de cada punto es la masa fresca media por larva y su dispersión la desviación estándar entre las tres réplicas. Estas curvas entraron en el ajuste conjunto del modelo (sec.~\ref{sec:numerica}).
-
-La tasa de cada cierre se estimó por ajuste lineal del tramo previo a la
-saturación; cuando el ajuste fue de baja calidad o la curva alcanzó el techo
-del sensor (cierres marcados como saturados), la tasa estimada es conservadora
-y se trató como cota inferior en la validación (sec. \ref{sec:resultados}).
+Se evaluaron dos dietas, D1 y D4, cuya descripción y composición proximal se
+detallan en el Cuadro~\ref{tab:dietas}.
 
 \begin{table}[htbp]
   \centering
-  \caption{Descripción de las dietas evaluadas.}
+  \caption{Dietas evaluadas: descripción y composición proximal del análisis
+  bromatológico propio (\% en base seca; EE: extracto etéreo).}
   \label{tab:dietas}
-  \begin{tabular}{lp{8cm}}
+  \begin{tabular}{lp{5.4cm}ccc}
     \hline
-    Dieta & Descripción \\
+    Dieta & Descripción & Proteína & EE & Cenizas \\
     \hline
-    D1 & Alimento comercial estándar para pollo de engorde (dieta de
-         referencia del modelo de Eriksen) \\
+    D1 & Alimento comercial para pollo de engorde (dieta de referencia del
+         modelo de Eriksen) & 21.4 & 4.2 & 8.4 \\
     D4 & Residuos agroindustriales de frutas (naranja, plátano, entre
-         otras), fermentados \\
+         otras), fermentados & 13.0 & 8.1 & 9.3 \\
     \hline
   \end{tabular}
 \end{table}
+
+Cada lote se cargó una sola vez al inicio del ciclo, sin reposición ni
+retiro: 250~g de sustrato por recipiente, preparado mezclando el alimento
+seco con agua hasta una humedad del 70~\% en base húmeda (75~g de materia
+seca y 175~g de agua), y 700 larvas por tratamiento. Como controles se
+incluyeron recipientes con alimento solo (los mismos 250~g de sustrato sin
+larvas; respiración del sustrato) y con larvas solas (mantenimiento sin
+alimento), medidos con el mismo protocolo; la tasa neta de cada tratamiento
+se obtuvo restando el control correspondiente del mismo día. La temperatura
+dentro de la cámara se registró de forma continua y se mantuvo aproximadamente
+constante entre cierres.
+
+En cada día de medición los cierres se realizaron de forma secuencial por
+dieta: primero un recipiente hasta la saturación del sensor (6000~ppm) y
+luego el otro, con el mismo procedimiento. Cada condición se midió con tres
+cierres consecutivos sobre el mismo lote (réplicas técnicas de medición); el
+valor reportado por punto es su media y el rango su dispersión. El
+experimento de gas no incluyó réplicas biológicas (lotes independientes); su
+incorporación queda como extensión futura.
+
+La tasa de cada cierre se estimó por ajuste lineal del tramo previo a la
+saturación. Cuando el ajuste fue de baja calidad o la curva alcanzó el techo
+del sensor, la tasa estimada es conservadora y se trató como cota inferior en
+la validación (sec.~\ref{sec:resultados}).
+
+En un ensayo paralelo, con las mismas dietas y condiciones de cría, se
+siguió el crecimiento larvario en D1 y D4 en tres recipientes (réplicas) por
+dieta, cada uno con 700 larvas. En los días 0, 2, 4, 6, 8, 10 y 14 se tomó de
+cada recipiente una muestra de 10 larvas, que se pesó en conjunto de forma no
+destructiva y se devolvió al recipiente. El valor de cada punto es la masa
+fresca media por larva y su dispersión la desviación estándar entre las tres
+réplicas. Estas curvas entraron en el ajuste conjunto del modelo
+(sec.~\ref{sec:numerica}).
+
 
 \subsection{Modelo dinámico del proceso}
 \label{sec:modelo}
@@ -132,8 +149,8 @@ tiene prioridad sobre la condición de instar. La entrada a prepupa es así una
 propiedad emergente del cruce entre una estructura que crece y un umbral que
 decrece: el modelo no recibe el día de cierre como dato, sino que lo predice
 como el instante $t_{\mathrm{stop}}$ en que $B(t) = B_{\max}(t)$
-(sec.~\ref{sec:resultados}), con $\rho$ como único parámetro calibrado del
-cierre. En \textcite{eriksenDynamicModellingFeed2022}, $t_{pm} = 13$~d
+(sec.~\ref{sec:resultados}), con $\rho$ como el único parámetro específico
+del cierre que se calibró. En \textcite{eriksenDynamicModellingFeed2022}, $t_{pm} = 13$~d
 contados desde la eclosión; como los montajes de este trabajo se hicieron con
 larvas de 4.5~d de edad, se adoptó $t_{pm} = 8.5$~d desde el montaje (fijo;
 Cuadro~\ref{tab:parametros}). Una precisión de interpretación: la ec. 15 del
@@ -310,9 +327,7 @@ en g~d$^{-1}$.
 \paragraph{Biomasa microbiana.}
 Al degradar el sustrato, los microorganismos incorporan una fracción del
 carbono a biomasa nueva: el crecimiento microbiano es proporcional a la tasa
-de degradación, con un rendimiento $Y_X$ (gramos de biomasa formada por gramo
-de sustrato degradado), concepto estándar de la cinética de cultivos
-\parencite{roels1980,shulerbioprocess2017}:
+de degradación:
 \begin{equation}
 \frac{dX}{dt} = Y_X\,r_{\mathrm{deg}},
 \qquad X(0) = X_0,
@@ -478,7 +493,7 @@ Las cotas de búsqueda no son arbitrarias: cada intervalo encierra el rango fís
 \subsection{Análisis de incertidumbre}
 \label{sec:incertidumbre}
 
-Las fuentes de incertidumbre consideradas fueron: (i) la exactitud instrumental del sensor de CO$_2$ (MH-410D, $\pm(50$ ppm $+\ 5$ \% de la lectura) según el fabricante \parencite{winsenMH410D2022}, con verificación de laboratorio contra cromatógrafo de gases (sec. \ref{sec:sistema}), que se propaga a la pendiente de cada cierre como un error relativo aproximado de $5$ \% $+\ 50/\Delta C$, con $\Delta C$ el incremento de concentración durante el cierre (entre 6 y 12 \% para las tasas de este trabajo); (ii) la calidad del ajuste lineal de cada curva, controlada con el filtro $R^2 \geq 0.5$ y el tratamiento de los cierres saturados como cotas inferiores; (iii) la dispersión entre los cierres consecutivos del mismo lote, reportada como rango cuando hubo más de una curva útil por punto; y (iv) la incertidumbre del volumen de aire y de las condiciones de la cámara (menor al 2 \%). La incertidumbre de la tasa neta se propago como $\sigma_{\mathrm{neto}} = \sqrt{\sigma_{\mathrm{trat}}^2 + \sigma_{\mathrm{ctrl}}^2}$, suponiendo errores independientes entre el tratamiento y su control del mismo día. Formalmente, para la tasa molar $R = f(m, V_{\mathrm{aire}}, T)$, con $m$ la pendiente medida, la ley de propagación para errores independientes da
+Las fuentes de incertidumbre consideradas fueron: (i) la exactitud instrumental del sensor de CO$_2$ (MH-410D, $\pm(50$ ppm $+\ 5$ \% de la lectura) según el fabricante \parencite{winsenMH410D2022}, con verificación de laboratorio contra cromatógrafo de gases (sec. \ref{sec:sistema}), que se propaga a la pendiente de cada cierre como un error relativo aproximado de $5$ \% $+\ 50/\Delta C$, con $\Delta C$ el incremento de concentración durante el cierre (entre 6 y 12 \% para las tasas de este trabajo); (ii) la calidad del ajuste lineal de cada curva, controlada con el filtro $R^2 \geq 0.5$ y el tratamiento de los cierres saturados como cotas inferiores; (iii) la dispersión entre los cierres consecutivos del mismo lote, reportada como rango cuando hubo más de una curva útil por punto; y (iv) la incertidumbre del volumen de aire y de las condiciones de la cámara (menor al 2 \%). La incertidumbre de la tasa neta se propagó como $\sigma_{\mathrm{neto}} = \sqrt{\sigma_{\mathrm{trat}}^2 + \sigma_{\mathrm{ctrl}}^2}$, suponiendo errores independientes entre el tratamiento y su control del mismo día. Formalmente, para la tasa molar $R = f(m, V_{\mathrm{aire}}, T)$, con $m$ la pendiente medida, la ley de propagación para errores independientes da
 \begin{equation}
 \left(\frac{u_R}{R}\right)^2 = \left(\frac{u_m}{m}\right)^2 + \left(\frac{u_V}{V_{\mathrm{aire}}}\right)^2 + \left(\frac{u_T}{T}\right)^2,
 \label{eq:propagacion}
@@ -489,6 +504,6 @@ El tiempo de respuesta del sensor ($T_{90} < 30$ s) es despreciable frente a la 
 \subsection{Validación externa con datos independientes}
 \label{sec:metodos_ermolaev}
 
-Para evaluar la transferibilidad del modelo a condiciones distintas de las de calibración se emplearon los datos de \cite{ermolaevGreenhouseGasEmissions2019}, quienes midieron la tasa de emisión de CO$_2$ de 700 larvas de \textit{H. illucens} criadas sobre residuos de alimentos (24.9~\% de materia seca) a 28~$^{\circ}$C durante 14 días, con alimentación en pulsos discretos los días 0, 2, 7 y 11 (294~g de materia seca en total, unas cuatro veces la ración por larva de este trabajo). Las tasas puntuales (días 2, 7 y 11) y la emisión acumulada se digitalizaron de la figura~2 de ese artículo, con error menor al 2~\% frente a los valores reportados en su texto y tablas.
+Para evaluar la transferibilidad del modelo a condiciones distintas de las de calibración se emplearon los datos de \textcite{ermolaevGreenhouseGasEmissions2019}, quienes midieron la tasa de emisión de CO$_2$ de 700 larvas de \textit{H. illucens} criadas sobre residuos de alimentos (24.9~\% de materia seca) a 28~$^{\circ}$C durante 14 días, con alimentación en pulsos discretos los días 0, 2, 7 y 11 (294~g de materia seca en total, unas cuatro veces la ración por larva de este trabajo). Las tasas puntuales (días 2, 7 y 11) y la emisión acumulada se digitalizaron de la figura~2 de ese artículo, con error menor al 2~\% frente a los valores reportados en su texto y tablas.
 
-La simulación transfiere sin cambios la cinética larvaria y el módulo microbiano calibrados en este trabajo. El estado larvario inicial se tomó de la simulación propia a los cinco días de edad (esto es, $t = 0.5$~d desde el montaje propio, cuyas larvas tenían 4.5~d de edad al montarse), que corresponde a la edad de las larvas de ese ensayo al iniciarse el experimento; los pulsos de alimentación se representaron como adiciones discretas de sustrato seco y agua según la humedad reportada, y la temperatura de 28~$^{\circ}$C se aplicó mediante la corrección $Q_{10}$ del módulo microbiano. Como el ensayo de Ermolaev et al.\ cubre el ciclo larvario completo (14~días, más allá de la ventana de medición propia), se dejaron libres los cuatro parámetros asociados a la dieta y al cierre del ciclo ---el factor de calidad $f$, el inicio del decrecimiento $t_{pm}$, la tasa $\rho$ y la biomasa máxima $B_{\max,0}$--- ajustados por mínimos cuadrados a las tres tasas puntuales y a la emisión acumulada a los 14~días ($92.4 \pm 14.5$~g~kg$^{-1}$), con residuos ponderados por la incertidumbre reportada; todos los demás parámetros permanecieron fijos en sus valores calibrados. Como segunda prueba se emplearon los datos de \cite{schonUsingGasExchange2026}, quienes midieron el intercambio gaseoso de 600 larvas de 5--6 días (5.0~mg en peso húmedo) sobre cuatro dietas de composición proximal conocida (alimento de pollo y tres mezclas semisintéticas con proporciones proteína:carbohidrato de 1:3, 1:5 y 1:9; 19.9 a 7.0~\% de proteína), en lotes únicos de 80~g de materia seca y 261~g de agua, a 27~$^{\circ}$C durante 7 días, con respirometría de flujo abierto (el flujo medido es la producción total larvas--lecho; el control fue una cámara vacía, sin control de alimento solo). Las curvas horarias de consumo de O$_2$ y de relación de intercambio respiratorio (RER) se digitalizaron de su figura~2 y se combinó VCO$_2$ = VO$_2\,\times\,$RER, reescalando cada curva para que su integral coincida con los totales reportados en su tabla~2 (error final menor al 2~\%). El estado larvario inicial se tomó de la simulación propia en el instante en que la biomasa larvaria alcanza los 1.3~mg de materia seca de sus larvas iniciales (sus animales, de una colonia comercial, llegan más pequeños que los de este trabajo a igual edad). La transferencia fija de nuevo el núcleo DEB completo (incluidos $B_0$, $t_{pm}$, $\rho$ y $B_{\max,0}$) y el módulo microbiano calibrado, y deja libre únicamente $f$ por dieta, ajustado por mínimos cuadrados sobre las 4 curvas horarias reconstruidas (29 puntos por dieta). Los valores de RER mayores que 1 (lipogénesis) son estructuralmente ajenos al modelo, que no representa O$_2$; la validación se limita por tanto al VCO$_2$.
+La simulación transfiere sin cambios la cinética larvaria y el módulo microbiano calibrados en este trabajo. El estado larvario inicial se tomó de la simulación propia a los cinco días de edad (esto es, $t = 0.5$~d desde el montaje propio, cuyas larvas tenían 4.5~d de edad al montarse), que corresponde a la edad de las larvas de ese ensayo al iniciarse el experimento; los pulsos de alimentación se representaron como adiciones discretas de sustrato seco y agua según la humedad reportada, y la temperatura de 28~$^{\circ}$C se aplicó mediante la corrección $Q_{10}$ del módulo microbiano. Como el ensayo de Ermolaev et al.\ cubre el ciclo larvario completo (14~días, más allá de la ventana de medición propia), se dejaron libres los cuatro parámetros asociados a la dieta y al cierre del ciclo ---el factor de calidad $f$, el inicio del decrecimiento $t_{pm}$, la tasa $\rho$ y la biomasa máxima $B_{\max,0}$--- ajustados por mínimos cuadrados a las tres tasas puntuales y a la emisión acumulada a los 14~días ($92.4 \pm 14.5$~g~kg$^{-1}$), con residuos ponderados por la incertidumbre reportada; todos los demás parámetros permanecieron fijos en sus valores calibrados. Como segunda prueba se emplearon los datos de \textcite{schonUsingGasExchange2026}, quienes midieron el intercambio gaseoso de 600 larvas de 5--6 días (5.0~mg en peso húmedo) sobre cuatro dietas de composición proximal conocida (alimento de pollo y tres mezclas semisintéticas con proporciones proteína:carbohidrato de 1:3, 1:5 y 1:9; 19.9 a 7.0~\% de proteína), en lotes únicos de 80~g de materia seca y 261~g de agua, a 27~$^{\circ}$C durante 7 días, con respirometría de flujo abierto (el flujo medido es la producción total larvas--lecho; el control fue una cámara vacía, sin control de alimento solo). Las curvas horarias de consumo de O$_2$ y de relación de intercambio respiratorio (RER) se digitalizaron de su figura~2 y se combinó VCO$_2$ = VO$_2\,\times\,$RER, reescalando cada curva para que su integral coincida con los totales reportados en su tabla~2 (error final menor al 2~\%). El estado larvario inicial se tomó de la simulación propia en el instante en que la biomasa larvaria alcanza los 1.3~mg de materia seca de sus larvas iniciales (sus animales, de una colonia comercial, llegan más pequeños que los de este trabajo a igual edad). La transferencia fija de nuevo el núcleo DEB completo (incluidos $B_0$, $t_{pm}$, $\rho$ y $B_{\max,0}$) y el módulo microbiano calibrado, y deja libre únicamente $f$ por dieta, ajustado por mínimos cuadrados sobre las 4 curvas horarias reconstruidas (29 puntos por dieta). Los valores de RER mayores que 1 (lipogénesis) son estructuralmente ajenos al modelo, que no representa O$_2$; la validación se limita por tanto al VCO$_2$.
