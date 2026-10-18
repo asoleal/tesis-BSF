@@ -1,69 +1,67 @@
 #!/usr/bin/env python3
-# sensibilidad.py - analisis de sensibilidad uno-a-la-vez (+-20%) de m, amax y N.
-# Recalibra (B0, f_D4, t_p D1/D4, w_p) y reporta metricas por perturbacion.
-import io, contextlib
+# sensibilidad.py - Sensibilidad uno-a-la-vez (+-20%) sobre los parametros
+# FIJOS del nucleo (m, YB, N, t_pm), recalibrando el ajuste conjunto completo
+# (8 gdl: B0, f_D4, a_max, B_max, rho, DM_f, tau1, tau4) en cada escenario.
 import numpy as np
 import validacion_estatica as V
+import calibracion_conjunta as C
 
-def preparar():
-    datos, _ = V.cargar_datos()
-    for dieta in ["D1", "D4"]:
-        datos[dieta]["neto"] = (datos[dieta]["trat"] - datos[dieta]["ctrl"]).clip(lower=0)
-    buf = io.StringIO()
-    with contextlib.redirect_stdout(buf):
-        kmic, ymic, xmic = {}, {}, {}
-        for dieta in ["D1", "D4"]:
-            dc = datos[dieta].dropna(subset=["ctrl"])
-            kmic[dieta], ymic[dieta], xmic[dieta] = V.calibrar_micro(
-                dc["dia"].values, dc["ctrl"].values)
-    return datos, kmic, ymic, xmic
+CLAVES = ["m", "YB", "N", "t_pm"]
+FACTORES = [0.8, 1.2]
 
-def metricas(datos, kmic, ymic, xmic, B0, f4, tp1, tp4, wp):
-    fila = {}
-    for dieta, tp, f in [("D1", tp1, 1.0), ("D4", tp4, f4)]:
-        d = datos[dieta]
-        _, _, mod = V.curva_lar(d["dia"].to_numpy(float), B0, tp, f,
-                                kmic[dieta], ymic[dieta], xmic[dieta], wp)
-        d = d.copy(); d["lar_mod"] = mod
-        dn = d.dropna(subset=["neto"]); li = dn[~dn["sat"]]
-        fila[f"R2_{dieta}"] = V.r2(li["neto"], li["lar_mod"]) if len(li) >= 2 else float("nan")
-        fila[f"RMSE_{dieta}"] = V.rmse(li["neto"], li["lar_mod"]) if len(li) else float("nan")
-        sa = dn[dn["sat"]]
-        fila[f"margen_{dieta}"] = float((((sa["lar_mod"] - sa["neto"]) / sa["neto"]) * 100).min()) if len(sa) else float("nan")
-    return fila
+def metricas(datos, crec, kmic, ymic, xmic, sol):
+    B0, f4, amax, Bmax, rho, dm_f, tau1, tau4 = sol
+    out = {}
+    for dieta, f, tau in [("D1", 1.0, tau1), ("D4", f4, tau4)]:
+        pars = dict(B0=B0, f=f, amax=amax, Bmax=Bmax, rho=rho)
+        t, Y, pd_ = C.simular_dieta(dieta, pars, kmic, ymic, xmic)
+        lar, _ = V.componentes_ppm(t, Y, pd_, kmic[dieta], ymic[dieta])
+        d = datos[dieta].dropna(subset=["neto"])
+        obs = d["neto"].to_numpy(float)
+        mod = np.interp(d["dia"].to_numpy(float) - C.DELTA, t, lar)
+        limp = ~d["sat"].to_numpy(bool)
+        r2 = (1.0 - np.sum((obs[limp] - mod[limp])**2)
+              / np.sum((obs[limp] - obs[limp].mean())**2)) if limp.sum() >= 2 else float("nan")
+        rmse_g = float(np.sqrt(np.mean((obs[limp] - mod[limp])**2))) if limp.sum() else float("nan")
+        sat = d["sat"].to_numpy(bool)
+        cota = float(np.min((mod[sat] - obs[sat]) / obs[sat] * 100.0)) if sat.sum() else float("nan")
+        g = crec[crec["dieta"] == dieta]
+        t_stop = C.t_stop_emergente(t, Y, pd_)
+        dmf = C.dm_frac(t, t_stop, dm_f, tau)
+        ph = (Y[0] + Y[1]) / dmf
+        modg = np.interp(g["dia"].to_numpy(float), t, ph)
+        rmse_b = float(np.sqrt(np.mean((modg - g["ph_mg"].to_numpy(float))**2)))
+        out[dieta] = dict(r2=r2, rmse_g=rmse_g, cota=cota, rmse_b=rmse_b, t_stop=t_stop)
+    return out
 
-def correr(datos, kmic, ymic, xmic, par=None, fac=1.0):
-    viejo = None
-    if par:
-        viejo = V.P[par]; V.P[par] = viejo * fac
-    buf = io.StringIO()
-    with contextlib.redirect_stdout(buf):
-        B0, f4, tp1, tp4, wp = V.calibrar_conjunto(datos, kmic, ymic, xmic)
-    if par:
-        V.P[par] = viejo
-    m = metricas(datos, kmic, ymic, xmic, B0, f4, tp1, tp4, wp)
-    m.update(B0=B0, f4=f4, tp1=tp1, tp4=tp4, wp=wp)
-    return m
+def correr(etiqueta):
+    datos, ayuno, kmic, ymic, xmic, crec = C.cargar_todo()
+    sol = C.calibrar(datos, crec, kmic, ymic, xmic)
+    B0, f4, amax, Bmax, rho = sol[:5]
+    m = metricas(datos, crec, kmic, ymic, xmic, sol)
+    print("%-10s B0=%.3g f4=%.3g amax=%.3g Bmax=%.4g rho=%.3g | "
+          "D1: RMSEg=%.1f RMSEb=%.1f cota=%.1f%% tstop=%.1f | "
+          "D4: R2=%.3f RMSEg=%.1f RMSEb=%.1f cota=%.1f%% tstop=%.1f"
+          % (etiqueta, B0, f4, amax, Bmax, rho,
+             m["D1"]["rmse_g"], m["D1"]["rmse_b"], m["D1"]["cota"], m["D1"]["t_stop"],
+             m["D4"]["r2"], m["D4"]["rmse_g"], m["D4"]["rmse_b"], m["D4"]["cota"], m["D4"]["t_stop"]),
+          flush=True)
 
 def main():
-    datos, kmic, ymic, xmic = preparar()
-    casos = [("base", None, 1.0)]
-    for par in ["m", "amax", "N"]:
-        casos += [(f"{par} -20%", par, 0.8), (f"{par} +20%", par, 1.2)]
-    filas = []
-    for nombre, par, fac in casos:
-        print(f"corriendo {nombre} ...", flush=True)
-        filas.append((nombre, correr(datos, kmic, ymic, xmic, par, fac)))
-    enc = ["caso", "B0", "f_D4", "tp_D1", "tp_D4", "w_p",
-           "R2_D4", "RMSE_D4", "RMSE_D1", "cotD1%", "cotD4%"]
-    print(("{:>10s}" + "{:>9s}" * 10).format(*enc))
-    for nombre, m in filas:
-        print("{:>10s}".format(nombre)
-              + "{:>9.3g}{:>9.3g}{:>9.2f}{:>9.2f}{:>9.2f}".format(
-                  m["B0"], m["f4"], m["tp1"], m["tp4"], m["wp"])
-              + "{:>9.3f}{:>9.2f}{:>9.2f}{:>9.1f}{:>9.1f}".format(
-                  m["R2_D4"], m["RMSE_D4"], m["RMSE_D1"],
-                  m["margen_D1"], m["margen_D4"]))
+    faltan = [k for k in CLAVES if k not in V.P]
+    if faltan:
+        print("AVISO: no estan en V.P y se omiten:", faltan)
+    correr("base")
+    for k in CLAVES:
+        if k not in V.P:
+            continue
+        v0 = V.P[k]
+        for fct in FACTORES:
+            V.P[k] = v0 * fct
+            try:
+                correr("%s x%.2g" % (k, fct))
+            finally:
+                V.P[k] = v0
 
 if __name__ == "__main__":
     main()

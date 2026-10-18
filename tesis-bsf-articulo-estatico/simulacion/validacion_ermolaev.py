@@ -39,8 +39,8 @@ MASA_FINAL_MG = 297.0 * 0.343       # Table 1: 101.9 mg DM/larva al dia 14
 
 
 def calibrar_modelo_propio():
-    """Reproduce la calibracion del articulo (en silencio) para fijar lo que
-    NO se reajusta: modulo microbiano D1 y (B0, tp1, wp)."""
+    """Modulo microbiano D1 (en silencio) + nucleo calibrado aceptado del
+    articulo (calibracion_conjunta con instares): ya NO se recalibra aqui."""
     datos, _ = V.cargar_datos()
     for dieta in ["D1", "D4"]:
         datos[dieta]["neto"] = (datos[dieta]["trat"] - datos[dieta]["ctrl"]).clip(lower=0)
@@ -49,19 +49,22 @@ def calibrar_modelo_propio():
         for dieta in ["D1", "D4"]:
             dc = datos[dieta].dropna(subset=["ctrl"])
             kmic[dieta], ymic[dieta], xmic[dieta] = V.calibrar_micro(
-                dc["dia"].values, dc["ctrl"].values)
-        B0, f4, tp1, tp4, wp = V.calibrar_conjunto(datos, kmic, ymic, xmic)
-    return kmic, ymic, xmic, B0, tp1, wp
+                dc["dia"].values, dc["ctrl"].values, dieta)
+    B0, amax, Bmax, rho = 1.14, 1.5, 48.9, 2.2   # calibracion conjunta aceptada
+    return kmic, ymic, xmic, B0, amax, Bmax, rho
 
 
-def estado_dia5(B0, tp1, wp, kmic, ymic):
-    """(B, L) de nuestra simulacion D1 a los 5 dias = estado inicial de sus larvas."""
-    p = dict(V.P); p["tp"] = tp1; p["wp"] = wp; p["f"] = 1.0
+def estado_dia5(B0, amax, Bmax, rho, kmic, ymic):
+    """(B, L) de nuestra simulacion D1 a la edad de 5 dias = estado inicial de
+    sus larvas. Ojo: nuestro t=0 es el montaje (larvas de ~4.5 d de edad), asi
+    que una larva de 5 d de edad corresponde a nuestro t ~= 0.5."""
+    p = dict(V.P); p.update(f=1.0, amax=amax, Bmax=Bmax, rho=rho)
     xb = V.X0["B"]
     V.X0["B"] = B0
     t, Y = V.simular(p, kmic, ymic)
     V.X0["B"] = xb
-    return float(np.interp(T_OFFSET, t, Y[0])), float(np.interp(T_OFFSET, t, Y[1]))
+    t5 = max(T_OFFSET - 4.5, 0.0)   # 4.5 d = edad estimada al montaje
+    return float(np.interp(t5, t, Y[0])), float(np.interp(t5, t, Y[1]))
 
 
 def simular_ermolaev(f, p_base, kref, YCO2, B5, L5, X0e):
@@ -96,36 +99,48 @@ def en_dia(t, fl, d):
 
 def main():
     print("Calibracion del modelo propio en silencio (puede tardar unos minutos)...")
-    kmic, ymic, xmic, B0, tp1, wp = calibrar_modelo_propio()
+    kmic, ymic, xmic, B0, amax, Bmax, rho = calibrar_modelo_propio()
     print(f"  micro D1: kref={kmic['D1']:.4g}, YCO2={ymic['D1']:.4g}, X0={xmic['D1']:.3g} g")
-    print(f"  conjunto: B0={B0:.4g} mg, tp1={tp1:.2f} d, wp={wp:.2f} d")
-    B5, L5 = estado_dia5(B0, tp1, wp, kmic["D1"], ymic["D1"])
+    print(f"  nucleo transferido: B0={B0:.4g} mg, amax={amax:.3g}, Bmax={Bmax:.3g}, rho={rho:.3g}")
+    B5, L5 = estado_dia5(B0, amax, Bmax, rho, kmic["D1"], ymic["D1"])
     print(f"  larva de 5 d (nuestro modelo D1): B={B5:.3g} mg, L={L5:.3g} mg")
 
     V.TC = 28.0   # a partir de aqui, escenario Ermolaev (28 C)
     obs = pd.read_csv(HERE / "ermolaev_co2.csv", comment="#")
     Lobs = obs[obs["tratamiento"] == "L"].dropna(subset=["co2_mg_min"])
-    p_base = dict(V.P); p_base["tp"] = tp1; p_base["wp"] = wp
+    # 4 parametros dieta/colonia-especificos (f, t_pm, rho, Bmax) contra
+    # 4 residuos: 3 tasas puntuales + acumulado dia 14 (92.4 +- 14.5, su Fig.).
+    # Criterios de validacion INDEPENDIENTES: dia del pico, magnitud, declive
+    # y masa final (ninguno entra al ajuste).
+    p_base = dict(V.P); p_base.update(amax=amax, rho=rho)
 
     def resid(par):
-        fpar, tp_e = par
-        p2 = dict(p_base); p2["tp"] = tp_e
+        fpar, tpm_e, rho_e, bmax_e = par
+        p2 = dict(p_base); p2.update(t_pm=tpm_e, rho=rho_e, Bmax=bmax_e)
         t, Y, p = simular_ermolaev(fpar, p2, kmic["D1"], ymic["D1"],
                                    B5, L5, xmic["D1"])
         fl = flujo_mg_min(t, Y, p, kmic["D1"], ymic["D1"])
         mod = np.array([en_dia(t, fl, d) for d in Lobs["dia"]])
-        return (mod - Lobs["co2_mg_min"].to_numpy(float)) / Lobs["sd_mg_min"].to_numpy(float)
+        r_tasas = (mod - Lobs["co2_mg_min"].to_numpy(float)) / Lobs["sd_mg_min"].to_numpy(float)
+        dias_e = t - T_OFFSET
+        cum = cumulative_trapezoid(fl * 1440.0 / 1000.0, dias_e, initial=0.0) / KG_FW
+        r_acum = np.array([(float(np.interp(14.0, dias_e, cum)) - 92.4) / 14.5])
+        return np.concatenate([r_tasas, r_acum])
 
-    sol = least_squares(resid, [1.0, 16.0], bounds=([0.2, 12.0], [1.2, 19.0]))
-    f_e, tp_e = sol.x
-    print(f"\n*** f Ermolaev = {f_e:.3f} (1.0 = calidad de D1), "
-          f"tp Ermolaev = {tp_e:.2f} d desde eclosion "
-          f"(dia {tp_e - T_OFFSET:.1f} de su ensayo) ***")
+    sol = least_squares(resid, [0.9, 12.0, 8.0, 80.0],
+                        bounds=([0.2, 10.0, 2.0, 60.0], [1.2, 16.0, 25.0, 95.0]))
+    f_e, tpm_e, rho_e, bmax_e = sol.x
+    print(f"\n*** f Ermolaev = {f_e:.3f}, t_pm = {tpm_e:.2f} d, "
+          f"rho = {rho_e:.3g} mg/d, Bmax = {bmax_e:.3g} mg ***")
 
-    p_base["tp"] = tp_e
+    p_base.update(t_pm=tpm_e, rho=rho_e, Bmax=bmax_e)
     t, Y, p = simular_ermolaev(f_e, p_base, kmic["D1"], ymic["D1"], B5, L5, xmic["D1"])
     fl = flujo_mg_min(t, Y, p, kmic["D1"], ymic["D1"])
     dias = t - T_OFFSET
+    bmax_t = p["Bmax"] - p["rho"] * np.maximum(t - p["t_pm"], 0.0)
+    i_stop = np.where(Y[0] >= bmax_t)[0]
+    if len(i_stop):
+        print(f"  detencion de prepupa emergente: dia {t[i_stop[0]] - T_OFFSET:.1f} de su ensayo")
     cum = cumulative_trapezoid(fl * 1440.0 / 1000.0, dias, initial=0.0) / KG_FW
 
     filas = []

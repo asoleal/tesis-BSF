@@ -41,7 +41,8 @@ VCO2_TOTAL_TABLA = {"REF": 19.6, "P:C 1:3": 16.9, "P:C 1:5": 16.2, "P:C 1:9": 10
 
 
 def calibrar_modelo_propio():
-    """Reproduce la calibracion del articulo (en silencio)."""
+    """Modulo microbiano D1 (en silencio) + nucleo calibrado aceptado del
+    articulo (calibracion_conjunta con instares): ya NO se recalibra aqui."""
     datos, _ = V.cargar_datos()
     for dieta in ["D1", "D4"]:
         datos[dieta]["neto"] = (datos[dieta]["trat"] - datos[dieta]["ctrl"]).clip(lower=0)
@@ -50,16 +51,16 @@ def calibrar_modelo_propio():
         for dieta in ["D1", "D4"]:
             dc = datos[dieta].dropna(subset=["ctrl"])
             kmic[dieta], ymic[dieta], xmic[dieta] = V.calibrar_micro(
-                dc["dia"].values, dc["ctrl"].values)
-        B0, f4, tp1, tp4, wp = V.calibrar_conjunto(datos, kmic, ymic, xmic)
-    return kmic, ymic, xmic, B0, tp1, wp
+                dc["dia"].values, dc["ctrl"].values, dieta)
+    B0, amax, Bmax, rho = 1.14, 1.5, 48.9, 2.2   # calibracion conjunta aceptada
+    return kmic, ymic, xmic, B0, amax, Bmax, rho
 
 
-def estado_inicial(B0, tp1, wp, kref, YCO2, masa_objetivo=MAS_INI_MS_MG):
+def estado_inicial(B0, amax, Bmax, rho, kref, YCO2, masa_objetivo=MAS_INI_MS_MG):
     """(B, L) de nuestra simulacion D1 en el instante en que B+L alcanza la
     masa inicial de Schon (~1.3 mg MS): sus larvas son 5-6 dias pero de una
     colonia distinta (llegan mas pequenas que las nuestras a esa edad)."""
-    p = dict(V.P); p["tp"] = tp1; p["wp"] = wp; p["f"] = 1.0
+    p = dict(V.P); p.update(f=1.0, amax=amax, Bmax=Bmax, rho=rho)
     xb = V.X0["B"]
     V.X0["B"] = B0
     t, Y = V.simular(p, kref, YCO2)
@@ -88,17 +89,20 @@ def flujo_ml_min(t, Y, p, kref, YCO2):
 
 def main():
     print("Calibracion del modelo propio en silencio (puede tardar unos minutos)...")
-    kmic, ymic, xmic, B0, tp1, wp = calibrar_modelo_propio()
+    kmic, ymic, xmic, B0, amax, Bmax, rho = calibrar_modelo_propio()
     print(f"  micro D1: kref={kmic['D1']:.4g}, YCO2={ymic['D1']:.4g}, X0={xmic['D1']:.3g} g")
-    print(f"  conjunto: B0={B0:.4g} mg, tp1={tp1:.2f} d, wp={wp:.2f} d")
-    Bs, Ls, ts = estado_inicial(B0, tp1, wp, kmic["D1"], ymic["D1"])
+    print(f"  nucleo transferido: B0={B0:.4g} mg, amax={amax:.3g}, Bmax={Bmax:.3g}, rho={rho:.3g}")
+    Bs, Ls, ts = estado_inicial(B0, amax, Bmax, rho, kmic["D1"], ymic["D1"])
     print(f"  estado inicial transplantado (t*={ts:.2f} d de nuestra D1): "
           f"B={Bs:.3g} mg, L={Ls:.3g} mg, B+L={Bs+Ls:.3g} mg MS")
 
     V.TC = 27.0   # escenario Schon (27 C): Q10 solo en el modulo microbiano
     obs = pd.read_csv(HERE / "schn_gas.csv", comment="#")
     crec = pd.read_csv(HERE / "schn_crecimiento.csv", comment="#")
-    p_base = dict(V.P); p_base["tp"] = tp1; p_base["wp"] = wp
+    # t_pm corregido por el transplante: el dia 0 de Schon es nuestro t*,
+    # y t_pm=8.5 esta definido en el eje del montaje.
+    p_base = dict(V.P); p_base.update(amax=amax, Bmax=Bmax, rho=rho,
+                                      t_pm=max(V.P["t_pm"] - ts, 1.0))
 
     resultados, fig_filas = {}, []
     print("\nAjuste de f por dieta contra la curva VCO2 horaria (mL/min/camara):")

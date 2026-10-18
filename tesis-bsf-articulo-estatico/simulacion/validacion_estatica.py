@@ -2,8 +2,8 @@
 # validacion_estatica.py - Modelo reducido (extension del DEB de Eriksen)
 # validado con camara estatica. Nucleo DEB + interruptor de prepupa +
 # modulo microbiano con crecimiento de biomasa + balance de gas.
-# Carga unica de 250 g (100/150 g), sin reposicion.
-# Experimento iniciado con ~700 huevos: B0 compartido entre dietas;
+# Carga unica de 500 g de alimento por caja (MS bromatologica: D1 86.3%, D4 80.3%), sin reposicion.
+# Larvas de ~4 mg PH al montaje (mismo lote del ensayo de crecimiento); B0 compartido entre dietas;
 # calidad de dieta f (D1=1 referencia Eriksen, D4 calibrado) y t_p por dieta.
 # Puntos saturados del NDIR = cotas inferiores (restriccion, no igualdad).
 # Salidas: figuras/validacion_co2_D1.png, figuras/validacion_co2_D4.png,
@@ -22,22 +22,41 @@ CSV = Path(__file__).resolve().parent / "datos_finales_PINN_corregidos.csv"
 
 P = dict(amax=1.4, alpha=1.0, beta=2.0, YB=0.44, YL=0.42, m=0.08, Bmax=65.0,
          tp=12.0, wp=1.0, m_suelo=0.13, N=700, f=1.0,
+         rho=1.0, t_pm=8.5, dI=5.0,  # ecs. 15-16 Eriksen: rho mg/d; t_pm d desde montaje
          Vair=12.1, T=300.15, Patm=101325.0, Rg=8.314,
          Q10=2.0, Tref=25.0, Kth=0.15, kmax=1.0, gw=0.41, Ks=2.0, YX=0.4, Ksm=5.0)
 TC = P["T"] - 273.15
-X0 = dict(B=0.012, L=0.003, DM=75.0, W=175.0, X=1.0)  # mg/larva ; g de lecho
+X0 = dict(B=0.012, L=0.003, DM=431.5, W=68.5, X=1.0)  # mg/larva ; g de lecho
+LECHO = {"D1": (431.5, 68.5), "D4": (401.5, 98.5)}  # (DM, W) g; 500 g x MS bromatologica
+
+def poner_lecho(dieta):
+    previo = (X0["DM"], X0["W"])
+    X0["DM"], X0["W"] = LECHO[dieta]
+    return previo
+
+def quitar_lecho(previo):
+    X0["DM"], X0["W"] = previo
 T_FIN, REPON = 18.0, 2.0
 DIAS_MED = [9, 11, 13, 17]
 
 def tasas(t, B, L, DM, W, X, p, kref, YCO2):
-    S = 1.0 / (1.0 + np.exp(-(t - p["tp"]) / p["wp"]))
-    a = (p["f"] * p["amax"] / (1.0 + (B / p["Bmax"]) ** p["alpha"])
-         * (1.0 - S) * DM / (DM + p["Ks"]))
+    # Instares de Eriksen (2022): ecs. 5, 15 y 16. Bmax(t) decrece tras t_pm
+    # (ec. 16); la prepupa (I=7) ocurre cuando B alcanza Bmax(t): detencion
+    # por estado, no por tiempo. t_pm = 13 d desde neonato - ~4.5 d al montaje.
+    Bmax_t = max(p["Bmax"] - p["rho"] * max(t - p["t_pm"], 0.0), 1e-3)
+    if B >= Bmax_t:                       # I = 7 (prepupa): no se alimenta
+        a_base = 0.0
+    elif B < p["Bmax"] / p["dI"]:         # I = 1-5: asimilacion plena (ec. 15)
+        a_base = p["amax"]
+    else:                                 # I = 6: freno logistico (ec. 5)
+        a_base = p["amax"] * max(1.0 - (B / Bmax_t) ** p["alpha"], 0.0)
+    a = p["f"] * a_base * DM / (DM + p["Ks"])
     rA = a * B
-    G = max(1.0 - (B / p["Bmax"]) ** p["beta"], 0.0)
+    G = max(1.0 - (B / Bmax_t) ** p["beta"], 0.0)
     muB = max((a - p["m"]) * G / (1.0 + p["YB"] * G), 0.0)
     rB = muB * B
-    rCm = p["m"] * B * ((1.0 - S) + p["m_suelo"] * S)
+    es_prep = 1.0 if B >= Bmax_t else 0.0
+    rCm = p["m"] * B * ((1.0 - es_prep) + p["m_suelo"] * es_prep)
     rL = rA - (1.0 + p["YB"]) * rB - rCm
     rCO2lar = rCm + p["YB"] * rB + p["YL"] * max(rL, 0.0)
     ths = W / (DM + W) if DM + W > 0 else 0.0
@@ -81,12 +100,14 @@ def componentes_ppm(t, Y, p, kref, YCO2):
         mic.append(ppm_min(r["rCmic"] / 44.0))
     return np.array(lar), np.array(mic)
 
-def curva_lar(dias, B0, tp, f, kref, YCO2, X0mic, wp=1.0):
+def curva_lar(dias, B0, tp, f, kref, YCO2, X0mic, wp=1.0, dieta="D1"):
     pd = dict(P); pd["tp"] = tp; pd["f"] = f; pd["wp"] = wp
     xb, xx = X0["B"], X0["X"]
     X0["B"], X0["X"] = B0, X0mic
+    previo = poner_lecho(dieta)
     t, Y = simular(pd, kref, YCO2)
     lar, _ = componentes_ppm(t, Y, pd, kref, YCO2)
+    quitar_lecho(previo)
     X0["B"], X0["X"] = xb, xx
     return t, lar, np.interp(dias, t, lar)
 
@@ -115,11 +136,13 @@ def cargar_datos():
     ay = df[df["Etiqueta"] == "Larvas_Ayuno"]["Tasa_Produccion"]
     return datos, (float(ay.mean()) if len(ay) else np.nan)
 
-def calibrar_micro(dias, ctrl_obs):
+def calibrar_micro(dias, ctrl_obs, dieta):
     p0 = dict(P); p0["N"] = 0
     def resid(logpar):
         kref, YCO2 = 10.0**logpar
+        previo = poner_lecho(dieta)
         t, Y = simular(p0, kref, YCO2, repon=False)
+        quitar_lecho(previo)
         _, mic = componentes_ppm(t, Y, p0, kref, YCO2)
         return np.interp(dias, t, mic) - ctrl_obs
     sol = least_squares(resid, [np.log10(0.05), np.log10(0.3)], verbose=1,
@@ -136,7 +159,7 @@ def calibrar_conjunto(datos, kmic, ymic, xmic):
         for dieta, tp, f in [("D1", tp1, 1.0), ("D4", tp4, f4)]:
             d = datos[dieta].dropna(subset=["neto"])
             _, _, mod = curva_lar(d["dia"].to_numpy(float), B0, tp, f,
-                                  kmic[dieta], ymic[dieta], xmic[dieta], wp)
+                                  kmic[dieta], ymic[dieta], xmic[dieta], wp, dieta=dieta)
             ri = mod - d["neto"].to_numpy(float)
             ri[d["sat"].to_numpy(bool)] = np.minimum(ri[d["sat"].to_numpy(bool)], 0.0)
             r.append(ri)
@@ -145,10 +168,11 @@ def calibrar_conjunto(datos, kmic, ymic, xmic):
     mejor = None
     for x0 in [[np.log10(0.012), 0.8, 11.0, 11.0, 1.0],
                [np.log10(0.05), 0.5, 10.0, 12.0, 0.5],
-               [np.log10(0.1), 0.7, 12.0, 10.5, 0.7]]:
+               [np.log10(0.1), 0.7, 12.0, 10.5, 0.7],
+               [np.log10(1.0), 0.8, 9.0, 9.0, 0.8]]:
         sol = least_squares(resid, x0, verbose=1,
-                            bounds=([np.log10(0.008), 0.2, 9.0, 9.0, 0.1],
-                                    [np.log10(0.5), 1.2, 17.0, 17.0, 2.0]))
+                            bounds=([np.log10(0.008), 0.2, 4.0, 4.0, 0.1],
+                                    [np.log10(5.0), 1.2, 17.0, 17.0, 2.0]))
         if mejor is None or sol.cost < mejor.cost:
             mejor = sol
     return 10.0**mejor.x[0], mejor.x[1], mejor.x[2], mejor.x[3], mejor.x[4]
@@ -166,15 +190,20 @@ def evaluar(dieta, d, B0, tp, f, wp, kref, YCO2, X0mic, ayuno):
     d["neto_lo"] = (d["trat_min"] - d["ctrl"]).clip(lower=0)
     d["neto_hi"] = (d["trat_max"] - d["ctrl"]).clip(lower=0)
     t, lar, mod_en_dias = curva_lar(d["dia"].to_numpy(float), B0, tp, f,
-                                    kref, YCO2, X0mic, wp)
+                                    kref, YCO2, X0mic, wp, dieta=dieta)
     pd = dict(P); pd["tp"] = tp; pd["f"] = f; pd["wp"] = wp
     xb, xx = X0["B"], X0["X"]
     X0["B"], X0["X"] = B0, X0mic
+    previo = poner_lecho(dieta)
     tt, Y = simular(pd, kref, YCO2)
     lar_c, mic_c = componentes_ppm(tt, Y, pd, kref, YCO2)
+    tc, Yc = simular(p0c, kref, YCO2) if False else (None, None)
+    quitar_lecho(previo)
     X0["B"], X0["X"] = xb, xx
     p0c = dict(pd); p0c["N"] = 0
+    previo = poner_lecho(dieta)
     tc, Yc = simular(p0c, kref, YCO2)
+    quitar_lecho(previo)
     _, mic_ctrl = componentes_ppm(tc, Yc, p0c, kref, YCO2)
     d["lar_mod"] = mod_en_dias
     d["mic_mod"] = np.interp(d["dia"].to_numpy(float), tc, mic_ctrl)
@@ -233,7 +262,7 @@ def main():
     for dieta in ["D1", "D4"]:
         dc = datos[dieta].dropna(subset=["ctrl"])
         kmic[dieta], ymic[dieta], xmic[dieta] = calibrar_micro(dc["dia"].values,
-                                                                dc["ctrl"].values)
+                                                                dc["ctrl"].values, dieta)
     B0, f4, tp1, tp4, wp = calibrar_conjunto(datos, kmic, ymic, xmic)
     print(f"\n*** Ajuste conjunto: B0={B0:.3g} mg/larva (postura de huevos), "
           f"f_D4={f4:.3g} (D1=1 referencia), t_p D1={tp1:.2f} d, t_p D4={tp4:.2f} d, "

@@ -1,148 +1,171 @@
 \section{Resultados}
 \label{sec:resultados}
 
-Se presentan primero los parámetros calibrados (módulo microbiano contra los controles; núcleo larvario contra las tasas netas) y luego la validación por descomposición de fuentes.
+Se presentan primero los parámetros calibrados (módulo microbiano contra los controles de alimento solo; núcleo larvario en un ajuste conjunto contra las tasas netas de CO$_2$ y las curvas de crecimiento) y luego la validación por descomposición de fuentes, las validaciones externas con datos independientes y la consolidación de todas las validaciones (Cuadro~\ref{tab:consolidacion_validaciones}).
+
+\input{simulacion/tabla_consolidacion_validaciones}
 
 \subsection{Calibración del módulo microbiano con los controles de alimento solo}
 
-Las curvas de control (alimento sin larvas) aislaron la componente microbiana. El ajuste de $k_{\mathrm{ref}}$ e $Y_{CO_2}$ por mínimos cuadrados dio valores consistentes entre dietas: $k_{\mathrm{ref}} = 0.282$ d$^{-1}$ e $Y_{CO_2} = 1.39$ para D1, y $k_{\mathrm{ref}} = 0.290$ d$^{-1}$ e $Y_{CO_2} = 1.13$ para D4. Con el estado de biomasa microbiana, el módulo reproduce tanto la magnitud como la tendencia creciente de las tasas de control ($R^2 = 0.968$ y $0.982$; RMSE de 1.0 y 1.5 ppm/min para D1 y D4; Figuras \ref{fig:valD1} y \ref{fig:valD4}): el aumento sostenido de las tasas de control corresponde al crecimiento de la biomasa microbiana sobre el sustrato.
+Las curvas de control (alimento sin larvas) aislaron la componente microbiana. El ajuste de $k_{\mathrm{ref}}$ e $Y_{CO_2}$ por mínimos cuadrados dio valores consistentes entre dietas: $k_{\mathrm{ref}} = 0.434$ d$^{-1}$ e $Y_{CO_2} = 1.52$ para D1, y $k_{\mathrm{ref}} = 0.382$ d$^{-1}$ e $Y_{CO_2} = 1.22$ para D4. Con el estado de biomasa microbiana, el módulo reproduce tanto la magnitud como la tendencia creciente de las tasas de control ($R^2 = 0.967$ y $0.983$; RMSE de 1.03 y 1.48 ppm/min para D1 y D4; Figura \ref{fig:conjunta}): el aumento sostenido de las tasas de control corresponde al crecimiento de la biomasa microbiana sobre el sustrato.
 
 \subsection{Ajuste conjunto del núcleo larvario}
 
-El ajuste conjunto sobre las tasas netas (tratamiento menos control del mismo día, promedio de tres cierres consecutivos) dio una biomasa inicial $B_0 = 0.0735$ mg/larva, del orden de la biomasa de una larva neonata (decenas de \textmu g); un factor de calidad de dieta $f = 0.698$ para D4 (D1 = 1, dieta de referencia de \textcite{eriksenDynamicModellingFeed2022}); tiempos centrales de prepupa $t_p = 16.4$ d para D1 y $t_p = 12.1$ d para D4; y un ancho de transición $w_p = 0.36$ d, es decir, un cese de la alimentación que ocurre en torno a un día. El ajuste usó cinco grados de libertad frente a cuatro puntos no saturados (uno en D1 y tres en D4) más tres cotas inferiores; el $R^2$ reportado debe leerse con ese tamaño muestral. Los parámetros cinéticos del núcleo DEB se mantuvieron fijos en los valores de la literatura (Cuadro \ref{tab:parametros}).
+El ajuste conjunto (sec.~\ref{sec:numerica}), con ocho grados de libertad frente a dos bloques de observaciones (tasas netas de gas y curvas de crecimiento), dio una estructura inicial $B_0 = 1.14$~mg por larva al montaje ---1.43~mg de materia seca con las reservas iniciales, consistente con las masas frescas medidas al montaje en el ensayo paralelo (4.9 y 3.3~mg en D1 y D4, es decir 1.3 y 0.9~mg de materia seca con $\delta_{DW} = 0.26$)---; un factor de calidad $f = 0.769$ para D4 (D1 = 1, dieta de referencia de \textcite{eriksenDynamicModellingFeed2022}); $a_{\max} = 1.5$~d$^{-1}$, en la cota superior del rango reportado por \textcite{eriksenDynamicModellingFeed2022} (1.1 a 1.5~d$^{-1}$), un resultado de frontera que se examina en el análisis de sensibilidad y se retoma en la discusión; $B_{\max,0} = 48.9$~mg y $\rho = 2.2$~mg~d$^{-1}$ (frente a 65~mg y 1~mg~d$^{-1}$ de la cepa de referencia, a la temperatura del ensayo); $\delta_{DW,f} = 0.39$, dentro del intervalo de la ec. 22 del modelo de referencia (0.33 a 0.45 para el contenido de lípidos estimado); y $\tau = 3.0$ y $5.6$~d para D1 y D4. Con estos valores, la entrada a prepupa emerge a los $t_{\mathrm{stop}} = 11.1$~d (D1) y $12.4$~d (D4) desde el montaje, compatibles con el colapso de emisiones observado entre los días 9 y 13 (D1) y 11 y 17 (D4) del experimento.
+
+La componente de biomasa reproduce las curvas de crecimiento con RMSE de 25.1~mg (D1) y 15.2~mg (D4), frente a masas de 140 a 220~mg en el pico, y la masa del día 14 queda dentro del 7~\%: 169 frente a 173~mg en D1 y 144 frente a 135~mg en D4. La fracción de lípidos al día 14 ---una predicción no calibrada--- coincide con el extracto etéreo medido por bromatología: 34~\% (D1) y 28~\% (D4) en el modelo frente a 33.4~\% y 26.6~\% medidos (base seca). La componente de gas reproduce el punto no saturado de D1 con RMSE de 25.1~ppm/min, pero queda por debajo de las cotas inferiores de los cierres saturados (hasta ~50~\% bajo la cota del día 9) y en D4 el ajuste es pobre ($R^2 = -0.08$, RMSE 39.3~ppm/min): este conflicto entre los dos bloques de observación es estructural y no un accidente de la ponderación, como se cuantifica en el análisis de sensibilidad (sec.~\ref{sec:sensibilidad}) y se retoma en la discusión.
 
 \subsection{Validación por descomposición de fuentes}
 
-El Cuadro \ref{tab:tasas} resume la comparación y las Figuras \ref{fig:valD1} y \ref{fig:valD4} muestran las curvas del modelo contra las mediciones.
+El Cuadro \ref{tab:tasas} resume la comparación y la Figura \ref{fig:conjunta} muestra las curvas del modelo contra las mediciones de gas y de biomasa.
 
-Para D4, la componente larvaria reproduce las tres tasas netas no saturadas con $R^2 = 0.981$ y RMSE de 5.2 ppm/min (89.0 frente a 88.6 el día 9; 21.3 frente a 21.5 el día 13; 9.0 frente a 0.0 el día 17), y satisface la cota inferior del día 11 (164.7 frente a 165.4 ppm/min, $-0.4$ \%). El suelo de mantenimiento en prepupa (9.0 ppm/min el día 17) queda cercano a la tasa de larvas en ayuno medida ese mismo día (14.3 ppm/min), lo que respalda el anclaje de $m_{\mathrm{suelo}}$: la medición de ayuno proviene de un tratamiento independiente (larvas sin alimento) y no entró en la calibración.
+Para D1, la componente larvaria del ajuste conjunto reproduce la forma de la trayectoria pero queda por debajo de las cotas inferiores de los cierres saturados: un 50~\% bajo la cota del día 9 y un 16~\% bajo la del día 11, y un 24~\% bajo el único punto no saturado (día 13; RMSE de 25.1~ppm/min sobre ese punto). La causa es el compromiso impuesto por el ajuste conjunto: alcanzar la cota del día 9 requeriría una asimilación temprana mayor, que el bloque de biomasa rechaza (sobreestimaría la curva de crecimiento, y $a_{\max}$ ya está en su cota superior); la magnitud del desacuerdo se cuantifica en el análisis de sensibilidad (sec.~\ref{sec:sensibilidad}). Dos salvedades de medición: la cota del día 9 proviene de cierres saturados (la tasa real es desconocida, solo acotada por abajo) y el punto del día 11 tuvo el ajuste lineal de menor calidad ($R^2 = 0.76$).
 
-Para D1, el modelo reproduce la forma de la trayectoria pero no todos los puntos: satisface la cota inferior del día 9 (267.9 frente a 267.8 ppm/min, $+0.0$ \%) y queda a un 10 \% del único punto no saturado (día 13: 92.2 frente a 102.8 ppm/min), pero no alcanza la cota inferior del día 11 (92.2 frente a 124.3 ppm/min, $-25.9$ \%). En el modelo la causa es estructural: con 75~g de materia seca para 700 larvas ($\approx 107$~mg de sustrato por larva, en el rango de ración por larva del modelo de referencia), las larvas agotan la fracción degradable del lecho hacia el día 10 y la tasa larvaria cae a la respiración de mantenimiento ($\approx 92$~ppm/min) antes de que opere el interruptor de prepupa ($t_p = 16.4$~d, ya al final de la ventana experimental). Es decir, para D1 el colapso de emisiones observado entre los días 9 y 11 se atribuye al agotamiento del alimento y no a la transición a prepupa, y la subestimación del día 11 indica que el agotamiento real fue más gradual que el del modelo, compatible con un lecho heterogéneo que la formulación de parámetros concentrados no representa. La tasa del día 11 proviene además del cierre con el ajuste lineal de menor calidad ($R^2 = 0.76$), por lo que la discrepancia real puede ser aún mayor; se retoma en la discusión.
+Para D4 el ajuste de gas es pobre ($R^2 = -0.08$, RMSE 39.3~ppm/min): el modelo sobreestima los días 9 ($+49$~\%) y 13 ($+239$~\%) y no alcanza la cota del día 11 ($-33$~\%), es decir, el pico de emisión del modelo es más tardío que el observado ---sigue al pico de biomasa (cercano al día 11 desde el montaje) mientras las tasas medidas ya declinan desde los días 9 a 11---. Este desfase temporal, y no la magnitud media, es la principal discrepancia del bloque de gas; se retoma en la discusión. El suelo de mantenimiento en prepupa (9.5~ppm/min el día 17) queda cercano a la tasa de larvas en ayuno medida ese mismo día (14.3~ppm/min, tratamiento independiente que no entró en la calibración), lo que respalda el anclaje de $m_{\mathrm{suelo}}$.
 
-Cabe notar que el RMSE de la componente larvaria en D4 (5.2 ppm/min) es del orden de la incertidumbre instrumental estimada para esas tasas (6 a 10 ppm/min, sec. \ref{sec:incertidumbre}), de modo que la componente larvaria reproduce las tasas netas de D4 dentro de la incertidumbre experimental; las discrepancias restantes (la cota inferior del día 11 de D1, que el modelo no alcanza, y el apagado del término microbiano en el tratamiento de D1 cuando las larvas agotan el sustrato) son estructurales y no instrumentales; se retoman en la discusión.
+La componente de biomasa reproduce las curvas de crecimiento de ambas dietas (RMSE de 25.1 y 15.2~mg frente a masas de 140 a 220~mg en el pico; Figura \ref{fig:conjunta}), con la masa del día 14 dentro del 7~\% y los $t_{\mathrm{stop}}$ emergentes (11.1 y 12.4~d) en la ventana del colapso observado. La discrepancia sistemática restante es la fase inicial: el modelo subestima el día 4 en ~33~\% en ambas dietas, porque el freno de Verhulst del último instar entra desde $B = B_{\max,0}/\delta_I \approx 10$~mg mientras el crecimiento observado es más explosivo al inicio; se retoma en la discusión.
 
-La componente total (larvaria más microbiana) reproduce el orden de magnitud y la forma temporal de las tasas de tratamiento en ambas dietas, incluidos el pico previo al colapso y el colapso mismo, que el modelo atribuye al agotamiento del sustrato en D1 y a la transición a prepupa en D4.
+La componente total (larvaria más microbiana) reproduce el orden de magnitud y la forma temporal de las tasas de tratamiento en ambas dietas, incluidos el pico previo al colapso y el colapso mismo, que el modelo atribuye a la entrada emergente a prepupa y no al agotamiento del sustrato (la fracción de Monod sobre el alimento operó cerca de la saturación: el sustrato no se agotó en la ventana de medición).
 
 \begin{table}[htbp]
 \centering
 \small
-\caption{Tasas de CO$_2$ observadas y modeladas por dieta y día de medición, en ppm/min: componente microbiana frente a controles de alimento solo; componente larvaria frente a la tasa neta (tratamiento menos control); total frente a tratamiento. ($^{*}$) cierre saturado: la tasa observada es una cota inferior (ver texto). En el tratamiento de D1 el total modelado de los días 11 y 13 es solo la componente larvaria: las larvas agotan la fracción degradable del sustrato hacia el día 10 y el término microbiano se apaga (sec. 2.2.2).}
+\caption{Tasas netas de CO$_2$ por dieta y día de medición (ppm/min): control de alimento solo observado, tasa neta observada (tratamiento menos control) y componente larvaria del modelo en el ajuste conjunto. ($^{*}$) cierre saturado: la tasa observada es una cota inferior. La desviación es (modelo $-$ observado)/observado; para las cotas, un valor negativo indica cota no alcanzada. Los días del experimento corresponden a los días desde el montaje más el desfase $\Delta = 2$~d (sec.~\ref{sec:numerica}).}
 \label{tab:tasas}
-\begin{tabular}{ll rrr rr rr}
+\begin{tabular}{ll rrr r}
 \toprule
-Dieta & Día & \multicolumn{2}{c}{Microbiana} & \multicolumn{2}{c}{Larvaria (neta)} & \multicolumn{2}{c}{Total} \\
-\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8}
- & & obs. & mod. & obs. & mod. & obs. & mod. \\
+Dieta & Día & Control obs. & Neta obs. & Larvaria mod. & Desv. (\%) \\
 \midrule
-D1 & 9  & 26.5 & 27.4 & 267.8$^{*}$ & 267.9 & 294.3 & 280.8 \\
-   & 11 & 34.8 & 33.4 & 124.3$^{*}$ & 92.2 & 159.1 & 92.2 \\
-   & 13 & 40.2 & 40.8 & 102.8 & 92.2 & 143.0 & 92.2 \\
+D1 & 9  & 26.5 & 267.8$^{*}$ & 133.5 & $-50.2$ \\
+   & 11 & 34.8 & 124.3$^{*}$ & 103.8 & $-16.5$ \\
+   & 13 & 40.2 & 102.8        & 77.7  & $-24.4$ \\
 \midrule
-D4 & 9  & 25.8 & 23.6 & 88.6 & 89.0 & 114.4 & 112.4 \\
-   & 11 & 27.2 & 28.9 & 165.4$^{*}$ & 164.7 & 192.5 & 192.3 \\
-   & 13 & 34.6 & 35.5 & 21.5 & 21.3 & 56.1 & 51.5 \\
-   & 17 & 54.1 & 53.5 & 0.0 & 9.0 & 40.0 & 49.2 \\
+D4 & 9  & 25.8 & 88.6         & 132.3 & $+49.3$ \\
+   & 11 & 27.2 & 165.4$^{*}$ & 110.7 & $-33.1$ \\
+   & 13 & 34.6 & 21.5         & 72.8  & $+239$ \\
+   & 17 & 54.1 & 0.0          & 9.5   & -- \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.85\textwidth]{figuras/validacion_co2_D1.png}
-\caption{Validación por descomposición de fuentes, dieta D1 (alimento estándar). Curvas: componentes larvaria y microbiana y total del modelo para el régimen de carga única. Puntos: controles de alimento solo (cuadrados), tratamiento (x) y tasa neta tratamiento menos control (círculos; triángulos: cierres saturados, es decir cotas inferiores, con el rango entre cierres).}
-\label{fig:valD1}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.85\textwidth]{figuras/validacion_co2_D4.png}
-\caption{Validación por descomposición de fuentes, dieta D4 (residuos agroindustriales de frutas). Simbología como en la Figura \ref{fig:valD1}; el diamante es la tasa de larvas en ayuno medida el día 17.}
-\label{fig:valD4}
+\includegraphics[width=0.95\textwidth]{figuras/calibracion_conjunta.png}
+\caption{Ajuste conjunto y validación por descomposición de fuentes. Paneles superiores (gas, ppm/min; días desde el montaje): componentes larvaria y microbiana y total del modelo; puntos: control de alimento solo (cuadrados) y tasa neta (círculos; triángulos: cierres saturados, es decir cotas inferiores, con el rango entre cierres). Paneles inferiores (biomasa, mg de peso húmedo por larva): masa $B + L$ del modelo convertida con la fracción de materia seca variable (ec.~\ref{eq:modelo_obs}), con la banda de $\pm 4$~\% en $\delta_{DW}$; puntos: media $\pm$ desviación estándar de las réplicas del ensayo paralelo; línea vertical punteada: $t_{\mathrm{stop}}$ emergente. Izquierda: D1; derecha: D4.}
+\label{fig:conjunta}
 \end{figure}
 
 \paragraph{Nota sobre el CH$_4$.}
 El canal de CH$_4$ (verificado en 0--10~\% en volumen) registró acumulaciones claramente medibles (pendientes de 300 a 3200~ppm/min, con $R^2 \geq 0.9$ en la mayoría de los cierres), pero sus dinámicas no fueron compatibles con la estructura del modelo: los controles de alimento solo decrecieron a lo largo del ciclo (de 1633 a 560~ppm/min en D1) mientras la degradación microbiana crece, los tratamientos no se separaron de forma consistente de sus controles (el día 9 midieron menos CH$_4$ que el control en ambas dietas) y aparecieron picos tardíos aislados (D4, día 17). Este patrón es atribuible a respuesta parcial del canal de CH$_4$ a volátiles de la fermentación del sustrato (etanol y otros compuestos orgánicos volátiles), y no a metanogénesis sola; por ello el término $\xi(\theta_s)$ del modelo se mantiene como indicador cualitativo de microambientes anóxicos y las lecturas de CH$_4$ se excluyeron de la validación cuantitativa; se retoma en la discusión.
 
-\subsection{Análisis de sensibilidad}
-Para evaluar cuánto dependen las conclusiones de los parámetros tomados de la literatura y del número aproximado de larvas, se recalibraron $B_0$, $f$, $t_p$ y $w_p$ perturbando uno a la vez $m$, $a_{\max}$ y $N$ en $\pm 20$~\% (Cuadro~\ref{tab:sensibilidad}). El ajuste es robusto al mantenimiento ($m$ $\pm 20$~\%: $R^2 \approx 0.98$ en D4, RMSE de 5.3 a 5.6 ppm/min), pero sensible a $a_{\max}$ y $N$: con $\pm 20$~\% el $R^2$ de D4 cae a $-2.44$ y $0.09$ ($a_{\max}$) y a $0.84$ y $0.93$ ($N$), y algunas cotas inferiores adicionales dejan de satisfacerse. La cota del día 11 de D1 queda incumplida en el caso base y en todos los escenarios de perturbación, lo que confirma su origen estructural (el agotamiento del sustrato en D1) y no un accidente de la calibración. Es decir, las tasas de gas sí restringen la combinación de parámetros: los valores cinéticos del núcleo DEB no son intercambiables, las conclusiones son condicionales a esos valores de la literatura y la sensibilidad cuantificada define la magnitud del riesgo, lo que refuerza la necesidad de una validación directa de biomasa que los fije de forma independiente.
+\subsection{Sensibilidad de la calibración}
+\label{sec:sensibilidad}
+
+La calibración conjunta deja fijos varios parámetros del núcleo. Para evaluar cuánto condicionan la solución, se perturbó uno a uno los cuatro parámetros fijos con incertidumbre genuina ---el coeficiente de mantenimiento $m$ y el rendimiento verdadero $Y_B$, que gobiernan la partición entre crecimiento y respiración; el número de larvas $N$, que convierte la escala por larva a la del reactor; y el inicio del decrecimiento $t_{pm}$, el único parámetro fijo del cierre del ciclo--- en $\pm 20$~\% ($t_{pm}$: 6.8 y 10.2~d), y se repitió la calibración completa de los ocho grados de libertad en cada escenario, con los mismos arranques múltiples de la sec.~\ref{sec:numerica} (Cuadro~\ref{tab:sensibilidad}). El desfase $\Delta$ no se perturbó porque proviene de las bitácoras de montaje y muestreo, y $\delta_I$ es el número de instares, un dato morfológico.
+
+Los ocho grados de libertad se recuperan de forma estable en los nueve escenarios: $B_0$ entre 1.02 y 1.28~mg, $f$ entre 0.697 y 0.802 y $B_{\max,0}$ entre 42.8 y 59.8~mg, con una calidad de ajuste apenas alterada (RMSE de biomasa de a lo sumo 30~mg; RMSE de gas de 15.7 a 32.6~ppm/min en D1 y de 36.4 a 44.9 en D4, alrededor de los valores base de 25.1 y 39.3). $a_{\max}$ permanece en su cota superior en el caso base y en seis de los ocho escenarios perturbados (las excepciones, $m \times 0.8$ y $t_{pm} \times 0.8$, lo llevan a 1.35 y 1.33~d$^{-1}$): el dato sigue pidiendo una asimilación temprana mayor que la permitida, independientemente de los parámetros fijos.
+
+El cierre emergente del ciclo es el resultado más robusto: $t_{\mathrm{stop}}$ varía apenas entre 11.1 y 11.4~d en D1 y entre 11.5 y 13.0~d en D4, aun con $t_{pm}$ perturbado en $\pm 20$~\%. La razón es una compensación estructural: al retrasar $t_{pm}$ de 8.5 a 10.2~d, la calibración casi triplica $\rho$ (de 2.2 a 5.93~mg~d$^{-1}$), de modo que el cruce $B(t) = B_{\max}(t)$ ocurre prácticamente en el mismo instante. Es decir, $t_{pm}$ y $\rho$ no son identificables por separado con estos datos: lo que las curvas de crecimiento determinan es el cruce emergente mismo. El análisis formal de esta correlación, con herramientas de identificabilidad estructural, queda fuera del alcance de este artículo.
+
+El resultado negativo más informativo es lo que la sensibilidad no logra corregir: en los nueve escenarios la cota saturada del día 9 de D1 queda sin alcanzar (el modelo queda entre un 46 y un 52~\% por debajo) y lo mismo ocurre con la cota del día 11 de D4 (entre un 27 y un 36~\%), y el $R^2$ del gas de D4 nunca supera 0.07. Ninguna recalibración bajo perturbaciones plausibles de los parámetros fijos logra elevar las emisiones tempranas sin romper la curva de crecimiento: el desacuerdo entre el bloque de gas y el de biomasa no es un artefacto del punto de calibración elegido, sino una limitación estructural del núcleo, que con un solo compartimento de biomasa estructural y rendimiento fijo no puede sostener a la vez el pico respiratorio temprano que exigen las tasas medidas y la trayectoria de crecimiento observada. Las vías estructurales que podrían resolverlo se retoman en la discusión.
 
 \begin{table}[htbp]
 \centering
-\caption{Análisis de sensibilidad uno a la vez ($\pm 20$~\%) sobre los parámetros fijos $m$, $a_{\mathrm{máx}}$ y $N$, recalibrando $B_0$, $f$, $t_p$ y $w_p$ en cada caso. RMSE en ppm/min sobre los puntos no saturados (en D1, un solo punto); cotas D1/D4: margen porcentual mínimo sobre las cotas inferiores de los cierres saturados de cada dieta (negativo: cota violada).}
+\footnotesize
+\caption{Sensibilidad de la calibración conjunta a los parámetros fijos: parámetros recuperados, calidad de ajuste y cierre emergente en cada escenario.}
 \label{tab:sensibilidad}
-\begin{tabular}{lrrrrrrr}
+\begin{tabular}{l ccccc cc cc cc}
 \toprule
-Perturbación & $B_0$ (mg) & $f$ (D4) & $R^2$ (D4) & RMSE (D4) & RMSE (D1) & cota D1 (\%) & cota D4 (\%) \\
+& \multicolumn{5}{c}{Parámetros recuperados} & \multicolumn{2}{c}{RMSE gas} & \multicolumn{2}{c}{RMSE biomasa} & \multicolumn{2}{c}{$t_{\mathrm{stop}}$} \\
+\cmidrule(lr){2-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10} \cmidrule(lr){11-12}
+Escenario & $B_0$ & $f$ & $a_{\max}$ & $B_{\max,0}$ & $\rho$ & D1 & D4 & D1 & D4 & D1 & D4 \\
 \midrule
-Base            & 0.0735 & 0.698 &  0.981 &  5.2 & 10.6 & $-25.9$ &  $-0.4$ \\
-$m$ $-20$~\%    & 0.0656 & 0.705 &  0.980 &  5.3 & 10.7 & $-25.9$ &  $-1.9$ \\
-$m$ $+20$~\%    & 0.0813 & 0.693 &  0.978 &  5.6 & 16.0 & $-25.8$ &    1.4  \\
-$a_{\max}$ $-20$~\% & 0.278 & 0.730 & $-2.44$ & 69.9 &  9.9 & $-65.3$ & $-46.0$ \\
-$a_{\max}$ $+20$~\% & 0.0136 & 0.722 & 0.086 & 36.1 & 11.9 & $-24.2$ & $-64.3$ \\
-$N$ $-20$~\%    & 0.0924 & 0.711 &  0.840 & 15.1 & 10.5 & $-50.0$ &   21.6  \\
-$N$ $+20$~\%    & 0.0515 & 0.707 &  0.933 &  9.8 & 10.8 & $-26.0$ & $-16.1$ \\
+Base & 1.14 & 0.769 & 1.50 & 48.9 & 2.20 & 25.1 & 39.3 & 25.1 & 15.2 & 11.1 & 12.4 \\
+$m \times 0.8$ & 1.20 & 0.697 & 1.35 & 56.1 & 2.89 & 32.6 & 40.2 & 26.1 & 23.5 & 11.1 & 12.9 \\
+$m \times 1.2$ & 1.15 & 0.771 & 1.50 & 46.1 & 2.02 & 15.7 & 43.5 & 29.4 & 17.2 & 11.4 & 12.7 \\
+$Y_B \times 0.8$ & 1.02 & 0.752 & 1.50 & 48.6 & 2.13 & 25.2 & 36.4 & 23.1 & 17.2 & 11.1 & 12.5 \\
+$Y_B \times 1.2$ & 1.23 & 0.802 & 1.50 & 50.1 & 2.24 & 23.5 & 44.9 & 26.5 & 13.3 & 11.2 & 12.3 \\
+$N \times 0.8$ & 1.14 & 0.763 & 1.50 & 59.8 & 2.83 & 27.0 & 38.0 & 18.4 & 15.7 & 11.1 & 12.4 \\
+$N \times 1.2$ & 1.18 & 0.772 & 1.50 & 42.8 & 1.80 & 20.8 & 43.2 & 29.3 & 15.1 & 11.2 & 12.5 \\
+$t_{pm} \times 0.8$ & 1.28 & 0.748 & 1.33 & 53.1 & 2.12 & 23.5 & 41.5 & 30.0 & 27.4 & 11.1 & 13.0 \\
+$t_{pm} \times 1.2$ & 1.15 & 0.771 & 1.50 & 50.3 & 5.93 & 21.3 & 42.6 & 22.0 & 13.2 & 11.1 & 11.5 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{Validación externa con datos independientes}
+\noindent En el Cuadro~\ref{tab:sensibilidad}, cada fila perturba un parámetro fijo ($\times 0.8$ o $\times 1.2$) y recalibra los ocho grados de libertad; la fila base es la calibración nominal. Unidades: $B_0$ y $B_{\max,0}$ en mg, $a_{\max}$ en d$^{-1}$, $\rho$ en mg~d$^{-1}$, RMSE de gas en ppm/min, RMSE de biomasa en mg de peso húmedo y $t_{\mathrm{stop}}$ en días desde el montaje. En todas las filas la cota saturada del día 9 de D1 y la del día 11 de D4 quedan sin alcanzar (ver texto).
+
+\subsection{Validación externa con los datos de Ermolaev et al.}
 \label{sec:resultados_ermolaev}
 
-El reajuste de los dos parámetros de dieta sobre los datos de \cite{ermolaevGreenhouseGasEmissions2019} arrojó $f = 0.74$ y $t_p = 16.1$~días desde la eclosión (equivalente al día 11 de su ensayo), valores coherentes con los obtenidos para las dietas de este trabajo ($f$ entre 0.70 y 1.0; $t_p$ entre 12.1 y 16.4~días). El Cuadro~\ref{cua:ermolaev} y la Figura~\ref{fig:ermolaev} comparan el modelo con las mediciones: las tres tasas se reproducen con desviaciones menores al 5~\%, el descenso entre los días 7 y 11 es de 30~\% en el modelo frente a 31~\% observado, y la emisión acumulada a los 14 días queda dentro de la dispersión experimental (88.0 frente a 92.4~$\pm$~14.5~g/kg de peso fresco). El máximo de la curva simulada ocurre el día 9.2, entre las dos mediciones más altas del ensayo (días 7 y 11).
+Con el núcleo larvario y el módulo microbiano calibrados transferidos sin cambios, y los cuatro parámetros asociados a la dieta y al cierre del ciclo dejados libres (sec.~\ref{sec:numerica}), el ajuste a las tres tasas puntuales y a la emisión acumulada de ese experimento converge a $f = 0.868$, $t_{pm} = 13.0$~d, $\rho = 4.24$~mg~d$^{-1}$ y $B_{\max,0} = 94.8$~mg. Dos de estos valores recuperados son coherentes con la biología del ensayo original: $B_{\max,0}$ corresponde a una cepa de talla mayor que la propia (sus larvas superan los 100~mg) y $t_{pm} \approx 13$~d es compatible con la duración del ciclo larvario que reportan (14~d de experimento).
+
+Las tres tasas puntuales del modelo quedan dentro de una desviación estándar de las observadas (Cuadro~\ref{cua:ermolaev} y Figura~\ref{fig:ermolaev}), y la emisión acumulada a los 14~días (90.8 frente a $92.4 \pm 14.5$~g~kg$^{-1}$) queda a menos del 2~\% del valor central. La masa larvaria final simulada (111.1~mg) supera en solo un 9~\% la reportada (101.9~mg): el cierre emergente por instares detiene el crecimiento en el punto correcto del ciclo.
+
+Quedan a la vista dos desacuerdos menores: el modelo subestima la emisión acumulada del arranque (día 2: 3.6 frente a 9.1~g~kg$^{-1}$) aunque reproduce la tasa puntual de ese día casi exactamente, y su tasa máxima ocurre hacia el día 6, alrededor de un día antes del pico observado. Ambos rasgos apuntan a una subestimación de la respiración en los primeros días, la misma discrepancia de fase temprana encontrada con los datos propios (sec.~\ref{sec:sensibilidad}).
 
 \begin{table}[htbp]
 \centering
-\caption{Validación externa: tasas de emisión de CO$_2$ por caja (700 larvas) y emisión acumulada, modelo frente a datos de \cite{ermolaevGreenhouseGasEmissions2019} (media $\pm$ desviación estándar).}
+\small
+\caption{Validación externa con los datos de Ermolaev et al.: tasas puntuales y emisión acumulada, observadas y modeladas.}
 \label{cua:ermolaev}
-\begin{tabular}{lcc}
-\hline
-Día & Modelo (mg/min) & Observado (mg/min) \\
-\hline
-2  & 2.65 & 2.53~$\pm$~1.1 \\
-7  & 7.93 & 8.04~$\pm$~1.6 \\
-11 & 5.58 & 5.58~$\pm$~1.5 \\
-\hline
-\multicolumn{3}{l}{Emisión acumulada al día 14 (g/kg peso fresco):} \\
-\multicolumn{1}{r}{modelo: 88.0} & \multicolumn{2}{l}{observado: 92.4~$\pm$~14.5} \\
-\hline
+\begin{tabular}{c cc cc}
+\toprule
+& \multicolumn{2}{c}{Tasa} & \multicolumn{2}{c}{Acumulada} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+Día & obs. & mod. & obs. & mod. \\
+\midrule
+2  & $2.53 \pm 1.1$ & 2.51 & 9.1  & 3.6 \\
+7  & $8.04 \pm 1.6$ & 7.08 & 37.3 & 40.9 \\
+11 & $5.58 \pm 1.5$ & 6.03 & 68.6 & 72.8 \\
+14 & --- & --- & $92.4 \pm 14.5$ & 90.8 \\
+\bottomrule
 \end{tabular}
 \end{table}
 
+\noindent Unidades del Cuadro~\ref{cua:ermolaev}: tasas en mg~min$^{-1}$ para el lote completo del reactor y acumulada en g~kg$^{-1}$ de alimento en peso fresco; las incertidumbres observadas son una desviación estándar (tasas) o el intervalo reportado (acumulada).
+
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.85\textwidth]{figuras/validacion_ermolaev.png}
-\caption{Validación externa del modelo con los datos de \cite{ermolaevGreenhouseGasEmissions2019}. (a) Tasa de emisión de CO$_2$ por caja: línea continua, modelo; puntos, media observada $\pm$ desviación estándar del tratamiento con larvas; líneas verticales, pulsos de alimentación. (b) Emisión acumulada. Los tratamientos de referencia del artículo original se muestran atenuados.}
+\includegraphics[width=0.8\textwidth]{figuras/validacion_ermolaev.png}
+\caption{Validación externa con los datos de Ermolaev et al.: comparación entre las tasas de CO$_2$ observadas y modeladas y la emisión acumulada a lo largo del ciclo larvario.}
 \label{fig:ermolaev}
 \end{figure}
 
-La validación es robusta frente a la elección del módulo microbiano: repitiendo el ejercicio con los parámetros microbianos calibrados con la dieta D4, los resultados cambian menos del 1~\% (tasa del día 11: 5.61~mg/min; acumulado: 88.3~g/kg; descenso: 29~\%). Como limitación, el modelo sobreestima la masa larvaria final (212~mg de materia seca frente a los 102~mg reportados), lo que indica que una calibración basada únicamente en emisiones de CO$_2$ no restringe la partición entre crecimiento y reservas lipídicas (véase la discusión).
-
-\subsection{Validación externa adicional: dietas con distinta relación proteína:carbohidrato}
+\subsection{Validación externa con los datos de Schøn et al.}
 \label{sec:resultados_schn}
 
-Una segunda validación externa, de resolución temporal mucho mayor que la anterior, empleó las curvas horarias de VCO$_2$ reconstruidas a partir de \cite{schonUsingGasExchange2026} para cuatro dietas con composición proximal conocida y relación proteína:carbohidrato decreciente (sec.~\ref{sec:metodos_ermolaev}). El ajuste de un único parámetro por dieta, $f$, reprodujo el ordenamiento cualitativo esperado: el alimento de pollo quedó con $f = 0.95$, es decir, de calidad similar a la dieta estándar de este trabajo ($f = 1$), y las mezclas semisintéticas ordenaron su factor de calidad de forma estrictamente decreciente con su contenido proteico (0.81, 0.78 y 0.70 para P:C 1:3, 1:5 y 1:9; Cuadro~\ref{cua:schn}). Las cuatro emisiones totales quedaron dentro de un 18~\% del valor observado (Cuadro~\ref{cua:schn}), y la posición del pico de emisión (días 5.5 a 6.1 según la dieta en el ensayo) quedó en los días 6.2 a 7.0 del modelo, con un desfase máximo de 1.5 días atribuible a que el agotamiento del sustrato es más gradual en el modelo que en el lecho real.
+La segunda prueba externa transfiere el núcleo completo ---incluido el cierre emergente--- y el módulo microbiano sin recalibrar, y deja libre únicamente el factor de calidad $f$ de cada una de las cuatro dietas de ese estudio (sec.~\ref{sec:numerica}). Los factores ajustados son 0.899 (alimento de pollo), 0.874 (mezcla P:C 1:3), 0.870 (1:5) y 0.725 (1:9): decrecen de forma monótona con el contenido de proteína de la dieta (de 19.9 a 7.0~\%), lo que respalda la interpretación de $f$ como un factor de calidad nutricional y no como un simple parámetro de ajuste.
+
+Los volúmenes totales de CO$_2$ quedan dentro del $\pm 25$~\% en las cuatro dietas (Cuadro~\ref{cua:schn} y Figura~\ref{fig:schn}): el modelo subestima entre un 9 y un 23~\% las tres dietas de mejor calidad y sobreestima un 17~\% la más pobre. El día del pico de emisión se reproduce dentro de medio día en las tres primeras dietas; en la 1:9 el pico del modelo llega 1.5~d más tarde que el observado, en el borde de la ventana de medición (7~d).
+
+Las masas finales quedan entre 1.19 y 1.90 veces las observadas, con la sobreestimación creciendo al empeorar la dieta (Cuadro~\ref{cua:schn}): en la dieta 1:9 las larvas observadas terminan con menos de la mitad de la masa de las alimentadas con alimento de pollo (21.0 frente a 43.2~mg de materia seca), un retardo del desarrollo que el núcleo solo puede representar reduciendo la asimilación vía $f$, sin otros mecanismos de ajuste fenológico. Además, en ese estudio el flujo medido es el total larvas--lecho (sin control de alimento solo), de modo que la prueba también extrapola el módulo microbiano a otra temperatura y otro sustrato; que aun así los totales queden dentro del $\pm 25$~\% y los picos dentro de medio día para las dietas de calidad media y alta respalda la transferibilidad de la parametrización conjunta.
 
 \begin{table}[htbp]
 \centering
-\caption{Validación externa con respirometría de flujo abierto \cite{schonUsingGasExchange2026}: proteína de la dieta, factor de calidad ajustado, emisión total de CO$_2$, día del pico y biomasa larvaria final (observado / modelo).}
+\small
+\caption{Validación externa con los datos de Schøn et al.: factor de calidad ajustado y comparación de volumen total, día del pico y masa final por dieta.}
 \label{cua:schn}
-\begin{tabular}{lccccc}
-\hline
-Dieta & Proteína (\%) & $f$ & VCO$_2$ total (L) & Pico (día) & Masa final (mg MS) \\
-\hline
-REF     & 19.9 & 0.95 & 19.6 / 19.3 & 5.7 / 6.2 & 43.2 / 90.8 \\
-P:C 1:3 & 17.3 & 0.81 & 16.9 / 14.7 & 6.0 / 7.0 & 37.7 / 65.2 \\
-P:C 1:5 & 12.1 & 0.78 & 16.2 / 13.3 & 6.0 / 7.0 & 33.5 / 57.7 \\
-P:C 1:9 & 7.0  & 0.70 & 10.8 / 10.7 & 5.5 / 7.0 & 21.0 / 43.8 \\
-\hline
+\begin{tabular}{l c rr rr rr}
+\toprule
+& & \multicolumn{2}{c}{VCO$_2$ total} & \multicolumn{2}{c}{Día del pico} & \multicolumn{2}{c}{Masa final} \\
+\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8}
+Dieta & $f$ & obs. & mod. & obs. & mod. & obs. & mod. \\
+\midrule
+Alimento de pollo & 0.899 & 19.6 & 15.0 & 5.7 & 5.2 & 43.2 & 51.5 \\
+P:C 1:3           & 0.874 & 16.9 & 14.7 & 6.0 & 5.5 & 37.7 & 50.0 \\
+P:C 1:5           & 0.870 & 16.2 & 14.7 & 6.0 & 5.5 & 33.5 & 49.8 \\
+P:C 1:9           & 0.725 & 10.8 & 12.6 & 5.5 & 7.0 & 21.0 & 40.0 \\
+\bottomrule
 \end{tabular}
 \end{table}
 
+\noindent Unidades del Cuadro~\ref{cua:schn}: volumen total de CO$_2$ en litros por lote (600 larvas, 80~g de materia seca de alimento, 7~d), día del pico desde el inicio de su ensayo y masa final en mg de materia seca por larva.
+
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.85\textwidth]{figuras/validacion_schn.png}
-\caption{Validación externa con \cite{schonUsingGasExchange2026}. Curvas de VCO$_2$ por cámara (línea continua, modelo; cuadrados, curva reconstruida digitalizando su figura~2) y biomasa larvaria diaria observada (línea naranja, eje derecho, mg MS por larva) para las cuatro dietas.}
+\includegraphics[width=0.9\textwidth]{figuras/validacion_schn.png}
+\caption{Validación externa con los datos de Schøn et al.: producción de CO$_2$ observada y modelada en las cuatro dietas de ese estudio.}
 \label{fig:schn}
 \end{figure}
 
-La biomasa larvaria final quedó sobrestimada por un factor cercano a 2 en las cuatro dietas (1.7 a 2.1). A diferencia de la validación anterior, aquí la desviación es sistemática y constante entre tratamientos, lo que indica un sesgo de asignación ---crecimiento estructural frente a reservas lipídicas--- y no ruido propio de cada dieta. El resultado es robusto a la elección del módulo microbiano: con los parámetros calibrados con la dieta de residuos los valores de $f$ cambian menos del 1~\%. La limitación coincide con la señalada en la discusión para la validación anterior: una calibración basada solo en CO$_2$ restringe el gasto respiratorio total, pero no la partición de ese carbono entre biomasa estructural y lípidos de reserva, de modo que el factor de corrección requerido es estable y estimable (véase la discusión).

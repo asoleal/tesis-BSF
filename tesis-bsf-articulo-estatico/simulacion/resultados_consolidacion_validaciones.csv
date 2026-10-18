@@ -1,0 +1,14 @@
+bloque,fuente,metrica,modelo,observado,criterio,resultado
+B0,Propia (pesadas d0),Masa inicial $B_0 + L_0$ (mg MS/larva),1.43,1.3 / 0.9 (D1/D4),orden de magnitud,CUMPLE
+B1,Propia (camara estatica),RMSE flujo CO$_2$ D1 (ppm/min),25.1,---,---,Ajuste
+B1,Propia (camara estatica),RMSE flujo CO$_2$ D4 (ppm/min),39.3 ($R^2 = -0.08$),---,---,Limitacion declarada
+B2,Propia,RMSE biomasa D1 / D4 (mg PH),25.1 / 15.2,---,---,Ajuste
+B2,Propia,Masa larval d14 D1 / D4 (mg PH),169 / 144,173 / 135,"$\pm$10\,\%",CUMPLE
+B3,Propia (bromatologia),Lipidos d14 D1 / D4 (\% MS),34 / 28,33.4 / 26.6 (EE),punto a punto,CUMPLE
+B4,Propia (ec. 22 Eriksen),Fraccion MS $\delta_{DW}$,0.39,0.33--0.45,dentro del rango,CUMPLE
+B5,Ermolaev et al.,Tasas CO$_2$ (3 pts) + acumulado d14 (g kg$^{-1}$),90.8,$92.4 \pm 14.5$,residuos $< 1\sigma$,CUMPLE
+B5,Ermolaev et al.,Masa larval final (mg),111.1,101.9,factor 2,"CUMPLE ($+9$\,\%)"
+B5,Ermolaev et al.,$t_{pm}$ (d) / $B_{max}$ (mg) recuperados,13.0 / 94.8,13 / 90 (Eriksen),consistencia,CUMPLE
+B6,Sch\o{}n et al.,"$f$ por dieta (REF, 1:3, 1:5, 1:9)","0.899, 0.874, 0.870, 0.725",orden P:C,coherente,CUMPLE
+B6,Sch\o{}n et al.,VCO$_2$ total (L),"15.0, 14.7, 14.7, 12.6","19.6, 16.9, 16.2, 10.8","$\pm$25\,\%",CUMPLE
+B6,Sch\o{}n et al.,Masa final (mg MS),"51.5, 50.0, 49.8, 40.0","43.2, 37.7, 33.5, 21.0",factor 2,CUMPLE
