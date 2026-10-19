@@ -50,7 +50,7 @@ def calibrar_modelo_propio():
             dc = datos[dieta].dropna(subset=["ctrl"])
             kmic[dieta], ymic[dieta], xmic[dieta] = V.calibrar_micro(
                 dc["dia"].values, dc["ctrl"].values, dieta)
-    B0, amax, Bmax, rho = 1.14, 1.5, 48.9, 2.2   # calibracion conjunta aceptada
+    B0, amax, Bmax, rho = 1.097, 1.499, 48.93, 2.0   # calibracion conjunta aceptada (750 g)
     return kmic, ymic, xmic, B0, amax, Bmax, rho
 
 

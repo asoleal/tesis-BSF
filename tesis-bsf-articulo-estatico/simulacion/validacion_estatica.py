@@ -2,7 +2,7 @@
 # validacion_estatica.py - Modelo reducido (extension del DEB de Eriksen)
 # validado con camara estatica. Nucleo DEB + interruptor de prepupa +
 # modulo microbiano con crecimiento de biomasa + balance de gas.
-# Carga unica de 500 g de alimento por caja (MS bromatologica: D1 86.3%, D4 80.3%), sin reposicion.
+# Dos cargas de alimento por caja, 500 g al montaje + 250 g al dia 5 (agregadas; MS bromatologica: D1 86.3%, D4 80.3%).
 # Larvas de ~4 mg PH al montaje (mismo lote del ensayo de crecimiento); B0 compartido entre dietas;
 # calidad de dieta f (D1=1 referencia Eriksen, D4 calibrado) y t_p por dieta.
 # Puntos saturados del NDIR = cotas inferiores (restriccion, no igualdad).
@@ -26,8 +26,8 @@ P = dict(amax=1.4, alpha=1.0, beta=2.0, YB=0.44, YL=0.42, m=0.08, Bmax=65.0,
          Vair=12.1, T=300.15, Patm=101325.0, Rg=8.314,
          Q10=2.0, Tref=25.0, Kth=0.15, kmax=1.0, gw=0.41, Ks=2.0, YX=0.4, Ksm=5.0)
 TC = P["T"] - 273.15
-X0 = dict(B=0.012, L=0.003, DM=431.5, W=68.5, X=1.0)  # mg/larva ; g de lecho
-LECHO = {"D1": (431.5, 68.5), "D4": (401.5, 98.5)}  # (DM, W) g; 500 g x MS bromatologica
+X0 = dict(B=0.012, L=0.003, DM=647.25, W=102.75, X=1.0)  # mg/larva ; g de lecho
+LECHO = {"D1": (647.25, 102.75), "D4": (602.25, 147.75)}  # (DM, W) g; 750 g x MS bromatologica (500 + 250)
 
 def poner_lecho(dieta):
     previo = (X0["DM"], X0["W"])
