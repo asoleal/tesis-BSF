@@ -1,0 +1,227 @@
+% suplementario.tex - Material Suplementario (validacion estatica BSF)
+% Compilar: latexmk -xelatex suplementario.tex
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Termes}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{Latin Modern Mono Light}
+
+\usepackage[spanish,es-noquoting,es-nodecimaldot]{babel}
+\usepackage{amsmath}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{caption}
+\usepackage{tikz}
+
+\usepackage[backend=biber,style=authoryear,sorting=nyt]{biblatex}
+\addbibresource{bibliografia/bibliografia.bib}
+
+\usepackage[hidelinks]{hyperref}
+
+% Numeracion S independiente
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\theequation}{S\arabic{equation}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thetable}{S\arabic{table}}
+
+\title{Material Suplementario\\[6pt]
+{\large Modelado y validación experimental de emisiones de CO$_2$
+  con separación de fuentes larvaria y microbiana en bioconversión
+  estática con \textit{Hermetia illucens}}}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\noindent Este Material Suplementario recoge el detalle matemático y de
+protocolo que complementa al texto principal.
+
+\tableofcontents
+\bigskip
+
+\section{Balance de gas en cámara estática}
+\label{sec:camara}
+
+El tercer componente conecta las fuentes con la medición: durante un cierre, el CO$_2$ se acumula en el volumen de aire de la cámara y el sensor registra la pendiente de concentración (Figura \ref{fig:camara}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  comp/.style={draw, rounded corners=2mm, minimum width=2.6cm, minimum height=1.1cm, align=center, fill=gray!8},
+  inst/.style={draw, rounded corners=2mm, minimum width=2.6cm, minimum height=1.1cm, align=center},
+  flujo/.style={->, >=latex, thick, shorten >=3pt, shorten <=3pt},
+  etiqueta/.style={fill=white, inner sep=1.5pt, font=\footnotesize}]
+\node[comp] (larvas) at (0,1.8) {Larvas\\ $N$};
+\node[comp] (lecho) at (0,-1.8) {Lecho\\ $D_M$, $W$};
+\node[comp] (cámara) at (6.4,0) {Cámara cerrada\\ $V_{\mathrm{aire}}$};
+\node[inst] (sensor) at (12.2,0) {Sensor\\ pendiente $dc/dt$};
+\draw[flujo] (larvas.east) -- node[etiqueta, sloped, above]{$N\,r_{CO_2}^{\mathrm{lar}}$} (cámara.170);
+\draw[flujo] (lecho.east) -- node[etiqueta, sloped, below]{$r_C^{\mathrm{mic}}$} (cámara.190);
+\draw[flujo] (cámara) -- node[etiqueta, above=2pt]{$R_{CO_2}/V_{\mathrm{aire}}$} (sensor);
+\end{tikzpicture}
+\caption{Balance de gas en la cámara estática, sobre el método estándar \parencite{hutchinsonMethodsSoilAnalysis1992}. Las fuentes larvaria y microbiana acumulan gas en el volumen de aire durante un cierre (ec. \ref{eq:camara}); el sensor registra la pendiente, llevada a ppm/min con la ley de gas ideal (ec. \ref{eq:ppm}).}
+\label{fig:camara}
+\end{figure}
+
+\paragraph{Acumulación de gas durante el cierre de la cámara.}
+El método de cámara estática estima la tasa a partir de la acumulación lineal del gas en un volumen conocido \parencite{hutchinsonMethodsSoilAnalysis1992}; con las fuentes del modelo, el balance molar sobre el aire de la cámara es
+\begin{equation}
+\frac{dc_{CO_2}}{dt} = \frac{R_{CO_2}}{V_{\mathrm{aire}}},
+\qquad
+R_{CO_2} = \frac{N\,r_{CO_2}^{\mathrm{lar}} + 1000\,r_C^{\mathrm{mic}}}{44000},
+\label{eq:camara}
+\end{equation}
+donde $c_{CO_2}$ es la concentración molar del aire de la cámara (mol/L), $V_{\mathrm{aire}}$ el volumen de aire efectivo (L) y $R_{CO_2}$ la fuente total (mol/d): el término larvario pasa de mg a g y ambos a mol con la masa molar del CO$_2$ (44~g/mol).
+
+\paragraph{Escala del sensor (ppm/min).}
+La comparación con el sensor se hace en la escala propia del método \parencite{hutchinsonMethodsSoilAnalysis1992}, convirtiendo la acumulación molar a ppm/min con la ley de gas ideal \parencite{atkinsPhysicalChemistry2014}:
+\begin{equation}
+r_{\mathrm{ppm}} = \frac{R_{CO_2}}{V_{\mathrm{aire}}}\,\frac{R_g\,T}{P}\,\frac{10^6}{1440}
+\quad [\mathrm{ppm/min}],
+\label{eq:ppm}
+\end{equation}
+donde $R_g = 8.314$~J/(mol$\cdot$K) es la constante de los gases, y $T$ y $P$ la temperatura y la presión de la cámara: el factor $R_g T/P$ es el volumen molar (L/mol), $10^6$ convierte la fracción molar a ppm y 1440 pasa de días a minutos.
+
+\section{Extensiones del núcleo larvario}
+\label{sec:nucleoext}
+
+\paragraph{Asimilación: extensiones al régimen por lotes.}
+A la expresión de la tasa de asimilación del modelo de referencia se le aplican dos extensiones que la adaptan al régimen por lotes:
+\begin{equation}
+a(B, t, D_M) = a_{\mathrm{E}}(B, t)\; f\; \frac{D_M}{D_M + K_s},
+\qquad r_A = a\,B.
+\label{eq:asimilacion}
+\end{equation}
+El factor de calidad de la dieta $f$ ($0 < f \le 1$) escala la asimilación cuando la dieta es menos nutritiva que la de referencia ($f = 1$ en D1; en D4 se calibra). El término $D_M/(D_M + K_s)$ limita la asimilación por disponibilidad de alimento: $K_s$, la constante de semisaturación, se fija en 2~g, pequeña frente a la carga agregada del lecho ($D_M(0) = 647.3$~g en D1 y $602.3$~g en D4), de modo que la asimilación opera en saturación durante todo el ensayo (factor $\geq 0.99$), sin parámetros adicionales calibrados. El flujo asimilado total sigue siendo proporcional a la estructura, $r_A = a\,B$, como en el modelo de referencia.
+
+\paragraph{Mantenimiento: suelo de prepupa.}
+En el modelo de referencia el mantenimiento es proporcional a la estructura, $r_{Cm} = m\,B$ \parencite{eriksenDynamicModellingFeed2022}. Como extensión se añade un suelo para la prepupa: al detenerse la asimilación en prepupa (instar 7), el mantenimiento cae a una fracción $m_{\mathrm{suelo}}$ del valor basal, anclada a la medición de larvas en ayuno del día 17 (resultados del texto principal):
+\begin{equation}
+r_{Cm} = m\,B\,\big[(1 - \varepsilon_{\mathrm{prep}}) + m_{\mathrm{suelo}}\,\varepsilon_{\mathrm{prep}}\big],
+\qquad
+\varepsilon_{\mathrm{prep}} =
+\begin{cases}
+1, & B \ge B_{\max}(t) \quad \text{(prepupa)},\\
+0, & \text{en otro caso},
+\end{cases}
+\label{eq:mantenimiento}
+\end{equation}
+
+\paragraph{Interpretación del umbral de transición.}
+El umbral de transición está escrito en términos de $B_{\max}$; en este trabajo se interpretó como la $B_{\max}(t)$ vigente en cada instante, de modo que el decrecimiento del techo induce efectivamente el cierre del ciclo larvario.
+
+\section{Cinética microbiana del lecho}
+\label{sec:micdetalle}
+
+\paragraph{Constante efectiva de degradación.}
+La constante efectiva de degradación $k$ (d$^{-1}$) combina tres elementos clásicos de la cinética de descomposición de residuos \parencite{roels1980,shulerbioprocess2017}: una corrección térmica tipo van 't Hoff, una respuesta de saturación a la humedad tipo Monod y un tope numérico:
+\begin{equation}
+k = \min\!\left(k_{\mathrm{ref}}\,Q_{10}^{(T - T_{\mathrm{ref}})/10}\,
+\frac{\theta_s}{\theta_s + K_{\theta}},\; k_{\max}\right).
+\label{eq:kmic}
+\end{equation}
+El primer término, $k_{\mathrm{ref}}$, es la tasa específica a la temperatura de referencia y es el único parámetro cinético calibrado. El segundo, $Q_{10}^{(T - T_{\mathrm{ref}})/10}$, es la corrección térmica: la tasa se multiplica por $Q_{10}$ cada 10~°C de aumento sobre $T_{\mathrm{ref}}$; se toman los valores nominales estándar $Q_{10} = 2$ y $T_{\mathrm{ref}} = 25$~°C \parencite{roels1980,shulerbioprocess2017}. El tercero, $\theta_s/(\theta_s + K_{\theta})$, es una forma de Monod sobre la humedad con semisaturación $K_{\theta} = 0.15$ (fija, no calibrada). Finalmente, el tope $k_{\max} = 1.0$~d$^{-1}$ (fijo) se incluye solo por seguridad numérica y nunca resulta activo.
+
+\paragraph{Crecimiento de la biomasa microbiana.}
+Al degradar el sustrato, los microorganismos incorporan una fracción del carbono a biomasa nueva: el crecimiento microbiano es proporcional a la tasa de degradación:
+\begin{equation}
+\frac{dX}{dt} = Y_X\,r_{\mathrm{deg}},
+\qquad X(0) = X_0,
+\label{eq:xmic}
+\end{equation}
+donde $X$ es la biomasa microbiana del lecho (g) e $Y_X$ el rendimiento de biomasa (g de biomasa por g de sustrato degradado), concepto estándar de la cinética de cultivos \parencite{roels1980,shulerbioprocess2017}.
+
+\section{Cotas de búsqueda del ajuste de parámetros}
+\label{sec:cotas}
+
+Las cotas de búsqueda no son arbitrarias: cada intervalo encierra el rango físicamente plausible de su parámetro. Las de $k_{\mathrm{ref}}$ abarcan tres órdenes de magnitud, desde una degradación despreciable ($10^{-3}$~d$^{-1}$) hasta la cota cinética del propio modelo ($k_{\max} = 1$~d$^{-1}$). Las de $Y_{CO_2}$ admiten desde una mineralización casi nula hasta 2~g de CO$_2$ por gramo de sustrato, valor superior a 1 posible porque la oxidación incorpora oxígeno del aire (la oxidación completa de carbohidratos rinde $\approx 1.5$~g~g$^{-1}$). El intervalo de $B_0$ (0.05 a 2~mg) cubre la estructura esperable de una larva de 4.5~d de edad según las trayectorias del modelo \parencite{eriksenDynamicModellingFeed2022}. El intervalo de $f$ permite desde una dieta cinco veces peor que la de referencia (0.2) hasta una ligeramente mejor (1.2). Las cotas de $a_{\max}$ (1.1 a 1.5~d$^{-1}$) son el rango reportado por \textcite{eriksenDynamicModellingFeed2022} para dietas estándar; las de $B_{\max,0}$ (20 a 80~mg) abarcan desde larvas de talla pequeña hasta más allá de la cepa de 65~mg de \textcite{eriksenDynamicModellingFeed2022}; las de $\rho$ (0.5 a 15~mg~d$^{-1}$) parten del valor de referencia (1~mg~d$^{-1}$) y admiten un decrecimiento mucho más rápido a la temperatura del ensayo; las de $\delta_{DW,f}$ (0.28 a 0.65) van desde el valor medido al montaje hasta por encima del rango de conversión a peso seco (0.20 a 0.45) \parencite{eriksenDynamicModellingFeed2022}, para no forzar la solución; y las de $\tau$ (0 a 6~d) acotan la anticipación de la rampa de materia seca respecto al cierre emergente.
+
+\section{Tasas netas de CO$_2$ por dieta y día de medición}
+\label{sec:tasasdia}
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Tasas netas de CO$_2$ por dieta y día de medición (ppm/min): control de alimento solo observado, tasa neta observada (tratamiento menos control) y componente larvaria del modelo en el ajuste conjunto. ($^{*}$) cierre saturado: la tasa observada es una cota inferior. La desviación es (modelo $-$ observado)/observado; para las cotas, un valor negativo indica cota no alcanzada. Los días del experimento corresponden a los días desde el montaje más el desfase $\Delta = 2$~d (sec. de solución numérica del texto principal).}
+\label{tab:tasas}
+\begin{tabular}{ll rrr r}
+\toprule
+Dieta & Día & Control obs. & Neta obs. & Larvaria mod. & Desv. (\%) \\
+\midrule
+D1 & 9  & 26.5 & 267.8$^{*}$ & 134.2 & $-49.9$ \\
+   & 11 & 34.8 & 124.3$^{*}$ & 105.2 & $-15.4$ \\
+   & 13 & 40.2 & 102.8        & 77.8  & $-24.3$ \\
+\midrule
+D4 & 9  & 25.8 & 88.6         & 134.2 & $+51.4$ \\
+   & 11 & 27.2 & 165.4$^{*}$ & 111.1 & $-32.8$ \\
+   & 13 & 34.6 & 21.5         & 74.0  & $+244$ \\
+   & 17 & 54.1 & 0.0          & 9.6   & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Sensibilidad de la calibración: tabla completa por escenario}
+\label{sec:senstab}
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Sensibilidad de la calibración conjunta a los parámetros fijos: parámetros recuperados, calidad de ajuste y cierre emergente en cada escenario.}
+\label{tab:sensibilidad}
+\begin{tabular}{l ccccc cc cc cc}
+\toprule
+& \multicolumn{5}{c}{Parámetros recuperados} & \multicolumn{2}{c}{RMSE gas} & \multicolumn{2}{c}{RMSE biomasa} & \multicolumn{2}{c}{$t_{\mathrm{stop}}$} \\
+\cmidrule(lr){2-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10} \cmidrule(lr){11-12}
+Escenario & $B_0$ & $f$ & $a_{\max}$ & $B_{\max,0}$ & $\rho$ & D1 & D4 & D1 & D4 & D1 & D4 \\
+\midrule
+Base & 1.10 & 0.802 & 1.50 & 48.9 & 2.00 & 25.0 & 40.5 & 24.5 & 12.1 & 11.4 & 12.5 \\
+$m \times 0.8$ & 1.09 & 0.806 & 1.46 & 55.8 & 2.50 & 31.7 & 41.7 & 20.8 & 12.0 & 11.1 & 12.1 \\
+$m \times 1.2$ & 1.26 & 0.745 & 1.44 & 51.1 & 2.66 & 7.1 & 50.0 & 26.3 & 18.0 & 11.1 & 12.5 \\
+$Y_B \times 0.8$ & 1.03 & 0.775 & 1.50 & 51.7 & 2.12 & 20.2 & 42.3 & 18.4 & 11.4 & 11.3 & 12.5 \\
+$Y_B \times 1.2$ & 1.15 & 0.813 & 1.49 & 50.0 & 2.23 & 23.9 & 45.2 & 27.8 & 14.0 & 11.3 & 12.3 \\
+$N \times 0.8$ & 1.02 & 0.786 & 1.50 & 61.5 & 2.89 & 25.1 & 41.3 & 19.3 & 14.6 & 11.1 & 12.3 \\
+$N \times 1.2$ & 0.92 & 0.890 & 1.50 & 41.9 & 1.39 & 22.7 & 44.2 & 36.0 & 11.3 & 11.9 & 12.6 \\
+$t_{pm} \times 0.8$ & 1.27 & 0.780 & 1.41 & 52.7 & 1.88 & 22.6 & 42.7 & 24.8 & 13.9 & 11.1 & 12.8 \\
+$t_{pm} \times 1.2$ & 1.14 & 0.767 & 1.50 & 51.3 & 6.15 & 19.8 & 44.2 & 21.6 & 13.3 & 11.1 & 11.5 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent En el Cuadro~\ref{tab:sensibilidad}, cada fila perturba un parámetro fijo ($\times 0.8$ o $\times 1.2$) y recalibra los ocho grados de libertad; la fila base es la calibración nominal. Unidades: $B_0$ y $B_{\max,0}$ en mg, $a_{\max}$ en d$^{-1}$, $\rho$ en mg~d$^{-1}$, RMSE de gas en ppm/min, RMSE de biomasa en mg de peso húmedo y $t_{\mathrm{stop}}$ en días desde el montaje. En todas las filas la cota saturada del día 9 de D1 y la del día 11 de D4 quedan sin alcanzar (ver texto).
+
+\section{Validación externa con los datos de Schøn et al.: tabla por dieta}
+\label{sec:schntab}
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Validación externa con los datos de Schøn et al.: factor de calidad ajustado y comparación de volumen total, día del pico y masa final por dieta.}
+\label{cua:schn}
+\begin{tabular}{l c rr rr rr}
+\toprule
+& & \multicolumn{2}{c}{VCO$_2$ total} & \multicolumn{2}{c}{Día del pico} & \multicolumn{2}{c}{Masa final} \\
+\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8}
+Dieta & $f$ & obs. & mod. & obs. & mod. & obs. & mod. \\
+\midrule
+Alimento de pollo & 0.907 & 19.6 & 15.0 & 5.7 & 5.2 & 43.2 & 51.6 \\
+P:C 1:3           & 0.883 & 16.9 & 14.7 & 6.0 & 5.5 & 37.7 & 50.3 \\
+P:C 1:5           & 0.878 & 16.2 & 14.7 & 6.0 & 5.5 & 33.5 & 50.0 \\
+P:C 1:9           & 0.733 & 10.8 & 12.6 & 5.5 & 7.0 & 21.0 & 40.2 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent Unidades del Cuadro~\ref{cua:schn}: volumen total de CO$_2$ en litros por lote (600 larvas, 80~g de materia seca de alimento, 7~d), día del pico desde el inicio de su ensayo y masa final en mg de materia seca por larva.
+
+\section{Consolidación de las validaciones}
+\label{sec:consol}
+
+\input{simulacion/tabla_consolidacion_validaciones}
+
+\printbibliography
+
+\end{document}
