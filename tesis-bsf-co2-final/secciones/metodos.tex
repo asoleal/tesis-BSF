@@ -1,0 +1,235 @@
+% secciones/métodos.tex
+\section{Materiales y métodos}
+\label{sec:metodos}
+
+\subsection{Sistema experimental y protocolo de medición}
+\label{sec:sistema}
+
+Las mediciones de gas se realizaron en cámaras plásticas rígidas de geometría troncopiramidal (volumen geométrico $\approx 13.8$~L), selladas durante cada cierre con su tapa reforzada con silicona, de modo que la concentración interior de CO$_2$ solo cambia por la producción del contenido. El sensor de CO$_2$ (MH-410D), montado en una cara lateral sobre el nivel del sustrato, se verificó contra un cromatógrafo de gases con fuente certificada en el rango del experimento (0--6000~ppm). El sustrato y las larvas se alojaron en un recipiente interno con tapa de malla, bajo el supuesto de equilibrio rápido de gases con el aire de la cámara; el mismo tipo de montaje se usó en tratamientos y controles, y el volumen de aire efectivo $V_{\mathrm{aire}}$ ---el volumen geométrico menos el ocupado por el recipiente y su contenido--- entró como parámetro medido en el cálculo de tasas. Las dimensiones completas del montaje se reportan en el Material Suplementario (sec.~S9).
+
+Se evaluaron dos dietas, D1 y D4, cuya descripción y composición proximal se
+detallan en el Cuadro~\ref{tab:dietas}.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Dietas evaluadas: descripción y composición proximal del análisis
+  bromatológico propio (\% en base seca; EE: extracto etéreo).}
+  \label{tab:dietas}
+  \begin{tabular}{lp{5.4cm}ccc}
+    \hline
+    Dieta & Descripción & Proteína & EE & Cenizas \\
+    \hline
+    D1 & Alimento comercial para pollo de engorde (dieta de referencia del
+         modelo de Eriksen) & 21.4 & 4.2 & 8.4 \\
+    D4 & Residuos agroindustriales de frutas (naranja, plátano, entre
+         otras), fermentados & 13.0 & 8.1 & 9.3 \\
+    \hline
+  \end{tabular}
+\end{table}
+
+Cada lote recibió dos cargas de alimento, sin retiros: 500~g por recipiente a la siembra y 250~g al día~5, tal como se recibió, sin ajuste de humedad (materia seca del análisis bromatológico: 86.3~\% en D1 y 80.3~\% en D4), con 700 larvas por recipiente; la equivalencia en materia seca de cada carga se reporta en el Material Suplementario (sec.~S9). El experimento se dio por finalizado el día~15. Como controles se incluyeron recipientes con alimento solo (el mismo régimen de cargas, sin larvas; respiración del sustrato) y con larvas solas (mantenimiento sin alimento), medidos con el mismo protocolo; la tasa neta de cada tratamiento se obtuvo restando el control correspondiente del mismo día. La temperatura de la cámara se registró de forma continua y se mantuvo aproximadamente constante entre cierres.
+
+En cada día de medición los cierres se hicieron en secuencia por dieta (los dos recipientes, uno tras otro, cada uno hasta la saturación del sensor a 6000~ppm). Cada condición se midió con tres cierres consecutivos sobre el mismo lote (réplicas técnicas de medición); el valor reportado por punto es su media y el rango su dispersión. El experimento de gas no incluyó réplicas biológicas (lotes independientes).
+
+La tasa de cada cierre se estimó por ajuste lineal del tramo previo a la saturación; cuando el ajuste fue de baja calidad o la curva alcanzó el techo del sensor, la tasa estimada es conservadora y se trató como cota inferior en la validación (sec.~\ref{sec:resultados}).
+
+En un ensayo paralelo, con las mismas dietas y condiciones de cría, se siguió el crecimiento larvario en tres recipientes (réplicas) por dieta, cada uno con 700 larvas y el mismo régimen de alimentación que las unidades de gas. En los días 0, 2, 4, 6, 8, 10 y 14 se tomó de cada recipiente una muestra de 10 larvas, que se pesó en conjunto de forma no destructiva y se devolvió al recipiente; cada punto es la masa fresca media por larva y su dispersión la desviación estándar entre las tres réplicas. Estas curvas entraron en el ajuste conjunto del modelo (sec.~\ref{sec:numerica}).
+
+\subsection{Modelo dinámico del proceso}
+\label{sec:modelo}
+
+El proceso se describe con un modelo dinámico de parámetros concentrados (0D) que amplía el modelo de asimilación, crecimiento y producción de CO$_2$ de \textcite{eriksenDynamicModellingFeed2022,eriksenMetabolicPerformanceFeed2024} (en adelante, el \emph{modelo de referencia}) ---desarrollado para \textit{H. illucens} sobre dieta estándar, cuya estructura de instares detiene la asimilación al final del ciclo--- con tres componentes adicionales: (i) dos extensiones de la asimilación que la adaptan al régimen por lotes y a dietas de calidad distinta (un factor de calidad $f$ y una limitación por alimento disponible); (ii) un módulo microbiano de biomasa creciente para la degradación del sustrato no consumido \parencite{roels1980}; y (iii) un balance de masa de gas en la cabeza de aire de la cámara estática de medición. El modelo supone temperatura constante (medida), humedad del lecho como variable de estado, oxígeno no limitante dentro de los cierres y número de larvas $N$ constante (mortalidad despreciable en el periodo experimental).
+
+El vector de estado es $\mathbf{x} = (A, B, L, D_M, W, X, c_{CO_2})$, donde $A$, $B$ y $L$ son los compartimentos larvarios (asimilado, estructura y lípidos, mg/larva), $D_M$, $W$ y $X$ la materia seca, el agua y la biomasa microbiana del lecho (g), y $c_{CO_2}$ la concentración de CO$_2$ en la cabeza de aire (mol/m$^3$). El origen temporal $t = 0$ corresponde al montaje del experimento (larvas de 4.5~d de edad). La estructura al montaje $B_0$ se calibró (Cuadro~\ref{tab:parametros}) y las reservas iniciales se tomaron proporcionales a ella, $L_0 = 0.25\,B_0$ (valor fijo: a los 4.5~d la larva ya acumuló lípidos del cuerpo graso); el compartimento $A$ queda en cuasi-equilibrio por construcción y no requiere condición inicial (sec.~\ref{sec:numerica}).
+
+
+\subsubsection{Núcleo larvario (DEB de Eriksen)}
+
+El núcleo sigue el modelo de compartimentos de \textcite{eriksenDynamicModellingFeed2022}: el alimento asimilado entra al compartimento $A$ y de allí se reparte entre crecimiento estructural $B$, reservas lipídicas $L$ y costos metabólicos pagados como CO$_2$ (Figura \ref{fig:nucleo}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  comp/.style={draw, rounded corners=2mm, minimum width=3.0cm, minimum height=1.1cm, align=center, fill=gray!8},
+  gas/.style={draw, dashed, rounded corners=2mm, minimum width=2.0cm, minimum height=1.1cm, align=center},
+  gate/.style={circle, draw, thick, fill=white, inner sep=1.8pt, font=\footnotesize},
+  flujo/.style={->, >=latex, thick, shorten >=3pt, shorten <=3pt},
+  etiqueta/.style={fill=white, inner sep=1.5pt, font=\footnotesize}]
+\node[comp] (alim) at (0,0) {Lecho\\ (alimento)};
+\node[comp] (A) at (6.0,0) {$A$: asimilado};
+\node[comp] (B) at (11.6,0) {$B$: estructura};
+\node[comp] (L) at (11.6,-4.0) {$L$: lípidos};
+\node[gas] (CO2) at (6.0,-4.0) {CO$_2$};
+\draw[flujo] (alim) -- node[etiqueta, above=2pt]{$r_A$} (A);
+\draw[flujo] (A) -- node[etiqueta, above=2pt]{$(1 + Y_B)\,r_B$} (B);
+\draw[flujo] (A) -- node[etiqueta, right=2pt]{$r_{Cm} + Y_B\,r_B$} (CO2);
+\draw[flujo] (A.south east) -- node[etiqueta]{$r_L$} (L.north west);
+\draw[flujo] (L) -- node[etiqueta, below=2pt]{$Y_L\,r_L$} (CO2);
+\end{tikzpicture}
+\caption{Compartimentos y flujos de carbono del núcleo larvario (adaptado de \parencite{eriksenDynamicModellingFeed2022}). La asimilación se detiene al final del ciclo por la transición a prepupa (ec.~\ref{eq:asimilacion_eriksen}); los costos $r_{Cm}$, $Y_B r_B$ y $Y_L r_L$ salen del sistema como CO$_2$. La línea discontinua indica un sumidero, no un compartimento acumulable; respecto al diagrama de Eriksen se añade el costo de lipogénesis $Y_L r_L$.}
+\label{fig:nucleo}
+\end{figure}
+
+\paragraph{Cierre del ciclo larvario: umbral de prepupa.}
+Al final del último instar la larva cesa de alimentarse y entra en prepupa: vacía el intestino, deja de crecer y sostiene su metabolismo con las reservas acumuladas \parencite{arreseInsectFatBody2010,nayakHermetiaIllucensDiptera2023}. En la tradición DEB el cierre no se impone por calendario sino por estado fisiológico: un cambio de régimen de asimilación activa a mantenimiento sobre reservas \parencite{kooijmanDynamicEnergyBudget2009,llandresDynamicEnergyBudget2015}. El modelo de referencia lo representa con un umbral de talla sobre la estructura $B$: bajo condiciones óptimas $B$ crece hasta un techo $B_{\max,0}$, pero las larvas más lentas cierran el ciclo a menor talla, pues el peso final y el tiempo de desarrollo se relacionan negativamente en la especie \parencite{eriksenDynamicModellingFeed2022}. Para captarlo el techo no se toma constante: pasado un tiempo $t_{pm}$ decrece a razón constante $\rho$ (mg~d$^{-1}$):
+\begin{equation}
+B_{\max}(t) =
+\begin{cases}
+B_{\max,0}, & t < t_{pm},\\[2pt]
+\max\!\big(B_{\max,0} - \rho\,(t - t_{pm}),\, 0\big), & t \ge t_{pm},
+\end{cases}
+\label{eq:bmaxt}
+\end{equation}
+Con el divisor de instares $\delta_I = 5$ fijo, mientras $B < B_{\max,0}/\delta_I$ la larva asimila a tasa plena; al superarlo entra en el último instar alimentario y la asimilación se frena (ec.~\ref{eq:asimilacion_eriksen}); y cuando $B \ge B_{\max}(t)$ pasa a prepupa y la asimilación se detiene, con prioridad de esta condición sobre la de instar. Como $B(t)$ crece de forma sigmoidal frente a un umbral primero plano y luego decreciente, ambas curvas terminan por cruzarse: el instante del cruce, $t_{\mathrm{stop}}$, emerge de la dinámica y se contrasta con el colapso observado de las emisiones (sec.~\ref{sec:resultados}). Se fijaron $\delta_I$ y $t_{pm}$ y se calibró $\rho$: en el modelo de referencia $t_{pm} = 13$~d desde la eclosión y, como los montajes se hicieron con larvas de 4.5~d, se adoptó $t_{pm} = 8.5$~d desde el montaje; la interpretación del umbral como la $B_{\max}(t)$ vigente en cada instante se detalla en el Material Suplementario (sec.~S2).
+
+\paragraph{Asimilación larvaria.}
+El modelo de referencia \parencite{eriksenDynamicModellingFeed2022} postula que la tasa específica de asimilación depende del instar ---plena en los instares iniciales, frenada por una forma de Verhulst en el último instar alimentario y nula en prepupa--- y que el flujo asimilado es proporcional a la estructura $B$:
+\begin{equation}
+a_{\mathrm{E}}(B, t) =
+\begin{cases}
+0, & B \ge B_{\max}(t) \quad \text{(prepupa)},\\[2pt]
+a_{\max}, & B < B_{\max,0}/\delta_I \quad \text{(instares iniciales)},\\[2pt]
+a_{\max}\,\max\!\big(1 - (B/B_{\max}(t))^{\alpha},\, 0\big),
+   & \text{en otro caso (último instar)},
+\end{cases}
+\qquad r_A = a_{\mathrm{E}}\,B,
+\label{eq:asimilacion_eriksen}
+\end{equation}
+con los casos evaluados en el orden indicado y $\alpha = 1$ (con él la forma coincide con el logístico de Verhulst, como señala el modelo de referencia). Dos extensiones la adaptan al régimen por lotes (Material Suplementario, sec.~S2): el factor de calidad de la dieta $f$ ($0 < f \le 1$) escala la asimilación cuando la dieta es menos nutritiva que la de referencia ($f = 1$ en D1; en D4 se calibra, sec.~\ref{sec:resultados}), y el término $D_M/(D_M + K_s)$ la limita por disponibilidad de alimento, con $K_s = 2$~g pequeña frente a la carga agregada, de modo que opera en saturación durante todo el ensayo.
+
+\paragraph{Crecimiento estructural y mantenimiento.}
+El crecimiento estructural sigue la forma logística con descuento de mantenimiento de \textcite{eriksenDynamicModellingFeed2022}:
+\begin{equation}
+G(B) = \max\!\left(1 - (B/B_{\max})^{\beta}, 0\right),
+\qquad
+\mu_B = \max\!\left(\frac{(a - m)\,G}{1 + Y_B\,G}, 0\right),
+\qquad r_B = \mu_B\,B,
+\label{eq:crecimiento}
+\end{equation}
+donde $G(B)$ lleva el crecimiento a cero al acercarse la estructura a su máximo, $\mu_B$ es la tasa específica de crecimiento y $r_B$ el flujo estructural; el numerador $(a - m)$ descuenta el mantenimiento de lo asimilado, en la tradición de Pirt \parencite{roels1980}, e $Y_B$ es el costo respiratorio por unidad de estructura nueva. El mantenimiento es proporcional a la estructura, $r_{Cm} = m\,B$, con un suelo $m_{\mathrm{suelo}}$ para la prepupa anclado a la medición de larvas en ayuno del día 17 (Material Suplementario, sec.~S2).
+
+\paragraph{Balance de lípidos y CO$_2$ larvario: cierre de carbono.}
+Con el compartimento $A$ en cuasi-equilibrio ($dA/dt \approx 0$), lo asimilado se reparte instantáneamente entre crecimiento, mantenimiento y reservas \parencite{eriksenDynamicModellingFeed2022,eriksenMetabolicPerformanceFeed2024}. Ese reparto fija el flujo neto a lípidos y cierra el balance de carbono: la producción larvaria de CO$_2$ es la suma de los tres costos respiratorios (mantenimiento, crecimiento y depósito de lípidos):
+\begin{equation}
+r_L = r_A - (1 + Y_B)\,r_B - r_{Cm},
+\qquad
+r_{CO_2}^{\mathrm{lar}} = r_{Cm} + Y_B\,r_B + Y_L\,\max(r_L, 0),
+\label{eq:co2lar}
+\end{equation}
+con $Y_L$ el costo de depósito de lípidos; todas las tasas en mg/larva/d.
+
+\subsubsection{Módulo microbiano del lecho}
+Las larvas no consumen la totalidad del sustrato: la fracción no asimilada permanece en el lecho, donde la microbiota ambiental la descompone en paralelo al consumo larvario (Figura \ref{fig:lecho}). Esta fuente no es despreciable: las emisiones medidas en reactores con \textit{H. illucens} mezclan la respiración larvaria y la microbiana \parencite{ermolaevGreenhouseGasEmissions2019,parodiBioconversionEfficienciesGreenhouse2020a}, y en los controles con solo alimento las tasas de CO$_2$ aumentaron de forma sostenida a lo largo del ciclo (sec. \ref{sec:resultados}). Una cinética de primer orden sobre la materia seca no puede reproducir ese aumento, pues el sustrato solo decrece: la explicación es el crecimiento de la propia biomasa degradadora, representada como un estado $X$ que crece sobre el sustrato degradado, en la tradición de los balances macroscópicos \parencite{roels1980,shulerbioprocess2017}.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  comp/.style={draw, rounded corners=2mm, minimum width=3.0cm, minimum height=1.1cm, align=center, fill=gray!8},
+  gas/.style={draw, dashed, rounded corners=2mm, minimum width=2.0cm, minimum height=1.1cm, align=center},
+  drv/.style={font=\footnotesize, align=center},
+  flujo/.style={->, >=latex, thick, shorten >=3pt, shorten <=3pt},
+  mod/.style={->, >=latex, dashed, shorten >=2pt},
+  etiqueta/.style={fill=white, inner sep=1.5pt, font=\footnotesize}]
+\node[comp] (lecho) at (0,0) {Lecho\\ $D_M$, $W$, $X$};
+\node[gas] (co2) at (6.5,0) {CO$_2$};
+\node[drv] (T) at (1.6,1.9) {$T$\; ($Q_{10}$)};
+\node[drv] (H) at (4.9,1.9) {$\theta_s$\; (Monod)};
+\draw[flujo] (lecho) -- node[etiqueta, pos=0.62, above=2pt]{$Y_{CO_2}\,r_{\mathrm{deg}}$}
+                       node[coordinate, pos=0.35] (k) {} (co2);
+\draw[mod] (T.south) -- (k);
+\draw[mod] (H.south) -- (k);
+\end{tikzpicture}
+\caption{Módulo microbiano del lecho (extensión respecto al modelo de referencia). La constante efectiva $k$ (Material Suplementario, sec.~S3) integra la corrección térmica $Q_{10}$ y la respuesta de humedad tipo Monod; la degradación $r_{\mathrm{deg}}$ (ec. \ref{eq:rmic}) crece con la biomasa microbiana $X$ y se apaga al agotarse el sustrato.}
+\label{fig:lecho}
+\end{figure}
+
+\paragraph{Efecto de la humedad del lecho sobre la cinética microbiana.}
+La actividad microbiana depende de la temperatura y de la humedad del lecho, ambas documentadas como factores de control del proceso con \textit{H. illucens} \parencite{bekkerImpactSubstrateMoisture2021a,mertenatBlackSoldierFly2019}. La constante efectiva de degradación $k$ (d$^{-1}$) combina una corrección térmica tipo van 't Hoff ($Q_{10} = 2$ sobre $T_{\mathrm{ref}} = 25$~°C), una respuesta tipo Monod sobre la humedad gravimétrica $\theta_s = W/(D_M + W)$ (semisaturación fija $K_{\theta} = 0.15$) y un tope numérico $k_{\max}$ (Material Suplementario, sec.~S3, incluida la trayectoria de humedad del ensayo). El único parámetro cinético calibrado es $k_{\mathrm{ref}}$, la tasa a la temperatura de referencia (sec.~\ref{sec:resultados}).
+
+\paragraph{Tasa de CO$_2$ microbiana.}
+La degradación microbiana del lecho es la oxidación de la materia orgánica residual: los microorganismos liberan CO$_2$ e incorporan una fracción del carbono a biomasa nueva. La tasa de degradación $r_{\mathrm{deg}}$ (g de sustrato por día) se toma proporcional a la biomasa microbiana $X$ y limitada por el sustrato disponible con una forma de Monod ($K_{sm} = 5$~g, pequeña frente a la carga del lecho: el factor opera por encima de 0.98 y apaga la tasa al agotarse el sustrato), y el CO$_2$ microbiano se obtiene con un rendimiento $Y_{CO_2}$ sobre el sustrato degradado \parencite{roels1980,shulerbioprocess2017}:
+\begin{equation}
+r_{\mathrm{deg}} = k\,X\,\frac{D_M}{D_M + K_{sm}},
+\qquad
+r_{C}^{\mathrm{mic}} = Y_{CO_2}\,r_{\mathrm{deg}},
+\label{eq:rmic}
+\end{equation}
+en g~d$^{-1}$; $Y_{CO_2}$ se calibra contra los controles (sec.~\ref{sec:resultados}).
+
+\paragraph{Biomasa microbiana.}
+El crecimiento microbiano es proporcional a la tasa de degradación, con rendimiento $Y_X$ (g de biomasa por g de sustrato; Material Suplementario, sec.~S3). Sin mediciones directas de biomasa, las curvas de control solo informan dos combinaciones de parámetros: la tasa inicial de emisión, $Y_{CO_2}\,k\,X_0$, y la tasa de crecimiento aparente, $\mu = Y_X\,k$; el sistema es no identificable en $X_0$, $Y_X$ y $k$ por separado. Se fijan $X_0 = 1$~g (valor nominal: los datos informan el producto $k\,X$) e $Y_X = 0.4$ (rendimiento aerobio típico sobre carbohidratos \parencite{roels1980}), y se calibran $k_{\mathrm{ref}}$ e $Y_{CO_2}$ contra los controles (sec.~\ref{sec:resultados}).
+
+\paragraph{Balance de masa del lecho.}
+El lecho pierde materia seca por dos vías ya formuladas: el consumo larvario ($N\,r_A/1000$, en g/d; Material Suplementario, sec.~S2) y la degradación microbiana ($r_{\mathrm{deg}}$, ec.~\ref{eq:rmic}), y gana agua metabólica en proporción fija $\gamma_w = 18/44 \approx 0.41$~g de H$_2$O por g de CO$_2$ (un mol de agua por mol de CO$_2$ \parencite{atkinsPhysicalChemistry2014}):
+\begin{equation}
+\frac{dD_M}{dt} = -\frac{N\,r_A}{1000} - r_{\mathrm{deg}},
+\qquad
+\frac{dW}{dt} = \gamma_w\left(\frac{N\,r_{CO_2}^{\mathrm{lar}}}{1000} + r_C^{\mathrm{mic}}\right),
+\qquad
+\frac{dX}{dt} = Y_X\,r_{\mathrm{deg}},
+\label{eq:lecho}
+\end{equation}
+
+El tope $D_M \geq 0$ impide sustrato negativo. La evaporación se desprecia a la escala de los cierres y la ventilación entre cierres no se modela, simplificaciones declaradas como limitaciones del balance de agua y materia seca. El experimento tuvo dos cargas de alimento (500~g al montaje y 250~g al día~5, sec.~\ref{sec:sistema}), representadas como una carga agregada al montaje: $D_M(0) = 647.3$~g y $W(0) = 102.8$~g en D1, y $D_M(0) = 602.3$~g y $W(0) = 147.8$~g en D4, según la materia seca bromatológica de cada dieta; representar la segunda carga como un pulso explícito desplaza los parámetros calibrados menos de un 5~\% y no altera los cierres emergentes (Material Suplementario, sec.~S3), y se reporta el ajuste con la carga agregada.
+
+\subsubsection{Balance de gas en cámara estática}
+
+El método de cámara estática estima la tasa de CO$_2$ a partir de la acumulación lineal del gas en un volumen de aire conocido \parencite{hutchinsonMethodsSoilAnalysis1992}: las fuentes larvaria y microbiana alimentan el balance molar del aire de la cámara y el sensor registra la pendiente de concentración, llevada a ppm/min con la ley de gas ideal (balance molar y conversión: Material Suplementario, sec.~S1).
+
+\paragraph{Validación por descomposición de fuentes.}
+La validación explota la descomposición de fuentes: la componente larvaria $N\,r_{CO_2}^{\mathrm{lar}}$ se compara con la tasa neta medida (tratamiento menos control del mismo día, promedio de tres cierres), y la componente microbiana $r_C^{\mathrm{mic}}$ con las curvas de control (alimento solo). Los parámetros del núcleo DEB se tomaron de \textcite{eriksenDynamicModellingFeed2022,eriksenMetabolicPerformanceFeed2024} (Cuadro~\ref{tab:parametros} y Material Suplementario, sec.~S11); los del módulo microbiano ($k_{\mathrm{ref}}$, $Y_{CO_2}$) se calibran contra las curvas de control (sec.~\ref{sec:resultados}).
+
+\begin{table}[htbp]
+\centering
+\caption{Parámetros calibrados del modelo y condiciones del montaje: símbolo, valor y unidad. Los parámetros fijos y los tomados de la literatura se listan en el Material Suplementario (sec.~S11).}
+\label{tab:parametros}
+\begin{tabular}{llll}
+\toprule
+Parámetro & Símbolo & Valor & Unidad \\
+\midrule
+Tasa máxima de asimilación & $a_{\max}$ & 1.5 & d$^{-1}$ \\
+Biomasa máxima de referencia & $B_{\max,0}$ & 48.9 & mg \\
+Tasa de decrecimiento de $B_{\max}(t)$ & $\rho$ & 2.0 & mg~d$^{-1}$ \\
+Biomasa inicial por larva & $B_0$ & 1.10 & mg \\
+Factor de calidad de dieta & $f$ & 1 (D1), 0.802 (D4) & -- \\
+Anticipación de la rampa de conversión a peso seco respecto al cese & $\tau$ & 2.34 (D1), 5.07 (D4) & d \\
+Fracción de materia seca larvaria final & $\delta_{DW,f}$ & 0.42 & -- \\
+Número de larvas & $N$ & 700 & -- \\
+Volumen de aire de la cámara & $V_{\mathrm{aire}}$ & 12.1 & L \\
+Temperatura (constante) & $T$ & 300.15 & K \\
+Constante microbiana & $k_{\mathrm{ref}}$ & 0.441 (D1), 0.386 (D4) & d$^{-1}$ \\
+Rendimiento de CO$_2$ microbiano & $Y_{CO_2}$ & 1.47 (D1), 1.19 (D4) & g/g \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent Procedencia de los valores: $B_0$, $a_{\max}$, $B_{\max,0}$, $\rho$, $f$ de D4, $\tau$ y $\delta_{DW,f}$ se calibraron en el ajuste conjunto con las tasas netas de CO$_2$ y la biomasa larvaria (secs.~\ref{sec:numerica} y~\ref{sec:resultados}); $k_{\mathrm{ref}}$ e $Y_{CO_2}$ se calibraron con los controles de alimento solo; los demás parámetros del núcleo provienen de la literatura o se fijaron (ver texto); los de la cámara son mediciones del experimento.
+
+\subsection{Solución numérica y ajuste de parámetros}
+\label{sec:numerica}
+
+El estado que se integra es $(B, L, D_M, W, X)$: el compartimento $A$ queda en cuasi-equilibrio por construcción (ec. \ref{eq:co2lar}) y la concentración de gas no se integra en el tiempo, pues la cámara se ventila entre cierres; la comparación con el sensor se hace sobre la tasa aparente instantánea, en la escala de ppm/min (Material Suplementario, sec.~S1), suponiendo la cámara bien mezclada y a $T$ y $P$ constantes durante cada cierre, de modo que la acumulación es lineal y su pendiente es la tasa del instante. El sistema es continuo: con la carga agregada del lecho no hay eventos discretos de reposición. La integración se hizo con LSODA \parencite{petzoldAutomaticSelectionMethods1983} a través de \texttt{solve\_ivp} (SciPy), con tolerancias $10^{-6}$ y $10^{-9}$, preferido a un paso fijo por los cambios rápidos del campo vectorial en torno a la transición de prepupa y al agotamiento del sustrato. La positividad de $D_M$ y $L$ se impuso anulando las tasas que las harían negativas. La implementación se hizo en Python 3 con NumPy y SciPy.
+
+El ajuste de parámetros siguió la descomposición de fuentes en dos etapas desacopladas, ambas resueltas por mínimos cuadrados con el algoritmo de región de confianza reflectante (\texttt{least\_squares} de SciPy).
+En la primera etapa se calibra el módulo microbiano de forma independiente: se simula el lecho sin larvas y se ajustan $k_{\mathrm{ref}}$ e $Y_{CO_2}$ contra las tasas de CO$_2$ de los controles de alimento solo, ambos en escala logarítmica, con cotas $k_{\mathrm{ref}} \in [10^{-3}, 1]$ d$^{-1}$ e $Y_{CO_2} \in [0.05, 2]$; $X_0$ e $Y_X$ permanecen fijos por la no identificabilidad ya discutida.
+
+En la segunda etapa se calibra el núcleo larvario de forma conjunta contra dos bloques de observaciones: las tasas netas de CO$_2$ (tratamiento menos control del mismo día, truncadas en cero por carecer de sentido físico) y las curvas de crecimiento de un ensayo paralelo en las mismas condiciones (masa fresca por larva, sec.~\ref{sec:sistema}). La comparación con la biomasa exige convertir la masa seca del modelo ($B + L$) a peso húmedo, y la fracción de materia seca larvaria no es constante: aumenta hacia el final del ciclo por el vaciado del intestino y la pérdida de agua asociados a la entrada en prepupa. Se representa con una rampa logística anclada al $t_{\mathrm{stop}}$ emergente (ec.~\ref{eq:bmaxt}) y anticipada $\tau$ días,
+\begin{equation}
+\delta_{DW}(t) = \delta_{DW,0} + \frac{\delta_{DW,f} - \delta_{DW,0}}{1 + \exp(-(t - (t_{\mathrm{stop}} - \tau))/w_{DM})},
+\qquad
+m_{PH}(t) = \frac{B(t) + L(t)}{\delta_{DW}(t)},
+\label{eq:modelo_obs}
+\end{equation}
+con $\delta_{DW,0} = 0.26$ (fracción medida al montaje) y $w_{DM} = 1$~d fijos, y $\delta_{DW,f}$ y $\tau$ calibrados (este último por dieta). Los días del registro de gas se evalúan en $t = d - \Delta$, con $\Delta = 2$~d un desfase fijo entre el etiquetado de medición y el día de montaje, tomado de las notas de laboratorio. El ajuste tiene ocho grados de libertad: la biomasa inicial $B_0$, compartida entre dietas (misma postura de huevos) y ajustada en escala logarítmica; $a_{\max}$, $B_{\max,0}$, $\rho$ y $\delta_{DW,f}$, compartidos; el factor de calidad $f$ de D4 (con $f = 1$ fijo en D1 por definición de dieta de referencia); y $\tau$ para cada dieta. Los residuos se ponderaron por la incertidumbre de cada bloque: para el gas, la mitad del rango entre los cierres consecutivos del mismo día, con un piso de 10~ppm/min; para el crecimiento, la desviación estándar entre réplicas, con un piso del 10~\% del valor medido. Los cierres saturados no aportan un valor puntual sino una cota inferior: su residuo se anula cuando el modelo queda por encima de ella, de modo que solo penalizan las predicciones por debajo de lo observado. Para evitar mínimos locales, el ajuste se repitió desde cuatro puntos de arranque y se conservó la solución de menor costo.
+
+Las cotas de búsqueda no son arbitrarias: cada intervalo encierra el rango físicamente plausible de su parámetro (justificación detallada por parámetro: Material Suplementario, sec.~S4). Los valores alcanzados ---incluidos los parámetros que quedaron en la frontera de su intervalo--- se reportan en la sec.~\ref{sec:resultados}.
+
+\subsection{Análisis de incertidumbre}
+\label{sec:incertidumbre}
+
+La incertidumbre de cada tasa combinó la exactitud instrumental del sensor (MH-410D, $\pm(50$ ppm $+\,5$~\% de la lectura) \parencite{winsenMH410D2022}), la calidad del ajuste lineal de cada cierre, la dispersión entre los cierres consecutivos del mismo lote y la del volumen de aire, propagada con la ley de errores independientes hasta la tasa neta (detalle en el Material Suplementario, sec.~S12): la incertidumbre combinada quedó entre 6.5 y 12~\% por tasa, dominada por la componente instrumental ---sistemática entre cierres---, mientras la componente aleatoria explica la dispersión punto a punto entre el modelo y los datos.
+
+\subsection{Validación externa con datos independientes}
+\label{sec:metodos_ermolaev}
+
+La transferibilidad se evaluó con dos conjuntos de datos independientes, manteniendo fijos el núcleo DEB y el módulo microbiano calibrados. El primero, de \textcite{ermolaevGreenhouseGasEmissions2019}: 700 larvas sobre residuos de alimentos a 28~$^{\circ}$C durante 14 días, con alimentación en pulsos (294~g de materia seca); se reajustaron solo los cuatro parámetros de dieta y cierre del ciclo ($f$, $t_{pm}$, $\rho$ y $B_{\max,0}$) contra las tres tasas puntuales y la emisión acumulada ($92.4 \pm 14.5$~g~kg$^{-1}$). El segundo, de \textcite{schonUsingGasExchange2026}: 600 larvas sobre cuatro dietas de proteína decreciente (19.9 a 7.0~\%) a 27~$^{\circ}$C durante 7 días, con respirometría de flujo abierto sin control de alimento solo; se reajustó únicamente $f$ por dieta contra las curvas horarias de VCO$_2$ reconstruidas (29 puntos por dieta). Los detalles de digitalización, transferencia de estados iniciales y ajuste se reportan en el Material Suplementario (sec.~S13).
