@@ -1,5 +1,6 @@
-% main.tex - validacion estatica del modelo extendido DEB (CO2, H. illucens)
+% main.tex - articulo unificado (tesis-bsf-co2-final)
 % Compilar: xelatex main; biber main; xelatex main; xelatex main
+% metodos.tex queda como referencia legacy; no se incluye.
 \documentclass[11pt,a4paper]{article}
 
 \usepackage{fontspec}
@@ -14,22 +15,23 @@
 \usepackage{booktabs}
 \usepackage{siunitx}
 \usepackage{caption}
-\usepackage{tikz}
+\usepackage{lineno}
+\linenumbers
 
 \usepackage[backend=biber,style=authoryear,sorting=nyt]{biblatex}
 \addbibresource{bibliografia/bibliografia.bib}
 
 \usepackage[hidelinks]{hyperref}
 
-\title{Modelado y validación experimental de emisiones de CO$_2$
-  con separación de fuentes larvaria y microbiana en bioconversión
-  estática con \textit{Hermetia illucens}}
+\title{Modelado de la producci\'on de CO$_2$ en la bioconversi\'on con
+  \textit{Hermetia illucens}: separaci\'on de fuentes larvaria y
+  microbiana en c\'amaras est\'aticas}
 \author{%
 \begin{tabular}{cc}
-John Jairo Leal Gómez${}^{1}$ & Sorany Milena Barrientos${}^{2}$\\[2pt]
-Luis Octavio González${}^{1}$ & Luis Fernando Mejía${}^{1}$
+John Jairo Leal G\'omez${}^{1}$ & Sorany Milena Barrientos${}^{2}$\\[2pt]
+Luis Octavio Gonz\'alez${}^{1}$ & Luis Fernando Mej\'ia${}^{1}$
 \end{tabular}\\[8pt]
-{\small ${}^{1}$Facultad de Ingeniería y Administración}\\
+{\small ${}^{1}$Facultad de Ingenier\'ia y Administraci\'on}\\
 {\small ${}^{2}$Facultad de Ciencias Agropecuarias}\\
 {\small Universidad Nacional de Colombia, Sede Palmira, Valle del Cauca, Colombia}
 }
@@ -38,12 +40,32 @@ Luis Octavio González${}^{1}$ & Luis Fernando Mejía${}^{1}$
 \begin{document}
 \maketitle
 
-%\input{secciones/resumen}
-%\input{secciones/introduccion}
-\input{secciones/metodos}
-%\input{secciones/resultados}
-%\input{secciones/discusion}
-%\input{secciones/conclusiones}
+% TODO: resumen (<=300 palabras) y keywords -- Paso 6
+
+\section{Introducci\'on}
+\label{sec:intro}
+
+\section{Materiales y m\'etodos}
+\label{sec:metodos}
+
+\input{secciones/sistema}
+
+\subsection{Modelo}
+\label{sec:modelo}
+
+\subsection{Calibraci\'on y protocolo de evaluaci\'on}
+\label{sec:calibracion}
+
+\section{Resultados}
+\label{sec:resultados}
+
+\section{Discusi\'on}
+\label{sec:discusion}
+
+\section{Conclusiones}
+\label{sec:conclusiones}
+
+\input{secciones/suplementario}
 
 \printbibliography
 
