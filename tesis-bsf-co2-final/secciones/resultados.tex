@@ -85,6 +85,28 @@ El modelo completo (C) es el mejor fuera de muestra: su RMSE censurado, 130.97~p
 
 La incertidumbre de la mejora se estimó remuestreando 5000 veces las predicciones fuera de calibración, con remuestreo agrupado por dieta y día. Para C, la reducción del RMSE censurado frente a E0 tiene mediana $+27.7$~\%, intervalo percentil $(-42.8, +46.0)$, y es positiva en el 90.9~\% de los remuestreos; el RMSE censurado de C tiene mediana 130.97~ppm/min y percentiles (64.5, 168.9). Estos intervalos describen el remuestreo de siete días de medición, no una validación independiente, y la fracción de mejora positiva no constituye una probabilidad de superioridad; se reportan como medida exploratoria de la estabilidad del resultado.
 
+\subsection{Validación externa}
+\label{sec:externa}
+
+El protocolo de dos niveles (Material Suplementario, sec.~\ref{sup:externa}) contra \textcite{ermolaevGreenhouseGasEmissions2019} ---700 larvas sobre residuos de comida a 28~\textdegree C, alimentación por pulsos--- da dos resultados complementarios. Con transferencia pura (Nivel A: todos los parámetros propios, incluido el pastoreo $\gamma = 0.5798$), el modelo reproduce la magnitud del pico y del acumulado dentro de una desviación estándar de lo observado (9.37 frente a 8.04~$\pm$~1.6~mg/min; 108.9 frente a 92.4~$+$~14.5~g/kg~FW), aunque adelanta el pico dos días (5.2 frente a 7) y subestima la biomasa final de las larvas (65.6 frente a 101.9~mg~MS/larva). Con ajuste mínimo (Nivel B: solo $f$, $t_{p,\min}$, $\rho$, $B_{\max,0}$), las tres tasas puntuales quedan dentro del 0.6~\% y el acumulado en 91.9 frente a 92.4~$\pm$~14.5~g/kg~FW. Significativamente, el reajuste pide $f = 0.741$ ---el sustrato de Ermolaev equivale al 74~\% de la calidad de la dieta de referencia--- mientras $\rho$ (9.84 frente a 9.64~mg~C/d) y $B_{\max,0}$ (40.86 frente a 39.69~mg~C) retornan a los valores propios: el núcleo, el lecho y el pastoreo transfieren entre sistemas, y el factor de dieta absorbe la diferencia entre sustratos. En \textcite{schonUsingGasExchange2026} (600 larvas, respirometría de flujo abierto, cuatro dietas de proteína decreciente), el ajuste mínimo reproduce los totales de CO$_2$ dentro del $\pm 25$~\% en tres de cuatro dietas y recupera el ordenamiento decreciente del factor de dieta con la relación proteína:carbohidrato; la dieta más pobre queda fuera de tolerancia y los picos se predicen con un día de retardo ---resultado mixto, reportado como tal. El Cuadro~\ref{tab:externa} sintetiza la evaluación en los cuatro conjuntos de datos.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \caption{Síntesis de la evaluación del modelo por conjunto de datos. Cada conjunto se evalúa con la métrica propia de su diseño; la columna de alejamiento resume el desajuste en términos relativos.}
+  \label{tab:externa}
+  \begin{tabular}{p{3.1cm}p{3.3cm}p{4.4cm}p{3.3cm}}
+    \toprule
+    Conjunto & Rol & Métrica principal & Alejamiento \\
+    \midrule
+    Propios (8 cierres) & calibración y validación cruzada interna & RMSE censurado fuera de muestra: 130.97~ppm/min (línea base E0: 180.53) & $-27$~\% vs base; cobertura de cotas 1/4 \\
+    Eriksen (Tabla~2, 15 escenarios) & verificación de la implementación & reproducción del núcleo: 54/60 métricas publicadas (X$_{DW}$ 15/15; $t_p$ 14/15; lípidos 15/15; MS 10/15) & valida el código; la MS es la métrica menos reproducida \\
+    Ermolaev & validación externa (A pura / B mínima) & RMSE de flujos: 1.66 / 0.05~mg/min; acumulado 14~d: 108.9 / 91.9~g/kg~FW (obs 92.4~$\pm$~14.5) & A: $+$18~\% acumulado, pico $-$2~d, biomasa $-$36~\%; B: $-$0.5~\%, $\rho$ y $B_{\max,0}$ retornan a los valores propios \\
+    Schøn & validación externa (B mínima) & totales de 4 dietas: 3/4 dentro de $\pm 25$~\% (REF $+$6~\%; 1:3 $+$1~\%; 1:5 $+$5~\%; 1:9 $+$44~\%) & orden de $f$ correcto; picos $+$1~d \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 \subsection{Límites declarados}
 \label{sec:limites}
 
