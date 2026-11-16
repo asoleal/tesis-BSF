@@ -17,21 +17,21 @@ La calibración completa (tres etapas, sec.~\ref{sec:calibracion}) reduce el RMS
   \label{tab:cierres}
   \begin{tabular}{llrrrrl}
     \toprule
-    Dieta & D\ia & Observado & E0 (referencia) & sin pastoreo & con pastoreo (C) & Saturado \\
+    Dieta & Día & Observado & E0 (referencia) & sin pastoreo & con pastoreo (C) & Saturado \\
     \midrule
-    D1 & 6  & $\ge 670.56$ & 296.03 & 630.12 & 459.84 & s\i \\
-    D1 & 6  & $\ge 474.23$ & 296.03 & 630.12 & 459.84 & s\i \\
-    D1 & 8  & $\ge 311.82$ & 341.42 & 730.29 & 421.25 & s\i \\
+    D1 & 6  & $\ge 670.56$ & 296.03 & 630.12 & 459.84 & sí \\
+    D1 & 6  & $\ge 474.23$ & 296.03 & 630.12 & 459.84 & sí \\
+    D1 & 8  & $\ge 311.82$ & 341.42 & 730.29 & 421.25 & sí \\
     D1 & 10 & 285.57       & 328.11 & 709.16 & 304.23 & no \\
     D4 & 6  & 228.52       & 267.77 & 579.20 & 301.52 & no \\
-    D4 & 8  & $\ge 383.67$ & 333.68 & 676.49 & 356.67 & s\i \\
+    D4 & 8  & $\ge 383.67$ & 333.68 & 676.49 & 356.67 & sí \\
     D4 & 10 & 104.11       & 331.19 & 592.50 & 155.86 & no \\
     D4 & 14 & 79.11        & 256.02 & 1065.71 & 156.87 & no \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-\noindent \footnotesize Nota: la columna \emph{sin pastoreo} corresponde al modelo completo recalibrado con $\gamma = 0$ (su propio ajuste); su RMSE sobre los cuatro cierres no saturados es 615.29~ppm/min. E0 y C reproducen los RMSE can\onicos (180.53 y 86.41~ppm/min).
+\noindent \footnotesize Nota: la columna \emph{sin pastoreo} corresponde al modelo completo recalibrado con $\gamma = 0$ (su propio ajuste); su RMSE sobre los cuatro cierres no saturados es 615.29~ppm/min. E0 y C reproducen los RMSE canónicos (180.53 y 86.41~ppm/min).
 
 \begin{table}[htbp]
   \centering
@@ -93,26 +93,7 @@ La incertidumbre de la mejora se estimó remuestreando 5000 veces las prediccion
 
 Con el modelo de referencia sin ajustar (E0: núcleo original, sin lecho) el acumulado de Ermolaev también coincide (93.5 frente a 92.4 $\pm$ 14.5~g/kg~FW) y la biomasa final se reproduce ($-7$~\%) ---pero por compensación: sin lecho falta la respiración microbiana y la curva de flujos es menos precisa (RMSE 0.65 frente a 0.05~mg/min del modelo completo ajustado). Con ajuste mínimo (Nivel B), el efecto del pastoreo es directo: con $\gamma = 0$ el acumulado se dispara a 122.6~g/kg~FW ($+$33~\%) y el RMSE de flujos a 2.06~mg/min; con $\gamma$ transferido, 91.9 ($-$0.5~\%) y 0.05~mg/min. El mejor ajuste de flujos subestima la biomasa final (58.7 frente a 101.9~mg~MS/larva) ---trade-off declarado. El reajuste pide $f = 0.741$ mientras $\rho$ (9.84 frente a 9.64~mg~C/d) y $B_{\max,0}$ (40.86 frente a 39.69~mg~C) retornan a los valores propios.
 
-En Schøn, el modelo de referencia da el mismo total para las cuatro dietas (17.33~L: sin mecanismo de dieta no puede distinguirlas) y acierta las intermedias por compensación; la configuración sin pastoreo sobre-predice entre un 8 y un 71~\%, y el pastoreo reduce los totales en un 13--15~\% en las cuatro dietas (de 18.4--21.1 a 15.6--18.4~L), con tres de cuatro dentro del $\pm 25$~\% y el ordenamiento decreciente de $f$ con la relación proteína:carbohidrato recuperado. El Cuadro~\ref{tab:externa} sintetiza la evaluación en los cuatro conjuntos de datos y las tres configuraciones; en el modelo de referencia el pastoreo no está definido ---carece de compartimento microbiano--- y su efecto se lee en las dos columnas del modelo completo, que difieren únamente en $\gamma$.
-
-\begin{table}[htbp]
-  \centering
-  \small
-  \caption{Evaluación del modelo por conjunto de datos y configuración: modelo de referencia sin ajustar (E0: núcleo larvario original, sin lecho), modelo completo sin pastoreo ($\gamma = 0$) y modelo completo con pastoreo ($\gamma$ transferido o ajustado; Nivel B en los externos). La última columna reporta la corrección porcentual atribuible al pastoreo sobre el modelo completo.}
-  \label{tab:externa}
-  \begin{tabular}{p{3.6cm}p{2.6cm}p{2.6cm}p{2.9cm}p{2.4cm}}
-    \toprule
-    Conjunto (métrica) & E0: referencia sin lecho & completo sin pastoreo & completo con pastoreo & Corrección por pastoreo \\
-    \midrule
-    Propios --- RMSE de gas in-muestra (ppm/min) & 180.53 & 615 & 86.41 & $-$86~\% \\
-    Propios --- validación cruzada (RMSE censurado, ppm/min) & 180.53 & 575.47 (A) & 130.97 & $-$77~\% \\
-    Ermolaev --- acumulado 14~d (g/kg FW) & 93.5 ($+$1~\%) & 122.6 ($+$33~\%) & 91.9 ($-$0.5~\%) & $-$25~\% \\
-    Ermolaev --- RMSE de flujos (mg/min) & 0.65 & 2.06 & 0.05 & $-$98~\% \\
-    Schøn --- total CO$_2$, 4 dietas (L) & 17.33 (idéntico) & $+$8 a $+$71~\% & $-$6 a $+$44~\%; 3/4 en $\pm 25$~\% & $-$13 a $-$15~\% \\
-    Eriksen --- verificación del núcleo (Tabla~2) & 54/60 métricas & --- & --- & --- \\
-    \bottomrule
-  \end{tabular}
-\end{table}
+En Schøn, el modelo de referencia da el mismo total para las cuatro dietas (17.33~L: sin mecanismo de dieta no puede distinguirlas) y acierta las intermedias por compensación; la configuración sin pastoreo sobre-predice entre un 8 y un 71~\%, y el pastoreo reduce los totales en un 13--15~\% en las cuatro dietas (de 18.4--21.1 a 15.6--18.4~L), con tres de cuatro dentro del $\pm 25$~\% y el ordenamiento decreciente de $f$ con la relación proteína:carbohidrato recuperado. En el modelo de referencia el pastoreo no está definido ---carece de compartimento microbiano--- y su efecto se lee en la comparación con y sin pastoreo del modelo completo (Cuadro~\ref{tab:cierres} para los datos propios; Cuadro~\ref{tab:ermolaev-detalle} del Material Suplementario para Ermolaev).
 
 \noindent \footnotesize Nota: en los datos propios, el valor in-muestra de la columna \emph{sin pastoreo} (615~ppm/min) corresponde al modelo acoplado con $\gamma = 0$; en la validación cruzada, la configuración sin pastoreo es A (lecho aditivo, núcleo original, sin acople).
 
