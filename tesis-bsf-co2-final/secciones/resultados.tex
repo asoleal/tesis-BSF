@@ -88,24 +88,30 @@ La incertidumbre de la mejora se estimó remuestreando 5000 veces las prediccion
 \subsection{Validación externa}
 \label{sec:externa}
 
-El protocolo de dos niveles (Material Suplementario, sec.~\ref{sup:externa}) contra \textcite{ermolaevGreenhouseGasEmissions2019} ---700 larvas sobre residuos de comida a 28~\textdegree C, alimentación por pulsos--- da dos resultados complementarios. Con transferencia pura (Nivel A: todos los parámetros propios, incluido el pastoreo $\gamma = 0.5798$), el modelo reproduce la magnitud del pico y del acumulado dentro de una desviación estándar de lo observado (9.37 frente a 8.04~$\pm$~1.6~mg/min; 108.9 frente a 92.4~$+$~14.5~g/kg~FW), aunque adelanta el pico dos días (5.2 frente a 7) y subestima la biomasa final de las larvas (65.6 frente a 101.9~mg~MS/larva). Con ajuste mínimo (Nivel B: solo $f$, $t_{p,\min}$, $\rho$, $B_{\max,0}$), las tres tasas puntuales quedan dentro del 0.6~\% y el acumulado en 91.9 frente a 92.4~$\pm$~14.5~g/kg~FW. Significativamente, el reajuste pide $f = 0.741$ ---el sustrato de Ermolaev equivale al 74~\% de la calidad de la dieta de referencia--- mientras $\rho$ (9.84 frente a 9.64~mg~C/d) y $B_{\max,0}$ (40.86 frente a 39.69~mg~C) retornan a los valores propios: el núcleo, el lecho y el pastoreo transfieren entre sistemas, y el factor de dieta absorbe la diferencia entre sustratos. En \textcite{schonUsingGasExchange2026} (600 larvas, respirometría de flujo abierto, cuatro dietas de proteína decreciente), el ajuste mínimo reproduce los totales de CO$_2$ dentro del $\pm 25$~\% en tres de cuatro dietas y recupera el ordenamiento decreciente del factor de dieta con la relación proteína:carbohidrato; la dieta más pobre queda fuera de tolerancia y los picos se predicen con un día de retardo ---resultado mixto, reportado como tal. El Cuadro~\ref{tab:externa} sintetiza la evaluación en los cuatro conjuntos de datos.
+Con el modelo de referencia sin ajustar (E0: núcleo original, sin lecho) el acumulado de Ermolaev también coincide (93.5 frente a 92.4 $\pm$ 14.5~g/kg~FW) y la biomasa final se reproduce ($-7$~\%) ---pero por compensación: sin lecho falta la respiración microbiana y la curva de flujos es menos precisa (RMSE 0.65 frente a 0.05~mg/min del modelo completo ajustado). Con ajuste mínimo (Nivel B), el efecto del pastoreo es directo: con $\gamma = 0$ el acumulado se dispara a 122.6~g/kg~FW ($+$33~\%) y el RMSE de flujos a 2.06~mg/min; con $\gamma$ transferido, 91.9 ($-$0.5~\%) y 0.05~mg/min. El mejor ajuste de flujos subestima la biomasa final (58.7 frente a 101.9~mg~MS/larva) ---trade-off declarado. El reajuste pide $f = 0.741$ mientras $\rho$ (9.84 frente a 9.64~mg~C/d) y $B_{\max,0}$ (40.86 frente a 39.69~mg~C) retornan a los valores propios.
+
+En Schøn, el modelo de referencia da el mismo total para las cuatro dietas (17.33~L: sin mecanismo de dieta no puede distinguirlas) y acierta las intermedias por compensación; la configuración sin pastoreo sobre-predice entre un 8 y un 71~\%, y el pastoreo reduce los totales en un 13--15~\% en las cuatro dietas (de 18.4--21.1 a 15.6--18.4~L), con tres de cuatro dentro del $\pm 25$~\% y el ordenamiento decreciente de $f$ con la relación proteína:carbohidrato recuperado. El Cuadro~\ref{tab:externa} sintetiza la evaluación en los cuatro conjuntos de datos y las tres configuraciones; en el modelo de referencia el pastoreo no está definido ---carece de compartimento microbiano--- y su efecto se lee en las dos columnas del modelo completo, que difieren únamente en $\gamma$.
 
 \begin{table}[htbp]
   \centering
   \small
-  \caption{Síntesis de la evaluación del modelo por conjunto de datos. Cada conjunto se evalúa con la métrica propia de su diseño; la columna de alejamiento resume el desajuste en términos relativos.}
+  \caption{Evaluación del modelo por conjunto de datos y configuración: modelo de referencia sin ajustar (E0: núcleo larvario original, sin lecho), modelo completo sin pastoreo ($\gamma = 0$) y modelo completo con pastoreo ($\gamma$ transferido o ajustado; Nivel B en los externos). La última columna reporta la corrección porcentual atribuible al pastoreo sobre el modelo completo.}
   \label{tab:externa}
-  \begin{tabular}{p{3.1cm}p{3.3cm}p{4.4cm}p{3.3cm}}
+  \begin{tabular}{p{3.6cm}p{2.6cm}p{2.6cm}p{2.9cm}p{2.4cm}}
     \toprule
-    Conjunto & Rol & Métrica principal & Alejamiento \\
+    Conjunto (métrica) & E0: referencia sin lecho & completo sin pastoreo & completo con pastoreo & Corrección por pastoreo \\
     \midrule
-    Propios (8 cierres) & calibración y validación cruzada interna & RMSE censurado fuera de muestra: 130.97~ppm/min (línea base E0: 180.53) & $-27$~\% vs base; cobertura de cotas 1/4 \\
-    Eriksen (Tabla~2, 15 escenarios) & verificación de la implementación & reproducción del núcleo: 54/60 métricas publicadas (X$_{DW}$ 15/15; $t_p$ 14/15; lípidos 15/15; MS 10/15) & valida el código; la MS es la métrica menos reproducida \\
-    Ermolaev & validación externa (A pura / B mínima) & RMSE de flujos: 1.66 / 0.05~mg/min; acumulado 14~d: 108.9 / 91.9~g/kg~FW (obs 92.4~$\pm$~14.5) & A: $+$18~\% acumulado, pico $-$2~d, biomasa $-$36~\%; B: $-$0.5~\%, $\rho$ y $B_{\max,0}$ retornan a los valores propios \\
-    Schøn & validación externa (B mínima) & totales de 4 dietas: 3/4 dentro de $\pm 25$~\% (REF $+$6~\%; 1:3 $+$1~\%; 1:5 $+$5~\%; 1:9 $+$44~\%) & orden de $f$ correcto; picos $+$1~d \\
+    Propios --- RMSE de gas in-muestra (ppm/min) & 180.53 & 615 & 86.41 & $-$86~\% \\
+    Propios --- validación cruzada (RMSE censurado, ppm/min) & 180.53 & 575.47 (A) & 130.97 & $-$77~\% \\
+    Ermolaev --- acumulado 14~d (g/kg FW) & 93.5 ($+$1~\%) & 122.6 ($+$33~\%) & 91.9 ($-$0.5~\%) & $-$25~\% \\
+    Ermolaev --- RMSE de flujos (mg/min) & 0.65 & 2.06 & 0.05 & $-$98~\% \\
+    Schøn --- total CO$_2$, 4 dietas (L) & 17.33 (idéntico) & $+$8 a $+$71~\% & $-$6 a $+$44~\%; 3/4 en $\pm 25$~\% & $-$13 a $-$15~\% \\
+    Eriksen --- verificación del núcleo (Tabla~2) & 54/60 métricas & --- & --- & --- \\
     \bottomrule
   \end{tabular}
 \end{table}
+
+\noindent \footnotesize Nota: en los datos propios, el valor in-muestra de la columna \emph{sin pastoreo} (615~ppm/min) corresponde al modelo acoplado con $\gamma = 0$; en la validación cruzada, la configuración sin pastoreo es A (lecho aditivo, núcleo original, sin acople).
 
 \subsection{Límites declarados}
 \label{sec:limites}
