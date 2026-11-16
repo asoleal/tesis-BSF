@@ -1,30 +1,30 @@
-% secciones/calibracion.tex -- Sec 2.3 Calibracion y protocolo de evaluacion
+% secciones/calibracion.tex -- Sec 2.3 Calibración y protocolo de evaluación
 
-\paragraph{Procedencia y tratamiento de los parametros.}
-Cada parametro del modelo recibe uno de tres tratamientos: se hereda del modelo de referencia sin reajuste, se fija por argumento de identificabilidad o de literatura, o se calibra contra los datos de este experimento. El Cuadro~\ref{tab:procedencia} resume la asignacion; la justificacion valor por valor y las cotas de busqueda estan en el Material Suplementario (sec.~\ref{sup:params}).
+\paragraph{Procedencia y tratamiento de los parámetros.}
+Cada parámetro del modelo recibe uno de tres tratamientos: se hereda del modelo de referencia sin reajuste, se fija por argumento de identificabilidad o de literatura, o se calibra contra los datos de este experimento. El Cuadro~\ref{tab:procedencia} resume la asignación; la justificación valor por valor y las cotas de búsqueda están en el Material Suplementario (sec.~\ref{sup:params}).
 
 \begin{table}[htbp]
   \centering
-  \caption{Tratamiento de los parametros del modelo. Los valores de referencia de los parametros heredados provienen de \textcite{eriksenDynamicModellingFeed2022} (Tabla~1 y archivo publicado).}
+  \caption{Tratamiento de los parámetros del modelo. Los valores de referencia de los parámetros heredados provienen de \textcite{eriksenDynamicModellingFeed2022} (Tabla~1 y archivo publicado).}
   \label{tab:procedencia}
   \begin{tabular}{lp{7.2cm}l}
     \toprule
-    Grupo & Parametros & Tratamiento \\
+    Grupo & Parámetros & Tratamiento \\
     \midrule
-    Nucleo, heredados & $Y_B = 0.44$, $Y_L = 0.42$, $m = 0.08$~d$^{-1}$, $\alpha = \beta = 1$, $t_{p,\min} = 13$~d, $\delta_I = 5$, $B_{\max,0} = 39.69$~mg~C, coeficientes $\delta$ & Sin reajuste \\
-    Nucleo, calibrados & $a_{\max}$, $\rho$ & Etapa~2 \\
+    Núcleo, heredados & $Y_B = 0.44$, $Y_L = 0.42$, $m = 0.08$~d$^{-1}$, $\alpha = \beta = 1$, $t_{p,\min} = 13$~d, $\delta_I = 5$, $B_{\max,0} = 39.69$~mg~C, coeficientes $\delta$ & Sin reajuste \\
+    Núcleo, calibrados & $a_{\max}$, $\rho$ & Etapa~2 \\
     Lecho, calibrados & $k_{\mathrm{ref}}$, $Y_{C,\mathrm{mic}}$ (por dieta) & Etapa~1, controles \\
-    Acople, calibrado & $f_{D4}$ ($f_{D1} = 1$ por definicion) & Etapa~2 \\
+    Acople, calibrado & $f_{D4}$ ($f_{D1} = 1$ por definición) & Etapa~2 \\
     Fijos & $X_0 = 1$~g~C, $Y_X = 0.4$, $K_{SM}$, $K_D$, $\theta$, $Q_{10} = 2$ & Identificabilidad o literatura \\
     \bottomrule
   \end{tabular}
 \end{table}
 
 \paragraph{Etapa 1: el lecho, contra los controles sin larvas.}
-El modulo microbiano se calibra de forma independiente: se simula el lecho sin larvas ($N = 0$) y se ajustan $k_{\mathrm{ref}}$ e $Y_{C,\mathrm{mic}}$ por dieta contra las tasas de CO$_2$ de los controles con alimento solo, en escala logaritmica, con cotas $k_{\mathrm{ref}} \in [10^{-3}, 1]$~d$^{-1}$ e $Y_{C,\mathrm{mic}} \in [0.05, 2]$ (justificacion de las cotas en el Material Suplementario, sec.~\ref{sup:cotas}). Los parametros fijos $X_0$ e $Y_X$ permanecen congelados en esta etapa por la no identificabilidad ya declarada (sec.~\ref{sec:modelo}).
+El módulo microbiano se calibra de forma independiente: se simula el lecho sin larvas ($N = 0$) y se ajustan $k_{\mathrm{ref}}$ e $Y_{C,\mathrm{mic}}$ por dieta contra las tasas de CO$_2$ de los controles con alimento solo, en escala logarítmica, con cotas $k_{\mathrm{ref}} \in [10^{-3}, 1]$~d$^{-1}$ e $Y_{C,\mathrm{mic}} \in [0.05, 2]$ (justificación de las cotas en el Material Suplementario, sec.~\ref{sup:cotas}). Los parámetros fijos $X_0$ e $Y_X$ permanecen congelados en esta etapa por la no identificabilidad ya declarada (sec.~\ref{sec:modelo}).
 
 \paragraph{Etapa 2: el sistema completo, contra gas y crecimiento.}
-Con el modulo microbiano congelado, la segunda etapa ajusta el nucleo y el acople contra dos bloques de observaciones. El bloque de gas son las tasas netas de CO$_2$ (tratamiento menos control del mismo dia, truncadas en cero por carecer de sentido fisico negativo); el bloque de crecimiento son las curvas de peso fresco del ensayo paralelo, convertidas a las unidades del modelo mediante los coeficientes de composicion ya definidos. Los parametros ajustados son la tasa maxima de asimilacion $a_{\max}$ y la razon de decrecimiento del techo $\rho$, compartidos entre dietas (misma postura de huevos y mismo protocolo de cria), y el factor de calidad $f_{D4}$ de la dieta D4. Los cierres saturados aportan una cota inferior, no un valor: su residuo se anula cuando el modelo predice por encima de lo observado y solo penaliza predicciones por debajo. Los residuos se ponderan por la incertidumbre de cada bloque ---mitad del rango entre cierres consecutivos para el gas (con piso de 10~ppm/min) y desviacion estandar entre recipientes para el crecimiento (con piso del 10~\% del valor)---. Para evitar minimos locales, el ajuste se repite desde cuatro puntos de arranque y se conserva la solucion de menor costo.
+Con el módulo microbiano congelado, la segunda etapa ajusta el núcleo y el acople contra dos bloques de observaciones. El bloque de gas son las tasas netas de CO$_2$ (tratamiento menos control del mismo día, truncadas en cero por carecer de sentido físico negativo); el bloque de crecimiento son las curvas de peso fresco del ensayo paralelo, convertidas a las unidades del modelo mediante los coeficientes de composición ya definidos. Los parámetros ajustados son la tasa máxima de asimilación $a_{\max}$ y la razón de decrecimiento del techo $\rho$, compartidos entre dietas (misma postura de huevos y mismo protocolo de cría), y el factor de calidad $f_{D4}$ de la dieta D4. Los cierres saturados aportan una cota inferior, no un valor: su residuo se anula cuando el modelo predice por encima de lo observado y solo penaliza predicciones por debajo. Los residuos se ponderan por la incertidumbre de cada bloque ---mitad del rango entre cierres consecutivos para el gas (con piso de 10~ppm/min) y desviación estándar entre recipientes para el crecimiento (con piso del 10~\% del valor)---. Para evitar mínimos locales, el ajuste se repite desde cuatro puntos de arranque y se conserva la solución de menor costo.
 
-\paragraph{Evaluacion: atribucion, validacion cruzada e incertidumbre.}
-Para separar los efectos de recalibrar y de extender, se comparan cuatro configuraciones: Eriksen original sin lecho ni acople (E0), nucleo recalibrado sin lecho (R), lecho aditivo con nucleo original (A) y modelo completo acoplado (C). La capacidad predictiva fuera de la calibracion se evalua con validacion cruzada interna agrupada por dia y dieta: en cada pliegue se retiran las observaciones de un dia, se recalibran ambas etapas con el resto y se predice el dia excluido. La incertidumbre de la mejora se estima con remuestreo bootstrap (5000 repeticiones, intervalos percentil). La sensibilidad local de los acumulados de CO$_2$ a cada parametro se evalua con perturbaciones del $\pm 10$~\% (en los parametros que quedaron en una frontera de su cota, solo hacia el interior del dominio). La implementacion se hizo en Python~3 con NumPy y SciPy (integracion LSODA; minimos cuadrados por region de confianza reflectante); tolerancias numericas y orden de ejecucion en el Material Suplementario (sec.~\ref{sup:params}).
+\paragraph{Evaluación: atribución, validación cruzada e incertidumbre.}
+Para separar los efectos de recalibrar y de extender, se comparan cuatro configuraciones: Eriksen original sin lecho ni acople (E0), núcleo recalibrado sin lecho (R), lecho aditivo con núcleo original (A) y modelo completo acoplado (C). La capacidad predictiva fuera de la calibración se evalúa con validación cruzada interna agrupada por día y dieta: en cada pliegue se retiran las observaciones de un día, se recalibran ambas etapas con el resto y se predice el día excluido. La incertidumbre de la mejora se estima con remuestreo bootstrap (5000 repeticiones, intervalos percentil). La sensibilidad local de los acumulados de CO$_2$ a cada parámetro se evalúa con perturbaciones del $\pm 10$~\% (en los parámetros que quedaron en una frontera de su cota, solo hacia el interior del dominio). La implementación se hizo en Python~3 con NumPy y SciPy (integración LSODA; mínimos cuadrados por región de confianza reflectante); tolerancias numéricas y orden de ejecución en el Material Suplementario (sec.~\ref{sup:params}).
