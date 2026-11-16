@@ -13,7 +13,7 @@ La calibración completa (tres etapas, sec.~\ref{sec:calibracion}) reduce el RMS
 \begin{table}[htbp]
   \centering
   \small
-  \caption{Cierres de gas del experimento propio y predicciones de las tres configuraciones (ppm/min). Los valores precedidos de $\ge$ son cotas inferiores: el cierre satur\o el sensor. RMSE censurado conjunto: E0 = 180.53, sin pastoreo = 435.31, con pastoreo = 86.41~ppm/min.}
+  \caption{Cierres de gas del experimento propio y predicciones de las tres configuraciones (ppm/min). Los valores precedidos de $\ge$ son cotas inferiores: el cierre saturó el sensor. RMSE censurado conjunto: E0 = 180.53, sin pastoreo = 435.31, con pastoreo = 86.41~ppm/min.}
   \label{tab:cierres}
   \begin{tabular}{llrrrrl}
     \toprule
@@ -91,11 +91,9 @@ La incertidumbre de la mejora se estimó remuestreando 5000 veces las prediccion
 \subsection{Validación externa}
 \label{sec:externa}
 
-Con el modelo de referencia sin ajustar (E0: núcleo original, sin lecho) el acumulado de Ermolaev también coincide (93.5 frente a 92.4 $\pm$ 14.5~g/kg~FW) y la biomasa final se reproduce ($-7$~\%) ---pero por compensación: sin lecho falta la respiración microbiana y la curva de flujos es menos precisa (RMSE 0.65 frente a 0.05~mg/min del modelo completo ajustado). Con ajuste mínimo (Nivel B), el efecto del pastoreo es directo: con $\gamma = 0$ el acumulado se dispara a 122.6~g/kg~FW ($+$33~\%) y el RMSE de flujos a 2.06~mg/min; con $\gamma$ transferido, 91.9 ($-$0.5~\%) y 0.05~mg/min. El mejor ajuste de flujos subestima la biomasa final (58.7 frente a 101.9~mg~MS/larva) ---trade-off declarado. El reajuste pide $f = 0.741$ mientras $\rho$ (9.84 frente a 9.64~mg~C/d) y $B_{\max,0}$ (40.86 frente a 39.69~mg~C) retornan a los valores propios.
+El protocolo de dos niveles (Material Suplementario, sec.~\ref{sup:externa}) contra \textcite{ermolaevGreenhouseGasEmissions2019} ---700 larvas sobre residuos de comida a 28~\textdegree C, alimentación por pulsos--- da dos resultados complementarios. Con el modelo de referencia sin ajustar (E0: núcleo original, sin lecho) el acumulado también coincide (93.5 frente a 92.4~$\pm$~14.5~g/kg~FW) y la biomasa final se reproduce ($-7$~\%) ---pero por compensación: sin lecho falta la respiración microbiana y la curva de flujos es menos precisa (RMSE 0.65 frente a 0.05~mg/min del modelo completo ajustado). Con ajuste mínimo (Nivel B), el efecto del pastoreo es directo: con $\gamma = 0$ el acumulado se dispara a 122.6~g/kg~FW ($+$33~\%) y el RMSE de flujos a 2.06~mg/min; con $\gamma$ transferido, 91.9 ($-$0.5~\%) y 0.05~mg/min. El mejor ajuste de flujos subestima la biomasa final (58.7 frente a 101.9~mg~MS/larva) ---trade-off declarado. El reajuste pide $f = 0.741$ mientras $\rho$ (9.84 frente a 9.64~mg~C/d) y $B_{\max,0}$ (40.86 frente a 39.69~mg~C) retornan a los valores propios.
 
 En Schøn, el modelo de referencia da el mismo total para las cuatro dietas (17.33~L: sin mecanismo de dieta no puede distinguirlas) y acierta las intermedias por compensación; la configuración sin pastoreo sobre-predice entre un 8 y un 71~\%, y el pastoreo reduce los totales en un 13--15~\% en las cuatro dietas (de 18.4--21.1 a 15.6--18.4~L), con tres de cuatro dentro del $\pm 25$~\% y el ordenamiento decreciente de $f$ con la relación proteína:carbohidrato recuperado. En el modelo de referencia el pastoreo no está definido ---carece de compartimento microbiano--- y su efecto se lee en la comparación con y sin pastoreo del modelo completo (Cuadro~\ref{tab:cierres} para los datos propios; Cuadro~\ref{tab:ermolaev-detalle} del Material Suplementario para Ermolaev).
-
-\noindent \footnotesize Nota: en los datos propios, el valor in-muestra de la columna \emph{sin pastoreo} (615~ppm/min) corresponde al modelo acoplado con $\gamma = 0$; en la validación cruzada, la configuración sin pastoreo es A (lecho aditivo, núcleo original, sin acople).
 
 \subsection{Límites declarados}
 \label{sec:limites}
