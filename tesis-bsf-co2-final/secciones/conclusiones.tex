@@ -1,0 +1,9 @@
+% secciones/conclusiones.tex -- Sec 5 Conclusiones
+
+Este estudio formuló y evaluó un modelo de caja gris para la generación de CO$_2$ en la bioconversión con \textit{Hermetia illucens} que separa las fuentes larvaria y microbiana de la emisión medida en cámaras estáticas. El núcleo fisiológico del modelo de referencia se conservó sin reajustes y se verificó fórmula a fórmula contra su implementación publicada.
+
+Sobre ese núcleo, el modelo añade un módulo microbiano del lecho con decaimiento endógeno y un acople alimento--larva cuyo componente central es el pastoreo: las larvas controlan la biomasa microbiana, y ese control top-down ---no el decaimiento--- es lo que hace utilizable al lecho; añadir el lecho sin él degrada la predicción por debajo de la línea base. El protocolo de atribución anidada cuantifica cada componente: el modelo completo es el mejor fuera de muestra (RMSE censurado 130.97 frente a 180.53~ppm/min), con la mejora positiva en el 90.9~\% de los remuestreos.
+
+La validación externa muestra una estructura transportable: contra \textcite{ermolaevGreenhouseGasEmissions2019}, el ajuste mínimo pide solo el factor de dieta mientras los parámetros fisiológicos retornan a los valores propios. Los desajustes restantes ---la biomasa final y el instante del pico en transferencia pura, la dieta más pobre en \textcite{schonUsingGasExchange2026}--- delimitan el dominio de validez del modelo: calidades de sustrato próximas a las calibradas.
+
+El trabajo futuro natural sigue los límites declarados: una fracción asimilada del carbono pastoreado; réplicas biológicas del experimento de gas para acotar la incertidumbre de las cotas censuradas; y la evolución dinámica de la humedad del lecho, hoy un parámetro fijo por falta de registro.
