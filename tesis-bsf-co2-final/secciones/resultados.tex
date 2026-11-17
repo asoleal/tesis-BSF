@@ -3,12 +3,12 @@
 \subsection{Verificación de la implementación}
 \label{sec:verificacion}
 
-Antes de la calibración, la implementación del núcleo larvario se verificó contra el archivo de modelación publicado por \textcite{eriksenDynamicModellingFeed2022} como material suplementario, mediante comparación fórmula a fórmula. Las dos divergencias encontradas entre sus ecuaciones impresas y su propio archivo ---y la decisión de replicar el archivo--- se documentan en el Material Suplementario (sec.~\ref{sup:correspondencia}). Esta verificación garantiza que el código implementa el modelo de referencia tal como su autor lo opera numéricamente; su transferibilidad al sistema experimental de este estudio es lo que las secciones siguientes evalúan.
+Antes de la calibración, la implementación del núcleo larvario se verificó contra el archivo de modelación publicado por \textcite{eriksenDynamicModellingFeed2022} como material suplementario, mediante comparación fórmula a fórmula. Las dos divergencias encontradas entre sus ecuaciones impresas y su propio archivo ---y la decisión de replicar el archivo--- se documentan en el Material Suplementario (sec.\~\ref{sup:correspondencia}). Esta verificación garantiza que el código implementa el modelo de referencia tal como su autor lo opera numéricamente; su transferibilidad al sistema experimental de este estudio es lo que las secciones siguientes evalúan.
 
 \subsection{Ajuste de calibración}
 \label{sec:ajuste}
 
-El modelo se calibró en tres etapas desacopladas (sec.~\ref{sec:calibracion}). Para interpretar los resultados se distinguen tres configuraciones, definidas en la calibración. E0 es el modelo de referencia de \textcite{eriksenDynamicModellingFeed2022}: contiene únicamente el núcleo larvario, sin lecho microbiano ni acople con el alimento, y conserva sus parámetros originales. S es el modelo completo de este estudio ---núcleo recalibrado, acople con el alimento y lecho microbiano--- pero con el pastoreo anulado ($\gamma = 0$). C es el modelo completo con pastoreo activo, obtenido mediante las tres etapas de calibración. La comparación entre E0 y S muestra la consecuencia de incorporar el lecho sin su control top-down; la comparación entre S y C evalúa el efecto del pastoreo dentro de una misma estructura.
+El modelo se calibró en tres etapas desacopladas (sec.\~\ref{sec:calibracion}). Para interpretar los resultados se distinguen tres configuraciones, definidas en la calibración. E0 es el modelo de referencia de \textcite{eriksenDynamicModellingFeed2022}: contiene únicamente el núcleo larvario, sin lecho microbiano ni acople con el alimento, y conserva sus parámetros originales. S es el modelo completo de este estudio ---núcleo recalibrado, acople con el alimento y lecho microbiano--- pero con el pastoreo anulado ($\gamma = 0$). C es el modelo completo con pastoreo activo, obtenido mediante las tres etapas de calibración. La comparación entre E0 y S muestra la consecuencia de incorporar el lecho sin su control top-down; la comparación entre S y C evalúa el efecto del pastoreo dentro de una misma estructura.
 
 La emisión observada en los ocho cierres varía entre 79.11 y 670.56~ppm/min, con una media de 317.20~ppm/min. Frente a esa referencia, el RMSE censurado de E0 es 180.53~ppm/min, equivalente al 56.9~\% de la media observada. Incorporar el lecho sin pastoreo empeora el ajuste: S alcanza 435.31~ppm/min, es decir, el 137.2~\% de la media. Al activar el pastoreo, C reduce el error a 86.41~ppm/min, equivalente al 27.2~\% de la media y dentro del criterio de aceptación declarado. Esto representa una reducción del 52.1~\% frente a E0 y del 80.2~\% frente a S. El error se denomina censurado porque los cuatro cierres saturados solo penalizan al modelo cuando su predicción queda por debajo de la cota observada.
 
@@ -24,7 +24,7 @@ El Cuadro~\ref{tab:calibrados} reporta los parámetros estimados. Cinco estimaci
   \centering
   \footnotesize
   \setlength{\tabcolsep}{2.5pt}
-  \caption{Cierres de gas del experimento propio: observaciones, predicciones de las tres configuraciones, errores relativos y mejora del modelo completo respecto al modelo sin pastoreo. Los valores precedidos de $\geq$ son cotas inferiores por saturación del sensor. El error se calcula como $(\text{predicción} - \text{observado}) / \text{observado} \times 100$. La columna `Mejora vs S' reporta el cociente del error absoluto de S entre el de C.}
+  \caption{Cierres de gas del experimento propio: observaciones, predicciones de las tres configuraciones, errores relativos y mejora del modelo completo respecto al modelo sin pastoreo. Los valores precedidos de $\geq$ son cotas inferiores por saturación del sensor. El error se calcula como $(predicción - observado) / observado \times 100$. La columna `Mejora vs S' reporta el cociente del error absoluto de S entre el de C.}
   \label{tab:cierres}
   \begin{tabular}{llrrrrrrrrrl}
     \toprule
@@ -33,57 +33,16 @@ El Cuadro~\ref{tab:calibrados} reporta los parámetros estimados. Cinco estimaci
     D1 & 6  & $\geq 670.56$ & 296.03 & cota & 630.12  & cota & 459.84  & cota & --- & --- & sí \\
     D1 & 6  & $\geq 474.23$ & 296.03 & cota & 630.12  & cota & 459.84  & cota & --- & --- & sí \\
     D1 & 8  & $\geq 311.82$ & 341.42 & cota & 730.29  & cota & 421.25  & cota & --- & --- & sí \\
-    D1 & 10 & 285.57        & 328.11 & +14.9 & 709.16  & +148.3 & 304.23  & +6.5 & 18.7 & 22.7× & no \\
-    D4 & 6  & 228.52       Números listos. Ahora el cuadro con las dos columnas nuevas y el contexto del sensor (±50 ppm). Reconstruyo el archivo completo:
-
-```bash
-cd ~/tesis-doctorado/tesis-BSF/tesis-bsf-co2-final
-cat > secciones/resultados.tex <<'RESEOF'
-% secciones/resultados.tex -- Sección 3: Resultados
-
-\subsection{Verificación de la implementación}
-\label{sec:verificacion}
-
-Antes de la calibración, la implementación del núcleo larvario se verificó contra el archivo de modelación publicado por \textcite{eriksenDynamicModellingFeed2022} como material suplementario, mediante comparación fórmula a fórmula. Las dos divergencias encontradas entre sus ecuaciones impresas y su propio archivo ---y la decisión de replicar el archivo--- se documentan en el Material Suplementario (sec.~\ref{sup:correspondencia}). Esta verificación garantiza que el código implementa el modelo de referencia tal como su autor lo opera numéricamente; su transferibilidad al sistema experimental de este estudio es lo que las secciones siguientes evalúan.
-
-\subsection{Ajuste de calibración}
-\label{sec:ajuste}
-
-El modelo se calibró en tres etapas desacopladas (sec.~\ref{sec:calibracion}). Para interpretar los resultados se distinguen tres configuraciones, definidas en la calibración. E0 es el modelo de referencia de \textcite{eriksenDynamicModellingFeed2022}: contiene únicamente el núcleo larvario, sin lecho microbiano ni acople con el alimento, y conserva sus parámetros originales. S es el modelo completo de este estudio ---núcleo recalibrado, acople con el alimento y lecho microbiano--- pero con el pastoreo anulado ($\gamma = 0$). C es el modelo completo con pastoreo activo, obtenido mediante las tres etapas de calibración. La comparación entre E0 y S muestra la consecuencia de incorporar el lecho sin su control top-down; la comparación entre S y C evalúa el efecto del pastoreo dentro de una misma estructura.
-
-La emisión observada en los ocho cierres varía entre 79.11 y 670.56~ppm/min, con una media de 317.20~ppm/min. Frente a esa referencia, el RMSE censurado de E0 es 180.53~ppm/min, equivalente al 56.9~\% de la media observada. Incorporar el lecho sin pastoreo empeora el ajuste: S alcanza 435.31~ppm/min, es decir, el 137.2~\% de la media. Al activar el pastoreo, C reduce el error a 86.41~ppm/min, equivalente al 27.2~\% de la media y dentro del criterio de aceptación declarado. Esto representa una reducción del 52.1~\% frente a E0 y del 80.2~\% frente a S. El error se denomina censurado porque los cuatro cierres saturados solo penalizan al modelo cuando su predicción queda por debajo de la cota observada.
-
-El ajuste del crecimiento presenta un comportamiento distinto. En los diez puntos utilizados para calibrar, correspondientes a los días 0--8, el peso fresco medio observado es 102.7~mg por larva y el RMSE de C es 36.2~mg, equivalente al 35.2~\%. El modelo reproduce la forma general de las curvas, pero con dos desajustes sistemáticos: subestima el crecimiento temprano del día~4 ---31~\% en D1 y 57~\% en D4--- y sobreestima el pico del día~8 ---32~\% en D1 y 24~\% en D4---. Por tanto, el bloque de gas cumple el criterio de aceptación, mientras que el crecimiento se utiliza como restricción fisiológica del ajuste y no como una predicción precisa punto por punto.
-
-El Cuadro~\ref{tab:cierres} permite examinar el gas cierre por cierre. En los cuatro no saturados, donde la comparación es completa, el patrón es consistente: E0 permanece aproximadamente entre 256 y 331~ppm/min y no reproduce el descenso de D4 desde 228.52 hasta 79.11~ppm/min. S sobreestima fuertemente la fase tardía, con 592.50 y 1065.71~ppm/min frente a 104.11 y 79.11 observados. C sigue la dirección del descenso: sus errores relativos son 6.5~\% en D1 día~10, 31.9~\% en D4 día~6, 49.7~\% en D4 día~10 y 98.3~\% en D4 día~14. Este último punto conserva un error grande en porcentaje, pero la diferencia absoluta es de 77.8~ppm/min ---comparable al error de fábrica del sensor (±50~ppm)--- mientras que sin pastoreo esa diferencia es de 986.6~ppm/min, una mejora de 12.7 veces.
-
-La Figura~\ref{fig:propios} explica este comportamiento mediante la descomposición de C en respiración larvaria y microbiana. En ausencia de pastoreo, el componente microbiano puede alcanzar 622.3~ppm/min en D1 día~10 y dominar la fase tardía. En C, el flujo de pastoreo limita la acumulación de biomasa microbiana y evita ese crecimiento desproporcionado. El pastoreo no elimina la fuente microbiana: la mantiene dentro de una magnitud compatible con las observaciones.
-
-El Cuadro~\ref{tab:calibrados} reporta los parámetros estimados. Cinco estimaciones alcanzaron una frontera de búsqueda: $k_{\mathrm{ref}}$ en ambas dietas y $\delta_{CS}$ en D1 alcanzaron el límite superior; $a_{\max}$ también alcanzó el superior, y $f_{\mathrm{mant}}$ el inferior. Estos valores se interpretan como límites del ajuste y no como estimaciones puntuales precisas.
-
-\begin{table}[htbp]
-  \centering
-  \footnotesize
-  \setlength{\tabcolsep}{2.5pt}
-  \caption{Cierres de gas del experimento propio: observaciones, predicciones de las tres configuraciones, errores relativos y mejora del modelo completo respecto al modelo sin pastoreo. Los valores precedidos de $\geq$ son cotas inferiores por saturación del sensor. El error se calcula como $(\text{predicción} - \text{observado}) / \text{observado} \times 100$. La columna `Mejora vs S' reporta el cociente del error absoluto de S entre el de C.}
-  \label{tab:cierres}
-  \begin{tabular}{llrrrrrrrrrl}
-    \toprule
-    Dieta & Día & Observado & E0 & err E0 & S & err S & C & err C & $\Delta$ abs. C & Mejora vs S & Sat. \\
-    \midrule
-    D1 & 6  & $\geq 670.56$ & 296.03 & cota & 630.12  & cota & 459.84  & cota & --- & --- & sí \\
-    D1 & 6  & $\geq 474.23$ & 296.03 & cota & 630.12  & cota & 459.84  & cota & --- & --- & sí \\
-    D1 & 8  & $\geq 311.82$ & 341.42 & cota & 730.29  & cota & 421.25  & cota & --- & --- & sí \\
-    D1 & 10 & 285.57        & 328.11 & +14.9 & 709.16  & +148.3 & 304.23  & +6.5 & 18.7 & 22.7× & no \\
-    D4 & 6  & 228.52        & 267.77 & +17.2 & 579.20  & +153.5 & 301.52  & +31.9 & 73.0 & 4.8× & no \\
+    D1 & 10 & 285.57        & 328.11 & +14.9 & 709.16  & +148.3 & 304.23  & +6.5 & 18.7 & 22.7\times & no \\
+    D4 & 6  & 228.52        & 267.77 & +17.2 & 579.20  & +153.5 & 301.52  & +31.9 & 73.0 & 4.8\times & no \\
     D4 & 8  & $\geq 383.67$ & 333.68 & cota & 676.49  & cota & 356.67  & cota & --- & --- & sí \\
-    D4 & 10 & 104.11        & 331.19 & +218.1 & 592.50  & +469.1 & 155.86  & +49.7 & 51.8 & 9.4× & no \\
-    D4 & 14 & 79.11         & 256.02 & +223.6 & 1065.71 & +1247.1 & 156.87 & +98.3 & 77.8 & 12.7× & no \\
+    D4 & 10 & 104.11        & 331.19 & +218.1 & 592.50  & +469.1 & 155.86  & +49.7 & 51.8 & 9.4\times & no \\
+    D4 & 14 & 79.11         & 256.02 & +223.6 & 1065.71 & +1247.1 & 156.87 & +98.3 & 77.8 & 12.7\times & no \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-{\footnotesize\noindent Nota: S corresponde al modelo completo recalibrado con $\gamma = 0$. El error de fábrica del sensor MH-410D es de $\pm 50$~ppm; en los cierres de menor emisión (D4 día~14: 79.11~ppm/min) esa incertidumbre representa $\pm 63$~\% del valor observado. La mejora del modelo se lee en la reducción del RMSE conjunto y en la contención de la fase tardía, no en el acierto punto por punto de cierres en el límite del rango del sensor. El RMSE censurado conjunto es: E0 = 180.53, S = 435.31 y C = 86.41~ppm/min.\par}
+\noindent \footnotesize Nota: S corresponde al modelo completo recalibrado con $\gamma = 0$. El error de fábrica del sensor MH-410D es de $\pm 50$~ppm; en los cierres de menor emisión (D4 día~14: 79.11~ppm/min) esa incertidumbre representa $\pm 63$~\% del valor observado. La mejora del modelo se lee en la reducción del RMSE conjunto y en la contención de la fase tardía, no en el acierto punto por punto de cierres en el límite del rango del sensor. El RMSE censurado conjunto es: E0 = 180.53, S = 435.31 y C = 86.41~ppm/min.\par
 
 \begin{table}[htbp]
   \centering
@@ -116,7 +75,7 @@ El Cuadro~\ref{tab:calibrados} reporta los parámetros estimados. Cinco estimaci
   \centering
   \footnotesize
   \setlength{\tabcolsep}{3pt}
-  \caption{Síntesis del desempeño por conjunto de datos. Los porcentajes asociados con un RMSE usan como denominador la media observada del bloque correspondiente. La última columna aplica los criterios operativos declarados en la sec.~\ref{sec:calibracion}; no constituye una prueba estadística de superioridad.}
+  \caption{Síntesis del desempeño por conjunto de datos. Los porcentajes asociados con un RMSE usan como denominador la media observada del bloque correspondiente. La última columna aplica los criterios operativos declarados en la sec.\~\ref{sec:calibracion}; no constituye una prueba estadística de superioridad.}
   \label{tab:externa}
   \begin{tabular}{p{2.8cm}p{2.1cm}p{2.2cm}p{2.6cm}p{1.2cm}p{2.1cm}}
     \toprule
@@ -124,20 +83,20 @@ El Cuadro~\ref{tab:calibrados} reporta los parámetros estimados. Cinco estimaci
     \midrule
     Propios: calibración, RMSE censurado & 180.53 (56.9~\%) & S: 435.31 (137.2~\%) & \textbf{86.41 (27.2~\%)} & $<$30~\% & C aceptable \\
     Propios: validación cruzada, RMSE censurado & 180.53 (56.9~\%) & A: 575.47 (181.4~\%) & \textbf{130.97 (41.3~\%)} & $<$50~\% & C aceptable \\
-    Ermolaev: acumulado al día~14, g/kg FW & 93.5 ($+1.2$~\%) & 122.6 ($+32.7$~\%) & \textbf{91.9 ($-0.5$~\%)} & $\pm25$~\% & E0 y C; C más cercano \\
+    Ermolaev: acumulado al día~14, g/kg FW & 93.5 ($+1.2$~\%) & 122.6 ($+32.7$~\%) & \textbf{91.9 ($-0.5$~\%)} & $\pm 25$~\% & E0 y C; C más cercano \\
     Ermolaev: RMSE de flujos, mg/min & 0.65 (12.1~\%) & 2.06 (38.3~\%) & \textbf{0.05 (0.9~\%)} & $<$15~\% & E0 y C; C mejor \\
-    Schøn: total de CO$_2$, cuatro dietas & 17.33~L en las cuatro & Errores de $+8$ a $+71$~\% & \textbf{Errores de $-6$ a $+44$~\%} & $\pm25$~\% & C: 3/4 dietas \\
-    Eriksen: verificación del núcleo & 54/60 métricas (90~\%) & No aplica & No aplica & $>80$~\% & Verificado \\
+    Sch\u00f8n: total de CO$_2$, cuatro dietas & 17.33~L en las cuatro & Errores de $+8$ a $+71$~\% & \textbf{Errores de $-6$ a $+44$~\%} & $\pm 25$~\% & C: 3/4 dietas \\
+    Eriksen: verificación del núcleo & 54/60 métricas (90~\%) & No aplica & No aplica & $>$80~\% & Verificado \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-{\footnotesize\noindent Notas: en calibración, S es el modelo completo recalibrado con $\gamma = 0$; en validación cruzada se muestra A, porque S no participa en ese protocolo. En Ermolaev, las columnas sin y con pastoreo corresponden al ajuste mínimo de nivel B con $\gamma = 0$ y con $\gamma$ transferido, respectivamente. En Schøn, E0 también queda dentro del $\pm25$~\% en tres dietas, pero asigna el mismo total a todas y no representa sus diferencias; C, además de quedar dentro del margen en tres dietas, recupera el orden decreciente de $f$ con la relación proteína:carbohidrato.\par}
+\noindent \footnotesize Notas: en calibración, S es el modelo completo recalibrado con $\gamma = 0$; en validación cruzada se muestra A, porque S no participa en ese protocolo. En Ermolaev, las columnas sin y con pastoreo corresponden al ajuste mínimo de nivel B con $\gamma = 0$ y con $\gamma$ transferido, respectivamente. En Sch\u00f8n, E0 también queda dentro del $\pm 25$~\% en tres dietas, pero asigna el mismo total a todas y no representa sus diferencias; C, además de quedar dentro del margen en tres dietas, recupera el orden decreciente de $f$ con la relación proteína:carbohidrato.\par
 
 \subsection{Atribución y capacidad predictiva fuera de muestra}
 \label{sec:atribucion}
 
-La comparación anidada de las cuatro configuraciones definidas en la sec.~\ref{sec:calibracion} se evaluó mediante validación cruzada interna agrupada por dieta y día. En cada uno de los siete pliegues se recalibraron las etapas con los días restantes y se predijo el día excluido, de modo que cada cierre de tratamiento fue predicho una única vez fuera de la calibración. El Cuadro~\ref{tab:cv} resume los resultados.
+La comparación anidada de las cuatro configuraciones definidas en la sec.\~\ref{sec:calibracion} se evaluó mediante validación cruzada interna agrupada por dieta y día. En cada uno de los siete pliegues se recalibraron las etapas con los días restantes y se predijo el día excluido, de modo que cada cierre de tratamiento fue predicho una única vez fuera de la calibración. El Cuadro~\ref{tab:cv} resume los resultados.
 
 C presenta el menor RMSE fuera de muestra: 130.97~ppm/min, una reducción del 27.4~\% frente a E0. En los cuatro cierres no saturados, la reducción es del 14.3~\%: 125.74 frente a 146.81~ppm/min. La recalibración del núcleo sin lecho (R) produce una mejora menor, con 164.41~ppm/min. En cambio, A degrada la predicción hasta 575.47~ppm/min: el lecho sin acople ni pastoreo sobreestima la fase tardía. Los parámetros de C permanecen relativamente estables entre pliegues ---$a_{\max}$ entre 1.47 y 1.50, y $\gamma$ entre 0.48 y 0.69---, aunque algunos pliegues alcanzan fronteras de búsqueda.
 
@@ -165,11 +124,11 @@ La incertidumbre se estimó remuestreando 5000 veces las predicciones fuera de c
 \subsection{Validación externa}
 \label{sec:externa}
 
-El protocolo de dos niveles descrito en el Material Suplementario (sec.~\ref{sup:externa}) se aplicó a \textcite{ermolaevGreenhouseGasEmissions2019}: 700 larvas sobre residuos de comida a 28~\textdegree C y alimentación por pulsos. Sin ajustar parámetros, E0 reproduce el acumulado del día~14 ---93.5 frente a $92.4 \pm 14.5$~g/kg FW--- y subestima la biomasa final en un 7~\%; sin embargo, su RMSE de flujos es 0.65~mg/min, mayor que el del modelo completo ajustado. Con ajuste mínimo de nivel B, eliminar el pastoreo eleva el acumulado a 122.6~g/kg FW ($+32.7$~\%) y el RMSE de flujos a 2.06~mg/min. Transferir el pastoreo reduce esos valores a 91.9~g/kg FW ($-0.5$~\%) y 0.05~mg/min. Este mejor ajuste del gas subestima la biomasa final ---58.7 frente a 101.9~mg~MS/larva---, un compromiso que se declara explícitamente. El reajuste estima $f = 0.741$, mientras que $\rho$ y $B_{\max,0}$ permanecen próximos a los valores obtenidos con los datos propios.
+El protocolo de dos niveles descrito en el Material Suplementario (sec.\~\ref{sup:externa}) se aplicó a \textcite{ermolaevGreenhouseGasEmissions2019}: 700 larvas sobre residuos de comida a 28~\textdegree C y alimentación por pulsos. Sin ajustar parámetros, E0 reproduce el acumulado del día~14 ---93.5 frente a $92.4 \pm 14.5$~g/kg FW--- y subestima la biomasa final en un 7~\%; sin embargo, su RMSE de flujos es 0.65~mg/min, mayor que el del modelo completo ajustado. Con ajuste mínimo de nivel B, eliminar el pastoreo eleva el acumulado a 122.6~g/kg FW ($+32.7$~\%) y el RMSE de flujos a 2.06~mg/min. Transferir el pastoreo reduce esos valores a 91.9~g/kg FW ($-0.5$~\%) y 0.05~mg/min. Este mejor ajuste del gas subestima la biomasa final ---58.7 frente a 101.9~mg~MS/larva---, un compromiso que se declara explícitamente. El reajuste estima $f = 0.741$, mientras que $\rho$ y $B_{\max,0}$ permanecen próximos a los valores obtenidos con los datos propios.
 
-En Schøn, E0 asigna 17.33~L de CO$_2$ a las cuatro dietas porque carece de un mecanismo que represente su calidad. El modelo con lecho pero sin pastoreo sobreestima los totales entre un 8 y un 71~\%; con pastoreo, los errores quedan entre $-6$ y $+44$~\%, con tres de cuatro dietas dentro del $\pm25$~\%. El pastoreo reduce los totales entre un 13 y un 15~\%, y el ajuste recupera el orden decreciente de $f$ con la relación proteína:carbohidrato. La dieta más pobre permanece fuera del margen y constituye un límite de transferibilidad. El Cuadro~\ref{tab:externa} resume estos resultados junto con los obtenidos en los datos propios y en la verificación del núcleo.
+En Sch\u00f8n, E0 asigna 17.33~L de CO$_2$ a las cuatro dietas porque carece de un mecanismo que represente su calidad. El modelo con lecho pero sin pastoreo sobreestima los totales entre un 8 y un 71~\%; con pastoreo, los errores quedan entre $-6$ y $+44$~\%, con tres de cuatro dietas dentro del $\pm 25$~\%. El pastoreo reduce los totales entre un 13 y un 15~\%, y el ajuste recupera el orden decreciente de $f$ con la relación proteína:carbohidrato. La dieta más pobre permanece fuera del margen y constituye un límite de transferibilidad. El Cuadro~\ref{tab:externa} resume estos resultados junto con los obtenidos en los datos propios y en la verificación del núcleo.
 
 \subsection{Límites declarados}
 \label{sec:limites}
 
-Se declaran cuatro límites. Primero, la cobertura de las cotas saturadas de C es 1/4: en tres de los cuatro cierres saturados el modelo predice por debajo de la cota observada, de modo que la reducción del RMSE censurado no implica que todas las predicciones superen los límites instrumentales. Segundo, la fase tardía no entró en el ajuste de las etapas 1 y 2; en los días 10 y 14 el modelo todavía sobreestima el peso larvario, con residuos de $+113$, $+46$, $+63$ y $+14$~mg en D1-10, D1-14, D4-10 y D4-14, respectivamente. Tercero, cinco estimaciones alcanzaron fronteras de búsqueda y deben interpretarse como límites del ajuste. Cuarto, la validación externa no es uniformemente satisfactoria: el ajuste de Ermolaev mejora el gas a costa de subestimar la biomasa, y en Schøn la dieta más pobre queda fuera del margen declarado.
+Se declaran cuatro límites. Primero, la cobertura de las cotas saturadas de C es 1/4: en tres de los cuatro cierres saturados el modelo predice por debajo de la cota observada, de modo que la reducción del RMSE censurado no implica que todas las predicciones superen los límites instrumentales. Segundo, la fase tardía no entró en el ajuste de las etapas 1 y 2; en los días 10 y 14 el modelo todavía sobreestima el peso larvario, con residuos de $+113$, $+46$, $+63$ y $+14$~mg en D1-10, D1-14, D4-10 y D4-14, respectivamente. Tercero, cinco estimaciones alcanzaron fronteras de búsqueda y deben interpretarse como límites del ajuste. Cuarto, la validación externa no es uniformemente satisfactoria: el ajuste de Ermolaev mejora el gas a costa de subestimar la biomasa, y en Sch\u00f8n la dieta más pobre queda fuera del margen declarado.
