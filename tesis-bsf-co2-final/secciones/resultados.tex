@@ -8,6 +8,8 @@ Antes de la calibración, la implementación del núcleo larvario se verificó c
 \subsection{Ajuste de calibración}
 \label{sec:ajuste}
 
+Antes de analizar los tratamientos, los controles sin larvas mostraron una emisión no larvaria persistente asociada al lecho: las tasas observadas estuvieron entre 52.95 y 108.02~ppm/min y aumentaron con el tiempo en ambas dietas. El módulo microbiano reprodujo su orden de magnitud y tendencia, con un RMSE de 14.43~ppm/min (20.9~\% de la media observada, 69.03~ppm/min), aunque subestimó seis de las siete observaciones. Estos controles se emplearon para calibrar la fuente microbiana y no constituyen una validación independiente de su cinética.
+
 El modelo se calibró en tres etapas desacopladas (sec.~\ref{sec:calibracion}). Para interpretar los resultados se distinguen tres configuraciones, definidas en la calibración. E0 es el modelo de referencia de \textcite{eriksenDynamicModellingFeed2022}: contiene únicamente el núcleo larvario, sin lecho microbiano ni acople con el alimento, y conserva sus parámetros originales. S es el modelo completo de este estudio ---núcleo recalibrado, acople con el alimento y lecho microbiano--- pero con el pastoreo anulado ($\gamma = 0$). C es el modelo completo con pastoreo activo, obtenido mediante las tres etapas de calibración. La comparación entre E0 y S muestra la consecuencia de incorporar el lecho sin su control top-down; la comparación entre S y C evalúa el efecto del pastoreo dentro de una misma estructura.
 
 La emisión observada en los ocho cierres varía entre 79.11 y 670.56~ppm/min, con una media de 317.20~ppm/min. Frente a esa referencia, el RMSE censurado de E0 es 180.53~ppm/min, equivalente al 56.9~\% de la media observada. Incorporar el lecho sin pastoreo empeora el ajuste: S alcanza 435.31~ppm/min, es decir, el 137.2~\% de la media. Al activar el pastoreo, C reduce el error a 86.41~ppm/min, equivalente al 27.2~\% de la media y dentro del criterio de aceptación declarado. Esto representa una reducción del 52.1~\% frente a E0 y del 80.2~\% frente a S. El error se denomina censurado porque los cuatro cierres saturados solo penalizan al modelo cuando su predicción queda por debajo de la cota observada.
@@ -91,7 +93,19 @@ El Cuadro~\ref{tab:calibrados} reporta los parámetros estimados. Cinco estimaci
   \end{tabular}
 \end{table}
 
-\noindent \footnotesize Notas: en calibración, S es el modelo completo recalibrado con $\gamma = 0$; en validación cruzada se muestra A, porque S no participa en ese protocolo. En Ermolaev, las columnas sin y con pastoreo corresponden al ajuste mínimo de nivel B con $\gamma = 0$ y con $\gamma$ transferido, respectivamente. En Schøn, E0 también queda dentro del $\pm 25$~\% en tres dietas, pero asigna el mismo total a todas y no representa sus diferencias; C, además de quedar dentro del margen en tres dietas, recupera el orden decreciente de $f$ con la relación proteína:carbohidrato.\par
+\noindent \footnotesize Nota: S corresponde al modelo completo recalibrado con
+$\gamma = 0$. El error de fábrica del sensor MH-410D, $\pm 50$~ppm, se refiere
+a concentración y no equivale a una incertidumbre de $\pm 50$~ppm/min. Su
+propagación a cada pendiente depende de los tiempos de lectura y del carácter
+sistemático o aleatorio del error, como se detalla en la
+sec.~\ref{sup:incertidumbre}; por ello no se expresa como un porcentaje
+directo de la tasa más baja. El peso de 25~ppm/min usado en el ajuste es una
+ponderación declarada, no un intervalo metrológico. La mejora del modelo se
+lee en la reducción del RMSE conjunto y en la contención de la fase tardía, no
+en el acierto punto por punto de cierres próximos al límite del sensor. El
+RMSE censurado conjunto es: E0 = 180.53, S = 435.31 y C =
+86.41~ppm/min.\par
+
 
 \subsection{Atribución y capacidad predictiva fuera de muestra}
 \label{sec:atribucion}
@@ -120,6 +134,11 @@ C presenta el menor RMSE fuera de muestra: 130.97~ppm/min, una reducción del 27
 \label{sec:bootstrap}
 
 La incertidumbre se estimó remuestreando 5000 veces las predicciones fuera de calibración, agrupadas por dieta y día. Para C, la reducción del RMSE censurado frente a E0 tiene una mediana de 27.7~\%, un intervalo percentil de $(-42.8, 46.0)$~\% y es positiva en el 90.9~\% de los remuestreos. El RMSE censurado de C tiene una mediana de 130.97~ppm/min y percentiles de 64.5 y 168.9~ppm/min. Estos intervalos describen la estabilidad frente al remuestreo de siete días de medición, no una validación independiente; la fracción de mejoras positivas tampoco debe interpretarse como una probabilidad de superioridad.
+
+\subsection{Sensibilidad local}
+\label{sec:sensibilidad}
+
+La sensibilidad local se evaluó perturbando individualmente $a_{\max}$, $\rho$, $f_{D4}$ y los parámetros microbianos $k_{\mathrm{ref}}$ y $\delta_{CS}$ de cada dieta, con perturbaciones de $\pm 10$~\% ---solo hacia el interior en las fronteras--- y los demás parámetros fijos. Los acumulados de CO$_2$ dependieron principalmente del núcleo larvario: reducir $a_{\max}$ un 10~\% disminuyó el total un 9.75~\% ---8.16~\% en D1 y 12.07~\% en D4--- y aumentó el RMSE censurado en 11.40~ppm/min. Perturbar $f_{D4}$ cambió el acumulado de D4 entre $-12.07$ y $+11.32$~\%, y el total entre $-4.92$ y $+4.62$~\%; su efecto sobre el ajuste fue asimétrico: aumentarla un 10~\% elevó el RMSE en 23.68~ppm/min, mientras que reducirla un 10~\% solo lo disminuyó en 0.31~ppm/min. En contraste, $\rho$ modificó el acumulado total en menos de 0.44~\%, y los parámetros microbianos en menos de 0.17~\%; sus efectos máximos sobre el RMSE fueron 2.43 y 0.09~ppm/min, respectivamente. Esta sensibilidad local complementa la comparación estructural entre E0, S y C, pero no mide por sí sola la importancia del lecho.
 
 \subsection{Validación externa}
 \label{sec:externa}

@@ -3,31 +3,552 @@
 
 \subsection{Balance molar de la cámara y conversión a ppm}
 \label{sup:balance}
-% TODO S1
+Sea $C_{\mathrm{ppm}}(t)$ la concentración de CO$_2$ en la cámara y
+$x_{\mathrm{CO_2}} = 10^{-6}C_{\mathrm{ppm}}$ su fracción molar. Durante un
+cierre, la cámara se considera estática, bien mezclada y a temperatura y
+presión aproximadamente constantes; también se desprecia la variación
+relativa del número total de moles de gas. Bajo esas condiciones, la ley de
+gases ideales da
+\begin{align*}
+n_{\mathrm{CO_2}}
+  = \frac{P V_{\mathrm{aire}}}{R_u T}\,x_{\mathrm{CO_2}},
+\qquad
+\frac{dn_{\mathrm{CO_2}}}{dt}
+  = \frac{P V_{\mathrm{aire}}}{R_u T}\,10^{-6}
+    \frac{dC_{\mathrm{ppm}}}{dt},
+\end{align*}
+donde $R_u = 8.314462618$~J~mol$^{-1}$~K$^{-1}$, $P$ se expresa en Pa,
+$T$ en K y $V_{\mathrm{aire}}$ en m$^3$. En la implementación, el volumen
+efectivo medido en litros se convierte a m$^3$ multiplicando por $10^{-3}$.
+
+Por estequiometría, cada mol de carbono respirado produce un mol de CO$_2$.
+Como $R_{C,\mathrm{total}}$ se expresa en g~C~d$^{-1}$, el flujo molar es
+\begin{align*}
+\frac{dn_{\mathrm{CO_2}}}{dt}
+  = \frac{R_{C,\mathrm{total}}}{12 \times 1440}
+  \qquad (\mathrm{mol~min^{-1}}),
+\end{align*}
+donde 12 es la masa molar del carbono en g~mol$^{-1}$ y 1440 convierte días
+a minutos. Al igualar ambas expresiones y despejar la pendiente se obtiene
+\begin{align*}
+\frac{dC_{\mathrm{ppm}}}{dt}
+  = 10^{6}\,\frac{R_u T}{P V_{\mathrm{aire}}}\,
+    \frac{R_{C,\mathrm{total}}}{12 \times 1440}
+  \qquad (\mathrm{ppm~min^{-1}}).
+\end{align*}
+El factor $10^6$ convierte la fracción molar a ppm. Si la emisión se expresa
+inicialmente como masa de CO$_2$, la conversión de carbono a CO$_2$ mediante
+$44/12$ y la posterior conversión a moles mediante 44 se cancelan, de modo
+que la ecuación anterior conserva exactamente la misma forma.
+
+El balance se aplica por separado a cada cierre. Como la cámara se ventila
+entre mediciones, la concentración no se acumula de un día a otro: el
+observable del modelo es la pendiente instantánea evaluada en el día del
+cierre, no una trayectoria continua de concentración. La saturación del
+sensor no modifica este balance; únicamente cambia el tratamiento del
+residuo, que se describe en la sec.~\ref{sec:calibracion}.
 
 \subsection{Extensiones del núcleo larvario al régimen por lotes}
 \label{sup:extensiones}
-% TODO S2
+El tiempo de integración es el tiempo desde el montaje, $t$, pero el
+programa de desarrollo depende de la edad fisiológica
+$\tau = t + 4.5$~d, pues las larvas tenían 4.5~d al montaje. El techo de
+biomasa estructural es
+\begin{align*}
+B_{\max}(\tau) =
+\begin{cases}
+B_{\max,0}, & \tau \leq t_{p,\min},\\
+B_{\max,0} - \rho(\tau-t_{p,\min}), & \tau > t_{p,\min},
+\end{cases}
+\end{align*}
+con $t_{p,\min}=13$~d desde la eclosión, equivalentes a 8.5~d desde el
+montaje. La pertenencia a cada instar se reevalúa en cada evaluación del
+estado; en particular, la prepupa es reversible: si $B$ vuelve a quedar por
+debajo de $B_{\max}(\tau)$, la larva retorna al instar~6, sin histéresis.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \setlength{\tabcolsep}{3pt}
+  \caption{Reglas operativas del núcleo larvario por instar.}
+  \label{tab:instares}
+  \begin{tabular}{p{2.1cm}p{3.5cm}p{4.5cm}p{3.1cm}}
+    \toprule
+    Regla & Instar 5 & Instar 6 & Prepupa (instar 7) \\
+    \midrule
+    Condición &
+      $B<B_{\max,0}/\delta_I$ &
+      $B_{\max,0}/\delta_I\leq B<B_{\max}(\tau)$ &
+      $B\geq B_{\max}(\tau)$ \\
+    Intensidad $a$ &
+      $a_{\max}$ &
+      $a_{\max}\left(1-(B/B_{\max}(\tau))^{\alpha}\right)$ &
+      $0$ \\
+    Mantenimiento $r_{C,m}$ &
+      $mB$ & $mB$ & $f_{\mathrm{mant}}mB$ \\
+    Balance estructural $r_B$ &
+      $\mu_B B$ & $\mu_B B$ & $-k_{\mathrm{cat}}B$ \\
+    Costo $r_{C,B}$ &
+      $Y_B r_B$ & $Y_B r_B$ & $0$ \\
+    Catabolismo $r_{\mathrm{cat}}$ &
+      $0$ & $0$ & $k_{\mathrm{cat}}B$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+La disponibilidad y la calidad del alimento modifican la intensidad de
+asimilación sin cambiar las reglas anteriores:
+\begin{align*}
+\Phi_D(D_C)=\frac{D_C}{K_D+D_C},
+\qquad
+a_{\mathrm{ef}}=a\,f_d\,\Phi_D(D_C),
+\qquad
+r_A=a_{\mathrm{ef}}B,
+\end{align*}
+con $f_{D1}=1$ y $f_{D4}$ calibrado. En los instares 5 y 6,
+\begin{align*}
+\mu_B=\frac{a_{\mathrm{ef}}-m}{1+Y_B}
+       \left(1-\left(\frac{B}{B_{\max}(\tau)}\right)^{\beta}\right).
+\end{align*}
+
+El remanente lipídico y su regla de depósito o movilización son
+\begin{align*}
+s_L &=
+\begin{cases}
+r_A-(r_B+r_{C,m}+r_{C,B}), & I=5,6,\\
+r_A-r_{C,m}, & I=7,
+\end{cases}\\
+r_L &=
+\begin{cases}
+s_L/(1+Y_L), & s_L\geq 0,\\
+s_L, & s_L<0,
+\end{cases}
+\qquad r_{C,L}=Y_L\max(r_L,0).
+\end{align*}
+Los balances de estado y la emisión larvaria se escriben de forma unificada:
+\begin{align*}
+\frac{dB}{d\tau}=r_B,\qquad
+\frac{dL_{\mathrm{tot}}}{d\tau}=r_L+\delta_{L,B}r_B,
+\end{align*}
+\begin{align*}
+r_{CO_2,\mathrm{lar}}
+  =r_{C,m}+r_{C,B}+r_{C,L}+r_{\mathrm{cat}}.
+\end{align*}
+
+Como $L_{\mathrm{tot}}$ incluye los lípidos estructurales, el carbono
+corporal sin doble conteo es
+$C_{\mathrm{cuerpo}}=(1-\delta_{L,B})B+L_{\mathrm{tot}}$. Con las reglas
+anteriores se verifica, tanto para $s_L\geq0$ como para $s_L<0$ y también en
+prepupa, el cierre
+\begin{align*}
+\frac{dC_{\mathrm{cuerpo}}}{d\tau}
+  =r_A-r_{CO_2,\mathrm{lar}}.
+\end{align*}
+
+Las condiciones iniciales se obtienen del peso seco inicial por larva,
+$X_{DW,0}$, mediante
+\begin{align*}
+B_0=X_{DW,0}\,\delta_{C,B}\delta_O,
+\qquad
+L_{\mathrm{tot},0}
+  =B_0\,\delta_{L,B}
+   \frac{\delta_{C,L}}{\delta_{C,B}\delta_O}.
+\end{align*}
+Los valores de los coeficientes y su procedencia se listan en la
+sec.~\ref{sup:params}.
 
 \subsection{Módulo microbiano del lecho: constante efectiva y humedad}
 \label{sup:microbiano}
-% TODO S3
+El lecho se describe mediante el carbono disponible del alimento, $D_C$, y la
+biomasa microbiana, $X$, ambos en g~C por cámara. La degradación sigue una
+cinética proporcional a la biomasa y saturada por el sustrato:
+\begin{align*}
+r_{\mathrm{deg}}
+  = k\,X\,\frac{D_C}{K_{SM}+D_C}
+  \qquad (\mathrm{g~C~d^{-1}}).
+\end{align*}
+La constante efectiva integra temperatura y humedad:
+\begin{align*}
+k(T_C,\theta)
+  = k_{\mathrm{ref}}\,
+    Q_{10}^{(T_C-25)/10}\,
+    \frac{\theta}{K_{\theta}+\theta},
+\end{align*}
+donde $T_C$ se expresa en grados Celsius y $\theta$ es la humedad efectiva del
+lecho. Como el experimento no registró la evolución de la humedad, $\theta$
+se mantuvo fija durante cada simulación; los valores de $Q_{10}$,
+$K_{\theta}$, $K_{SM}$ y los demás parámetros fijos se listan en la
+sec.~\ref{sup:params}.
+
+Los balances completos del módulo son
+\begin{align*}
+\frac{dD_C}{dt}
+  &= -\frac{N r_A}{1000} - r_{\mathrm{deg}},\\
+\frac{dX}{dt}
+  &= Y_X r_{\mathrm{deg}} - k_d X - G,\\
+\frac{dC_{\mathrm{CO_2,mic}}}{dt}
+  &= Y_{C,\mathrm{mic}}r_{\mathrm{deg}} + k_d X,\\
+\frac{dC_{\mathrm{res}}}{dt}
+  &= (1-Y_X-Y_{C,\mathrm{mic}})r_{\mathrm{deg}} + G.
+\end{align*}
+El factor $1/1000$ convierte la asimilación larvaria de mg~C a g~C. El
+decaimiento endógeno transfiere carbono de $X$ a CO$_2$; el carbono
+degradado que no forma biomasa ni se respira pasa al residuo estabilizado
+$C_{\mathrm{res}}$.
+
+El pastoreo larvario se calcula como
+\begin{align*}
+G
+  = \gamma\,\frac{N r_A}{1000}\,\frac{X}{K_G+X},
+\end{align*}
+con $\gamma$ en gramos de carbono microbiano pastoreado por gramo de carbono
+asimilado por las larvas. El carbono pastoreado no se añade a la asimilación
+larvaria: se transfiere a $C_{\mathrm{res}}$. En los controles sin larvas,
+$r_A=0$ y, por tanto, $G=0$; la misma anulación ocurre durante la prepupa.
+
+Las cargas de alimento se incorporan como pulsos instantáneos
+$\Delta D_{C,j}$ en los tiempos de alimentación, calculados a partir de la
+masa suministrada y su fracción de carbono degradable $\delta_{CS}$. Entre
+pulsos se integran las ecuaciones anteriores sin términos adicionales de
+entrada. En ausencia de pulsos, la suma de los balances verifica
+\begin{align*}
+\frac{d}{dt}
+\left(D_C+X+C_{\mathrm{CO_2,mic}}+C_{\mathrm{res}}\right)
+  = -\frac{N r_A}{1000},
+\end{align*}
+de modo que el decaimiento y el pastoreo solo redistribuyen el carbono entre
+compartimentos.
+
+Los controles sin larvas informan el producto efectivo $kX$, pero no permiten
+separar por completo $k$, $X$ y los rendimientos microbianos. Por ello se
+fijan $X_0=1$~g~C y $Y_X=Y_{C,\mathrm{mic}}=0.4$, y se calibran
+$k_{\mathrm{ref}}$ y $\delta_{CS}$ para cada dieta.
 
 \subsection{Justificación de las cotas de búsqueda de la calibración}
 \label{sup:cotas}
-% TODO S4
+Las cotas se fijaron antes del ajuste como restricciones operativas de búsqueda,
+no como intervalos universales para \textit{H. illucens}. El Cuadro
+\ref{tab:cotas-busqueda} las presenta en la escala original de los parámetros.
+En la implementación, $k_{\mathrm{ref}}$, $a_{\max}$ y $\rho$ se optimizan
+mediante sus logarithmos decimales; los demás parámetros se ajustan en su
+escala natural.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \caption{Cotas utilizadas en las tres etapas de calibración.}
+  \label{tab:cotas-busqueda}
+  \begin{tabular}{llll}
+    \toprule
+    Etapa & Parámetro & Cota inferior & Cota superior \\
+    \midrule
+    1 & $k_{\mathrm{ref}}$ en D1 y D4 (d$^{-1}$) & $10^{-3}$ & 1 \\
+    1 & $\delta_{CS}$ en D1 y D4 & 0.05 & 0.95 \\
+    2 & $a_{\max}$ (d$^{-1}$) & 1.0 & 1.5 \\
+    2 & $\rho$ (mg~C~d$^{-1}$) & 0.5 & 15 \\
+    2 & $f_{D4}$ & 0.4 & 1.0 \\
+    2 & $\gamma$ & 0 & 1 \\
+    3 & $f_{\mathrm{mant}}$ & 0.05 & 1.0 \\
+    3 & $k_{\mathrm{cat}}$ (d$^{-1}$) & 0 & 0.3 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+El intervalo de $k_{\mathrm{ref}}$ abarca tres órdenes de magnitud y permite
+representar desde una degradación lenta hasta una constante de referencia de
+1~d$^{-1}$. La fracción degradable $\delta_{CS}$ se mantiene estrictamente
+entre cero y uno. Para $a_{\max}$, la cota inferior conserva el valor heredado
+de 1~d$^{-1}$ y la superior limita su recalibración a 1.5~d$^{-1}$. El
+intervalo de $\rho$ incluye el valor heredado de 1~mg~C~d$^{-1}$, pero admite
+tanto una disminución más lenta como una contracción más rápida del techo
+estructural. La cota $f_{D4}\leq 1$ impide que la dieta de menor calidad
+supere la asimilación de D1, mientras que $\gamma=0$ conserva anidada la
+configuración sin pastoreo. En prepupa, $f_{\mathrm{mant}}$ representa entre
+el 5~\% y el 100~\% del mantenimiento ordinario, y $k_{\mathrm{cat}}=0$
+permite anular el catabolismo estructural.
+
+Cinco estimaciones alcanzaron una frontera: $k_{\mathrm{ref}}$ llegó a
+1~d$^{-1}$ en ambas dietas, $\delta_{CS}$ llegó a 0.95 en D1, $a_{\max}$
+alcanzó el límite superior ---reportado numéricamente como 1.4999~d$^{-1}$---
+y $f_{\mathrm{mant}}$ alcanzó el inferior de 0.05. Los demás parámetros
+quedaron en el interior de sus intervalos. Una estimación en frontera se
+interpreta como un límite del ajuste condicionado por el dominio admitido, no
+como una estimación puntual precisa del parámetro fisiológico.
+
+Para el ajuste mínimo de la validación externa se emplearon cotas separadas.
+En Ermolaev, los intervalos fueron $f\in[0.2,1.2]$,
+$t_{p,\min}\in[5,11]$~d en el eje temporal del ensayo ---equivalentes a
+10--16~d de edad fisiológica---, $\rho\in[0.5,15]$~mg~C~d$^{-1}$ y
+$B_{\max,0}\in[30,65]$~mg~C. En Schøn se reajustó únicamente $f$, con la
+misma cota $[0.2,1.2]$.
 
 \subsection{Parámetros fijos y tomados de la literatura}
 \label{sup:params}
-% TODO S5
+Esta sección distingue los parámetros heredados del modelo de referencia de
+aquellos fijados para cerrar las extensiones. Que un valor provenga de la
+literatura no implica que haya sido medido en este experimento ni que sea
+universal para otras dietas y condiciones de cría.
+
+\subsection*{Núcleo heredado de Eriksen}
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \caption{Parámetros del núcleo larvario conservados sin reajuste en el
+  modelo completo.}
+  \label{tab:s5-eriksen}
+  \begin{tabular}{llp{1.8cm}p{6.8cm}}
+    \toprule
+    Parámetro & Valor & Unidad & Procedencia \\
+    \midrule
+    $Y_B$ & 0.44 & adimensional & Costo respiratorio de síntesis estructural;
+    Tabla~1 de \textcite{eriksenDynamicModellingFeed2022}. \\
+    $Y_L$ & 0.42 & adimensional & Costo respiratorio de depósito lipídico;
+    Tabla~1 de Eriksen. \\
+    $m$ & 0.08 & d$^{-1}$ & Mantenimiento específico; Tabla~1 de Eriksen. \\
+    $\alpha$, $\beta$ & 1, 1 & adimensional & Exponentes del frenado de
+    asimilación y crecimiento; modelo de Eriksen. \\
+    $t_{p,\min}$ & 13 & d & Tiempo mínimo de desarrollo desde la eclosión;
+    equivale a 8.5~d desde el montaje. \\
+    $\delta_I$ & 5 & adimensional & Incremento relativo de biomasa entre
+    estadios; modelo de Eriksen. \\
+    $B_{\max,0}$ & 39.69 & mg~C & Valor de 90~mg de materia seca del archivo
+    oficial, multiplicado por $\delta_{C,B}=0.49$ y $\delta_O=0.9$. \\
+    $\delta_{L,B}$ & 0.1 & adimensional & Coeficiente de contenido lipídico
+    asociado a la biomasa estructural; Eriksen. \\
+    $\delta_{C,B}$ & 0.49 & adimensional & Fracción de carbono utilizada en
+    la conversión de biomasa estructural; Eriksen. \\
+    $\delta_{C,L}$ & 0.79 & adimensional & Fracción de carbono del lípido
+    empleada en el archivo oficial de Eriksen. \\
+    $\delta_O$ & 0.9 & adimensional & Fracción orgánica de la materia seca;
+    el resto corresponde a cenizas. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Los valores de referencia $a_{\max}=1$~d$^{-1}$ y
+$\rho=1$~mg~C~d$^{-1}$ se utilizan en las configuraciones con núcleo original,
+pero no son parámetros fijos del modelo completo: ambos se recalibran en la
+etapa~2. Análogamente, $f_{\mathrm{mant}}=1$ y $k_{\mathrm{cat}}=0$ recuperan
+el comportamiento original de prepupa, pero no sustituyen los valores
+estimados en la etapa~3.
+
+\subsection*{Acople, lecho y conversiones fijas}
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \caption{Parámetros fijados en las extensiones y en las conversiones de
+  unidades. Ninguno de ellos se estima en las tres etapas de calibración.}
+  \label{tab:s5-fijos}
+  \begin{tabular}{llp{1.8cm}p{6.8cm}}
+    \toprule
+    Parámetro & Valor & Unidad & Procedencia \\
+    \midrule
+    $f_{D1}$ & 1 & adimensional & Definición de D1 como dieta de referencia. \\
+    $K_D$ & 2 & g~C & Semisaturación de disponibilidad; valor fijo, pequeño
+    frente a las cargas del experimento. \\
+    $X_0$ & 1 & g~C & Normalización de la biomasa microbiana inicial,
+    necesaria porque los controles informan principalmente el producto $kX$. \\
+    $Y_X$ & 0.4 & adimensional & Rendimiento de crecimiento aerobio fijado por
+    identificabilidad, dentro del orden de magnitud de la literatura
+    \parencite{roels1980,shulerbioprocess2017}. \\
+    $Y_{C,\mathrm{mic}}$ & 0.4 & adimensional & Fracción respirada del carbono
+    degradado; junto con $Y_X$, deja una fracción de 0.2 para el residuo. \\
+    $K_{SM}$ & 50 & g~C & Semisaturación microbiana por sustrato, fijada para
+    cerrar la cinética sin añadir otro parámetro calibrado. \\
+    $Q_{10}$ & 2 & adimensional & Convención de la corrección térmica tipo
+    van 't Hoff; no se estima con los datos. \\
+    $T_{\mathrm{ref}}$ & 25 & °C & Temperatura de referencia de la corrección
+    $Q_{10}$. \\
+    $\theta$ & 0.7 & adimensional & Humedad efectiva constante ante la
+    ausencia de un registro dinámico del contenido de agua. \\
+    $K_{\theta}$ & 0.15 & adimensional & Semisaturación fijada para la
+    respuesta microbiana a la humedad. \\
+    $k_d$ & 0.05 & d$^{-1}$ & Decaimiento endógeno fijado según el orden de
+    magnitud de la literatura de heterótrofos aerobios \parencite{roels1980}. \\
+    $K_G$ & 0.1 & g~C & Semisaturación del encuentro larva--microbiota;
+    parámetro estructural no calibrado. \\
+    $\delta_{C,\mathrm{alim}}$ & 0.47 & g~C~g$^{-1}$~MS & Factor fijo para
+    convertir la materia seca del alimento en equivalentes de carbono. \\
+    $F_{MS}$ & 0.325 & adimensional & Factor fijo de conversión del peso
+    fresco larvario a materia seca en el ajuste de crecimiento. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Los valores $K_D$, $K_{SM}$, $\theta$, $K_{\theta}$ y $K_G$ son decisiones
+estructurales del modelo, no parámetros identificados independientemente por
+el experimento. Su función es cerrar las respectivas formas funcionales
+manteniendo limitado el número de grados de libertad.
+
+\subsection*{Implementación numérica}
+
+Todas las integraciones emplean LSODA. La verificación del núcleo y la etapa~1
+utilizan tolerancias relativa y absoluta de $10^{-7}$ y $10^{-10}$,
+respectivamente. Las etapas~2 y~3, así como la validación cruzada del modelo
+con lecho, emplean $10^{-6}$ y $10^{-9}$; en las configuraciones reducidas sin
+lecho de la validación cruzada se conservan $10^{-7}$ y $10^{-10}$. Las
+tolerancias absolutas se aplican a los estados en sus unidades internas.
+
+La integración se divide en segmentos delimitados por las cargas de alimento.
+El estado final de cada segmento inicializa el siguiente y el carbono de la
+nueva carga se añade como un pulso instantáneo. El orden de cálculo conserva
+la secuencia declarada: etapa~1 con los controles sin larvas, etapa~2 con gas
+y crecimiento, y etapa~3 con la fase tardía, congelando en cada paso los
+parámetros estimados anteriormente.
 
 \subsection{Dimensiones del montaje y equivalencias de materia seca}
 \label{sup:montaje}
-% TODO S6
+El modelo utiliza el volumen geométrico solo como descripción del montaje; la
+conversión de carbono respirado a ppm/min emplea el volumen de aire efectivo.
+Los valores utilizados son:
+\begin{itemize}
+  \item volumen geométrico aproximado de la cámara: 13.8~L;
+  \item volumen de aire efectivo: $V_{\mathrm{aire}}=12.1$~L;
+  \item volumen desplazado por el recipiente y su contenido: aproximadamente
+  1.7~L, por diferencia;
+  \item número de larvas por recipiente: $N=700$;
+  \item temperatura empleada en las simulaciones: $T=300.15$~K, equivalente
+  a 27~°C;
+  \item presión atmosférica empleada en el balance molar: 101325~Pa.
+\end{itemize}
+
+Cada recipiente recibió 500~g de alimento fresco en $t=0$ y 250~g en $t=5$~d.
+Las fracciones de materia seca del análisis bromatológico fueron 0.863 en D1 y
+0.803 en D4. Para una carga $j$ de la dieta $d$, la conversión es
+\begin{align*}
+M_{MS,j}=M_{\mathrm{fresco},j}\,f_{MS,d},
+\qquad
+\Delta D_{C,j}
+  =M_{MS,j}\,\delta_{C,\mathrm{alim}}\,\delta_{CS,d},
+\end{align*}
+donde $\delta_{C,\mathrm{alim}}=0.47$~g~C~g$^{-1}$~MS. El Cuadro
+\ref{tab:s6-alimento} presenta el carbono total antes de aplicar
+$\delta_{CS}$; el carbono efectivamente disponible $D_C$ se obtiene al
+multiplicar esos valores por la fracción degradable calibrada para cada dieta.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \caption{Equivalencias de las cargas de alimento por recipiente. El carbono
+  de la última columna es anterior a la aplicación de $\delta_{CS}$.}
+  \label{tab:s6-alimento}
+  \begin{tabular}{llrrrr}
+    \toprule
+    Dieta & Carga & Fresco (g) & $f_{MS}$ & Materia seca (g) &
+    Carbono (g~C) \\
+    \midrule
+    D1 & $t=0$~d & 500 & 0.863 & 431.50 & 202.805 \\
+    D1 & $t=5$~d & 250 & 0.863 & 215.75 & 101.403 \\
+    D1 & Total & 750 & --- & 647.25 & 304.208 \\
+    \midrule
+    D4 & $t=0$~d & 500 & 0.803 & 401.50 & 188.705 \\
+    D4 & $t=5$~d & 250 & 0.803 & 200.75 & 94.353 \\
+    D4 & Total & 750 & --- & 602.25 & 283.058 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Las condiciones larvarias iniciales se obtienen del peso fresco medio por
+larva al montaje, $PH_0$, mediante el factor fijo $F_{MS}=0.325$:
+\begin{align*}
+X_{DW,0}=PH_0F_{MS},\qquad
+B_0=X_{DW,0}\delta_{C,B}\delta_O,
+\end{align*}
+y las reservas lipídicas iniciales siguen la convención del archivo oficial de
+Eriksen:
+\begin{align*}
+L_{\mathrm{tot},0}
+  =B_0\delta_{L,B}
+  \frac{\delta_{C,L}}{\delta_{C,B}\delta_O}.
+\end{align*}
+Los valores resultantes se muestran en el Cuadro \ref{tab:s6-iniciales}; las
+cantidades de carbono son por larva y no se multiplican por $N$ hasta evaluar
+los balances de la cámara.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \caption{Conversión de las condiciones larvarias iniciales.}
+  \label{tab:s6-iniciales}
+  \begin{tabular}{lrrrr}
+    \toprule
+    Dieta & $PH_0$ (mg) & $X_{DW,0}$ (mg) & $B_0$ (mg~C) &
+    $L_{\mathrm{tot},0}$ (mg~C) \\
+    \midrule
+    D1 & 4.9 & 1.5925 & 0.7023 & 0.1258 \\
+    D4 & 3.3 & 1.0725 & 0.4730 & 0.0847 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+El tiempo $t=0$ corresponde al montaje, con larvas de 4.5~d de edad. Por
+tanto, la edad fisiológica utilizada por el núcleo es $\tau=t+4.5$~d y el
+umbral $t_{p,\min}=13$~d desde la eclosión se evalúa en $t=8.5$~d desde el
+montaje.
 
 \subsection{Propagación de la incertidumbre de las tasas}
 \label{sup:incertidumbre}
-% TODO S7
+La especificación de $\pm 50$~ppm del sensor MH-410D se refiere a concentración,
+no directamente a la pendiente de concentración expresada en ppm/min. La
+propagación debe hacerse para cada cierre a partir de las lecturas utilizadas
+en el ajuste lineal.
+
+Sean $C_i$ las concentraciones en ppm y $t_i$ los tiempos en minutos del tramo
+lineal. La pendiente estimada con intercepto libre es
+\begin{align*}
+\widehat r
+  =\frac{\sum_{i=1}^{n}(t_i-\bar t)C_i}{S_{tt}},
+\qquad
+S_{tt}=\sum_{i=1}^{n}(t_i-\bar t)^2 .
+\end{align*}
+Si las lecturas tuvieran errores aleatorios independientes, de media cero y
+desviación estándar común $\sigma_C$, la incertidumbre estándar de la
+pendiente sería
+\begin{align*}
+\sigma_r=\frac{\sigma_C}{\sqrt{S_{tt}}}.
+\end{align*}
+Por tanto, solo bajo el supuesto adicional de que 50~ppm representa una
+desviación estándar independiente por lectura podría escribirse
+$\sigma_r=50/\sqrt{S_{tt}}$~ppm/min. La especificación de exactitud del
+fabricante no demuestra por sí misma ese supuesto.
+
+Si, de forma conservadora, $\pm 50$~ppm se interpreta como una cota de error
+aditivo que puede variar entre lecturas, el modelo lineal proporciona la cota
+\begin{align*}
+|\Delta\widehat r|
+  \leq 50\,\frac{\sum_{i=1}^{n}|t_i-\bar t|}{S_{tt}}
+  \qquad (\mathrm{ppm/min}),
+\end{align*}
+sin asignar una distribución probabilística al error. En el extremo opuesto,
+un sesgo aditivo constante durante todo el cierre modifica el intercepto pero
+se cancela en la pendiente. Estos dos casos muestran por qué no es válido
+convertir la especificación del sensor en una incertidumbre universal de la
+tasa sin declarar el modelo de error.
+
+Para los tres cierres técnicos de una misma unidad, la tasa reportada es
+$\bar r=(r^{(1)}+r^{(2)}+r^{(3)})/3$. Si las pendientes fueran independientes,
+con incertidumbres $\sigma_{r,q}$, la incertidumbre de la media sería
+\begin{align*}
+\sigma_{\bar r}
+  =\frac{1}{3}\sqrt{\sigma_{r,1}^2+\sigma_{r,2}^2+\sigma_{r,3}^2},
+\end{align*}
+que se reduce a $\sigma_r/\sqrt{3}$ cuando las tres incertidumbres son
+iguales. Esta reducción no se aplica a un sesgo instrumental compartido.
+Además, las réplicas técnicas no sustituyen réplicas biológicas independientes.
+
+En los cierres saturados no se calcula un intervalo simétrico alrededor de la
+pendiente: la lectura truncada proporciona una cota inferior de la emisión y
+se conserva el tratamiento censurado descrito en la calibración. El coeficiente
+$R^2$ mide linealidad del tramo ajustado y tampoco sustituye la propagación de
+incertidumbre.
+
+El peso de 25~ppm/min utilizado en el bloque de gas es una ponderación
+declarada del ajuste, no una estimación metrológica derivada de los
+$\pm 50$~ppm del sensor. Esta distinción corrige la interpretación de la
+especificación instrumental sin modificar las tasas observadas ni los
+resultados de calibración.
 
 \subsection{Validación externa: digitalización y transferencia de estados}
 \label{sup:externa}
@@ -67,4 +588,140 @@ Los datos externos se digitalizaron de las figuras de los estudios originales (3
 
 \subsection{Correspondencia entre el modelo de Eriksen y la implementación}
 \label{sup:correspondencia}
-% TODO S9: tabla ecuación impresa <-> Excel oficial <-> código
+La comparación se realizó contra las ecuaciones del artículo de
+\textcite{eriksenDynamicModellingFeed2022}, su archivo oficial \emph{S1 Data}
+---hojas \emph{Main sheet} y \emph{Model}--- y la implementación de este
+estudio. Las referencias de celda corresponden a la primera fila de cálculo del
+archivo oficial; las filas siguientes repiten las mismas fórmulas.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \caption{Correspondencia del núcleo dinámico: ecuaciones impresas, archivo
+  oficial de Eriksen e implementación de este estudio.}
+  \label{tab:s9-nucleo}
+  \begin{tabular}{p{1.0cm}p{3.8cm}p{4.2cm}p{5.0cm}}
+    \toprule
+    Ecuación & Artículo impreso & \emph{S1 Data} & Este estudio \\
+    \midrule
+    (1)--(3) &
+    $dA/dt=0$, $dB/dt=r_B$ y
+    $dL_{\mathrm{tot}}/dt=r_L+\delta_{L,B}r_B$. &
+    \texttt{V4} verifica el cierre de asimilados; \texttt{H5} e \texttt{I5}
+    actualizan $B$ y $L_{\mathrm{tot}}$ por Euler. &
+    Las mismas ecuaciones definen \texttt{dB} y \texttt{dLtot}. El pool de
+    asimilados no se integra: su reparto instantáneo impone el mismo cierre. \\
+    \midrule
+    (4)--(5) &
+    $r_A=aB$, con $a$ según el instar. &
+    \texttt{N4} calcula $a$ y \texttt{P4=N4*H4}. &
+    $r_A=a_{\mathrm{ef}}B$. Con factor de alimento unitario,
+    $a_{\mathrm{ef}}=a$; el factor $f_d\Phi_D$ es una extensión propia. \\
+    \midrule
+    (6) &
+    $r_{CO_2,m}=mB$. &
+    \texttt{Q4=C20*H4}. &
+    $r_{C,m}=mB$ en los estadios alimentarios. El factor
+    $f_{\mathrm{mant}}$ de prepupa es una extensión; con valor 1 recupera el
+    núcleo original. \\
+    \midrule
+    (7)--(11) &
+    $r_B=\mu_BB$ hasta el instar 6 y cero en prepupa;
+    $\mu_B$ combina mantenimiento, costo de crecimiento y frenado logístico;
+    $r_{CO_2,B}=Y_Br_B$. &
+    \texttt{O4}, \texttt{R4} y \texttt{S4} aplican las mismas expresiones. &
+    Misma formulación para el núcleo original. El catabolismo
+    $r_B=-k_{\mathrm{cat}}B$ solo aparece en la extensión de prepupa y se
+    anula con $k_{\mathrm{cat}}=0$. \\
+    \midrule
+    (12)--(13) &
+    Reparto del excedente hacia lípidos y costo $Y_L$ solo durante su
+    síntesis. &
+    \texttt{T4} evalúa el signo del excedente y \texttt{U4} aplica el costo
+    solo si \texttt{T4>0}. &
+    Se calcula primero $s_L$ y después $r_L$ con la misma ramificación;
+    $r_{C,L}=Y_L\max(r_L,0)$. \\
+    \midrule
+    (14) &
+    Suma de mantenimiento y costos de síntesis estructural y lipídica. &
+    \texttt{AB4=(Q4+S4+U4)*(44/12)}. &
+    Suma de los mismos tres componentes; $r_{\mathrm{cat}}$ es adicional y
+    vale cero en el núcleo original. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \caption{Correspondencia de estadios, integración y conversiones de
+  biomasa.}
+  \label{tab:s9-conversiones}
+  \begin{tabular}{p{1.0cm}p{3.8cm}p{4.2cm}p{5.0cm}}
+    \toprule
+    Ecuación & Artículo impreso & \emph{S1 Data} & Este estudio \\
+    \midrule
+    (15) &
+    El umbral de prepupa utiliza $B_{\max,0}$. &
+    \texttt{K4} usa $B_{\max,0}/\delta_I$ para pasar al instar 6, pero el
+    techo dinámico \texttt{G4} para pasar al instar 7. &
+    Se reproduce el archivo: la prepupa comienza cuando
+    $B\geq B_{\max}(\tau)$, no cuando supera el techo constante. \\
+    \midrule
+    (16) &
+    $B_{\max}$ permanece constante hasta $t_{p,\min}$ y luego decrece
+    linealmente. &
+    \texttt{G4} implementa las dos ramas según la edad fisiológica. &
+    \texttt{Bmax\_t} reproduce las mismas ramas; el piso numérico evita
+    evaluar un techo no positivo fuera del dominio biológico. \\
+    \midrule
+    (17)--(18) &
+    Integración mediante Euler con paso de 0.01--0.02~d. &
+    Cada fila actualiza los estados con $\Delta t$; el valor predeterminado
+    es 0.01~d. &
+    Se emplea LSODA de paso adaptativo. Es una diferencia de método
+    numérico, no de ecuaciones. \\
+    \midrule
+    (19)--(21) &
+    Conversión de carbono estructural y lipídico a materia seca y fracción
+    lipídica. &
+    \texttt{W4}, \texttt{X4}, \texttt{Y4} y \texttt{AA4}. &
+    Se utilizan como observables en la verificación del núcleo; no añaden
+    estados ni modifican los balances dinámicos. \\
+    \midrule
+    (22) &
+    Conversión entre materia seca y peso fresco considerando el agua
+    estructural y los lípidos. &
+    \texttt{AC4} y \texttt{AD4}. &
+    Se evalúa en la verificación contra Eriksen. El factor $F_{MS}$ empleado
+    para preparar los datos propios es una convención separada y no sustituye
+    esta ecuación en dicha verificación. \\
+    \midrule
+    Iniciales &
+    No aparecen explícitamente como una ecuación numerada. &
+    \texttt{C35=C6*C11*C14} y
+    \texttt{I4=C35*C13*(C12/(C11*C14))}. &
+    $B_0=X_{DW,0}\delta_{C,B}\delta_O$ y
+    $L_{\mathrm{tot},0}=B_0\delta_{L,B}\delta_{C,L}/
+    (\delta_{C,B}\delta_O)$: coincidencia exacta. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+La comparación revela dos diferencias sustantivas entre el texto y su propio
+archivo. La primera es el umbral de prepupa de la ecuación~(15), ya descrito.
+La segunda es el carbono lipídico: el texto reporta $\delta_{C,L}=0.74$ para
+la trilaurina, mientras que \emph{Main sheet!C12} contiene 0.79; esta
+implementación conserva el valor del archivo. La ecuación~(7) impresa y la
+celda \texttt{R4}, en cambio, definen ambas el crecimiento estructural sin un
+máximo adicional en cero. Las guardas numéricas de la implementación protegen
+las evaluaciones fuera del dominio válido, pero no introducen una regla
+distinta dentro de las ramas fisiológicas.
+
+La verificación contra las métricas publicadas reproduce 54 de 60 casos
+(90~\%): $X_{DW}$, 15/15; tiempo de desarrollo, 14/15; contenido lipídico,
+15/15; y fracción de materia seca, 10/15. Se supera así el criterio mínimo
+declarado del 80~\%. Las seis discrepancias restantes se concentran en una
+métrica de tiempo de desarrollo y cinco de fracción de materia seca. Esta
+comparación evalúa fidelidad de implementación frente al modelo publicado; no
+constituye una validación independiente del modelo con los datos propios.
