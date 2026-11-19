@@ -53,18 +53,23 @@ residuo, que se describe en la sec.~\ref{sec:calibracion}.
 El tiempo de integración es el tiempo desde el montaje, $t$, pero el
 programa de desarrollo depende de la edad fisiológica
 $\tau = t + 4.5$~d, pues las larvas tenían 4.5~d al montaje. El techo de
-biomasa estructural es
+biomasa estructural se evalúa en dos pasos:
 \begin{align*}
-B_{\max}(\tau) =
+B_{\max}^{\mathrm{crudo}}(\tau) &=
 \begin{cases}
 B_{\max,0}, & \tau \leq t_{p,\min},\\
 B_{\max,0} - \rho(\tau-t_{p,\min}), & \tau > t_{p,\min},
-\end{cases}
+\end{cases}\\
+B_{\max}(\tau) &= \max\!\left(B_{\max}^{\mathrm{crudo}}(\tau),\varepsilon_B\right).
 \end{align*}
-con $t_{p,\min}=13$~d desde la eclosión, equivalentes a 8.5~d desde el
-montaje. La pertenencia a cada instar se reevalúa en cada evaluación del
-estado; en particular, la prepupa es reversible: si $B$ vuelve a quedar por
-debajo de $B_{\max}(\tau)$, la larva retorna al instar~6, sin histéresis.
+Aquí $t_{p,\min}=13$~d desde la eclosión, equivalentes a 8.5~d desde el
+montaje, y $\varepsilon_B=10^{-12}$~mg~C es un piso de protección numérica,
+no un tamaño fisiológico. La pertenencia a cada instar se reevalúa en cada
+evaluación del estado con prioridad de la condición de instar~5. Por debajo
+del techo, la función asigna el instar~6 solo si
+$B\geq B_{\max,0}/\delta_I$; si $B<B_{\max,0}/\delta_I$, asigna el instar~5.
+Esta regla operacional no documenta reversiones efectivamente ocurridas en el
+ensayo.
 
 \begin{table}[htbp]
   \centering
@@ -79,7 +84,7 @@ debajo de $B_{\max}(\tau)$, la larva retorna al instar~6, sin histéresis.
     Condición &
       $B<B_{\max,0}/\delta_I$ &
       $B_{\max,0}/\delta_I\leq B<B_{\max}(\tau)$ &
-      $B\geq B_{\max}(\tau)$ \\
+      $B\geq\max\{B_{\max}(\tau),B_{\max,0}/\delta_I\}$ \\
     Intensidad $a$ &
       $a_{\max}$ &
       $a_{\max}\left(1-(B/B_{\max}(\tau))^{\alpha}\right)$ &
@@ -672,8 +677,9 @@ archivo oficial; las filas siguientes repiten las mismas fórmulas.
     $B_{\max}$ permanece constante hasta $t_{p,\min}$ y luego decrece
     linealmente. &
     \texttt{G4} implementa las dos ramas según la edad fisiológica. &
-    \texttt{Bmax\_t} reproduce las mismas ramas; el piso numérico evita
-    evaluar un techo no positivo fuera del dominio biológico. \\
+    \texttt{Bmax\_t} reproduce las ramas y añade el piso numérico cuando la
+    recta cruda deja el dominio fisiológico; con la calibración actual esto
+    ocurre dentro del periodo simulado. \\
     \midrule
     (17)--(18) &
     Integración mediante Euler con paso de 0.01--0.02~d. &
