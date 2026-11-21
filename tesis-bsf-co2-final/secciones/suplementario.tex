@@ -605,6 +605,7 @@ archivo oficial; las filas siguientes repiten las mismas fórmulas.
   \caption{Correspondencia del núcleo dinámico: ecuaciones impresas, archivo
   oficial de Eriksen e implementación de este estudio.}
   \label{tab:s9-nucleo}
+  \setlength{\tabcolsep}{3pt}
   \begin{tabular}{p{1.0cm}p{3.8cm}p{4.2cm}p{5.0cm}}
     \toprule
     Ecuación & Artículo impreso & \emph{S1 Data} & Este estudio \\
@@ -662,6 +663,7 @@ archivo oficial; las filas siguientes repiten las mismas fórmulas.
   \caption{Correspondencia de estadios, integración y conversiones de
   biomasa.}
   \label{tab:s9-conversiones}
+  \setlength{\tabcolsep}{3pt}
   \begin{tabular}{p{1.0cm}p{3.8cm}p{4.2cm}p{5.0cm}}
     \toprule
     Ecuación & Artículo impreso & \emph{S1 Data} & Este estudio \\
@@ -705,8 +707,9 @@ archivo oficial; las filas siguientes repiten las mismas fórmulas.
     \midrule
     Iniciales &
     No aparecen explícitamente como una ecuación numerada. &
-    \texttt{C35=C6*C11*C14} y
-    \texttt{I4=C35*C13*(C12/(C11*C14))}. &
+    \texttt{C35=C6*C11*C14} y\newline
+    \texttt{I4=C35*C13*(C12/}\newline
+    \texttt{(C11*C14))}. &
     $B_0=X_{DW,0}\delta_{C,B}\delta_O$ y
     $L_{\mathrm{tot},0}=B_0\delta_{L,B}\delta_{C,L}/
     (\delta_{C,B}\delta_O)$: coincidencia exacta. \\
