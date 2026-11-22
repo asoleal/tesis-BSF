@@ -297,6 +297,67 @@ $t_{p,\min}\in[5,11]$~d en el eje temporal del ensayo ---equivalentes a
 $B_{\max,0}\in[30,65]$~mg~C. En Schøn se reajustó únicamente $f$, con la
 misma cota $[0.2,1.2]$.
 
+\subsection{Resultados de la calibración por etapas}
+\label{sup:resultados-calibracion}
+
+La calibración se ejecutó en tres etapas secuenciales para evitar la no identificabilidad. Los valores obtenidos con el modelo revisado (sin $Y_{C,\mathrm{mic}}$, $K_D$ ni correcciones $Q_{10}$) fueron:
+
+\paragraph{Etapa 1 --- lecho microbiano (controles, $N=0$).}
+Se ajustaron $k_{\mathrm{ref}}$ y $\delta_{CS}$ por dieta contra los cierres de CO$_2$ de controles sin larvas (días larvarios 6, 8, 10 en D1; 6, 8, 10, 14 en D4). El parámetro $k_{\mathrm{ref}}$ se optimizó en escala logarítmica; los residuos son diferencias de tasas en ppm/min.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \caption{Resultados de la calibración del lecho microbiano (etapa 1).}
+  \label{tab:s6-etapa1}
+  \begin{tabular}{llccc}
+    \toprule
+    Dieta & $k_{\mathrm{ref}}$ (d$^{-1}$) & $\delta_{CS}$ & RMSE (ppm/min) & Frontera \\
+    \midrule
+    D1 & 1.000 & 0.665 & 7.31 & $k_{\mathrm{ref}}$ (superior) \\
+    D4 & 1.000 & 0.538 & 7.79 & $k_{\mathrm{ref}}$ (superior) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{Etapa 2 --- núcleo larvario + acople (tratamientos, $N=700$).}
+Se ajustaron $a_{\max}$, $\rho$, $f_{D4}$ y $\gamma$ contra crecimiento (peso fresco) y gas (CO$_2$) de los tratamientos. Para evitar que la fase de prepupa distorsione los parámetros de crecimiento, el ajuste se restringió a días larvarios $\leq 8$. Los valores fijos de la etapa 1 se mantuvieron congelados.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \caption{Resultados de la calibración del núcleo larvario con acople (etapa 2).}
+  \label{tab:s6-etapa2}
+  \begin{tabular}{lcccc}
+    \toprule
+    Parámetro & Valor & Cota inferior & Cota superior & Frontera \\
+    \midrule
+    $a_{\max}$ (d$^{-1}$) & 1.180 & 1.0 & 1.5 & No \\
+    $\rho$ (mg C d$^{-1}$) & 3.000 & 0.5 & 15.0 & No \\
+    $f_{D4}$ & 0.698 & 0.4 & 1.0 & No \\
+    $\gamma$ & 0.170 & 0.0 & 1.0 & No \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{Comparación con el modelo de referencia.}
+Para cuantificar el aporte del lecho, se compararon las predicciones del modelo completo (C) contra el núcleo de \textcite{eriksen2022} sin extensión (E0). En los tratamientos, ambas configuraciones producen RMSE similares porque la emisión larvaria domina la señal. La diferencia aparece en los controles sin larvas: E0 predice cero CO$_2$ (RMSE 68--74~ppm/min), mientras que C reproduce las emisiones del lecho (RMSE 7.3--7.8~ppm/min).
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \caption{RMSE (ppm/min) de la comparación E0 vs C.}
+  \label{tab:s6-comparacion}
+  \begin{tabular}{lcccc}
+    \toprule
+    Configuración & Control D1 & Control D4 & Trat. D1 & Trat. D4 \\
+    \midrule
+    E0 (Eriksen puro) & 67.64 & 74.27 & 122.75 & 278.75 \\
+    C (completo) & \textbf{7.31} & \textbf{7.79} & 122.75 & 279.92 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 \subsection{Parámetros fijos y tomados de la literatura}
 \label{sup:params}
 Esta sección distingue los parámetros heredados del modelo de referencia de
@@ -734,3 +795,20 @@ declarado del 80~\%. Las seis discrepancias restantes se concentran en una
 métrica de tiempo de desarrollo y cinco de fracción de materia seca. Esta
 comparación evalúa fidelidad de implementación frente al modelo publicado; no
 constituye una validación independiente del modelo con los datos propios.
+
+\subsection{Limitaciones del modelo}
+\label{sup:limitaciones}
+
+El modelo presenta las siguientes limitaciones estructurales conocidas:
+
+\begin{enumerate}
+  \item \textbf{Fase de adaptación inicial:} el crecimiento observado entre los días 0 y 4 es más rápido que el predicho por el núcleo de \textcite{eriksen2022}. Esto sugiere una fase de aclimatación o expresión génica temprana no capturada por la cinética de asimilación--mantenimiento. El ajuste de la etapa~2 se restringió a días larvarios $\leq 8$ para evitar que esta discrepancia distorsione los parámetros de la fase de crecimiento estable.
+  
+  \item \textbf{Identificabilidad del lecho:} en los tratamientos con larvas, la contribución del lecho microbiano al CO$_2$ total es pequeña frente a la larvaria. Por tanto, los parámetros del lecho ($k_{\mathrm{ref}}$, $\delta_{CS}$) se calibran principalmente con los controles sin larvas, donde la señal es puramente microbiana.
+  
+  \item \textbf{Humedad y temperatura:} se asumen constantes ($27^\circ$C, humedad controlada). No se incluyen correcciones $Q_{10}$ ni cinéticas de humedad porque el experimento no registró la evolución temporal de estas variables.
+  
+  \item \textbf{No linealidad y mínimos locales:} la función de costo puede tener mínimos locales. Se mitiga con multinicio, pero no se garantiza el óptimo global.
+  
+  \item \textbf{Validación externa parcial:} los datos de \textcite{ermolaev2019} y \textcite{schoen2026} se usan para validación, pero corresponden a condiciones experimentales distintas (escala, dieta, densidad larvaria).
+\end{enumerate}
