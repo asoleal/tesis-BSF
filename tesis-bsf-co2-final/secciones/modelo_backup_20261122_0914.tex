@@ -1,0 +1,179 @@
+% secciones/modelo.tex -- Sec 2.2 Modelo
+
+El proceso se describe con un modelo dinámico de parámetros concentrados en equivalentes de carbono, que toma como núcleo el modelo de asimilación, crecimiento y producción de CO$_2$ de \textcite{eriksenDynamicModellingFeed2022} para \textit{H. illucens} y añade una extensión: una fuente microbiana asociada con la degradación del alimento no consumido. El estado integrado es $\mathbf{y} = (B, L_{\mathrm{tot}}, D_C, X)$, donde $B$ y $L_{\mathrm{tot}}$ son la biomasa estructural y los lípidos totales de la larva (mg~C larva$^{-1}$), $D_C$ el carbono del alimento disponible en la cámara (g~C) y $X$ la biomasa microbiana del lecho (g~C); el carbono respirado acumulado se lleva como variable contable. El modelo supone temperatura constante (medida), oxígeno no limitante dentro de los cierres y número de larvas $N$ constante. El origen temporal $t = 0$ es el montaje del experimento. El núcleo heredado de \textcite{eriksenDynamicModellingFeed2022} se calibró con larvas desde la eclosión, por lo que sus ecuaciones se gobiernan por la edad fisiológica $\tau = t + 4.5$~d; las extensiones propias (lecho microbiano, alimento) son procesos del experimento y se gobiernan por $t$. El umbral $t_{p,\min} = 13$~d desde la eclosión equivale entonces a 8.5~d desde el montaje.
+
+La cámara de medición mezcla dos fuentes de CO$_2$ que el sensor no puede separar: la respiración de las larvas y la degradación microbiana del alimento. Atribuir el total medido a cada fuente exige un término mecanístico para ambas. La larva se modela como un procesador de carbono: ingiere alimento y asimila una fracción proporcional a su tamaño (tasa $r_A$); ese carbono se reparte entre crecimiento de la estructura corporal ($B$), reservas lipídicas ($L_{\mathrm{tot}}$) y costos metabólicos pagados como CO$_2$ (mantenimiento $r_{C,m}$, síntesis de estructura y depósito de lípidos). Así, la emisión larvaria es la suma de esos costos: todo carbono asimilado que no permanece en el cuerpo sale como gas. En paralelo, el alimento no consumido se degrada en el lecho por la microbiota ambiental, con cinética propia. El resto de esta sección presenta el núcleo que describe la larva \parencite{eriksenDynamicModellingFeed2022}, después la fuente microbiana del lecho y al final el observable de cámara con el que se compara el modelo. El modelo de referencia no representa la fuente microbiana del lecho; se introduce en este artículo.
+
+\paragraph{Estadios de desarrollo.}
+Las larvas de \textit{H. illucens} crecen por mudas: entre muda y muda (un instar) su biomasa corporal se multiplica por un factor aproximadamente constante. El modelo no describe cada muda: comprime el desarrollo en tres estadios operativos según la biomasa estructural $B$ (el tejido corporal, sin las reservas lipídicas), con dos referencias de tamaño: la biomasa máxima $B_{\max,0}$ (el mayor tamaño que puede alcanzar una larva sin restricciones) y el umbral $B_{\max,0}/\delta_I$, donde $\delta_I = 5$ es el incremento relativo de peso por muda. Mientras $B < B_{\max,0}/\delta_I$ la larva está en el estadio inicial ($I = 5$), de asimilación plena; cuando $B_{\max,0}/\delta_I \leq B < B_{\max}(\tau)$ ha entrado en el último estadio alimentario ($I = 6$), con la asimilación frenada; y al alcanzar $B \geq B_{\max}(\tau)$ ---el techo de biomasa a la edad $\tau$--- pasa a prepupa ($I = 7$), que ya no se alimenta. La numeración no es arbitraria: el modelo de referencia inicia su descripción en el instar 5, el estadio de sus larvas iniciales (~5~d de edad), y numera los estadios consecutivamente hasta la prepupa; se conserva esa numeración para que ambos modelos sean directamente comparables.
+
+El máximo de biomasa que una larva puede alcanzar no es fijo. En la especie, el peso final y el tiempo de desarrollo se relacionan negativamente: las larvas que tardan más en crecer pupan a menor tamaño \parencite{eriksenDynamicModellingFeed2022}. El modelo lo representa con un techo que decrece con la edad a partir de un tiempo mínimo de desarrollo:
+
+\begin{equation}
+  B_{\max}^{\text{crudo}}(\tau) = B_{\max,0} - \rho \max(\tau - t_{p,\min}, 0),
+  \label{eq:techo-crudo}
+\end{equation}
+y aplica después la protección
+\begin{equation}
+  B_{\max}(\tau) = \max!\left(B_{\max}^{\text{crudo}}(\tau), \varepsilon_B\right),
+  \label{eq:techo}
+\end{equation}
+con $t_{p,\min} = 13$~d (ni la larva más rápida pupa antes) y $\varepsilon_B = 10^{-12}$~mg~C. El valor de referencia es $\rho = 1$~mg~C~d$^{-1}$, la razón a la que se estrecha la meta para las larvas lentas; en C este parámetro se recalibra. El piso $\varepsilon_B = 10^{-12}$~mg~C es un umbral numérico, no fisiológico: evita que el techo $B_{\max}(\tau)$ se anule o invierta, lo cual produciría una división por cero en las ecuaciones de asimilación~(\ref{eq:a-estadio}) y crecimiento~(\ref{eq:muB}). El valor protegido es también el que entra en la clasificación de instares. $B_{\max,0} = 39.69$~mg~C se hereda del modelo de referencia: es su valor por defecto de 90~mg de peso seco (dentro del rango 65--90~mg reportado por \citeauthor{eriksenDynamicModellingFeed2022}), escalado a carbono orgánico multiplicando por $\delta_{C,B} = 0.49$ (fracción de carbono de la biomasa estructural) y por $\delta_O = 0.9$ (fracción orgánica de esa biomasa; el resto es ceniza). En este estudio no se reajusta (sec.~\ref{sec:calibracion}). Estos coeficientes de composición, junto con $\delta_{C,L}$ y $\delta_{L,B}$, se emplean en todo el modelo para convertir entre peso fresco, peso seco y carbono; su lista completa está en el Material Suplementario (sec.~\ref{sup:params}).
+
+\paragraph{Adquisición y destino del carbono.}
+Fijados los estadios de desarrollo, el modelo describe cómo entra el carbono a la larva y a dónde va. La asimilación es proporcional al tamaño del cuerpo. La intensidad específica de asimilación $a$ depende del estadio:
+\begin{equation}
+  r_A = a\,B,
+  \label{eq:asim}
+\end{equation}
+con
+\begin{equation}
+  a = \begin{cases}
+    a_{\max}, & I = 5, \\[4pt]
+    a_{\max}\left(1 - (B/B_{\max}(\tau))^{\alpha}\right), & I = 6, \\[4pt]
+    0, & I = 7,
+  \end{cases}
+  \label{eq:a-estadio}
+\end{equation}
+donde $a_{\max} = 1$~d$^{-1}$ es la tasa específica máxima de asimilación ---el techo fisiológico de cuánto carbono incorpora la larva por unidad de biomasa estructural y por día--- y $\alpha = 1$. 
+En el estadio 5 la asimilación opera a su tasa máxima ($a = a_{\max}$). En el estadio 6 un factor logístico $1 - (B/B_{\max})^\alpha$ frena progresivamente la asimilación conforme la larva se acerca a su biomasa larval máxima; con $\alpha = 1$ se recupera la forma clásica de Verhulst. En prepupa ($I = 7$) la asimilación se anula ($a = 0$).
+
+La calidad de la dieta modula la asimilación mediante un factor adimensional $f_d$ que escala la intensidad del estadio. La tasa base $a$ (ec.~\ref{eq:a-estadio}) depende del estadío de desarrollo: plena en el estadio 5, frenada por el techo en el 6, nula en prepupa. Sobre esa tasa base, el factor $f_d$ representa la fracción de asimilación que la larva logra extraer de la dieta concreta:
+\begin{equation}
+  a_{\mathrm{ef}} = a\,f_d,
+  \label{eq:aef}
+\end{equation}
+con $f_d = 1$ en D1 (la dieta de referencia con que se calibró el modelo de Eriksen) y $f_d < 1$ en D4, estimado de los datos de este experimento (sec.~\ref{sec:calibracion}). La forma multiplicativa se elige por economía: no altera las ecuaciones del núcleo ni sus parámetros, y solo reduce la intensidad efectiva de asimilación cuando la dieta es de menor calidad.
+
+El carbono asimilado se reparte con prioridad fija. Primero, el mantenimiento:
+\begin{equation}
+  r_{C,m} = m\,B,
+  \label{eq:mant}
+\end{equation}
+proporcional a la estructura, con prioridad absoluta. Segundo, el crecimiento:
+\begin{equation}
+  r_B = \mu_B\,B,
+  \label{eq:crec}
+\end{equation}
+con tasa específica
+\begin{equation}
+  \mu_B = \frac{(a_{\mathrm{ef}} - m)}{1 + Y_B}\left(1 - \left(\frac{B}{B_{\max}(\tau)}\right)^{\beta}\right),
+  \label{eq:muB}
+\end{equation}
+y $\beta = 1$. Los tres factores se leen por separado: $(a_{\mathrm{ef}} - m)$ es lo que sobra de la asimilación después de pagar el mantenimiento; $1/(1 + Y_B)$ convierte ese remanente en crecimiento neto, porque fabricar estructura cuesta ---$Y_B$ unidades de CO$_2$ por cada unidad depositada: con $Y_B = 0.44$, de cada 1.44 unidades asignadas al crecimiento, 1 queda en el cuerpo y 0.44 se respiran---; y el factor logístico frena el crecimiento a medida que la larva se acerca a su biomasa larval máxima. En prepupa el crecimiento cesa, $r_B = 0$.
+
+Tercero, las reservas. El excedente después de mantenimiento y crecimiento es
+\begin{equation}
+  s_L = r_A - (r_B + r_{C,m} + Y_B\,r_B).
+  \label{eq:excedente}
+\end{equation}
+Si $s_L \geq 0$, el remanente se deposita como lípido:
+\begin{equation}
+  r_L = \frac{s_L}{1 + Y_L}, \qquad r_{C,L} = Y_L\,r_L,
+  \label{eq:lipidos-pos}
+\end{equation}
+donde $Y_L$ es el costo de depósito ---la versión de $Y_B$ para el almacén--- y $r_{C,L}$ el CO$_2$ asociado. Si $s_L < 0$ ---la asimilación no alcanza a pagar siquiera el mantenimiento, como en ayuno--- no hay nada que depositar: la larva moviliza sus reservas a razón
+\begin{equation}
+  r_L = s_L,
+  \label{eq:lipidos-neg}
+\end{equation}
+un flujo negativo que drena $L_{\mathrm{tot}}$, sin costo de depósito porque desmantelar el almacén no cuesta lo mismo que llenarlo.
+
+Los balances de estado recogen el resultado del reparto:
+\begin{align}
+  \frac{dB}{d\tau} &= r_B, \label{eq:balanceB} \\
+  \frac{dL_{\mathrm{tot}}}{d\tau} &= r_L + \delta_{L,B}\,r_B,
+  \label{eq:balanceL}
+\end{align}
+con $\delta_{L,B} = 0.1$: el tejido corporal no es proteína pura e incorpora alrededor de un 10% de lípido al crecer.
+
+\paragraph{El reparto no deja residuos.}
+Todo carbono que entra por $r_A$ termina en el cuerpo ($B$), en el almacén ($L_{\mathrm{tot}}$) o en el aire como CO$_2$ (los tres costos): el reparto no deja residuos. Esta cuenta cerrada es la base de la separación de fuentes que persigue este estudio: si el destino de cada unidad asimilada está resuelto por el modelo, la fracción que respira la larva queda determinada y no debe adjudicarse al total de la cámara.
+
+\paragraph{La emisión larvaria no se mide directamente.}
+La emisión de CO$_2$ de la larva no es un dato experimental directo: el sensor registra el total de la cámara (larva + lecho), y la fracción larvaria se obtiene sumando sus costos respiratorios del modelo:
+\begin{equation}
+  r_{CO_2,\mathrm{lar}} = r_{C,m} + r_{C,B} + r_{C,L} + r_{\mathrm{cat}},
+  \label{eq:emision}
+\end{equation}
+con $r_{C,B} = Y_B\,r_B$ el costo de síntesis estructural, $r_{C,L} = Y_L\,\max(r_L, 0)$ el costo de depósito lipídico ---solo se cobra cuando hay síntesis: movilizar reservas en ayuno no cuesta--- y $r_{\mathrm{cat}} = k_{\mathrm{cat}}B$ el catabolismo estructural de la prepupa (ec.~\ref{eq:rcat}), nulo fuera de ese estadio. En el modelo de referencia la prepupa no cataboliza su estructura ($k_{\mathrm{cat}} = 0$); aquí se introduce porque los datos de este estudio muestran que la biomasa larvaria cae en la fase tardía, señal de histólisis previa a la pupación. La ecuación~(\ref{eq:emision}) da la emisión en mg de carbono por larva y día; para comparar con el sensor, que mide CO$_2$, se convierte multiplicando por $44/12$, la razón entre el peso molecular del CO$_2$ (44~g/mol) y el peso atómico del carbono (12~g/mol). Esta emisión calculada, ya en unidades de CO$_2$, es el aporte larvario que se suma al microbiano y se compara con el sensor de la cámara en los resultados.
+
+Las condiciones iniciales traducen el tamaño de las larvas al montaje a las unidades del modelo. La larva se siembra con un peso fresco medido en el ensayo de crecimiento; el peso seco $X_{DW,0}$ (mg) se obtiene del peso fresco mediante la fracción de materia seca. De ese peso seco solo una parte es carbono en la unidad del modelo: la fracción orgánica $\delta_O = 0.9$ (el 10\% restante del peso seco es ceniza) contiene a su vez una fracción de carbono $\delta_{C,B} = 0.49$. Estos coeficientes de composición ---como $\delta_{L,B}$ y $\delta_{C,L}$--- se toman de la Tabla~1 del modelo de referencia \parencite{eriksenDynamicModellingFeed2022}: describen la composición química típica de la larva y no se miden en este estudio. El producto $B_0 = X_{DW,0}\,\delta_{C,B}\delta_O$ es el carbono que la larva trae en su cuerpo al montaje. Los lípidos iniciales se estiman con la misma lógica: una fracción $\delta_{L,B} = 0.1$ de la biomasa estructural es lípido (los lípidos del propio tejido), y ese lípido es carbono en una fracción $\delta_{C,L} = 0.79$ (valor del lípido de referencia del modelo, la trilaurina). El convenio del modelo de referencia asume que las reservas iniciales son exactamente esos lípidos estructurales: $L_{\mathrm{tot},0} = B_0\,\delta_{L,B}\,\delta_{C,L}/(\delta_{C,B}\delta_O)$. Qué parámetros se heredan, cuáles se fijan y cuáles se calibran se define en la sec.~\ref{sec:calibracion}; la procedencia valor por valor está en el Material Suplementario (sec.~\ref{sup:params}).
+
+\paragraph{El cierre del ciclo: prepupa.}
+Entrar en prepupa no congela a la larva: deja de asimilar ($r_A = 0$), pero sigue respirando y empieza a consumir su propia estructura. El modelo de referencia asume que la prepupa paga su mantenimiento movilizando lípidos a la tasa plena $mB$, como si la larva inmóvil conservara el metabolismo de un estadio alimentario. Los datos de este estudio contradicen esa suposición: la emisión cae fuertemente en la fase tardía (D4 día 14, Cuadro~3), señal de que el metabolismo de supervivencia es mucho menor. Se introduce entonces el factor $f_{\mathrm{mant}} \in (0,1]$ como la corrección mínima posible: un escalar que reduce el mantenimiento de prepupa sin alterar las ecuaciones del núcleo:
+\begin{equation}
+  r_{C,m} = f_{\mathrm{mant}}\,m\,B,
+  \label{eq:prep-mant}
+\end{equation}
+La calibración lo estima en la frontera inferior de su intervalo ($0.05$), es decir, una reducción del 95\% respecto al mantenimiento pleno. Este valor indica que la prepupa en este sistema opera cerca de un metabolismo basal mínimo; pero conviene declarar que no hay medidas directas de metabolismo de prepupa en \textit{H. illucens} que validen el mecanismo, de modo que $f_{\mathrm{mant}}$ se interpreta como un ajuste empírico, no como una constante fisiológica de la literatura del insecto. En paralelo, la estructura se cataboliza a tasa proporcional:
+\begin{equation}
+  \frac{dB}{d\tau} = -k_{\mathrm{cat}}\,B,
+  \label{eq:prep-cat}
+\end{equation}
+y el carbono catabolizado se respira entero:
+\begin{equation}
+  r_{\mathrm{cat}} = k_{\mathrm{cat}}\,B
+  \quad \text{(mg~C larva$^{-1}$ d$^{-1}$)},
+  \label{eq:rcat}
+\end{equation}
+sin pasar por el excedente de lípidos. Como $r_A = 0$, el excedente es $s_L = -r_{C,m} < 0$: las reservas pagan el mantenimiento reducido movilizándose a tasa $r_L = s_L$, sin costo de depósito, y no hay costos de síntesis ($r_{C,B} = r_{C,L} = 0$), de modo que la emisión de la prepupa es $r_{CO_2,\mathrm{lar}} = r_{C,m} + r_{\mathrm{cat}}$. La cuenta cierra exacto: como $L_{\mathrm{tot}}$ incluye los lípidos estructurales, el carbono corporal total se contabiliza sin duplicarlos como $C_{\mathrm{cuerpo}} = (1-\delta_{L,B})B + L_{\mathrm{tot}}$; con el balance anterior, en prepupa $dC_{\mathrm{cuerpo}}/d\tau = -(k_{\mathrm{cat}}B + f_{\mathrm{mant}}mB)$, que es exactamente lo respirado. La conservación del carbono vale entonces en los tres estadios. El módulo es además una extensión estricta del núcleo: con $f_{\mathrm{mant}} = 1$ y $k_{\mathrm{cat}} = 0$ reproduce exactamente la prepupa original, inmóvil y pagando $mB$ con lípidos. La clasificación se reevalúa sin histéresis; por debajo del techo, la regla asigna el instar 6 solo si $B \geq B_{\max,0}/\delta_I$. Los dos parámetros se estiman en la etapa 3 (sec.~\ref{sec:calibracion}).
+
+\paragraph{El lecho microbiano: una segunda fuente de CO$_2$.}
+Las larvas no consumen todo el sustrato: una fracci\'on permanece en el lecho, donde la microbiota ambiental la descompone en paralelo al consumo larvario. Los controles sin larvas del experimento lo confirman: producen CO$_2$ de forma sostenida, se\~nal que no puede atribuirse a la respiraci\'on larvaria. Esta fuente ---ausente en el modelo de referencia--- se describe con dos variables ya presentadas, el carbono disponible $D_C$ y la biomasa microbiana $X$ (g~C), y una cin\'etica de degradaci\'on proporcional a la biomasa microbiana y limitada por el sustrato:
+\begin{equation}
+  r_{\mathrm{deg}} = k\,X\,\frac{D_C}{K_{SM} + D_C}
+  \quad \text{(g~C~d$^{-1}$)},
+  \label{eq:deg}
+\end{equation}
+con $K_{SM}$ la constante de semisaturaci\'on por sustrato y $k$ la tasa efectiva de degradaci\'on. El carbono degradado se reparte en tres v\'ias: una fracci\'on $Y_X$ crea biomasa microbiana nueva, una fracci\'on $Y_{C,\mathrm{mic}}$ se emite como CO$_2$ ($r_{C,\mathrm{mic}} = Y_{C,\mathrm{mic}}\,r_{\mathrm{deg}}$) ---este es el aporte microbiano de la c\'amara--- y el resto permanece como residuo estabilizado. Los ensayos se realizaron a temperatura (27~$^\circ$C) y humedad aproximadamente constantes, de modo que $k$ se calibra directamente contra las curvas de los controles sin larvas; la temperatura y la humedad se reconocen como factores ambientales relevantes en la bioconversi\'on con \textit{H. illucens} \parencite{bekkerImpactSubstrateMoisture2021a}, pero no entran como par\'ametros activos del modelo en este ensayo. El balance de carbono del alimento cierra por conservaci\'on de masa. El estado $D_C$ (g~C) tiene dos salidas y ninguna entrada continua ---el alimento se incorpora como pulsos instant\'aneos, no como flujo---. Primera salida: el consumo larvario. Con $N$ larvas asimilando cada una a tasa $r_A$ (mg~C~larva$^{-1}$~d$^{-1}$), el flujo total es $N\,r_A$~mg~C~d$^{-1}$; pasando a gramos, $N\,r_A/1000$~g~C~d$^{-1}$. Segunda salida: la degradaci\'on microbiana del lecho, $r_{\mathrm{deg}}$ (g~C~d$^{-1}$), definida en la ecuaci\'on~(\ref{eq:deg}). La acumulaci\'on es $dD_C/dt$. Por conservaci\'on,
+\begin{equation}
+  \frac{dD_C}{dt} = -\frac{N\,r_A}{1000} - r_{\mathrm{deg}},
+  \label{eq:balanceDC}
+\end{equation}
+con el signo negativo porque ambas v\'ias restan carbono disponible. El factor $1000$ convierte las unidades del n\'ucleo larvario (mg~C) a las del lecho (g~C); es la \'unica convenci\'on adicional del balance, que en s\'i es un principio de conservaci\'on de masa. Hay una limitaci\'on de identificabilidad: los controles sin larvas informan el producto $k\,X$ pero no permiten separar $k$, $X$ y $Y_X$; se fijan entonces $X_0 = 1$~g~C y $Y_X = 0.4$ (rendimiento de crecimiento aerobio t\'ipico \parencite{roels1980,shulerbioprocess2017}) y se calibran $k$ y la fracci\'on de carbono degradable del alimento $\delta_{CS}$ contra las curvas de los controles (sec.~\ref{sec:calibracion}). Se declara un l\'imite del modelo: la asimilaci\'on larvaria $r_A = a_{\mathrm{ef}}B$ permanece positiva aunque $D_C$ caiga a cero. En este experimento el alimento nunca se agota ---las cargas totales superan ampliamente el consumo---, de modo que el modelo opera dentro de su rango de validez; fuera de \'el, cuando $D_C \to 0$, la formulaci\'on se vuelve mec\'anicamente inconsistente porque la larva seguir\'ia asimilando sin sustrato.
+
+La biomasa microbiana tampoco se acumula indefinidamente: una fracci\'on se autodestruye y respira su propio carbono, en la tradici\'on de los modelos de fase end\'ogena del crecimiento microbiano \parencite{henzeActivatedSludgeModels2015}. El modelo lo representa con un decaimiento de primer orden, $k_d\,X$, que se resta del crecimiento y cuyo carbono se emite como CO$_2$ microbiano:
+\begin{equation}
+  \frac{dX}{dt} = Y_X\,r_{\mathrm{deg}} - k_d\,X - G,
+  \label{eq:balanceX}
+\end{equation}
+donde $k_d = 0.05$~d$^{-1}$ es la tasa de decaimiento, fija de la literatura de heter\'otrofos aerobios (tiempo de recambio $\approx 20$~d; sec.~\ref{sup:params}), y $G$ es el pastoreo larvario. A medida que el sustrato se agota, $r_{\mathrm{deg}}$ cae y el decaimiento hace que $X$ alcance un m\'aximo y decrezca.
+
+\paragraph{Acoplamiento larva--lecho: pastoreo microbiano.}
+Las larvas de \textit{H. illucens} ingieren activamente microbios del sustrato junto con el alimento. La evidencia procede de tres l\'ineas convergentes. Primero, estudios de secuenciaci\'on del microbioma intestinal muestran que las larvas albergan en su tracto digestivo bacterias provenientes del ambiente de crianza ---Actinomyces, Dysgonomonas, Enterococcus y otros taxones del sustrato--- que constituyen una comunidad n\'ucleo estable \parencite{klammsteinerCoreGutMicrobiome2020}. La carga bacteriana aumenta de la regi\'on anterior a la posterior del intestino medio (de $10^3$ a $10^7$~UFC~g$^{-1}$), lo que indica acumulaci\'on activa de material microbiano ingerido \parencite{brunoIntestinalMicrobiotaHermetia2019}; el perfil taxon\'omico var\'ia con la dieta, confirmando que la larva procesa bacterias del sustrato \parencite{wynantsAssessingMicrobiotaBlack2019}. Segundo, an\'alisis metatranscript\'omicos revelan una remodelaci\'on funcional activa del microbioma intestinal en respuesta a la dieta, con transferencia de genes metab\'olicos entre el sustrato y el hospedero \parencite{waltPerfectSoldierBlack2026b}; el frass ---mezcla de sustrato no consumido, heces larvarias y microorganismos \parencite{pettengillEnvironmentalFrassRemodels2026}--- remodela el microbioma intestinal al aportar una cohorte de microorganismos degradadores de lignocelulosa, particularmente \textit{Rummeliibacillus} y \textit{Scedosporium}. Tercero, el principio de bacterivor\'ia en larvas de invertebrados ---obtenci\'on de carbono a trav\'es de la ingesti\'on de bacterias--- est\'a documentado en detrit\'ivoros acu\'aticos \parencite{douilletCarbonContributionBacterivory1993}, y los flujos de carbono entre el microbial loop y los macroinvertebrados constituyen un marco ecol\'ogico establecido \parencite{vanwensemCarbonNitrogenFluxes1997}. En conjunto, estas l\'ineas sustentan que la larva ingiere biomasa microbiana del sustrato; pero ninguna cuantifica el flujo de carbono bacteriano $\to$ larva en \textit{H. illucens}, de modo que el aporte nutricional directo de los microbios no puede parametrizarse con los datos disponibles.
+
+El modelo representa este ``pastoreo'' como un control top-down sobre la biomasa microbiana: un flujo proporcional a la asimilaci\'on larvaria y saturado en la biomasa disponible:
+\begin{equation}
+  G = \gamma\,\frac{N\,r_A}{1000}\,\frac{X}{K_G + X},
+  \label{eq:pastoreo}
+\end{equation}
+con $\gamma$ el coeficiente de pastoreo (g~C microbiano removido por g~C asimilado por la larva) y $K_G = 0.1$~g~C la semisaturaci\'on del encuentro, un valor representativo de la escala del sistema. El carbono pastoreado se incorpora al residuo estabilizado,
+\begin{equation}
+  \frac{dR}{dt} = (1 - Y_X - Y_{C,\mathrm{mic}})\,r_{\mathrm{deg}} + G,
+  \label{eq:residuo}
+\end{equation}
+consistente con la definici\'on de frass como mezcla que incluye material microbiano ingerido pero no asimilado \parencite{pettengillEnvironmentalFrassRemodels2026}. A esta resoluci\'on del modelo la larva no convierte los microbios ingeridos en biomasa estructural: el t\'ermino $G$ reduce $X$ y aumenta el residuo, cerrando el balance de carbono. Dos propiedades hacen al t\'ermino bien comportado: sin larvas no hay pastoreo ($G = 0$ en los controles) y en ayuno o prepupa se apaga solo ($r_A = 0$).
+
+Se declara una limitaci\'on metodol\'ogica: aunque la literatura documenta la transferencia de material microbiano del sustrato al tracto digestivo de \textit{H. illucens}, no existe una estimaci\'on directa del flujo de carbono bacteriano $\to$ larva. El par\'ametro $\gamma$ se calibra indirectamente contra las curvas de CO$_2$ de los tratamientos con larvas (sec.~\ref{sec:calibracion}); su estimaci\'on interior al intervalo de b\'usqueda confirma que el control top-down es identificable con estos datos.
+
+\paragraph{Del modelo al sensor: el observable de c\'amara.}
+El modelo produce tasas de carbono; el sensor registra una pendiente de concentraci\'on en ppm/min, y comparar ambos exige traducir una a la otra. El carbono respirado por la c\'amara completa es
+\begin{equation}
+  R_{C,\mathrm{total}} = \frac{N\,r_{CO_2,\mathrm{lar}}}{1000} + r_{C,\mathrm{mic}}
+  \quad \text{(g~C~d$^{-1}$)},
+  \label{eq:observable}
+\end{equation}
+con el factor $1000$ convierte mg~C (unidades del n\'ucleo larvario) a g~C (unidades del lecho). En la c\'amara est\'atica bien mezclada, la concentraci\'on de CO$_2$ sigue la ley del gas ideal. El volumen molar a la temperatura del ensayo es $V_m = R_u\,T/P$, con $R_u = 8.314$~J~mol$^{-1}$~K$^{-1}$ la constante universal, $T = 300.15$~K ($27^\circ$C) y $P = 101\,325$~Pa (presi\'on atmosf\'erica). La pendiente de concentraci\'on resulta:
+\begin{equation}
+  \frac{dC_{\mathrm{ppm}}}{dt} = \frac{10^{6}}{V_{\mathrm{aire}}}\,\frac{R_u\,T}{P}\,\frac{R_{C,\mathrm{total}}}{12 \times 1440}
+  \quad \text{(ppm~min$^{-1}$)},
+  \label{eq:gas-ideal}
+\end{equation}
+donde $V_{\mathrm{aire}} = 0.0121$~m$^3$ ($12.1$~L) es el volumen de aire efectivo de la c\'amara, $12$~g~mol$^{-1}$ el peso at\'omico del carbono, y $1440$~min~d$^{-1}$ la conversi\'on de d\'ias a minutos. Entre cierres la c\'amara se ventila, de modo que la concentraci\'on no se acumula de un d\'ia a otro: el observable del modelo es la pendiente instant\'anea evaluada en los d\'ias de medici\'on, no una trayectoria de concentraci\'on.
+
+\paragraph{El techo del sensor: cotas, no puntos.}
+En la mitad de los puntos de tratamiento los cierres alcanzaron la saturación del sensor; allí la lectura deja de seguir a la tasa real y el ajuste lineal subestima la emisión. Esos puntos no se descartan ni se tratan como valores exactos: se usan como cotas inferiores ---el modelo solo incurre en residual si su predicción queda por debajo de lo observado---, criterio que se formaliza con la calibración (sec.~\ref{sec:calibracion}). La fracción de puntos censurados y su efecto sobre los resultados se reportan en la sección de resultados.
+
+\paragraph{Fidelidad de la implementación.}
+La implementación de este estudio se verificó contra el archivo de modelación que \citeauthor{eriksenDynamicModellingFeed2022} publica como material suplementario, con comparación fórmula a fórmula. La verificación dejó dos divergencias documentadas entre las ecuaciones impresas del modelo de referencia y su propio archivo: el umbral de prepupa impreso usa el techo constante $B_{\max,0}$ mientras el archivo usa el techo decreciente $B_{\max}(\tau)$, y el valor impreso $\delta_{C,L} = 0.74$ aparece como $0.79$ en el archivo. Esta implementación reproduce el archivo en ambos casos. No existe la divergencia adicional de un máximo en cero en la ecuación de crecimiento: el texto y el archivo emplean la misma regla. De la misma manera, el reparto instantáneo descrito en esta sección reproduce el comportamiento del compartimento transitorio de asimilados del modelo impreso, que su propio archivo tampoco integra. La tabla de correspondencia completa (ecuación impresa $\leftrightarrow$ archivo $\leftrightarrow$ código de este estudio), junto con la comparación de métodos de integración, se reporta en el Material Suplementario (sec.~\ref{sup:correspondencia}).
