@@ -1,17 +1,5 @@
 #!/usr/bin/env python3
-"""Etapa 1 de calibracion: modulo microbiano contra controles de alimento.
-
-Se calibran por dieta k_ref (escala logaritmica) y delta_CS (fraccion
-degradable del carbono del alimento) contra los cierres de control
-(alimento sin larvas, N=0), por minimos cuadrados con region de confianza
-reflectante y multinicio.
-
-Fijos por no identificabilidad o por literatura:
-    X0 = 1 g C, Y_X = 0.4, K_SM = 50 g C,
-    delta_C_alim = 0.47 g C/g MS, T = 300.15 K, V_aire = 12.1 L.
-
-Reglas: si un optimo queda en la frontera de su cota, se reporta como tal.
-"""
+"""Etapa 1 de calibracion: modulo microbiano contra controles de alimento."""
 
 import argparse
 import sys
@@ -26,7 +14,6 @@ from scipy.optimize import least_squares
 
 from modelo.modelo_bsf import ParametrosLecho, carbono_a_ppm_min, tasas_lecho
 
-# Condiciones del montaje
 PULSOS = [(0.0, 500.0), (5.0, 250.0)]
 MS_DIETA = {"D1": 0.863, "D4": 0.803}
 T_K = 300.15
@@ -36,19 +23,15 @@ DELTA_C_ALIM = 0.47
 T_FIN = 14.0
 DIA_MONTAJE_SEP = 3
 
-# Fijos declarados
 X0_G_C = 1.0
 Y_X = 0.4
 K_SM = 50.0
 
-# Cotas fisicamente plausibles
 BOUNDS = {
     "log10_k_ref": (-3.0, 0.0),
     "delta_CS": (0.05, 0.95),
 }
-ARRANQUES = [
-    (-1.3, 0.6), (-0.3, 0.6), (-1.3, 0.2), (-0.3, 0.9),
-]
+ARRANQUES = [(-1.3, 0.6), (-0.3, 0.6), (-1.3, 0.2), (-0.3, 0.9)]
 
 
 def pulso_carbono(dieta, g_fresco, delta_CS):
@@ -56,14 +39,13 @@ def pulso_carbono(dieta, g_fresco, delta_CS):
 
 
 def simular_control(dieta, k_ref, delta_CS, t_eval):
-    """Lecho sin larvas: solo los estados [D_C, X], con los dos pulsos."""
     p_lecho = ParametrosLecho(
         f_dieta=1.0, k_ref=k_ref, K_SM=K_SM, Y_X=Y_X, delta_CS=delta_CS,
     )
 
     def rhs_lecho(t, y):
         D_C, X = [max(float(v), 0.0) for v in y]
-        micro = tasas_lecho(t, D_C, X, p_lecho, T_C)
+        micro = tasas_lecho(D_C, X, T_C, p_lecho)
         return [micro.dD_C, micro.dX]
 
     y = np.array([0.0, X0_G_C])
@@ -88,7 +70,7 @@ def simular_control(dieta, k_ref, delta_CS, t_eval):
     t = np.concatenate(ts)
     Y = np.concatenate(ys, axis=1)
     R_C = np.array([
-        tasas_lecho(0.0, max(float(y[0]), 0.0), max(float(y[1]), 0.0), p_lecho, T_C).rCmic
+        tasas_lecho(max(float(y[0]), 0.0), max(float(y[1]), 0.0), T_C, p_lecho).rCmic
         for y in Y.T
     ])
     return t, carbono_a_ppm_min(R_C, V_AIRE_L, T_K)
