@@ -10,7 +10,27 @@ Antes de la calibración, la implementación del núcleo larvario se verificó c
 
 Antes de analizar los tratamientos, los controles sin larvas mostraron una emisión no larvaria persistente asociada al lecho: las tasas observadas estuvieron entre 52.95 y 108.02~ppm/min y aumentaron con el tiempo en ambas dietas. El módulo microbiano reprodujo su orden de magnitud y tendencia, con un RMSE de 14.43~ppm/min (20.9~\% de la media observada, 69.03~ppm/min), aunque subestimó seis de las siete observaciones. Estos controles se emplearon para calibrar la fuente microbiana y no constituyen una validación independiente de su cinética.
 
-El modelo se calibró en tres etapas desacopladas (sec.~\ref{sec:calibracion}). Para interpretar los resultados se distinguen tres configuraciones, definidas en la calibración. E0 es el modelo de referencia de \textcite{eriksenDynamicModellingFeed2022}: contiene únicamente el núcleo larvario, sin lecho microbiano ni acople con el alimento, y conserva sus parámetros originales. S es el modelo completo de este estudio ---núcleo recalibrado, acople con el alimento y lecho microbiano--- pero con el pastoreo anulado ($\gamma = 0$). C es el modelo completo con pastoreo activo, obtenido mediante las tres etapas de calibración. El contraste E0--S combina la recalibración del núcleo, el acople con el alimento, el lecho y el módulo de prepupa; por tanto, no aísla el efecto del lecho. En cambio, S y C comparten estructura y parámetros, salvo $\gamma$, de modo que su comparación acota el efecto del pastoreo dentro del modelo.
+El modelo se calibró en tres etapas desacopladas (sec.~\ref{sec:calibracion}). Para interpretar los resultados se distinguen tres configuraciones, definidas en la calibración. E0 es el modelo de referencia de \textcite{eriksenDynamicModellingFeed2022}: contiene únicamente el núcleo larvario, sin lecho microbiano ni acople con el alimento, y conserva sus parámetros originales. S es el modelo completo de este estudio ---núcleo recalibrado, acople con el alimento y lecho microbiano--- pero con el pastoreo anulado ($\gamma = 0$). C es el modelo completo con pastoreo activo, obtenido mediante las tres etapas de calibración. 
+
+\paragraph{Comparación con el modelo de referencia.}
+Para cuantificar el aporte del lecho microbiano, se compararon las predicciones del modelo completo (C) contra el núcleo larvario de \textcite{eriksen2022} sin extensión (E0). En los tratamientos, ambas configuraciones producen RMSE similares (Tabla~\ref{tab:comparacion_E0_C}), porque la emisión larvaria domina la señal. La diferencia aparece en los controles sin larvas: E0 predice cero CO$_2$, con RMSE de 68--74~ppm/min, mientras que C reproduce las emisiones del lecho microbiano con RMSE de 7.3--7.8~ppm/min. El lecho es, por tanto, indispensable para cerrar el balance de carbono en ausencia de larvas, aunque su contribución relativa en los tratamientos es menor que la larvaria.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \caption{Comparación del modelo completo (C) contra el núcleo de referencia (E0). RMSE en ppm/min.}
+  \label{tab:comparacion_E0_C}
+  \begin{tabular}{lcccc}
+    \toprule
+    Configuración & Control D1 & Control D4 & Tratamiento D1 & Tratamiento D4 \\
+    \midrule
+    E0 (Eriksen puro) & 67.64 & 74.27 & 122.75 & 278.75 \\
+    C (completo) & \textbf{7.31} & \textbf{7.79} & 122.75 & 279.92 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+El contraste E0--S combina la recalibración del núcleo, el acople con el alimento, el lecho y el módulo de prepupa; por tanto, no aísla el efecto del lecho. En cambio, S y C comparten estructura y parámetros, salvo $\gamma$, de modo que su comparación acota el efecto del pastoreo dentro del modelo.
 
 La emisión observada en los ocho cierres varía entre 79.11 y 670.56~ppm/min, con una media de 317.20~ppm/min. Frente a esa referencia, el RMSE censurado de E0 es 180.53~ppm/min, equivalente al 56.9~\% de la media observada. La configuración S, que combina la recalibración del núcleo y las extensiones estructurales pero anula el pastoreo, empeora el ajuste respecto de E0: S alcanza 435.31~ppm/min, es decir, el 137.2~\% de la media. Al activar el pastoreo, C reduce el error a 86.41~ppm/min, equivalente al 27.2~\% de la media y dentro del criterio de aceptación declarado. Esto representa una reducción del 52.1~\% frente a E0 y del 80.2~\% frente a S. El error se denomina censurado porque los cuatro cierres saturados solo penalizan al modelo cuando su predicción queda por debajo de la cota observada.
 
