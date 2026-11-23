@@ -165,3 +165,29 @@ En Schøn, el nivel B reajusta $f$ por dieta contra las curvas horarias; por tan
 \label{sec:limites}
 
 Se declaran cuatro límites. Primero, la cobertura de las cotas saturadas de C es 1/4: en tres de los cuatro cierres saturados el modelo predice por debajo de la cota observada, de modo que la reducción del RMSE censurado no implica que todas las predicciones superen los límites instrumentales. Segundo, la evidencia tardía no es independiente: los cierres tardíos de gas participaron en la etapa~2 y los tres cierres exactos tardíos intervinieron en la calibración global de prepupa; además, en los días 10 y 14 el modelo todavía sobreestima el peso larvario, con residuos de $+113$, $+46$, $+63$ y $+14$~mg en D1-10, D1-14, D4-10 y D4-14, respectivamente. Tercero, cinco estimaciones alcanzaron fronteras de búsqueda y deben interpretarse como límites del ajuste. Cuarto, la validación externa no es uniformemente satisfactoria: el ajuste de Ermolaev mejora el gas a costa de subestimar la biomasa, y en Schøn la dieta más pobre queda fuera del margen declarado.
+
+\begin{table}[htbp]
+  \centering
+  \footnotesize
+  \setlength{\tabcolsep}{2.5pt}
+  \caption{Cierres de gas del experimento propio: observaciones, predicciones de las tres configuraciones, errores relativos y mejora del modelo completo respecto al modelo sin pastoreo. Los valores precedidos de $\geq$ son cotas inferiores por saturaci\'{o}n del sensor. El error relativo es la diferencia entre predicci\'{o}n y observaci\'{o}n, dividida por la observaci\'{o}n y multiplicada por 100. La columna `Mejora vs S' reporta el cociente del error absoluto de S entre el de C.}
+  \label{tab:cierres}
+  \begin{tabular}{llrrrrrrrrrl}
+    \toprule
+    Dieta & D\'{\i}a & Observado & E0 & err E0 & S & err S & C & err C & $\Delta$ abs. C & Mejora vs S & Sat. \\
+    \midrule
+    D1 & 6  & $\geq 670.56$ & 286.72 & cota & 622.68  & cota & 367.25  & cota & --- & --- & s\'{\i} \\
+    D1 & 6  & $\geq 474.23$ & 286.72 & cota & 622.68  & cota & 367.25  & cota & --- & --- & s\'{\i} \\
+    D1 & 8  & $\geq 311.82$ & 342.00 & cota & 796.29  & cota & 387.48  & cota & --- & --- & s\'{\i} \\
+    D1 & 10 & 285.57        & 348.03 & +21.9 & 993.16  & +247.8 & 369.32  & +29.3 & 83.8 & 8.5$\times$ & no \\
+    D4 & 6  & 228.52        & 145.70 & -36.2 & 401.01  & +75.5 & 240.60  & +5.3 & 12.1 & 14.3$\times$ & no \\
+    D4 & 8  & $\geq 383.67$ & 193.80 & cota & 588.26  & cota & 260.07  & cota & --- & --- & s\'{\i} \\
+    D4 & 10 & 104.11        & 240.86 & +131.3 & 777.70  & +647.0 & 294.97  & +183.3 & 190.9 & 3.5$\times$ & no \\
+    D4 & 14 & 79.11         & 270.10 & +241.4 & 997.53  & +1161.0 & 271.87 & +243.7 & 192.8 & 4.8$\times$ & no \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\noindent \footnotesize Nota: S corresponde al modelo completo con pastoreo anulado,
+$\gamma = 0$. El RMSE censurado de tratamientos es: E0 = 91.41, S = 515.54 y C =
+103.96~ppm/min. El RMSE agregado (controles + tratamientos) es: E0 = 82.72, S = 516.93 y C = 362.26~ppm/min.\par
