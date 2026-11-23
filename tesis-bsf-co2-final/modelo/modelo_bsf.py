@@ -34,6 +34,9 @@ class ParametrosEriksen:
     delta_CB: float = 0.49
     delta_CL: float = 0.79  # valor usado en el Excel oficial de Eriksen
     delta_O: float = 0.9
+    # Módulo de prepupa
+    f_mant_prepupa: float = 1.0  # factor del mantenimiento en instar 7
+    k_cat_prepupa: float = 0.0   # d^-1, catabolismo estructural en instar 7
 
 
 @dataclass(frozen=True)
@@ -114,8 +117,9 @@ def tasas_larva(
     """
     del Ltot  # Ltot no entra en las tasas del núcleo original.
     B = max(float(B), 0.0)
-    bm = Bmax_t(t, p)
-    I = instar(B, t, p)
+    tau = t + 4.5  # edad fisiológica; núcleo larvario gobernado por τ
+    bm = Bmax_t(tau, p)
+    I = instar(B, tau, p)
 
     if I < 6:
         a = p.amax
@@ -129,11 +133,18 @@ def tasas_larva(
     G = max(1.0 - (B / bm) ** p.beta, 0.0)
     muB = ((a_eff - p.m) / (1.0 + p.YB)) * G
 
-    rB = muB * B
-    rCB = p.YB * rB
-    rCm = p.m * B
-    sL = rA - (rB + rCm + rCB)
-    rcat = 0.0
+    if I <= 6:
+        rB = muB * B
+        rCB = p.YB * rB
+        rCm = p.m * B
+        sL = rA - (rB + rCm + rCB)
+        rcat = 0.0
+    else:
+        rB = -p.k_cat_prepupa * B
+        rCB = 0.0
+        rCm = p.m * p.f_mant_prepupa * B
+        sL = rA - rCm
+        rcat = p.k_cat_prepupa * B
     rL = sL / (1.0 + p.YL) if sL >= 0.0 else sL
     rCL = p.YL * max(rL, 0.0)
     rCO2_C = rCm + rCB + rCL + rcat

@@ -339,8 +339,24 @@ Se ajustaron $a_{\max}$, $\rho$, $f_{D4}$ y $\gamma$ contra crecimiento (peso fr
     \bottomrule
   \end{tabular}
 \end{table}
+
 \paragraph{Etapa 3 --- prepupa (tratamientos, d\'{\i}as larvarios $\geq 10$).}
 Se ajustaron $f_{\mathrm{mant}}$ y $k_{\mathrm{cat}}$ contra los cierres tard\'{\i}os de CO$_2$ de los tratamientos, cuando las larvas han iniciado la migraci\'{o}n y la emisi\'{o}n observada decrece. Los par\'{a}metros de las etapas 1 y 2 se mantuvieron congelados.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \caption{Resultados de la calibraci\'{o}n de la fase de prepupa (etapa 3).}
+  \label{tab:s6-etapa3}
+  \begin{tabular}{lcccc}
+    \toprule
+    Par\'{a}metro & Valor & Cota inferior & Cota superior & Frontera \\
+    \midrule
+    $f_{\mathrm{mant}}$ & 0.300 & 0.05 & 1.0 & No \\
+    $k_{\mathrm{cat}}$ (d$^{-1}$) & 0.050 & 0.0 & 0.3 & No \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 
 \paragraph{Comparación con el modelo de referencia.}
@@ -805,7 +821,7 @@ constituye una validación independiente del modelo con los datos propios.
 El modelo presenta las siguientes limitaciones estructurales conocidas:
 
 \begin{enumerate}
-  \item \textbf{Fases de transici\'{o}n:} el modelo subestima el crecimiento observado entre los d\'{\i}as 0 y 4 (fase de adaptaci\'{o}n) y no reproduce la ca\'{\i}da de emisi\'{o}n en la fase tard\'{\i}a (d\'{\i}as $\geq 10$; RMSE tard\'{\i}o D1=144, D4=394~ppm/min). Esta ca\'{\i}da no se explica por un m\'{o}dulo de prepupa porque el modelo no incluye el mecanismo de migraci\'{o}n/pupaci\'{o}n; se debe probablemente a una reducci\'{o}n de la asimilaci\'{o}n por agotamiento del alimento o a mortalidad parcial de larvas, procesos no capturados por la cin\'{e}tica de asimilaci\'{o}n--mantenimiento. El ajuste de la etapa~2 se restringi\'{o} a d\'{\i}as larvarios $\leq 8$ para evitar que la discrepancia de la fase tard\'{\i}a distorsione los par\'{a}metros de crecimiento.
+  \item \textbf{Fases de transici\'{o}n:} el modelo subestima el crecimiento observado entre los d\'{\i}as 0 y 4 (fase de adaptaci\'{o}n). La ca\'{\i}da de emisi\'{o}n en la fase tard\'{\i}a (d\'{\i}as $\geq 10$) se captura parcialmente con el m\'{o}dulo de prepupa ($f_{\mathrm{mant}} = 0.300$, $k_{\mathrm{cat}} = 0.050$~d$^{-1}$): el RMSE tard\'{\i}o mejora para D1 (17.8~ppm/min) pero permanece elevado para D4 (124.5~ppm/min). Esto sugiere que el mecanismo de reducci\'{o}n del mantenimiento m\'{a}s catabolismo estructural es insuficiente para la dieta de menor calidad, posiblemente por una din\'{a}mica microbiana del lecho no capturada o por mortalidad diferencial de larvas. El ajuste de la etapa~2 se restringi\'{o} a d\'{\i}as larvarios $\leq 8$ para evitar que la discrepancia de la fase tard\'{\i}a distorsione los par\'{a}metros de crecimiento.
   
   \item \textbf{Identificabilidad del lecho:} en los tratamientos con larvas, la contribución del lecho microbiano al CO$_2$ total es pequeña frente a la larvaria. Por tanto, los parámetros del lecho ($k_{\mathrm{ref}}$, $\delta_{CS}$) se calibran principalmente con los controles sin larvas, donde la señal es puramente microbiana.
   

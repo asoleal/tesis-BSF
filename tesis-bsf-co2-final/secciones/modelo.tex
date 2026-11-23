@@ -5,88 +5,24 @@ El proceso se describe con un modelo dinámico de parámetros concentrados en eq
 La cámara de medición mezcla dos fuentes de CO$_2$ que el sensor no puede separar: la respiración de las larvas y la degradación microbiana del alimento. Atribuir el total medido a cada fuente exige un término mecanístico para ambas. La larva se modela como un procesador de carbono: ingiere alimento y asimila una fracción proporcional a su tamaño (tasa $r_A$); ese carbono se reparte entre crecimiento de la estructura corporal ($B$), reservas lipídicas ($L_{\mathrm{tot}}$) y costos metabólicos pagados como CO$_2$ (mantenimiento $r_{C,m}$, síntesis de estructura y depósito de lípidos). Así, la emisión larvaria es la suma de esos costos: todo carbono asimilado que no permanece en el cuerpo sale como gas. En paralelo, el alimento no consumido se degrada en el lecho por la microbiota ambiental, con cinética propia. El resto de esta sección presenta el núcleo que describe la larva \parencite{eriksenDynamicModellingFeed2022}, después la fuente microbiana del lecho y al final el observable de cámara con el que se compara el modelo. El modelo de referencia no representa la fuente microbiana del lecho; se introduce en este artículo.
 
 \paragraph{Estadios de desarrollo.}
-Las larvas de \textit{H. illucens} crecen por mudas: entre muda y muda (un instar) su biomasa corporal se multiplica por un factor aproximadamente constante. El modelo no describe cada muda: comprime el desarrollo en tres estadios operativos según la biomasa estructural $B$ (el tejido corporal, sin las reservas lipídicas), con dos referencias de tamaño: la biomasa máxima $B_{\max,0}$ (el mayor tamaño que puede alcanzar una larva sin restricciones) y el umbral $B_{\max,0}/\delta_I$, donde $\delta_I = 5$ es el incremento relativo de peso por muda. Mientras $B < B_{\max,0}/\delta_I$ la larva está en el estadio inicial ($I = 5$), de asimilación plena; cuando $B_{\max,0}/\delta_I \leq B < B_{\max}(\tau)$ ha entrado en el último estadio alimentario ($I = 6$), con la asimilación frenada; y al alcanzar $B \geq B_{\max}(\tau)$ ---el techo de biomasa a la edad $\tau$--- pasa a prepupa ($I = 7$), que ya no se alimenta. La numeración no es arbitraria: el modelo de referencia inicia su descripción en el instar 5, el estadio de sus larvas iniciales (~5~d de edad), y numera los estadios consecutivamente hasta la prepupa; se conserva esa numeración para que ambos modelos sean directamente comparables.
-
-El máximo de biomasa que una larva puede alcanzar no es fijo. En la especie, el peso final y el tiempo de desarrollo se relacionan negativamente: las larvas que tardan más en crecer pupan a menor tamaño \parencite{eriksenDynamicModellingFeed2022}. El modelo lo representa con un techo que decrece con la edad a partir de un tiempo mínimo de desarrollo:
-
+El n\'{u}cleo de \textcite{eriksenDynamicModellingFeed2022} gobierna el desarrollo larvario por edad fisiol\'{o}gica $\tau = t + 4.5$~d, donde $t$ es el tiempo desde el inicio del experimento y $4.5$~d es la edad de las larvas al montaje. El techo de biomasa decrece con $\tau$ a partir de un tiempo m\'{\i}nimo $t_{p,\min} = 13$~d:
 \begin{equation}
-  B_{\max}^{\text{crudo}}(\tau) = B_{\max,0} - \rho \max(\tau - t_{p,\min}, 0),
-  \label{eq:techo-crudo}
-\end{equation}
-y aplica después la protección
-\begin{equation}
-  B_{\max}(\tau) = \max!\left(B_{\max}^{\text{crudo}}(\tau), \varepsilon_B\right),
+  B_{\max}(\tau) = \max\!\left(B_{\max,0} - \rho \max(\tau - t_{p,\min}, 0),\, \varepsilon_B\right),
   \label{eq:techo}
 \end{equation}
-con $t_{p,\min} = 13$~d (ni la larva más rápida pupa antes) y $\varepsilon_B = 10^{-12}$~mg~C. El valor de referencia es $\rho = 1$~mg~C~d$^{-1}$, la razón a la que se estrecha la meta para las larvas lentas; en C este parámetro se recalibra. El piso $\varepsilon_B = 10^{-12}$~mg~C es un umbral numérico, no fisiológico: evita que el techo $B_{\max}(\tau)$ se anule o invierta, lo cual produciría una división por cero en las ecuaciones de asimilación~(\ref{eq:a-estadio}) y crecimiento~(\ref{eq:muB}). El valor protegido es también el que entra en la clasificación de instares. $B_{\max,0} = 39.69$~mg~C se hereda del modelo de referencia: es su valor por defecto de 90~mg de peso seco (dentro del rango 65--90~mg reportado por \citeauthor{eriksenDynamicModellingFeed2022}), escalado a carbono orgánico multiplicando por $\delta_{C,B} = 0.49$ (fracción de carbono de la biomasa estructural) y por $\delta_O = 0.9$ (fracción orgánica de esa biomasa; el resto es ceniza). En este estudio no se reajusta (sec.~\ref{sec:calibracion}). Estos coeficientes de composición, junto con $\delta_{C,L}$ y $\delta_{L,B}$, se emplean en todo el modelo para convertir entre peso fresco, peso seco y carbono; su lista completa está en el Material Suplementario (sec.~\ref{sup:params}).
+con $B_{\max,0} = 39.69$~mg~C, $\rho = 1$~mg~C~d$^{-1}$ (recalibrado en este estudio) y $\varepsilon_B = 10^{-12}$~mg~C como protecci\'{o}n num\'{e}rica. Mientras $B < B_{\max}(\tau)$ la larva asimila alimento; cuando $B$ alcanza el techo la asimilaci\'{o}n cesa. Las extensiones propias (lecho, pastoreo) usan $t$; el n\'{u}cleo usa $\tau$. En este experimento de 14~d las larvas no alcanzan el techo; la descripci\'{o}n de estadios posteriores se omite.
 
-\paragraph{Adquisición y destino del carbono.}
-Fijados los estadios de desarrollo, el modelo describe cómo entra el carbono a la larva y a dónde va. La asimilación es proporcional al tamaño del cuerpo. La intensidad específica de asimilación $a$ depende del estadio:
+\paragraph{Adquisici\'{o}n y destino del carbono.}
+La asimilaci\'{o}n es proporcional a la biomasa estructural con intensidad $a_{\mathrm{ef}} = a_{\max} f_d$ (factor de calidad de dieta $f_d$). El carbono asimilado se reparte con prioridad fija: primero mantenimiento $r_{C,m} = m B$, luego crecimiento neto:
 \begin{equation}
-  r_A = a\,B,
-  \label{eq:asim}
-\end{equation}
-con
-\begin{equation}
-  a = \begin{cases}
-    a_{\max}, & I = 5, \\[4pt]
-    a_{\max}\left(1 - (B/B_{\max}(\tau))^{\alpha}\right), & I = 6, \\[4pt]
-    0, & I = 7,
-  \end{cases}
-  \label{eq:a-estadio}
-\end{equation}
-donde $a_{\max} = 1$~d$^{-1}$ es la tasa específica máxima de asimilación ---el techo fisiológico de cuánto carbono incorpora la larva por unidad de biomasa estructural y por día--- y $\alpha = 1$. 
-En el estadio 5 la asimilación opera a su tasa máxima ($a = a_{\max}$). En el estadio 6 un factor logístico $1 - (B/B_{\max})^\alpha$ frena progresivamente la asimilación conforme la larva se acerca a su biomasa larval máxima; con $\alpha = 1$ se recupera la forma clásica de Verhulst. En prepupa ($I = 7$) la asimilación se anula ($a = 0$).
-
-La calidad de la dieta modula la asimilación mediante un factor adimensional $f_d$ que escala la intensidad del estadio. La tasa base $a$ (ec.~\ref{eq:a-estadio}) depende del estadío de desarrollo: plena en el estadio 5, frenada por el techo en el 6, nula en prepupa. Sobre esa tasa base, el factor $f_d$ representa la fracción de asimilación que la larva logra extraer de la dieta concreta:
-\begin{equation}
-  a_{\mathrm{ef}} = a\,f_d,
-  \label{eq:aef}
-\end{equation}
-con $f_d = 1$ en D1 (la dieta de referencia con que se calibró el modelo de Eriksen) y $f_d < 1$ en D4, estimado de los datos de este experimento (sec.~\ref{sec:calibracion}). La forma multiplicativa se elige por economía: no altera las ecuaciones del núcleo ni sus parámetros, y solo reduce la intensidad efectiva de asimilación cuando la dieta es de menor calidad.
-
-El carbono asimilado se reparte con prioridad fija. Primero, el mantenimiento:
-\begin{equation}
-  r_{C,m} = m\,B,
-  \label{eq:mant}
-\end{equation}
-proporcional a la estructura, con prioridad absoluta. Segundo, el crecimiento:
-\begin{equation}
-  r_B = \mu_B\,B,
+  r_B = \frac{(a_{\mathrm{ef}} - m)}{1 + Y_B}\left(1 - \left(\frac{B}{B_{\max}(\tau)}\right)^{\beta}\right) B,
   \label{eq:crec}
 \end{equation}
-con tasa específica
-\begin{equation}
-  \mu_B = \frac{(a_{\mathrm{ef}} - m)}{1 + Y_B}\left(1 - \left(\frac{B}{B_{\max}(\tau)}\right)^{\beta}\right),
-  \label{eq:muB}
-\end{equation}
-y $\beta = 1$. Los tres factores se leen por separado: $(a_{\mathrm{ef}} - m)$ es lo que sobra de la asimilación después de pagar el mantenimiento; $1/(1 + Y_B)$ convierte ese remanente en crecimiento neto, porque fabricar estructura cuesta ---$Y_B$ unidades de CO$_2$ por cada unidad depositada: con $Y_B = 0.44$, de cada 1.44 unidades asignadas al crecimiento, 1 queda en el cuerpo y 0.44 se respiran---; y el factor logístico frena el crecimiento a medida que la larva se acerca a su biomasa larval máxima. En prepupa el crecimiento cesa, $r_B = 0$.
-
-Tercero, las reservas. El excedente después de mantenimiento y crecimiento es
-\begin{equation}
-  s_L = r_A - (r_B + r_{C,m} + Y_B\,r_B).
-  \label{eq:excedente}
-\end{equation}
-Si $s_L \geq 0$, el remanente se deposita como lípido:
-\begin{equation}
-  r_L = \frac{s_L}{1 + Y_L}, \qquad r_{C,L} = Y_L\,r_L,
-  \label{eq:lipidos-pos}
-\end{equation}
-donde $Y_L$ es el costo de depósito ---la versión de $Y_B$ para el almacén--- y $r_{C,L}$ el CO$_2$ asociado. Si $s_L < 0$ ---la asimilación no alcanza a pagar siquiera el mantenimiento, como en ayuno--- no hay nada que depositar: la larva moviliza sus reservas a razón
-\begin{equation}
-  r_L = s_L,
-  \label{eq:lipidos-neg}
-\end{equation}
-un flujo negativo que drena $L_{\mathrm{tot}}$, sin costo de depósito porque desmantelar el almacén no cuesta lo mismo que llenarlo.
-
-Los balances de estado recogen el resultado del reparto:
+y el excedente $s_L = r_A - (r_B + r_{C,m} + Y_B r_B)$ se deposita como l\'{\i}pido $r_L = s_L/(1+Y_L)$ si $s_L \geq 0$, o se moviliza $r_L = s_L$ si $s_L < 0$ (ayuno). Los balances de estado son:
 \begin{align}
-  \frac{dB}{d\tau} &= r_B, \label{eq:balanceB} \\
-  \frac{dL_{\mathrm{tot}}}{d\tau} &= r_L + \delta_{L,B}\,r_B,
-  \label{eq:balanceL}
+  \frac{dB}{d\tau} &= r_B, \\
+  \frac{dL_{\mathrm{tot}}}{d\tau} &= r_L + \delta_{L,B}\,r_B.
 \end{align}
-con $\delta_{L,B} = 0.1$: el tejido corporal no es proteína pura e incorpora alrededor de un 10% de lípido al crecer.
-
 \paragraph{El reparto no deja residuos.}
 Todo carbono que entra por $r_A$ termina en el cuerpo ($B$), en el almacén ($L_{\mathrm{tot}}$) o en el aire como CO$_2$ (los tres costos): el reparto no deja residuos. Esta cuenta cerrada es la base de la separación de fuentes que persigue este estudio: si el destino de cada unidad asimilada está resuelto por el modelo, la fracción que respira la larva queda determinada y no debe adjudicarse al total de la cámara.
 

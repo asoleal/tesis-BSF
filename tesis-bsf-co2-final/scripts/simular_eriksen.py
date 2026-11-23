@@ -40,7 +40,7 @@ def simular_eriksen(dieta, t_eval):
         amax=A_MAX, alpha=1.0, beta=1.0, YB=0.44, YL=0.15, m=0.15,
         Bmax0=39.69, tp_min=13.0, rho=RHO, delta_I=1.25,
         delta_LB=0.1, delta_CB=0.49, delta_CL=0.79, delta_O=0.9,
-        f_mant_prepupa=0.3, k_cat_prepupa=0.02,
+         
     )
     f_dieta = F_D4 if dieta == "D4" else 1.0
     p_lecho = ParametrosLecho(
