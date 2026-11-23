@@ -1,9 +1,93 @@
-% secciones/discusion.tex -- Sec 4 Discusión
+\section{Discusi\'{o}n}
+\label{sec:discusion}
 
-Este estudio parte de una pregunta simple ---cuánto del CO$_2$ medido en un contenedor de bioconversión respiran las larvas y cuánto el lecho--- y la aborda mediante una implementación verificada del núcleo fisiológico, una comparación entre configuraciones y una evaluación con límites declarados. El resultado central es que C mejora el ajuste del caso de estudio, pero la evaluación cruzada no demuestra superioridad predictiva general. Su RMSE censurado agregado es 130.97 frente a 180.53~ppm/min de E0; sin embargo, los parámetros de prepupa permanecieron fijos en valores ajustados con todos los datos tardíos, por lo que el agregado es híbrido. En los cinco cierres tempranos, A presenta el menor RMSE censurado, 122.87~ppm/min, frente a 147.06 de C; en los tres tardíos, C alcanza 98.50 frente a 168.00~ppm/min de E0, pero esos cierres participaron en la calibración global de prepupa. R reduce el error agregado a 164.41~ppm/min, mientras que el paso de R a C combina lecho, acople, pastoreo y prepupa y no aísla una contribución mecanística. Además, el intervalo percentil bootstrap de la reducción agregada de C frente a E0, $(-42.8,46.0)$~\%, incluye valores negativos y hereda la dependencia tardía; no constituye una prueba concluyente de superioridad.
+El modelo propuesto integra el n\'{u}cleo bioenerg\'{e}tico de
+\parencite{eriksen2022} con un m\'{o}dulo microbiano del lecho y un
+mecanismo de pastoreo larvario, todo dentro de un marco de balanza de
+carbono expl\'{i}cita. Los resultados obligan a una lectura honesta:
+la extensi\'{o}n no mejora la predicci\'{o}n del CO$_2$ en tratamientos
+con larvas respecto al n\'{u}cleo puro (RMSE 104 vs 91~ppm/min), pero
+cierra el balance de carbono en los controles sin larvas, donde el
+n\'{u}cleo falla estrepitosamente (RMSE 71.5 vs 22.8~ppm/min). El
+valor del modelo completo no est\'{a} en una mayor precisi\'{o}n del
+gas, sino en que un solo marco mecan\'{i}stico reproduce el sistema
+batch con y sin larvas, separando las fuentes de emisi\'{o}n.
 
-El contraste estructural es compatible con un control top-down de la biomasa microbiana dentro de la formulación asumida. En calibración, anular el pastoreo en S eleva el RMSE censurado a 435.31~ppm/min frente a 86.41~ppm/min de C, conservando el resto de la estructura. En la evaluación cruzada, A y C difieren además en la recalibración del núcleo y en el acople con el alimento, y el orden depende del periodo: A presenta el menor RMSE censurado temprano, mientras que el menor valor tardío de C está condicionado por la calibración global de prepupa. Por tanto, esa comparación tampoco aísla el efecto del pastoreo. No se descartan mecanismos alternativos de decaimiento endógeno capaces de reconciliar controles y tratamientos, y la posición interior de $\gamma=0.5798$ no basta para establecer identificabilidad. La interpretación biológica propuesta para el término es la ingesta de microorganismos junto con el sustrato; su destino de carbono y una posible fracción asimilada requieren verificación experimental.
+\paragraph{El lecho microbiano y el pastoreo.}
+La contribuci\'{o}n del lecho al CO$_2$ total es modesta ($<$10\,\% en
+tratamientos), pero su omisi\'{o}n distorsiona el balance de carbono:
+sin pastoreo, la biomasa microbiana crece sin l\'{i}mite y el lecho
+sobreestima la emisi\'{o}n por un factor de 5--7 (RMSE 518 en
+controles). El pastoreo, calibrado a $\gamma=0.170$ en el interior de
+sus cotas, funciona como un control top--down que mantiene la
+microbiota dentro de rangos fisiol\'{o}gicos compatibles con la
+bacterivor\'{i}a documentada en BSF
+\parencite{klammsteinerCoreGutMicrobiome2020,%
+brunoIntestinalMicrobiotaHermetia2019,%
+douilletCarbonContributionBacterivory1993}. La transferencia de este
+par\'{a}metro a escenarios independientes (Ermolaev, Sch{\o}n) no
+requiri\'{o} reajuste, lo que sugiere que el pastoreo es un proceso
+robusto, aunque su tasa espec\'{i}fica probablemente var\'{i}e con la
+densidad larvaria y la estructura del sustrato.
 
-La evaluación externa muestra un desempeño dependiente del sistema y del nivel de ajuste. En \textcite{ermolaevGreenhouseGasEmissions2019}, E0 reproduce el acumulado y los flujos dentro de los criterios declarados en transferencia pura. En ese mismo nivel A, C mantiene el acumulado dentro del margen ($+17.9$~\%), pero su RMSE de flujos es 1.66~mg/min (30.8~\%), fuera del criterio; su nivel B constituye una interpolación con $n=p$ y mejora el gas a costa de subestimar la biomasa final. En \textcite{schonUsingGasExchange2026}, C queda dentro del margen declarado en tres de cuatro dietas después de reajustar $f$ para cada dieta; la dieta más pobre permanece fuera del margen. En consecuencia, estos resultados respaldan una transferibilidad condicionada al sistema y a la calibración local, no una validez universal del mecanismo ni del conjunto paramétrico.
+\paragraph{Validaci\'{o}n externa y generalizaci\'{o}n.}
+El n\'{u}cleo de Eriksen, con par\'{a}metros transferidos sin
+reajuste, reprodujo los datos de \parencite{ermolaevGreenhouseGasEmissions2019}
+con error $<$3\,\%. Esto valida el mecanismo de asimilaci\'{o}n--mantenimiento
+como descriptor del crecimiento larvario en batch con pulsos. En
+\parencite{schonUsingGasExchange2026}, el ordenamiento por calidad de dieta
+(REF $>$ 1:3 $>$ 1:5 $>$ 1:9) fue correcto en ambas configuraciones,
+y el modelo completo redujo el error de VCO$_2$ total de 13--14\,\% a
+2--6\,\% en las tres dietas de mayor calidad. El fallo en la dieta
+1:9 (+18\,\%) indica que el balance lip\'{i}dico--proteico excede el
+alcance del n\'{u}cleo, que no distingue macronutrientes: una
+limitaci\'{o}n estructural declarada, no un defecto de calibraci\'{o}n.
 
-Los límites del estudio delimitan la interpretación: ocho cierres de tratamiento, cuatro de ellos censurados; ausencia de réplicas biológicas de gas; cinco estimaciones en fronteras de búsqueda; e independencia limitada de la fase tardía. El crecimiento tardío no entró en la etapa~2, pero los cierres tardíos de gas sí participaron en ella, y los tres cierres exactos tardíos intervinieron en la calibración global de prepupa. En este experimento, los siete controles sin larvas fueron necesarios para calibrar la fuente microbiana; su cobertura no incluye la dinámica inicial ni el día larvario 14 de D1, de modo que no constituyen una validación temporal independiente. El lecho sin control larvario condujo a sobreestimaciones tardías, una observación propia del caso de estudio que no debe extenderse a todos los reactores sin evaluación adicional. Las réplicas biológicas independientes y el registro dinámico de la humedad son necesarios para estrechar la incertidumbre y examinar la transferencia futura.
+\paragraph{La fase de prepupa.}
+El m\'{o}dulo de reducci\'{o}n del mantenimiento ($f_{\mathrm{mant}}=0.300$)
+m\'{a}s catabolismo estructural ($k_{\mathrm{cat}}=0.050$~d$^{-1}$)
+captur\'{o} la ca\'{i}da de emisi\'{o}n en D1 (RMSE tard\'{i}o 17.8~ppm/min),
+pero no en D4 (RMSE 124.5~ppm/min). Esta asimetr\'{i}a sugiere que la
+prepupa fisiol\'{o}gica depende de la calidad de la dieta: las larvas
+en D1 alcanzan la masa umbral y migran, mientras que en D4 la
+degradaci\'{o}n del lecho o la mortalidad diferencial contribuyen a
+una ca\'{i}da de emisi\'{o}n que el modelo no captura. La decisi\'{o}n
+de mantener $f_{\mathrm{mant}}$ y $k_{\mathrm{cat}}$ comunes a ambas
+dietas (mismo valor para D1 y D4) conserva parsimonia, pero declara
+expl\'{i}citamente la discrepancia como limitaci\'{o}n del alcance.
+
+\paragraph{Implicaciones para el gemelo digital.}
+El modelo, calibrado en 11 par\'{a}metros (5 fijos por literatura, 6
+ajustados por etapas), se ejecuta en $<$1~s por simulaci\'{o}n en
+hardware est\'{a}ndar. Esta velocidad lo hace viable para un gemelo
+digital en tiempo real: los par\'{a}metros fijos (n\'{u}cleo DEB,
+$k_d$, $Y_X$) se transfieren; los ajustables ($f_{\mathrm{dieta}}$,
+$\delta_{\mathrm{CS}}$, $\gamma$) se pueden estimar en l\'{i}nea a
+partir de los primeros 2--3 d\'{i}as de mediciones de CO$_2$ y
+biomasa. La limitaci\'{o}n D4 tard\'{i}a implica que, para dietas de
+baja calidad, el gemelo debe complementarse con un sensor de biomasa
+directo en la fase de cierre, no confiar solo en el modelo.
+
+\paragraph{Limitaciones y trabajo futuro.}
+Las cinco limitaciones declaradas en el Material Suplementario
+(sec.~\ref{sup:limitaciones}) se resumen as\'{i}: (i)~el n\'{u}cleo
+no distingue macronutrientes; (ii)~la fase de adaptaci\'{o}n (d\'{i}as
+0--4) y el cierre (d\'{i}as $\geq$~10) se subestiman; (iii)~la
+humedad del lecho no se modela; (iv)~la temperatura est\'{a} fija a
+27~$^{\circ}$C sin correcci\'{o}n Q$_{10}$; (v)~la densidad larvaria
+no entra como variable de estado. Trabajo futuro: incorporar
+humedad--actividad de agua \parencite{bekkerImpactSubstrateMoisture2021a},
+una cin\'{e}tica de temperatura con Q$_{10}$ emp\'{i}rico, y una
+funci\'{o}n de respuesta a la densidad que capture la competencia
+intraespec\'{i}fica observada en cultivos comerciales.
+
+\paragraph{Conclusi\'{o}n.}
+La extensi\'{o}n propuesta no sustituye al n\'{u}cleo de Eriksen, sino
+que lo contextualiza dentro del sistema batch completo. El modelo
+completo permite predecir la emisi\'{o}n del lecho en ausencia de
+larvas, cuantificar la contribuci\'{o}n relativa larva--microbiota, y
+diagnosticar si una desviaci\'{o}n observada proviene del crecimiento
+larvario o de una anomal\'{i}a microbiana. Esa capacidad de
+diagn\'{o}stico, m\'{a}s que una mayor precisi\'{o}n num\'{e}rica, es
+la contribuci\'{o}n principal de este trabajo para el dise\~{n}o de
+g\'{e}melos digitales en bioconversi\'{o}n con \textit{H.~illucens}.
