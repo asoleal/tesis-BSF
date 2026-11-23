@@ -96,33 +96,32 @@ def simular_control(config, dieta, t_eval):
         return t_eval, np.zeros_like(t_eval)
     
     f_d = 1.0 if dieta == "D1" else F_D4
-    gamma = 0.0 if config == "S" else GAMMA_C
+    # Controles sin larvas: gamma=0 siempre
     p_lecho = ParametrosLecho(f_dieta=f_d, k_ref=K_REF[dieta], K_SM=K_SM, Y_X=Y_X,
-                               delta_CS=DELTA_CS[dieta], k_d=k_d, gamma=gamma, K_G=K_G)
-    D_C0 = PULSOS[0][1] * MS_DIETA[dieta] * DELTA_C_ALIM * DELTA_CS[dieta]
-    y0 = [D_C0, X0]
+                               delta_CS=DELTA_CS[dieta], k_d=k_d, gamma=0.0, K_G=K_G)
     
-    def f(t, y):
-        D_C, X = y
+    def rhs_lecho(t, y):
+        D_C, X = [max(float(v), 0.0) for v in y]
         micro = tasas_lecho(D_C, X, T_C, p_lecho)
         return [micro.dD_C, micro.dX]
     
+    # D_C inicial = 0, como en compare_E0_vs_C.py
+    y = np.array([0.0, X0])
     cortes = sorted(set([0.0] + [d for d, _ in PULSOS] + [T_FIN]))
     pulsos = dict(PULSOS)
     ts, ys = [], []
-    y = list(y0)
     for a, b in zip(cortes[:-1], cortes[1:]):
         if a > 0.0:
             y[0] += pulsos[a] * MS_DIETA[dieta] * DELTA_C_ALIM * DELTA_CS[dieta]
         t_seg = t_eval[(t_eval >= a) & (t_eval <= b)]
         if len(t_seg) < 2:
             t_seg = np.linspace(a, b, 3)
-        sol = solve_ivp(f, (a, b), y, method="LSODA", t_eval=t_seg, rtol=1e-5, atol=1e-8)
+        sol = solve_ivp(rhs_lecho, (a, b), y, method="LSODA", t_eval=t_seg, rtol=1e-5, atol=1e-8)
         if not sol.success:
             raise RuntimeError(f"fallo control [{a},{b}]")
         ts.append(sol.t)
         ys.append(sol.y)
-        y = sol.y[:, -1].copy().tolist()
+        y = sol.y[:, -1].copy()
     t = np.concatenate(ts)
     Y = np.concatenate(ys, axis=1)
     
@@ -139,12 +138,9 @@ def main():
     gas = cierres[(~cierres["excluir_promedio"]) & (cierres["Gas"] == "co2")].copy()
     gas["dia_larvario"] = gas["Dia_Experimento"] - DIA_MONTAJE_SEP
     
-    # Controles: asignar dieta segun dia (controles D1: dias 6,8,10; D4: 6,8,10,14)
+    # Controles: asignar dieta
     control_mask = gas["condicion"] == "control"
-    gas.loc[control_mask & gas["dia_larvario"].isin([6,8,10]) & 
-            (gas["dia_larvario"] != 14), "dieta"] = "D1"
-    # Los controles D4 incluyen dia 14
-    gas.loc[control_mask & gas["dia_larvario"].isin([6,8,10,14]), "dieta"] = "D4"
+    gas.loc[control_mask, "dieta"] = "D1"  # por defecto, luego corregimos
     
     configs = ["E0", "S", "C"]
     t_eval = np.array(sorted(set([0.0, 5.0, 8.0, 10.0, 12.0, 14.0] +
@@ -198,26 +194,7 @@ def main():
         sat_mark = "sí" if r["saturado"] else "no"
         print(f"{r['dieta']:<5} {int(r['dia']):<4} {r['obs']:<10.2f} {sat_mark:<4} {r['E0_pred']:<10.2f} {r['E0_err']:<8.1f} {r['S_pred']:<10.2f} {r['S_err']:<8.1f} {r['C_pred']:<10.2f} {r['C_err']:<8.1f}")
     
-    # RMSE agregado (controles + tratamientos)
-    for cfg in configs:
-        res_cens = []
-        for _, r in df.iterrows():
-            resid = r[f"{cfg}_pred"] - r["obs"]
-            if r["saturado"]:
-                resid = max(resid, 0.0)
-            res_cens.append(resid)
-        rmse_cens = np.sqrt(np.mean(np.array(res_cens)**2))
-        
-        df_exact = df[~df["saturado"]]
-        if len(df_exact) > 0:
-            res_exact = df_exact[f"{cfg}_pred"] - df_exact["obs"]
-            rmse_exact = np.sqrt(np.mean(res_exact**2))
-        else:
-            rmse_exact = np.nan
-        
-        print(f"\n{cfg}: RMSE censurado total = {rmse_cens:.2f}, RMSE exacto total = {rmse_exact:.2f}")
-    
-    # Por tipo
+    # RMSE por tipo
     for tipo, g_tipo in df.groupby("tipo"):
         print(f"\n--- {tipo.upper()} ---")
         for cfg in configs:

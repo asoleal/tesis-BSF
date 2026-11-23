@@ -46,54 +46,37 @@ El Cuadro~\ref{tab:calibrados} reporta los parámetros estimados. Una estimaci\'
   \centering
   \footnotesize
   \setlength{\tabcolsep}{2.5pt}
-  \caption{Cierres de gas del experimento propio: observaciones, predicciones de las tres configuraciones, errores relativos y mejora del modelo completo respecto al modelo sin pastoreo. Los valores precedidos de $\geq$ son cotas inferiores por saturación del sensor. El error relativo es la diferencia entre predicción y observación, dividida por la observación y multiplicada por 100. La columna `Mejora vs S' reporta el cociente del error absoluto de S entre el de C.}
+  \caption{Cierres de gas del experimento propio: observaciones, predicciones de las tres configuraciones, errores relativos y mejora del modelo completo respecto al modelo sin pastoreo. Los valores precedidos de $\geq$ son cotas inferiores por saturaci\'{o}n del sensor. El error relativo es la diferencia entre predicci\'{o}n y observaci\'{o}n, dividida por la observaci\'{o}n y multiplicada por 100. La columna `Mejora vs S' reporta el cociente del error absoluto de S entre el de C.}
   \label{tab:cierres}
   \begin{tabular}{llrrrrrrrrrl}
     \toprule
-    Dieta & Día & Observado & E0 & err E0 & S & err S & C & err C & $\Delta$ abs. C & Mejora vs S & Sat. \\
+    Dieta & D\'{\i}a & Observado & E0 & err E0 & S & err S & C & err C & $\Delta$ abs. C & Mejora vs S & Sat. \\
     \midrule
-    D1 & 6  & $\geq 670.56$ & 296.03 & cota & 630.12  & cota & 459.84  & cota & --- & --- & sí \\
-    D1 & 6  & $\geq 474.23$ & 296.03 & cota & 630.12  & cota & 459.84  & cota & --- & --- & sí \\
-    D1 & 8  & $\geq 311.82$ & 341.42 & cota & 730.29  & cota & 421.25  & cota & --- & --- & sí \\
-    D1 & 10 & 285.57        & 328.11 & +14.9 & 709.16  & +148.3 & 304.23  & +6.5 & 18.7 & 22.7× & no \\
-    D4 & 6  & 228.52        & 267.77 & +17.2 & 579.20  & +153.5 & 301.52  & +31.9 & 73.0 & 4.8× & no \\
-    D4 & 8  & $\geq 383.67$ & 333.68 & cota & 676.49  & cota & 356.67  & cota & --- & --- & sí \\
-    D4 & 10 & 104.11        & 331.19 & +218.1 & 592.50  & +469.1 & 155.86  & +49.7 & 51.8 & 9.4× & no \\
-    D4 & 14 & 79.11         & 256.02 & +223.6 & 1065.71 & +1247.1 & 156.87 & +98.3 & 77.8 & 12.7× & no \\
+    D1 & 6  & $\geq 670.56$ & 286.72 & cota & 622.68  & cota & 367.25  & cota & --- & --- & s\'{\i} \\
+    D1 & 6  & $\geq 474.23$ & 286.72 & cota & 622.68  & cota & 367.25  & cota & --- & --- & s\'{\i} \\
+    D1 & 8  & $\geq 311.82$ & 342.00 & cota & 796.29  & cota & 387.48  & cota & --- & --- & s\'{\i} \\
+    D1 & 10 & 285.57        & 348.03 & +21.9 & 993.16  & +247.8 & 369.32  & +29.3 & 83.8 & 7.6$\times$ & no \\
+    D4 & 6  & 228.52        & 145.70 & -36.2 & 401.01  & +75.5 & 240.60  & +5.3 & 12.1 & 13.2$\times$ & no \\
+    D4 & 8  & $\geq 383.67$ & 193.80 & cota & 588.26  & cota & 260.07  & cota & --- & --- & s\'{\i} \\
+    D4 & 10 & 104.11        & 240.86 & +131.3 & 777.70  & +647.0 & 294.97  & +183.3 & 190.9 & 2.5$\times$ & no \\
+    D4 & 14 & 79.11         & 270.10 & +241.4 & 997.53  & +1161.0 & 271.87 & +243.7 & 192.8 & 3.8$\times$ & no \\
     \bottomrule
   \end{tabular}
 \end{table}
 
 \noindent \footnotesize Nota: S corresponde al modelo completo con pastoreo anulado,
-$\gamma = 0$. El error de fábrica del sensor MH-410D, $\pm 50$~ppm, se refiere
-a concentración y no equivale a una incertidumbre de $\pm 50$~ppm/min. Su
-propagación a cada pendiente depende de los tiempos de lectura y del carácter
-sistemático o aleatorio del error, como se detalla en la
+$\gamma = 0$. El error de f\'{a}brica del sensor MH-410D, $\pm 50$~ppm, se refiere
+a concentraci\'{o}n y no equivale a una incertidumbre de $\pm 50$~ppm/min. Su
+propagaci\'{o}n a cada pendiente depende de los tiempos de lectura y del car\'{a}cter
+sistem\'{a}tico o aleatorio del error, como se detalla en la
 sec.~\ref{sup:incertidumbre}; por ello no se expresa como un porcentaje
-directo de la tasa más baja. El peso de 25~ppm/min usado en el ajuste es una
-ponderación declarada, no un intervalo metrológico. La mejora del modelo se
-lee en la reducción del RMSE conjunto y en la contención de la fase tardía, no
-en el acierto punto por punto de cierres próximos al límite del sensor. El
-RMSE censurado conjunto es: E0 = 180.53, S = 435.31 y C =
-86.41~ppm/min.\par
+directo de la tasa m\'{a}s baja. El peso de 25~ppm/min usado en el ajuste es una
+ponderaci\'{o}n declarada, no un intervalo metrol\'{o}gico. La mejora del modelo se
+lee en la reducci\'{o}n del RMSE conjunto y en la contenci\'{o}n de la fase tard\'{\i}a, no
+en el acierto punto por punto de cierres pr\'{o}ximos al l\'{\i}mite del sensor. El
+RMSE censurado conjunto es: E0 = 82.72, S = 516.93 y C =
+362.26~ppm/min.\par
 
-\begin{table}[htbp]
-  \centering
-  \caption{Parámetros calibrados del modelo. Las fronteras indican que el ajuste alcanzó el límite del intervalo de búsqueda.}
-  \label{tab:calibrados}
-  \begin{tabular}{llll}
-    \toprule
-    Etapa & Parámetro & Valor & Frontera \\
-    \midrule
-        1 & $k_{\mathrm{ref}}$ (D1 / D4) & 1.0 / 1.0~d$^{-1}$ & Superior en ambas \\
-    1 & $\delta_{CS}$ (D1 / D4) & 0.665 / 0.538 & No \\
-    2 & $a_{\max}$ & 1.180~d$^{-1}$ & No \\
-    2 & $\rho$ & 3.000~mg~C~d$^{-1}$ & No \\
-    2 & $f_{D4}$ & 0.698 & No \\
-    2 & $\gamma$ & 0.170 & No \\
-    \bottomrule
-  \end{tabular}
-\end{table}
 
 \begin{figure}[htbp]
   \centering
