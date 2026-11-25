@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Etapa 2: nucleo larvario + lecho + pastoreo (fase <= 8, rapido)."""
+"""Etapa 2: nucleo larvario + lecho + pastoreo (fase completa 0-14)."""
 
 import sys
 from pathlib import Path
@@ -22,7 +22,7 @@ PULSOS = [(0.0, 500.0), (5.0, 250.0)]
 MS_DIETA = {"D1": 0.863, "D4": 0.803}
 T_K = 300.15; T_C = T_K - 273.15
 V_AIRE_L = 12.1; DELTA_C_ALIM = 0.47; F_MS = 0.325
-DIA_MONTAJE_SEP = 3; T_FIN = 14.0; DIA_AJUSTE_MAX = 8.0
+DIA_MONTAJE_SEP = 3; T_FIN = 14.0; DIA_AJUSTE_MAX = 14.0
 X0_G_C = 1.0; Y_X = 0.4; K_SM = 50.0; K_G = 0.1
 
 BOUNDS = {"a_max": (1.0, 1.5), "rho": (0.5, 15.0), "f_D4": (0.4, 1.0), "gamma": (0.0, 1.0)}
@@ -63,7 +63,7 @@ def simular(dieta, a_max, rho, f_D4, gamma, t_eval):
 
     ppm = np.zeros_like(t)
     for i, (ti, yi) in enumerate(zip(t, Y.T)):
-        lar = tasas_larva(ti, yi[0], yi[1], p_larva, factor_alimento=f_dieta)
+        lar = tasas_larva(ti, yi[0], yi[1], p_larva, f_dieta)
         mic = tasas_lecho(yi[2], yi[3], T_C, p_lecho)
         ppm[i] = carbono_a_ppm_min(N_LARVAS * lar.rCO2_C / 1000.0 + mic.rCmic, V_AIRE_L, T_K)
 

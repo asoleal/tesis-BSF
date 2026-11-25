@@ -1,0 +1,354 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usetheme{default}
+\usecolortheme{default}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows.meta,positioning}
+\usepackage{fontspec}
+\setmainfont{DejaVu Sans}
+
+\definecolor{verdehoja}{RGB}{76, 140, 74}
+\definecolor{marronlarva}{RGB}{139, 90, 43}
+\definecolor{grisfondo}{RGB}{250, 248, 245}
+\definecolor{azulcielo}{RGB}{100, 149, 237}
+
+\setbeamercolor{background canvas}{bg=grisfondo}
+\setbeamercolor{frametitle}{fg=white,bg=verdehoja}
+\setbeamercolor{title}{fg=marronlarva}
+\setbeamercolor{subtitle}{fg=verdehoja}
+\setbeamercolor{author}{fg=marronlarva}
+\setbeamercolor{item}{fg=verdehoja}
+\setbeamercolor{block title}{fg=white,bg=marronlarva}
+\setbeamercolor{block body}{bg=white,fg=black}
+\setbeamertemplate{navigation symbols}{}
+
+\title{\textbf{La Mosca Soldado Negra:}\\De los residuos a la proteina}
+\subtitle{Modelado inteligente de emisiones para una bioconversion sostenible}
+\author{Dr.~(Cand.) John Jairo Leal Gomez\\{\small Profesor Asociado, UNAL Palmira}}
+\date{}
+
+\begin{document}
+
+\begin{frame}
+  \vspace{1cm}
+  \centering
+  {\Huge\textcolor{verdehoja}{$\bullet$}}\\[0.3cm]
+  {\LARGE\textbf{La Mosca Soldado Negra}}\\[0.2cm]
+  {\large De los residuos a la proteina}\\[0.5cm]
+  {\normalsize\textcolor{marronlarva}{Modelado inteligente de emisiones para una bioconversion sostenible}}\\[1cm]
+  {\small Dr.~(Cand.) John Jairo Leal Gomez}\\[0.1cm]
+  {\footnotesize Profesor Asociado, Universidad Nacional de Colombia -- Palmira}\\[0.3cm]
+  {\footnotesize\textcolor{gray}{Sistema Inteligente para el Modelado y Prediccion de Emisiones de GEI}}
+\end{frame}
+
+\begin{frame}{Que es \textit{Hermetia illucens}?}
+  \begin{columns}
+    \begin{column}{0.55\textwidth}
+      \begin{itemize}
+        \item Una mosca neotropical, inofensiva, que no pica ni transmite enfermedades.
+        \item Sus \textbf{larvas} son los verdaderos protagonistas: voraces, resistentes, eficientes.
+        \item En 14 dias, una larva puede multiplicar su peso \textbf{100 veces}.
+        \item Lo hacen \textbf{comiendo residuos organicos}: frutas, vegetales, cafe, e incluso estiercol.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.40\textwidth}
+      \centering
+      \begin{tikzpicture}[scale=0.8]
+        \draw[fill=marronlarva,rounded corners] (0,0) ellipse (1.2 and 0.4);
+        \draw[fill=marronlarva!70] (-0.8,0.2) -- (0.8,0.2) -- (0.6,1.5) -- (-0.6,1.5) -- cycle;
+        \draw[fill=marronlarva!50] (-0.4,1.5) -- (0.4,1.5) -- (0.2,2.2) -- (-0.2,2.2) -- cycle;
+        \node at (0,-0.6) {\footnotesize\textit{Larva de BSF}};
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Un ciclo de vida veloz}
+  \centering
+  \begin{tikzpicture}[scale=0.9]
+    \node[draw,circle,fill=white,minimum size=1cm] (huevo) at (0,0) {\footnotesize Huevo};
+    \node[below] at (huevo.south) {\tiny 4 dias};
+    \node[draw,rounded corners,fill=marronlarva!30,minimum width=1.5cm,minimum height=0.8cm] (larva) at (3,0) {\footnotesize Larva};
+    \node[below] at (larva.south) {\tiny 14 dias};
+    \node[draw,diamond,fill=gray!30,minimum size=1cm] (prepupa) at (6,0) {\footnotesize Prepupa};
+    \node[below] at (prepupa.south) {\tiny migra};
+    \node[draw,regular polygon,regular polygon sides=6,fill=verdehoja!20,minimum size=1cm] (pupa) at (9,0) {\footnotesize Pupa};
+    \node[below] at (pupa.south) {\tiny 14 dias};
+    \node[draw,circle,fill=azulcielo!30,minimum size=1cm] (adulto) at (12,0) {\footnotesize Adulto};
+    \node[below] at (adulto.south) {\tiny 5--8 dias};
+    \draw[->,thick,verdehoja] (huevo) -- (larva);
+    \draw[->,thick,verdehoja] (larva) -- (prepupa);
+    \draw[->,thick,verdehoja] (prepupa) -- (pupa);
+    \draw[->,thick,verdehoja] (pupa) -- (adulto);
+    \draw[->,thick,verdehoja,dashed] (adulto.north) to[out=120,in=60] (huevo.north);
+  \end{tikzpicture}
+  \vspace{0.5cm}
+  \begin{block}{El dato clave}
+    Solo la \textbf{larva} come. El adulto vive solo para reproducirse.\\
+    \textbf{El insecto productivo = la larva.}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Por que nos interesa?}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+      \textbf{El problema}
+      \begin{itemize}
+        \item Colombia genera $\sim$12 millones de toneladas de residuos organicos al ano.
+        \item Gran parte va a rellenos sanitarios, generando metano (CH$_4$).
+        \item Necesitamos alternativas que \textbf{valoricen} en vez de \textbf{contaminar}.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{La solucion}
+      \begin{itemize}
+        \item Las larvas convierten residuos en \textbf{biomasa rica en proteina} (42\% PB).
+        \item El residuo (frass) es un \textbf{excelente fertilizante organico}.
+        \item Reduccion de emisiones de GEI vs. descomposicion natural.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \vspace{0.4cm}
+  \centering
+  \begin{tikzpicture}
+    \node[draw,rounded corners,fill=verdehoja!20] (residuo) at (0,0) {Residuos};
+    \node[draw,rounded corners,fill=marronlarva!30] (larva) at (4,0) {Larvas BSF};
+    \node[draw,rounded corners,fill=azulcielo!20] (proteina) at (8,0.8) {Proteina animal};
+    \node[draw,rounded corners,fill=verdehoja!30] (frass) at (8,-0.8) {Fertilizante};
+    \draw[->,thick] (residuo) -- (larva) node[midway,above] {\footnotesize bioconversion};
+    \draw[->,thick] (larva) -- (proteina) node[midway,above,sloped] {\footnotesize harina};
+    \draw[->,thick] (larva) -- (frass) node[midway,below,sloped] {\footnotesize frass};
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{El reto: de donde sale el CO$_2$?}
+  \begin{columns}
+    \begin{column}{0.55\textwidth}
+      En la camara de cria medimos CO$_2$, pero este viene de \textbf{dos fuentes}:
+      \vspace{0.3cm}
+      \begin{enumerate}
+        \item \textbf{La larva:} respira para crecer, moverse y mantenerse viva.
+        \item \textbf{El lecho:} bacterias y hongos degradan lo que la larva no comio.
+      \end{enumerate}
+      \vspace{0.3cm}
+      El sensor \textbf{no las separa}.\\
+      Como sabemos cuanto le toca a cada una?
+    \end{column}
+    \begin{column}{0.40\textwidth}
+      \centering
+      \begin{tikzpicture}[scale=0.7]
+        \draw[thick,rounded corners,fill=gray!10] (-2,-1.5) rectangle (2,2);
+        \node at (0,1.6) {\footnotesize Camara de cria};
+        \draw[fill=marronlarva!50] (-0.8,0) ellipse (0.5 and 0.2);
+        \node at (-0.8,-0.5) {\tiny larva};
+        \draw[fill=verdehoja!30] (0.8,0) circle (0.4);
+        \node at (0.8,-0.6) {\tiny bacterias};
+        \draw[->,thick,red] (0,2.2) -- (0,1.5);
+        \node at (0,2.5) {\tiny CO$_2$};
+        \draw[->,thick,blue] (-0.8,0.3) to[out=60,in=120] (0,1.5);
+        \draw[->,thick,green!70!black] (0.8,0.4) to[out=60,in=60] (0,1.5);
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Que es un modelo DEB?}
+  \begin{block}{Dynamic Energy Budget}
+    Una ``hoja de balance'' matematica que rastrea donde va la energia del alimento:
+  \end{block}
+  \vspace{0.3cm}
+  \centering
+  \begin{tikzpicture}[scale=0.85]
+    \node[draw,rounded corners,fill=yellow!30] (alimento) at (0,0) {Alimento};
+    \node[draw,rounded corners,fill=orange!30] (reservas) at (3.5,0) {Reservas (lipidos)};
+    \node[draw,rounded corners,fill=verdehoja!30] (estructura) at (7,0.8) {Estructura (crecer)};
+    \node[draw,rounded corners,fill=red!20] (mantenimiento) at (7,-0.8) {Mantenimiento (respirar)};
+    \node[draw,rounded corners,fill=gray!20] (lipidos) at (10.5,0) {Lipidos (ahorro)};
+    \draw[->,thick] (alimento) -- (reservas) node[midway,above] {\footnotesize asimila};
+    \draw[->,thick] (reservas) -- (estructura) node[midway,above,sloped] {\footnotesize $\kappa$};
+    \draw[->,thick] (reservas) -- (mantenimiento) node[midway,below,sloped] {\footnotesize $1-\kappa$};
+    \draw[->,thick] (reservas) -- (lipidos) node[midway,above,sloped] {\footnotesize excedente};
+  \end{tikzpicture}
+  \vspace{0.3cm}
+  \begin{itemize}
+    \item Desarrollado por Bas Kooijman (Vrije Universiteit Amsterdam).
+    \item Aplicado a peces, crustaceos, ahora a insectos (Eriksen 2022).
+    \item Nosotros lo extendimos para incluir el \textbf{lecho bacteriano}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Nuestro aporte: un gemelo digital del batch}
+  \begin{columns}
+    \begin{column}{0.50\textwidth}
+      \textbf{Que hicimos:}
+      \begin{itemize}
+        \item Disenamos un batch controlado con 2 dietas (alta y baja calidad).
+        \item Medimos CO$_2$ cada hora, biomasa cada dia, carbono del sustrato.
+        \item Calibramos un modelo que separa larva $\leftrightarrow$ lecho.
+      \end{itemize}
+      \vspace{0.3cm}
+      \textbf{Que obtuvimos:}
+      \begin{itemize}
+        \item El nucleo Eriksen reproduce el crecimiento larvario.
+        \item El lecho explica el CO$_2$ cuando \textbf{no hay larvas} (control).
+        \item El pastoreo larvario es indispensable: sin el, el lecho se desborda.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \centering
+      \begin{tikzpicture}[scale=0.7]
+        \draw[thick,rounded corners,fill=gray!10] (-2.5,-2) rectangle (2.5,2.5);
+        \node at (0,2) {\footnotesize \textbf{Gemelo digital}};
+        \draw[fill=marronlarva!40] (-1,0.5) ellipse (0.6 and 0.3);
+        \node at (-1,0) {\tiny Larva (DEB)};
+        \draw[fill=verdehoja!30] (1,0.5) circle (0.4);
+        \node at (1,0) {\tiny Lecho (Monod)};
+        \draw[<->,thick,marronlarva] (-0.3,0.5) -- (0.5,0.5);
+        \node at (0.1,0.8) {\tiny pastoreo};
+        \draw[->,thick,blue] (0,-1.5) -- (0,-0.3);
+        \node at (0.8,-1.2) {\tiny CO$_2$ total};
+        \node[draw,rounded corners,fill=white] at (0,-1.8) {\tiny Prediccion};
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Resultados: funciona?}
+  \centering
+  \textbf{Validacion externa: nuestro modelo predice datos de otros laboratorios?}
+  \vspace{0.4cm}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Ermolaev (Suecia, 2019)}
+        700 larvas, residuos de cocina, 28$^\circ$C.
+        \vspace{0.2cm}
+        
+        $\Rightarrow$ Error en acumulado: \textbf{menos del 3\%}.
+        \vspace{0.1cm}
+        
+        El nucleo DEB \textbf{generaliza} sin reajuste.
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Schon (Alemania, 2026)}
+        Dietas de distinta calidad proteica.
+        \vspace{0.2cm}
+        
+        $\Rightarrow$ Ordenamiento correcto en 4/4 dietas.
+        \vspace{0.1cm}
+        
+        Limite: en dieta muy pobre, el nucleo \textbf{se satura}.
+      \end{block}
+    \end{column}
+  \end{columns}
+  \vspace{0.4cm}
+  \textcolor{verdehoja}{\textbf{Narrativa honesta:}} el modelo funciona bien en condiciones normales, pero declaramos sus limites.
+\end{frame}
+
+\begin{frame}{Y esto para que sirve en el Valle del Cauca?}
+  \begin{columns}
+    \begin{column}{0.55\textwidth}
+      \textbf{Residuos disponibles:}
+      \begin{itemize}
+        \item \textbf{Cafe:} mucilago, cascarilla (miles de toneladas/ano).
+        \item \textbf{Cana:} bagazo, cachaza (ya se usa, pero sobra).
+        \item \textbf{Frutas:} banano, maracuya, aguacate (rechazos de exportacion).
+        \item \textbf{Mercados:} residuos organicos de Plaza de Mercado (Cali, Palmira).
+      \end{itemize}
+      \vspace{0.2cm}
+      \textbf{Productos:}
+      \begin{itemize}
+        \item Harina de larva $\rightarrow$ alimento para peces y aves.
+        \item Frass $\rightarrow$ fertilizante organico certificado.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.40\textwidth}
+      \centering
+      \begin{tikzpicture}[scale=0.65]
+        \node[draw,rounded corners,fill=brown!20] (cafe) at (0,2) {Cafe};
+        \node[draw,rounded corners,fill=green!20] (cana) at (0,0.8) {Cana};
+        \node[draw,rounded corners,fill=yellow!20] (fruta) at (0,-0.4) {Frutas};
+        \node[draw,rounded corners,fill=gray!20] (mercado) at (0,-1.6) {Mercados};
+        \node[draw,rounded corners,fill=marronlarva!40,minimum width=1.5cm] (bsf) at (4,0.2) {BSF};
+        \node[draw,rounded corners,fill=red!20] (proteina) at (8,1) {Proteina};
+        \node[draw,rounded corners,fill=verdehoja!30] (frass) at (8,-0.6) {Fertilizante};
+        \draw[->,thick] (cafe) -- (bsf);
+        \draw[->,thick] (cana) -- (bsf);
+        \draw[->,thick] (fruta) -- (bsf);
+        \draw[->,thick] (mercado) -- (bsf);
+        \draw[->,thick] (bsf) -- (proteina);
+        \draw[->,thick] (bsf) -- (frass);
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Hacia donde vamos: el gemelo digital IoT}
+  \begin{columns}
+    \begin{column}{0.55\textwidth}
+      \textbf{Vision:} una granja de BSF con sensores en tiempo real.
+      \vspace{0.3cm}
+      
+      \textbf{Que mide el sensor:}
+      \begin{itemize}
+        \item CO$_2$, temperatura, humedad del lecho.
+        \item Peso de la camara (biomasa estimada).
+      \end{itemize}
+      \vspace{0.2cm}
+      
+      \textbf{Que predice el modelo:}
+      \begin{itemize}
+        \item La larva esta creciendo bien? Necesita mas alimento?
+        \item El lecho se esta desbordando? Hay que ajustar humedad?
+        \item Cuando cosechar? (antes de que empiece la migracion).
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.40\textwidth}
+      \centering
+      \begin{tikzpicture}[scale=0.7]
+        \draw[thick,rounded corners,fill=blue!5] (-2,-2) rectangle (2,2.5);
+        \node at (0,2) {\footnotesize \textbf{Dashboard}};
+        \draw[fill=green!40] (-1.5,0.5) rectangle (-0.5,1.2);
+        \node at (-1,0.85) {\tiny CO$_2$};
+        \draw[fill=orange!40] (-0.3,0.5) rectangle (0.7,1.2);
+        \node at (0.2,0.85) {\tiny T$^\circ$};
+        \draw[fill=purple!30] (0.9,0.5) rectangle (1.9,1.2);
+        \node at (1.4,0.85) {\tiny H\%};
+        \draw[fill=gray!30] (-1.5,-0.5) rectangle (1.9,0.2);
+        \node at (0.2,-0.15) {\tiny Prediccion de biomasa};
+        \draw[fill=red!20] (-1.5,-1.3) rectangle (1.9,-0.6);
+        \node at (0.2,-0.95) {\tiny Alerta: ajustar alimento};
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Conclusiones}
+  \begin{enumerate}
+    \item \textit{Hermetia illucens} es una \textbf{alternativa real} para valorizar residuos organicos del Valle del Cauca.
+    \item El \textbf{modelo DEB} permite rastrear la energia del alimento $\rightarrow$ crecimiento $\rightarrow$ emision, con cierre de carbono.
+    \item Nuestro modelo \textbf{hibrido} (larva DEB + lecho Monod) separa las fuentes de CO$_2$ por primera vez en BSF.
+    \item El \textbf{pastoreo bacteriano} es clave: las larvas no solo comen el sustrato, tambien comen las bacterias que lo degradan.
+    \item El \textbf{gemelo digital} esta al alcance: simulacion en $<1$ segundo, calibrable con datos de los primeros dias.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}
+  \vspace{1.5cm}
+  \centering
+  {\Huge\textcolor{verdehoja}{Gracias}}\\[0.8cm]
+  
+  {\normalsize\textcolor{marronlarva}{Preguntas?}}\\[1cm]
+  
+  {\small \textit{jjlealg@unal.edu.co}}\\[0.2cm]
+  {\footnotesize\texttt{github.com/asoleal/tesis-bsf-co2}}\\[0.5cm]
+  
+  \begin{tikzpicture}
+    \draw[fill=verdehoja,rounded corners] (-0.5,-0.2) rectangle (0.5,0.2);
+    \node[white] at (0,0) {\tiny BSF};
+  \end{tikzpicture}
+\end{frame}
+
+\end{document}

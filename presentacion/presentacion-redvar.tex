@@ -1,0 +1,120 @@
+% =============================================================================
+% PRESENTACIÓN REDVAR - Proceso de bioconversión con Hermetia illucens
+% Compilación: xelatex presentacion-redvar.tex
+% =============================================================================
+\documentclass[aspectratio=169, 11pt]{beamer}
+
+% --- Fuentes (XeLaTeX) ---
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Termes}
+\setsansfont{TeX Gyre Heros}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+
+% --- Tema y colores ---
+\usetheme{Madrid}
+\usecolortheme{beaver}
+\definecolor{unalRojo}{RGB}{148, 36, 36}
+\definecolor{verdeOK}{RGB}{34, 139, 34}
+\setbeamercolor{structure}{fg=unalRojo}
+\setbeamercolor{block title}{bg=unalRojo!15, fg=unalRojo}
+\setbeamercolor{block body}{bg=unalRojo!5}
+
+% --- Metadatos ---
+\title[Bioconversión BSF]{Del residuo al recurso: bioconversión con \textit{Hermetia illucens}}
+\subtitle{Proceso, monitoreo ambiental y revalorización}
+\author{John Jairo Leal Gómez}
+\institute[UNAL]{Doctorado en Estudios Ambientales\\Universidad Nacional de Colombia -- Sede Palmira}
+\date{REDVAR -- Evento de Revalorización de Residuos\\Noviembre 2026}
+\titlegraphic{\includegraphics[width=1.5cm]{../tesis/00Figuras/00f00EscudoUN2016.jpg}}
+
+\newcommand{\BSF}{\textit{Hermetia illucens}}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+
+\begin{document}
+
+% =============================================================================
+% APERTURA - EL PROBLEMA
+% =============================================================================
+
+% --- 1. Portada ---
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+% --- 2. El problema ---
+\begin{frame}{Residuos orgánicos: fuente de GEI y oportunidad perdida}
+% TODO: cifras GEI Colombia/Valle, descomposición anaerobia en vertederos
+\end{frame}
+
+% =============================================================================
+% EL PROCESO
+% =============================================================================
+
+% --- 3. La apuesta ---
+\begin{frame}{La apuesta: bioconversión con \BSF{}}
+% TODO: qué es, velocidad (días), productos, por qué BSF
+\end{frame}
+
+% --- 4. El problema operativo ---
+\begin{frame}{El proceso opera como caja negra}
+% TODO: sin medición no hay gestión; anoxia local, pérdida de biomasa
+\end{frame}
+
+% --- 5. Medir para saber ---
+\begin{frame}{Medir para saber: nodo IoT de bajo costo}
+% TODO: ESP32 + NDIR (CO2) + electroquímico (CH4), T/HR, calibración
+\end{frame}
+
+% --- 6. Modelar para entender ---
+\begin{frame}{Modelar para entender: curva esperada vs. medición}
+% TODO: modelo DEB (Eriksen 2022), CO2 esperado como referencia
+\end{frame}
+
+% --- 7. Detectar para actuar ---
+\begin{frame}{Detectar para actuar: alerta de anaerobiosis}
+% TODO: residuo operativo Y_sensor - Y_modelo, correlación con CH4
+\end{frame}
+
+% --- 8. Lo que muestran los datos ---
+\begin{frame}{Lo que muestran los ciclos reales}
+% TODO: gráficas de datos experimentales, picos CH4, efecto dieta
+\end{frame}
+
+% =============================================================================
+% REVALORIZACIÓN
+% =============================================================================
+
+% --- 9. Doble salida ---
+\begin{frame}{La doble salida: biomasa + frass}
+% TODO: biomasa 37-56% proteína, frass N-P-K
+\end{frame}
+
+% --- 10. Frass ---
+\begin{frame}{Frass: de excreta a fertilizante orgánico}
+% TODO: composición, potencial agrícola regional
+\end{frame}
+
+% --- 11. Proteína ---
+\begin{frame}{Proteína animal: alternativa a harina de pescado}
+% TODO: acuicultura y avicultura
+\end{frame}
+
+% --- 12. Cadena de valor ---
+\begin{frame}{Residuos agroindustriales del Valle: cadena de valor}
+% TODO: pulpa de café, bagazo, orujo; del residuo al mercado
+\end{frame}
+
+% =============================================================================
+% CIERRE
+% =============================================================================
+
+% --- 13. Cierre ---
+\begin{frame}{Medir, valorizar, escalar}
+% TODO: mensaje final + contacto
+\end{frame}
+
+\end{document}

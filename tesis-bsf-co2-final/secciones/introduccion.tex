@@ -1,7 +1,99 @@
 % secciones/introduccion.tex -- Sec 1 Introducción
+% secciones/introduccion.tex -- Sec 1 Introducción
 
-La bioconversión de residuos orgánicos con \textit{Hermetia illucens} se ha consolidado como una vía de valorización: transforma desperdicios agroindustriales en biomasa rica en proteína para alimentación animal y un residuo estabilizado que devuelve materia orgánica al suelo. Su evaluación ambiental completa, sin embargo, exige contabilizar todo el carbono del sistema, incluido el que retorna a la atmósfera durante el proceso. En un contenedor de cría, la emisión de CO$_2$ medida mezcla dos respiraciones que ningún sensor separa: la de las larvas y la de la microbiota que degrada el alimento no consumido. La distinción no es un detalle para el balance de gases de efecto invernadero del proceso: la respiración larvaria es un costo metabólico del insecto productivo, mientras que la del lecho depende del manejo del sustrato; y atribuir el total medido a cada fuente no puede lograrse con la medición sola, sino que requiere un modelo mecanístico de ambas.
+La bioconversión de residuos orgánicos con \textit{Hermetia illucens} se ha
+consolidado como una vía de valorización: transforma desperdicios
+agroindustriales en biomasa rica en proteína para alimentación animal y un
+residuo estabilizado que devuelve materia orgánica al suelo. Su evaluación
+ambiental completa, sin embargo, exige contabilizar todo el carbono del
+sistema, incluido el que retorna a la atmósfera durante el proceso. En un
+contenedor de cría, la emisión de CO$_2$ medida mezcla dos respiraciones que
+ningún sensor separa: la de las larvas y la de la microbiota que degrada el
+alimento no consumido. La distinción no es un detalle para el balance de
+gases de efecto invernadero del proceso: la respiración larvaria es un costo
+metabólico del insecto productivo, mientras que la del lecho depende del
+manejo del sustrato; y atribuir el total medido a cada fuente no puede
+lograrse con la medición sola, sino que requiere un modelo mecanístico de
+ambas.
 
-El modelo dinámico de \textcite{eriksenDynamicModellingFeed2022} es hoy la descripción más completa de la respiración larvaria: deriva la producción de CO$_2$ de la fisiología del insecto ---asimilación, crecimiento y acumulación de lípidos--- con cierre de carbono, y reproduce trayectorias de emisión bajo las condiciones en que fue desarrollado. Sin embargo, esas reproducciones emplean los mismos escenarios con que se parametrizó, por lo que no constituyen una validación independiente; y el modelo no representa ni la degradación microbiana del sustrato ni la limitación por disponibilidad de alimento, factores ineludibles en un lote real con dietas variables. Los estudios de emisión en reactores con \textit{H. illucens} confirman que la señal de cámara mezcla ambas fuentes \parencite{ermolaevGreenhouseGasEmissions2019,parodiBioconversionEfficienciesGreenhouse2020a}.
+El modelo dinámico de \textcite{eriksenDynamicModellingFeed2022} es hoy la
+descripción más completa de la respiración larvaria: deriva la producción de
+CO$_2$ de la fisiología del insecto ---asimilación, crecimiento y
+acumulación de lípidos--- con cierre de carbono, y reproduce trayectorias de
+emisión bajo las condiciones en que fue desarrollado. Sin embargo, esas
+reproducciones emplean los mismos escenarios con que se parametrizó, por lo
+que no constituyen una validación independiente; y el modelo no representa
+ni la degradación microbiana del sustrato ni la limitación por
+disponibilidad de alimento, factores ineludibles en un lote real con dietas
+variables. Los estudios de emisión en reactores con \textit{H.~illucens}
+confirman que la señal de cámara mezcla ambas fuentes
+\parencite{ermolaevGreenhouseGasEmissions2019,parodiBioconversionEfficienciesGreenhouse2020a}.
 
-El objetivo de este estudio es formular y evaluar un modelo de caja gris que conserve la estructura del núcleo fisiológico de \textcite{eriksenDynamicModellingFeed2022} y añada explícitamente la relación alimento--larva--lecho, de modo que las emisiones medidas en cámaras estáticas puedan atribuirse a sus dos fuentes. Tres preguntas guían la evaluación: (i) cuánto del error de predicción proviene de aplicar el núcleo original fuera de su dominio de calibración; (ii) qué aporte representa la fuente microbiana del lecho en el total de cámara; y (iii) si la calidad y la disponibilidad del alimento explican las diferencias entre dietas sin sustituir los balances respiratorios del modelo de referencia. La evaluación distingue transferencia sin reajuste, recalibración con datos propios y comparación entre configuraciones anidadas, e incluye validación cruzada interna y un análisis de incertidumbre con límites declarados. La contribución del estudio es la formulación de la fuente microbiana del lecho y del acople entre la disponibilidad de alimento y la asimilación larvaria ---ambos ausentes en el modelo de referencia---, junto con un protocolo de comparación que distingue la recalibración del núcleo de la incorporación conjunta de las extensiones, sin atribuir de forma independiente la mejora a mecanismos que las configuraciones no aíslan.
+Este estudio formula y eval\'{u}a un modelo de caja gris
+\textbf{h\'{\i}brido}: el n\'{u}cleo larvario conserva la estructura DEB
+de \textcite{eriksenDynamicModellingFeed2022}, mientras que el lecho
+microbiano se describe con cin\'{e}tica de sustrato limitada (Monod), no
+con balances DEB. Esta elecci\'{o}n obedece a parsimonia: un compartimento
+DEB bacteriano a\~{n}adir\'{\i}a estados de reserva y estructura que, con
+los datos disponibles (CO$_2$ de c\'{a}mara, biomasa larvaria y carbono
+del sustrato), no ser\'{\i}an identificables con los datos actuales.
+
+El acople es unidireccional: el n\'{u}cleo Eriksen ignora al lecho, pero
+el lecho siente a la larva a trav\'{e}s de dos v\'{\i}as documentadas en
+la literatura del insecto. La primera es el consumo de sustrato
+compartido: la larva asimila carbono del pool de sustrato disponible
+$D_C$ (g~C~c\'{a}mara$^{-1}$), reduciendo la cantidad que queda para la
+degradaci\'{o}n microbiana; la fracci\'{o}n de carbono del alimento es
+una medida est\'{a}ndar en balances de bioconversi\'{o}n con
+\textit{H.~illucens} \parencite{eriksenDynamicModellingFeed2022}. La
+segunda es el pastoreo bacteriano:
+\textcite{douilletCarbonContributionBacterivory1993} cuantific\'{o} la
+contribuci\'{o}n del carbono bacteriano a la nutrici\'{o}n de
+\textit{H.~illucens} mediante bacterivor\'{\i}a, y estudios posteriores
+del microbioma intestinal confirman que las larvas ingieren activamente
+microbios del sustrato
+\parencite{klammsteinerCoreGutMicrobiome2020,%
+brunoIntestinalMicrobiotaHermetia2019,%
+wynantsAssessingMicrobiotaBlack2019}. En el modelo, este pastoreo se
+representa con un coeficiente $\gamma$ (adimensional) que cuantifica la
+fracci\'{o}n del flujo de asimilaci\'{o}n larvaria destinada al consumo
+de biomasa microbiana $X$. La emisi\'{o}n total medida en c\'{a}mara es
+la suma de la respiraci\'{o}n larvaria (n\'{u}cleo Eriksen) m\'{a}s la
+respiraci\'{o}n microbiana del lecho (Monod); el carbono transferido
+desde $D_C$ y $X$ a la biomasa larvaria se acumula en el insecto y no se
+libera como CO$_2$ inmediato.
+
+La evaluación distingue tres configuraciones anidadas. La configuración
+\textbf{E0} (Eriksen puro) transfiere los parámetros del artículo original
+sin reajuste, sirviendo como línea base de validación externa. La
+configuración \textbf{S} añade el lecho microbiano con pastoreo anulado
+($\gamma = 0$), revelando la magnitud de la sobreestimación cuando la
+biomasa bacteriana crece sin control. La configuración \textbf{C} incluye
+el pastoreo completo, cerrando el balance de carbono del sistema batch. La
+calibración se estructura en tres etapas secuenciales: (1)~parámetros del
+lecho contra controles sin larvas ($k_{\mathrm{ref}}$,
+$\delta_{\mathrm{CS}}$); (2)~parámetros de asimilación y pastoreo contra
+tratamientos en fase activa, días $\leq 8$ ($a_{\max}$, $\rho$,
+$f_{\mathrm{D4}}$, $\gamma$); y (3)~parámetros de prepupa contra cierres
+tardíos, días $\geq 10$ ($f_{\mathrm{mant}}$, $k_{\mathrm{cat}}$). Cada
+etapa congela los parámetros de las anteriores, de modo que la varianza
+explicada se atribuye mecánicamente al módulo que se activa.
+
+El protocolo de validación distingue tres niveles. El \textbf{nivel A}
+transfiere parámetros calibrados en un experimento a datos independientes
+(Ermolaev, Sch{\o}n) sin reajuste, evaluando generalización pura. El
+\textbf{nivel B} permite reajuste mínimo de factores de escala
+($f_{\mathrm{dieta}}$) ante diferencias de dieta y temperatura, evaluando
+robustez condicional. El \textbf{nivel C} recalibra todo el núcleo, como
+referencia de límite superior. Tres preguntas guían la evaluación: (i)~cuánto
+del error de predicción proviene de aplicar el núcleo original fuera de su
+dominio de calibración; (ii)~qué aporte representa la fuente microbiana del
+lecho en el total de cámara; y (iii)~si la calidad y la disponibilidad del
+alimento explican las diferencias entre dietas sin sustituir los balances
+respiratorios del modelo de referencia. La contribución del estudio es la
+formulación de la fuente microbiana del lecho y del acople entre la
+disponibilidad de alimento y la asimilación larvaria ---ambos ausentes en el
+modelo de referencia---, junto con un protocolo de comparación que distingue
+la recalibración del núcleo de la incorporación conjunta de las extensiones,
+sin atribuir de forma independiente la mejora a mecanismos que las
+configuraciones no aíslan.
